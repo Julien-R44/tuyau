@@ -33,5 +33,17 @@
     "format": "esm",
     "dts": true,
     "target": "esnext"
+  },
+  "release-it": {
+    "git": {
+      "commitMessage": "chore(release): @tuyau/utils@${version}",
+      "tagAnnotation": "release ${version}",
+      "tagName": "@tuyau/utils@${version}"
+    },
+    "github": {
+      "release": true,
+      "releaseName": "@tuyau/utils@${version}",
+      "web": true
+    }
   }
 }
