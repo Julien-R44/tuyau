@@ -1,6 +1,3 @@
-/**
- * @link https://github.com/remix-run/remix/blob/2248669ed59fd716e267ea41df5d665d4781f4a9/packages/remix-server-runtime/serialize.ts
- */
 type JsonPrimitive = string | number | boolean | string | number | boolean | null
 
 type NonJsonPrimitive = undefined | Function | symbol
@@ -11,6 +8,12 @@ type FilterKeys<TObj extends object, TFilter> = {
   [TKey in keyof TObj]: TObj[TKey] extends TFilter ? TKey : never
 }[keyof TObj]
 
+/**
+ * Convert a type to a JSON-serialized version of itself
+ *
+ * This is useful when sending data from client to server, as it ensure the
+ * resulting type will match what the client will receive after JSON serialization.
+ */
 export type Serialize<T> =
   IsAny<T> extends true
     ? any
@@ -47,9 +50,7 @@ type SerializeObject<T extends object> = {
  */
 export type Simplify<TType> = TType extends any[] | Date
   ? TType
-  : {
-      [K in keyof TType]: Simplify<TType[K]>
-    }
+  : { [K in keyof TType]: Simplify<TType[K]> }
 
 export type IsNever<T> = [T] extends [never] ? true : false
 

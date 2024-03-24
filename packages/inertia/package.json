@@ -1,15 +1,11 @@
 {
-  "name": "@tuyau/client",
+  "name": "@tuyau/inertia",
   "description": "",
   "version": "0.0.0",
   "main": "index.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "dependencies": {
-    "ky": "^1.2.3",
-    "@tuyau/utils": "workspace:*"
   },
   "author": "Julien Ripouteau <julien@ripouteau.com>",
   "license": "ISC",

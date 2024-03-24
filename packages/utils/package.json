@@ -1,16 +1,37 @@
 {
-  "name": "@conduit/utils",
-  "description": "",
+  "name": "@tuyau/utils",
+  "description": "Utilities for Tuyau",
   "version": "0.0.0",
   "main": "index.js",
   "type": "module",
+  "files": [
+    "build"
+  ],
   "exports": {
-    "./types": "./src/types.ts"
+    "./types": "./build/types.js"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "release": "pnpm build && pnpm release-it",
+    "build": "tsup-node",
+    "checks": "pnpm lint && pnpm typecheck"
   },
   "author": "Julien Ripouteau <julien@ripouteau.com>",
   "license": "ISC",
-  "keywords": []
+  "keywords": [],
+  "publishConfig": {
+    "access": "public",
+    "tag": "latest"
+  },
+  "tsup": {
+    "entry": [
+      "./src/types.ts"
+    ],
+    "outDir": "./build",
+    "clean": true,
+    "format": "esm",
+    "dts": true,
+    "target": "esnext"
+  }
 }

@@ -7,18 +7,12 @@ import { Node, Project, QuoteKind } from 'ts-morph'
 import type { MethodDeclaration, SourceFile } from 'ts-morph'
 import type { CommandOptions } from '@adonisjs/core/types/ace'
 import { parseBindingReference } from '@adonisjs/core/helpers'
-import type { Router } from '@adonisjs/core/http'
 import { RouteJSON } from '@adonisjs/core/types/http'
 // @ts-ignore
 import matchit from '@poppinss/matchit'
 
 type HandlerData = { method: MethodDeclaration; body: Node }
 type RouteReferenceParsed = Awaited<ReturnType<typeof parseBindingReference>>
-type SerializedRoute = {
-  name?: string
-  path: string
-  params?: Array<string>
-}
 
 export default class CodegenTypes extends BaseCommand {
   static commandName = 'codegen:types:routes'
@@ -37,7 +31,7 @@ export default class CodegenTypes extends BaseCommand {
     this.#destination = new URL('./.adonisjs/types/api.d.ts', this.app.appRoot)
     const directory = this.#getDestinationDirectory()
     if (!existsSync(directory)) {
-      await mkdir(directory)
+      await mkdir(directory, { recursive: true })
     }
   }
 
@@ -108,8 +102,11 @@ export default class CodegenTypes extends BaseCommand {
    * in a routes.d.ts file
    */
   async #writeFinalInterface(types: Record<string, any>) {
-    const file = this.#project.addSourceFileAtPathIfExists(fileURLToPath(this.#destination))
-    if (!file) throw new Error('Unable to create the routes.d.ts file')
+    const file = this.#project.createSourceFile(fileURLToPath(this.#destination), {
+      overwrite: true,
+    })
+
+    if (!file) throw new Error('Unable to create the api.d.ts file')
 
     file?.removeText()
 
@@ -151,7 +148,7 @@ export default class CodegenTypes extends BaseCommand {
     file: SourceFile,
     routeHandler: RouteReferenceParsed
   ): HandlerData | undefined {
-    const classDef = file.getClasses()[0]
+    const classDef = file.getClasses().find((c) => c.isDefaultExport())
     if (!classDef) return
 
     const method = classDef.getMethod(routeHandler.method)
