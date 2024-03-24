@@ -1,5 +1,5 @@
 import type { Options as KyOptions } from 'ky'
-import { Simplify, Serialize, IsNever, Prettify } from '@conduit/codegen/types'
+import { Simplify, Serialize, IsNever, Prettify } from '@conduit/utils/types'
 
 /**
  * Shape of the response returned by Conduit

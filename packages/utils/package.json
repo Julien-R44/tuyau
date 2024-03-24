@@ -1,15 +1,14 @@
 {
-  "name": "@conduit/client",
+  "name": "@conduit/utils",
   "description": "",
   "version": "0.0.0",
   "main": "index.js",
   "type": "module",
+  "exports": {
+    "./types": "./src/types.ts"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "dependencies": {
-    "ky": "^1.2.3",
-    "@conduit/utils": "workspace:*"
   },
   "author": "Julien Ripouteau <julien@ripouteau.com>",
   "license": "ISC",
