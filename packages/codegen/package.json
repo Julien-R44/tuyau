@@ -26,7 +26,7 @@
     "index:commands": "adonis-kit index build/commands",
     "prebuild": "npm run lint && npm run clean",
     "build": "pnpm lint && pnpm clean && tsc && pnpm copy:templates && pnpm index:commands",
-    "release": "pnpm build && pnpm run postbuild && pnpm release-it",
+    "release": "pnpm build && pnpm release-it",
     "version": "npm run build",
     "prepublishOnly": "npm run build"
   },
