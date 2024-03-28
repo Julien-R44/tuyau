@@ -2,9 +2,9 @@ import type { Options as KyOptions } from 'ky'
 import { Simplify, Serialize, IsNever, Prettify } from '@tuyau/utils/types'
 
 /**
- * Shape of the response returned by Conduit
+ * Shape of the response returned by Tuyau
  */
-export type ConduitResponse<Res> =
+export type TuyauResponse<Res> =
   | { data: Res; error: null; response: Response; status: number }
   | { data: null; error: { message: string }; response: Response; status: number }
 
@@ -21,9 +21,9 @@ export type AdonisClient<in out Route extends Record<string, any>> = {
   }
     ? K extends 'get' | 'head'
       ? unknown extends Request // If request is not typed
-        ? (options?: ConduitOptions & { query?: Request }) => Promise<ConduitResponse<Res>>
-        : (options: ConduitOptions & { query: Request }) => Promise<ConduitResponse<Res>>
-      : (body: Request, options?: ConduitOptions) => Promise<ConduitResponse<Res>>
+        ? (options?: TuyauOptions & { query?: Request }) => Promise<TuyauResponse<Res>>
+        : (options: TuyauOptions & { query: Request }) => Promise<TuyauResponse<Res>>
+      : (body: Request, options?: TuyauOptions) => Promise<TuyauResponse<Res>>
     : CreateParams<Route[K]>
 }
 
@@ -38,9 +38,9 @@ export type CreateParams<Route extends Record<string, any>> =
     : never
 
 /**
- * Options accepted by Conduit
+ * Options accepted by Tuyau
  */
-export type ConduitOptions = Omit<
+export type TuyauOptions = Omit<
   KyOptions,
   'prefixUrl' | 'body' | 'json' | 'method' | 'searchParams'
 >

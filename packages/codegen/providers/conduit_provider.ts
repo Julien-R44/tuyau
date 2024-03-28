@@ -11,7 +11,7 @@ declare module '@adonisjs/core/http' {
     ) => Route<T>
   }
 }
-export default class ConduitProvider {
+export default class TuyauProvider {
   constructor(protected app: ApplicationService) {}
 
   /**

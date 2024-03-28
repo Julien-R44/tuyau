@@ -1,8 +1,8 @@
 import ky from 'ky'
 import type { KyInstance } from 'ky'
 
-import { ConduitHTTPError } from './errors.js'
-import type { ConduitOptions, AdonisClient } from './types.js'
+import { TuyauHTTPError } from './errors.js'
+import type { TuyauOptions as TuyauOptions, AdonisClient } from './types.js'
 
 const methods = ['get', 'post', 'put', 'delete', 'patch', 'head'] as const
 
@@ -70,7 +70,7 @@ function createProxy(client: KyInstance, config: any, paths: string[] = []): any
          * the data and set the error
          */
         if (!response.ok) {
-          error = new ConduitHTTPError(response.status, data)
+          error = new TuyauHTTPError(response.status, data)
           data = undefined
         }
 
@@ -81,11 +81,11 @@ function createProxy(client: KyInstance, config: any, paths: string[] = []): any
 }
 
 /**
- * Create a new Conduit client
+ * Create a new Tuyau client
  */
 export function createTuyau<const T extends Record<string, any>>(
   baseUrl: string,
-  options?: ConduitOptions
+  options?: TuyauOptions
 ): AdonisClient<T> {
   const client = ky.create({ prefixUrl: baseUrl, throwHttpErrors: false, ...options })
   return createProxy(client, options)
