@@ -16,10 +16,12 @@
     "build": "tsup-node",
     "checks": "pnpm lint && pnpm typecheck"
   },
+  "devDependencies": {
+    "@tuyau/utils": "workspace:*"
+  },
   "dependencies": {
     "@poppinss/matchit": "^3.1.2",
-    "ky": "^1.2.3",
-    "@tuyau/utils": "workspace:*"
+    "ky": "^1.2.3"
   },
   "author": "Julien Ripouteau <julien@ripouteau.com>",
   "license": "ISC",
