@@ -34,6 +34,10 @@
     "dts": true,
     "target": "esnext"
   },
+  "publishConfig": {
+    "access": "public",
+    "tag": "latest"
+  },
   "release-it": {
     "git": {
       "commitMessage": "chore(release): @tuyau/client@${version}",
