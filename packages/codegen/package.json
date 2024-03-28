@@ -63,5 +63,17 @@
     "exclude": [
       "tests/**"
     ]
+  },
+  "release-it": {
+    "git": {
+      "commitMessage": "chore(release): @tuyau/codegen@${version}",
+      "tagAnnotation": "release ${version}",
+      "tagName": "@tuyau/codegen@${version}"
+    },
+    "github": {
+      "release": true,
+      "releaseName": "@tuyau/codegen@${version}",
+      "web": true
+    }
   }
 }

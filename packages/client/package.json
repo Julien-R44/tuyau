@@ -3,6 +3,9 @@
   "description": "e2e client for AdonisJS",
   "version": "0.0.0",
   "type": "module",
+  "files": [
+    "build"
+  ],
   "exports": {
     ".": "./build/index.js"
   },
