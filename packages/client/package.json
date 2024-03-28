@@ -1,11 +1,14 @@
 {
   "name": "@tuyau/client",
-  "description": "",
+  "description": "e2e client for AdonisJS",
   "version": "0.0.0",
-  "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "release": "pnpm build && pnpm release-it",
+    "build": "tsup-node",
+    "checks": "pnpm lint && pnpm typecheck"
   },
   "dependencies": {
     "ky": "^1.2.3",
@@ -13,5 +16,27 @@
   },
   "author": "Julien Ripouteau <julien@ripouteau.com>",
   "license": "ISC",
-  "keywords": []
+  "keywords": [],
+  "tsup": {
+    "entry": [
+      "./index.ts"
+    ],
+    "outDir": "./build",
+    "clean": true,
+    "format": "esm",
+    "dts": true,
+    "target": "esnext"
+  },
+  "release-it": {
+    "git": {
+      "commitMessage": "chore(release): @tuyau/client@${version}",
+      "tagAnnotation": "release ${version}",
+      "tagName": "@tuyau/client@${version}"
+    },
+    "github": {
+      "release": true,
+      "releaseName": "@tuyau/client@${version}",
+      "web": true
+    }
+  }
 }

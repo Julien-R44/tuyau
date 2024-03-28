@@ -83,7 +83,7 @@ function createProxy(client: KyInstance, config: any, paths: string[] = []): any
 /**
  * Create a new Conduit client
  */
-export function conduit<const T extends Record<string, any>>(
+export function createTuyau<const T extends Record<string, any>>(
   baseUrl: string,
   options?: ConduitOptions
 ): AdonisClient<T> {
