@@ -102,7 +102,7 @@ export default class CodegenTypes extends BaseCommand {
    * in a routes.d.ts file
    */
   async #writeFinalInterface(types: Record<string, any>) {
-    const file = this.#project.createSourceFile(fileURLToPath(this.#destination), {
+    const file = this.#project.createSourceFile(fileURLToPath(this.#destination), '', {
       overwrite: true,
     })
 
@@ -112,7 +112,7 @@ export default class CodegenTypes extends BaseCommand {
 
     file.insertText(0, (writer) => {
       writer
-        .writeLine(`import type { Serialize, Simplify } from '@adonisjs/codegen/types'`)
+        .writeLine(`import type { Serialize, Simplify } from '@tuyau/utils/types'`)
         .writeLine(`import type { Infer } from '@vinejs/vine/types'`)
         .newLine()
         .writeLine(`export interface AdonisApi {`)

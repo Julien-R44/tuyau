@@ -56,6 +56,9 @@ importers:
 
   packages/client:
     dependencies:
+      '@poppinss/matchit':
+        specifier: ^3.1.2
+        version: 3.1.2
       '@tuyau/utils':
         specifier: workspace:*
         version: link:../utils
@@ -421,7 +424,6 @@ packages:
   /@arr/every@1.0.1:
     resolution: {integrity: sha512-UQFQ6SgyJ6LX42W8rHCs8KVc0JS0tzVL9ct4XYedJukskYVWTo49tNiMEK9C2HTyarbNiT/RVIRSY82vH+6sTg==}
     engines: {node: '>=4'}
-    dev: true
 
   /@babel/code-frame@7.24.2:
     resolution: {integrity: sha512-y5+tLQyV8pg3fsiln67BVLD1P13Eg4lh5RW9mF0zUuvLrv9uIQ4MCL+CRT+FTsBlBjcIan6PGsLcBN0m3ClUyQ==}
@@ -1097,7 +1099,6 @@ packages:
     resolution: {integrity: sha512-Bx+jY+vmdQFmwYiHliiPjr+oVBaGnh79B1h1FSAm3jME1QylLFt8PPYC0ymO8Q5PzJj/KuE3jeTnZhRHOWqq8g==}
     dependencies:
       '@arr/every': 1.0.1
-    dev: true
 
   /@poppinss/middleware@3.2.2:
     resolution: {integrity: sha512-73AJXODpZcfpO3b9Fr4SQNksXtATpUpCAnKgIUVDfZqAsS1gzLGhDfYo/Qi44hH29P8q28MXqmaoYY2oTpdZFQ==}

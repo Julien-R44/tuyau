@@ -3,6 +3,9 @@
   "description": "e2e client for AdonisJS",
   "version": "0.0.0",
   "type": "module",
+  "exports": {
+    ".": "./build/index.js"
+  },
   "scripts": {
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
@@ -11,6 +14,7 @@
     "checks": "pnpm lint && pnpm typecheck"
   },
   "dependencies": {
+    "@poppinss/matchit": "^3.1.2",
     "ky": "^1.2.3",
     "@tuyau/utils": "workspace:*"
   },
