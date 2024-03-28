@@ -74,7 +74,7 @@ export default class CodegenTypes extends BaseCommand {
       const importPath = schema.getImplementations()[0].getSourceFile().getFilePath()
       const relativeImportPath = relative(this.#getDestinationDirectory(), importPath)
 
-      return `Infer<typeof import('${relativeImportPath}')['${schema.getText()}']>`
+      return `InferInput<typeof import('${relativeImportPath}')['${schema.getText()}']>`
     }
   }
 
