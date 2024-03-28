@@ -27,7 +27,7 @@
     "prebuild": "npm run lint && npm run clean",
     "build": "tsc",
     "postbuild": "npm run copy:templates && npm run index:commands",
-    "release": "np",
+    "release": "pnpm build && pnpm run postbuild && pnpm release-it",
     "version": "npm run build",
     "prepublishOnly": "npm run build"
   },
