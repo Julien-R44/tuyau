@@ -25,8 +25,7 @@
     "test": "c8 npm run quick:test",
     "index:commands": "adonis-kit index build/commands",
     "prebuild": "npm run lint && npm run clean",
-    "build": "tsc",
-    "postbuild": "npm run copy:templates && npm run index:commands",
+    "build": "pnpm lint && pnpm clean && tsc && pnpm copy:templates && pnpm index:commands",
     "release": "pnpm build && pnpm run postbuild && pnpm release-it",
     "version": "npm run build",
     "prepublishOnly": "npm run build"

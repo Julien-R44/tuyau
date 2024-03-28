@@ -59,12 +59,13 @@ importers:
       '@poppinss/matchit':
         specifier: ^3.1.2
         version: 3.1.2
-      '@tuyau/utils':
-        specifier: workspace:*
-        version: link:../utils
       ky:
         specifier: ^1.2.3
         version: 1.2.3
+    devDependencies:
+      '@tuyau/utils':
+        specifier: workspace:*
+        version: link:../utils
 
   packages/codegen:
     devDependencies:
@@ -86,8 +87,6 @@ importers:
       ts-morph:
         specifier: ^22.0.0
         version: 22.0.0
-
-  packages/inertia: {}
 
   packages/utils: {}
 
