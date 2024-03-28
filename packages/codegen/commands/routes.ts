@@ -113,7 +113,7 @@ export default class CodegenTypes extends BaseCommand {
     file.insertText(0, (writer) => {
       writer
         .writeLine(`import type { Serialize, Simplify } from '@tuyau/utils/types'`)
-        .writeLine(`import type { Infer } from '@vinejs/vine/types'`)
+        .writeLine(`import type { InferInput } from '@vinejs/vine/types'`)
         .newLine()
         .writeLine(`export interface AdonisApi {`)
         .write(this.#generateFinalInterface(types, '  '))
