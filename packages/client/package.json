@@ -1,7 +1,7 @@
 {
   "name": "@tuyau/client",
   "description": "e2e client for AdonisJS",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": "build/index.js",
   "type": "module",
   "files": [
