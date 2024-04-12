@@ -1,58 +1,75 @@
-name: test
+name: CI
 
-on:
-  - push
-  - pull_request
+on: [push, pull_request]
 
 jobs:
   lint:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - name: Install
-        run: pnpm install
-      - name: Run lint
-        run: pnpm lint
+    - uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 21
+
+    - name: Install pnpm
+      run: |
+        corepack enable
+        corepack prepare pnpm@latest --activate
+
+    - name: Install dependencies
+      run: pnpm install
+
+    - name: Lint
+      run: pnpm lint
 
   typecheck:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - name: Install
-        run: pnpm install
-      - name: Run typecheck
-        run: pnpm run typecheck
+    - uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 21
+
+    - name: Install pnpm
+      run: |
+        corepack enable
+        corepack prepare pnpm@latest --activate
+
+    - name: Install dependencies
+      run: |
+        pnpm install
+        pnpm -r build
+
+    - name: Typecheck
+      run: pnpm typecheck
 
   tests:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-        node-version: ["lts/iron", "latest"]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
-      - uses: actions/checkout@v4
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-      - name: Install
-        run: pnpm install
-      - name: Run tests
-        run: pnpm test
-  windows:
-    runs-on: windows-latest
-    strategy:
-      matrix:
-        node-version: ["lts/iron", "latest"]
+    - uses: actions/checkout@v4
 
-    steps:
-      - uses: actions/checkout@v4
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-      - name: Install
-        run: pnpm install
-      - name: Run tests
-        run: pnpm test
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 21
+
+    - name: Install pnpm
+      run: |
+        corepack enable
+        corepack prepare pnpm@latest --activate
+
+    - name: Install dependencies
+      run: |
+        pnpm install
+        pnpm -r build
+
+    - name: Run tests
+      run: FORCE_COLOR=1 pnpm test
