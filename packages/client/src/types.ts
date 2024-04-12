@@ -20,10 +20,14 @@ export type AdonisClient<in out Route extends Record<string, any>> = {
     request: infer Request
   }
     ? K extends 'get' | 'head'
-      ? unknown extends Request // If request is not typed
+      ? unknown extends Request
         ? (options?: TuyauOptions & { query?: Request }) => Promise<TuyauResponse<Res>>
-        : (options: TuyauOptions & { query: Request }) => Promise<TuyauResponse<Res>>
-      : (body: Request, options?: TuyauOptions) => Promise<TuyauResponse<Res>>
+        : {} extends Request
+          ? (options?: TuyauOptions & { query?: Request }) => Promise<TuyauResponse<Res>>
+          : (options: TuyauOptions & { query: Request }) => Promise<TuyauResponse<Res>>
+      : {} extends Request
+        ? (body?: Request | null, options?: TuyauOptions) => Promise<TuyauResponse<Res>>
+        : (body: Request, options?: TuyauOptions) => Promise<TuyauResponse<Res>>
     : CreateParams<Route[K]>
 }
 

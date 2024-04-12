@@ -29,8 +29,8 @@ function createProxy(client: KyInstance, config: any, paths: string[] = []): any
       /**
        * Otherwise, it's time to make the request.
        */
-      const method = paths.pop() as (typeof methods)[number]
-      const path = paths.join('/')
+      const method = paths[paths.length - 1] as (typeof methods)[number]
+      const path = paths.slice(0, -1).join('/')
 
       /**
        * If the method is get or head, we should send the query as the body.
