@@ -135,4 +135,102 @@ test.group('Client', () => {
     assert.equal(r1.data!.token, '123')
     assert.equal(r2.data!.token, '123')
   })
+
+  test('parse as ArrayBuffer when octet-stream response', async ({ assert }) => {
+    const tuyau = createTuyau<{
+      auth: {
+        login: {
+          post: {
+            request: { email: string; password: string }
+            response: Simplify<Serialize<{ token: string }>>
+          }
+        }
+      }
+    }>('http://localhost:3333')
+
+    nock('http://localhost:3333')
+      .post('/auth/login')
+      .reply(200, 'hello', { 'Content-Type': 'application/octet-stream' })
+
+    const result = await tuyau.auth.login.post({
+      email: 'foo@ok.com',
+      password: 'secret',
+    })
+
+    assert.isTrue(result.data instanceof ArrayBuffer)
+  })
+
+  test('parse as text when content type is not recognized', async ({ assert }) => {
+    const tuyau = createTuyau<{
+      auth: {
+        login: {
+          post: {
+            request: { email: string; password: string }
+            response: string
+          }
+        }
+      }
+    }>('http://localhost:3333')
+
+    nock('http://localhost:3333')
+      .post('/auth/login')
+      .reply(200, 'hello', { 'Content-Type': 'text/plain' })
+
+    const result = await tuyau.auth.login.post({
+      email: 'test@ok.com',
+      password: 'secret',
+    })
+
+    assert.isTrue(typeof result.data === 'string')
+    assert.equal(result.data, 'hello')
+  })
+
+  test('pass ky options when creating instance', async ({ assert }) => {
+    let hookCalled = false
+    const tuyau = createTuyau<{
+      auth: {
+        login: {
+          post: {
+            request: unknown
+            response: Simplify<Serialize<{ token: string }>>
+          }
+        }
+      }
+    }>('http://localhost:3333', {
+      headers: { 'x-foo': 'bar' },
+      hooks: {
+        beforeRequest: [
+          () => {
+            hookCalled = true
+          },
+        ],
+      },
+    })
+
+    nock('http://localhost:3333')
+      .post('/auth/login')
+      .reply(200, { token: '123' })
+      .matchHeader('x-foo', 'bar')
+    await tuyau.auth.login.post()
+
+    assert.isTrue(hookCalled)
+  })
+
+  test('route params', async ({ assert }) => {
+    const tuyau = createTuyau<{
+      users: {
+        ':id': {
+          get: {
+            request: { foo: string }
+            response: Simplify<Serialize<{ id: string }>>
+          }
+        }
+      }
+    }>('http://localhost:3333')
+
+    nock('http://localhost:3333').get('/users/1?foo=bar').reply(200, { id: '1' })
+    const result = await tuyau.users({ id: '1' }).get({ query: { foo: 'bar' } })
+
+    assert.equal(result.data!.id, '1')
+  })
 })
