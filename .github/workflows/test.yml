@@ -10,51 +10,49 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install
-        run: npm install
+        run: pnpm install
       - name: Run lint
-        run: npm run lint
+        run: pnpm lint
 
   typecheck:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Install
-        run: npm install
+        run: pnpm install
       - name: Run typecheck
-        run: npm run typecheck
+        run: pnpm run typecheck
 
   tests:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
-        node-version:
-          - 20.10.0
-          - 21.x
+        node-version: ["lts/iron", "latest"]
+
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
       - name: Install
-        run: npm install
+        run: pnpm install
       - name: Run tests
-        run: npm test
+        run: pnpm test
   windows:
     runs-on: windows-latest
     strategy:
       matrix:
-        node-version:
-          - 20.10.0
-          - 21.x
+        node-version: ["lts/iron", "latest"]
+
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
       - name: Install
-        run: npm install
+        run: pnpm install
       - name: Run tests
-        run: npm test
+        run: pnpm test
