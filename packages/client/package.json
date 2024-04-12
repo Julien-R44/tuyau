@@ -15,6 +15,7 @@
     "typecheck": "tsc --noEmit",
     "release": "pnpm build && pnpm release-it",
     "build": "tsup-node",
+    "test": "c8 node --loader ts-node/esm bin/test.ts",
     "quick:test": "node --loader ts-node/esm bin/test.ts",
     "checks": "pnpm lint && pnpm typecheck"
   },
