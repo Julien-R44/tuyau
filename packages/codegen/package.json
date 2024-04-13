@@ -33,9 +33,9 @@
   "devDependencies": {
     "@adonisjs/assembler": "^7.2.3",
     "@adonisjs/core": "^6.3.1",
+    "@tuyau/client": "workspace:*",
     "@poppinss/matchit": "^3.1.2",
     "@types/node": "^20.11.25",
-    "np": "^10.0.0",
     "ts-morph": "^22.0.0"
   },
   "peerDependencies": {
@@ -47,12 +47,6 @@
   "publishConfig": {
     "access": "public",
     "tag": "latest"
-  },
-  "np": {
-    "message": "chore(release): %s",
-    "tag": "latest",
-    "branch": "main",
-    "anyBranch": false
   },
   "c8": {
     "reporter": [
