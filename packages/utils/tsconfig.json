@@ -1,5 +1,5 @@
 {
-  "extends": "@julr/tooling-configs/tsconfigs/tsconfig.node",
+  "extends": "@adonisjs/tsconfig/tsconfig.package.json",
   "compilerOptions": {
     "rootDir": "./",
     "types": [],

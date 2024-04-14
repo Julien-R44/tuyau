@@ -8,7 +8,6 @@
     "start": "node bin/server.js",
     "build": "node ace build",
     "dev": "node ace --import=hot-hook/register serve",
-    "test": "node ace test",
     "lint": "eslint .",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit"
@@ -54,7 +53,6 @@
   },
   "devDependencies": {
     "@adonisjs/assembler": "^7.4.0",
-    "@adonisjs/tsconfig": "^1.3.0",
     "@japa/plugin-adonisjs": "^3.0.1",
     "@tuyau/utils": "workspace:*",
     "@types/luxon": "^3.4.2",
