@@ -1,0 +1,53 @@
+@let(sponsors = await getSponsors())
+
+<div class="sponsors_wrapper">
+  <p>
+    Explain sponsorship program here
+  </p>
+
+  {{-- Rendering Github sponsors as per their selected tier --}}
+  @!component('docs::elements/sponsors', {
+    sponsors,
+    tier: 'gold',
+    title: 'Gold sponsors',
+    finder: (sponsor) => {
+      return !sponsor.isOneTime && sponsor.monthlyDollars > 29
+    }
+  })
+
+  @!component('docs::elements/sponsors', {
+    sponsors,
+    tier: 'silver',
+    title: 'Silver sponsors',
+    finder: (sponsor) => {
+      return !sponsor.isOneTime && sponsor.monthlyDollars === 29
+    }
+  })
+
+  @!component('docs::elements/sponsors', {
+    sponsors,
+    tier: 'basic',
+    title: 'Sponsors',
+    finder: (sponsor) => {
+      return !sponsor.isOneTime && sponsor.monthlyDollars >= 19 && sponsor.monthlyDollars < 29
+    }
+  })
+
+  @!component('docs::elements/sponsors', {
+    sponsors,
+    tier: 'basic',
+    title: 'Backers',
+    finder: (sponsor) => {
+      return !sponsor.isOneTime && sponsor.monthlyDollars >= 0 && sponsor.monthlyDollars < 19
+    }
+  })
+
+  @!component('docs::elements/sponsors', {
+    sponsors,
+    tier: 'previous',
+    title: 'Past sponsors',
+    finder: (sponsor) => {
+      return sponsor.monthlyDollars === -1 || sponsor.isOneTime
+    }
+  })
+</div>

@@ -1,0 +1,82 @@
+@import 'unpoly';
+@import '@docsearch/css';
+
+/* Gray colors */
+@import '@radix-ui/colors/mauve.css';
+@import '@radix-ui/colors/mauve-alpha.css';
+@import '@radix-ui/colors/mauve-dark.css';
+@import '@radix-ui/colors/mauve-dark-alpha.css';
+
+/* Accent colors */
+@import '@radix-ui/colors/amber.css';
+@import '@radix-ui/colors/amber-alpha.css';
+@import '@radix-ui/colors/amber-dark.css';
+@import '@radix-ui/colors/amber-dark-alpha.css';
+
+/* Interface colors */
+@import '@radix-ui/colors/orange-alpha.css';
+@import '@radix-ui/colors/amber-alpha.css';
+@import '@radix-ui/colors/orange-dark-alpha.css';
+@import '@radix-ui/colors/amber-dark-alpha.css';
+
+/**
+ * Dimer doc theme styles
+ */
+@import '@dimerapp/docs-theme/styles';
+
+:root {
+  --progress-bar-color: var(--amber-a11);
+  --sidebar-active-link-bg-color: var(--amber-a6);
+  --sidebar-active-link-text-color: var(--amber-12);
+  --aside-active-link-text-color: var(--amber-11);
+  --pre-tabs-active-border-color: var(--amber-10);
+
+  --note-icon-color: var(--amber-a11);
+  --code-bg-color: var(--amber-a3);
+  --code-text-color: var(--amber-a11);
+  --code-highlight-border-color: var(--amber-11);
+  --sidebar-loading-link-bg-color: var(--amber-a3);
+  --docsearch-primary-color: var(--amber-9);
+}
+
+html.dark {
+  --progress-bar-color: var(--amber-a11);
+  --sidebar-active-link-bg-color: var(--amber-a5);
+  --sidebar-active-link-text-color: var(--amber-12);
+  --aside-active-link-text-color: var(--amber-11);
+  --pre-tabs-active-border-color: var(--amber-a10);
+
+  --note-icon-color: var(--amber-a11);
+  --code-bg-color: var(--amber-a3);
+  --code-text-color: var(--amber-a11);
+  --code-highlight-border-color: var(--amber-a8);
+  --sidebar-loading-link-bg-color: var(--amber-a7);
+  --docsearch-primary-color: var(--amber-8);
+}
+
+.markdown .media_box {
+  padding: 2rem;
+  border: 4px solid var(--mauve-4);
+  border-radius: 4px;
+  margin: var(--prose-elements-margin) 0;
+}
+
+.markdown .media_box figure, .markdown .media_box p {
+  margin: 0;
+}
+
+.markdown ul li ul {
+  margin: 0px;
+}
+
+
+@media only screen and (min-width: 768px) {
+  .header_container {
+    background-color: var(--mauveA1);
+    backdrop-filter: blur(10px);
+  }
+}
+
+.markdown .table_container {
+  overflow-x: auto;
+}

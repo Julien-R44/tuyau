@@ -25,7 +25,7 @@ test.group('Client | Typings', () => {
     expectTypeOf<NonNullable<Response['data']>>().toEqualTypeOf<{ token: string }>()
   })
 
-  test('get', async ({ assert, expectTypeOf }) => {
+  test('get', async ({ expectTypeOf }) => {
     const tuyau = createTuyau<{
       users: {
         get: {
@@ -43,7 +43,7 @@ test.group('Client | Typings', () => {
     expectTypeOf<NonNullable<Response['data']>>().toEqualTypeOf<{ token: string }>()
   })
 
-  test('get | every params optionals', async ({ assert, expectTypeOf }) => {
+  test('get | every params optionals', async ({ expectTypeOf }) => {
     const tuyau = createTuyau<{
       users: {
         get: {
@@ -73,7 +73,7 @@ test.group('Client | Typings', () => {
       .toMatchTypeOf<{ query: { email: string; page?: number } }>()
   })
 
-  test('result as string', async ({ assert, expectTypeOf }) => {
+  test('result as string', async ({ expectTypeOf }) => {
     const tuyau = createTuyau<{
       auth: {
         login: {

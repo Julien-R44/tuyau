@@ -1,0 +1,26 @@
+{
+  "links": {
+    "home": {
+      "title": "Your project name",
+      "href": "/"
+    },
+    "github": {
+      "title": "Your project on Github",
+      "href": "https://github.com/dimerapp"
+    }
+  },
+  "sponsors_sources": [
+  ],
+  "search": {
+  },
+  "advertising_sponsors": [
+    {
+      "link": "",
+      "logo": "",
+      "logo_dark": "",
+      "logo_styles": ""
+    }
+  ],
+  "fileEditBaseUrl": "https://github.com/dimerapp/docs-boilerplate/blob/develop",
+  "copyright": "Your project legal name"
+}
