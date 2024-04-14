@@ -82,6 +82,9 @@ importers:
       '@adonisjs/core':
         specifier: ^6.5.0
         version: 6.5.0(@adonisjs/assembler@7.4.0)(@vinejs/vine@1.8.0)(edge.js@6.0.2)
+      '@julr/tooling-configs':
+        specifier: ^2.2.0
+        version: 2.2.0(eslint@8.57.0)(prettier@3.2.5)(typescript@5.4.5)
       '@poppinss/matchit':
         specifier: ^3.1.2
         version: 3.1.2
@@ -179,8 +182,8 @@ importers:
         specifier: ^8.57.0
         version: 8.57.0
       hot-hook:
-        specifier: ^0.1.9
-        version: 0.1.9
+        specifier: ^0.1.10
+        version: 0.1.10
       pino-pretty:
         specifier: ^11.0.0
         version: 11.0.0
@@ -4949,8 +4952,8 @@ packages:
       lru-cache: 10.2.0
     dev: true
 
-  /hot-hook@0.1.9:
-    resolution: {integrity: sha512-6tjuUSFpg0dy88Yhf7H/XMNv9y2Lc+fefx91FQKxUVXeSdOw8F9WOArbqMrNbP/trNBQBTmwY9HthSs640cJkA==}
+  /hot-hook@0.1.10:
+    resolution: {integrity: sha512-ilWzR35L2yGjk2N70lSq8/xG2vcafhu32TeDU0iY0mJZF9O6l/62ur866xzvPDNq6uC8PWLwCqAPswFMxvdRmQ==}
     dependencies:
       chokidar: 3.6.0
       fast-glob: 3.3.2

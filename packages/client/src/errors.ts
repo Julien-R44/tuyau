@@ -1,9 +1,10 @@
 export class TuyauHTTPError extends Error {
   constructor(
     public status: number,
-    public data: unknown,
+    public value: unknown,
   ) {
-    super(data + '')
+    super(value + '')
     this.name = 'TuyauHTTPError'
+    this.value = value
   }
 }

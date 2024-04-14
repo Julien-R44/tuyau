@@ -29,7 +29,7 @@
     "test": "c8 npm run quick:test",
     "index:commands": "adonis-kit index build/commands",
     "prebuild": "npm run lint && npm run clean",
-    "build": "pnpm clean && tsc && pnpm copy:templates && pnpm index:commands",
+    "build": "pnpm clean && tsup-node && pnpm copy:templates && pnpm index:commands",
     "release": "pnpm build && pnpm release-it",
     "version": "npm run build",
     "prepublishOnly": "npm run build"
@@ -43,6 +43,7 @@
   "devDependencies": {
     "@adonisjs/assembler": "^7.4.0",
     "@adonisjs/core": "^6.5.0",
+    "@julr/tooling-configs": "^2.2.0",
     "@poppinss/matchit": "^3.1.2",
     "@tuyau/client": "workspace:*",
     "@tuyau/utils": "workspace:*",
@@ -72,5 +73,18 @@
       "releaseName": "@tuyau/codegen@${version}",
       "web": true
     }
+  },
+  "tsup": {
+    "entry": [
+      "./index.ts",
+      "./src/types.ts",
+      "./commands/main.ts",
+      "./providers/tuyau_provider.ts"
+    ],
+    "outDir": "./build",
+    "clean": true,
+    "format": "esm",
+    "dts": true,
+    "target": "esnext"
   }
 }

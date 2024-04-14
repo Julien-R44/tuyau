@@ -1,5 +1,5 @@
+import { relative } from 'node:path'
 import { defineConfig } from '@adonisjs/core/app'
-import { relative } from 'path';
 
 export default defineConfig({
   /*
@@ -11,7 +11,11 @@ export default defineConfig({
   | will be scanned automatically from the "./commands" directory.
   |
   */
-  commands: [() => import('@adonisjs/core/commands'), () => import('@adonisjs/lucid/commands'), () => import('@tuyau/codegen/commands')],
+  commands: [
+    () => import('@adonisjs/core/commands'),
+    () => import('@adonisjs/lucid/commands'),
+    () => import('@tuyau/codegen/commands'),
+  ],
 
   /*
   |--------------------------------------------------------------------------
@@ -39,7 +43,7 @@ export default defineConfig({
     () => import('@adonisjs/lucid/database_provider'),
     () => import('@adonisjs/auth/auth_provider'),
     () => import('@adonisjs/inertia/inertia_provider'),
-    () => import('@tuyau/codegen/tuyau_provider')
+    () => import('@tuyau/codegen/tuyau_provider'),
   ],
 
   /*
@@ -71,7 +75,7 @@ export default defineConfig({
       {
         files: ['tests/functional/**/*.spec(.ts|.js)'],
         name: 'functional',
-        timeout: 30000,
+        timeout: 30_000,
       },
     ],
     forceExit: false,
@@ -108,16 +112,16 @@ export default defineConfig({
       async () => ({
         default: (ui, message, actions) => {
           if (message.type === 'hot-hook:full-reload') {
-            const path = relative(import.meta.dirname, message.path || message.paths[0]);
+            const path = relative(import.meta.dirname, message.path || message.paths[0])
 
-            ui.logger.log(`${ui.colors.green('full-reload')} due to ${ui.colors.cyan(path)}`);
-            actions.restartServer();
+            ui.logger.log(`${ui.colors.green('full-reload')} due to ${ui.colors.cyan(path)}`)
+            actions.restartServer()
           }
 
           if (message.type === 'hot-hook:invalidated') {
-            const path = relative(import.meta.dirname, message.path || message.paths[0]);
+            const path = relative(import.meta.dirname, message.path || message.paths[0])
 
-            ui.logger.log(`${ui.colors.yellow('invalidated')} ${ui.colors.cyan(path)}`);
+            ui.logger.log(`${ui.colors.yellow('invalidated')} ${ui.colors.cyan(path)}`)
           }
         },
       }),

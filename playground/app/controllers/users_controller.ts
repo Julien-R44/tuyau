@@ -1,9 +1,9 @@
 import type { HttpContext } from '@adonisjs/core/http'
-\
+
 export default class UsersController {
   index({ response }: HttpContext) {
     if (Math.random() > 0.5) {
-      return response.badGateway('Somethisdng went wrong' as const)
+      return response.badGateway('Something went wrong' as const)
     }
 
     if (Math.random() > 0.5) {
