@@ -10,6 +10,7 @@
 */
 
 import 'reflect-metadata'
+
 import { Ignitor } from '@adonisjs/core'
 import { readFile } from 'node:fs/promises'
 import { defineConfig } from '@adonisjs/vite'
@@ -57,7 +58,7 @@ async function defineRoutes(app: ApplicationService) {
       return response.redirect(redirectsCollection[request.url()])
     }
 
-    for (let collection of collections) {
+    for (const collection of collections) {
       await collection.refresh()
       const entry = collection.findByPermalink(request.url())
       if (entry) {

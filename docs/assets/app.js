@@ -1,4 +1,5 @@
 import 'unpoly'
+
 import Alpine from 'alpinejs'
 import mediumZoom from 'medium-zoom'
 import docsearch from '@docsearch/js'

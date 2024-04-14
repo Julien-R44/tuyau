@@ -10,8 +10,7 @@
     "download:sponsors": "node --loader=ts-node/esm bin/download_sponsors.ts",
     "start": "node bin/test.js",
     "serve": "node --loader=ts-node/esm bin/serve.ts",
-    "dev": "concurrently \"vite\" \"npm run serve\"",
-    "test": "node ace test"
+    "dev": "concurrently \"vite\" \"npm run serve\""
   },
   "imports": {
     "#src/*": "./src/*.js"

@@ -43,7 +43,7 @@ export async function downloadSponsors() {
     /**
      * Processing sponsors
      */
-    for (let source of sources) {
+    for (const source of sources) {
       const { body } = await request(source)
       const sponsors = await body.json()
       if (Array.isArray(sponsors)) {

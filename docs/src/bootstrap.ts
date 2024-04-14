@@ -11,10 +11,10 @@
 import edge from 'edge.js'
 import uiKit from 'edge-uikit'
 import collect from 'collect.js'
-import { dimer } from '@dimerapp/edge'
 import { readFile } from 'node:fs/promises'
-import { RenderingPipeline } from '@dimerapp/edge'
-import { Collection, Renderer } from '@dimerapp/content'
+import { Renderer } from '@dimerapp/content'
+import type { Collection} from '@dimerapp/content';
+import { dimer , RenderingPipeline } from '@dimerapp/edge'
 import { docsHook, docsTheme } from '@dimerapp/docs-theme'
 
 import grammars from '../vscode_grammars/main.js'

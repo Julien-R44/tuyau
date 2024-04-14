@@ -10,6 +10,7 @@
 */
 
 import { Collection } from '@dimerapp/content'
+
 import { renderer } from './bootstrap.js'
 
 const docs = new Collection()

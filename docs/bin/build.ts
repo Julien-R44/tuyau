@@ -10,6 +10,7 @@
 */
 
 import 'reflect-metadata'
+
 import { Ignitor } from '@adonisjs/core'
 import { defineConfig } from '@adonisjs/vite'
 
@@ -38,8 +39,8 @@ async function exportHTML() {
   const { default: ace } = await import('@adonisjs/core/services/ace')
   const { default: app } = await import('@adonisjs/core/services/app')
 
-  for (let collection of collections) {
-    for (let entry of collection.all()) {
+  for (const collection of collections) {
+    for (const entry of collection.all()) {
       try {
         const output = await entry.writeToDisk(app.makePath('dist'), { collection, entry })
         ace.ui.logger.action(`create ${output.filePath}`).succeeded()
