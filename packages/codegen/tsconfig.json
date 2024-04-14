@@ -1,7 +1,8 @@
 {
-  "extends": "@adonisjs/tsconfig/tsconfig.package.json",
+  "extends": "@julr/tooling-configs/tsconfigs/tsconfig.node",
   "compilerOptions": {
     "rootDir": "./",
     "outDir": "./build"
-  }
+  },
+  "exclude": ["node_modules", "build", "coverage"]
 }

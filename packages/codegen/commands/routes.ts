@@ -16,10 +16,10 @@ type HandlerData = { method: MethodDeclaration; body: Node }
 type RouteReferenceParsed = Awaited<ReturnType<typeof parseBindingReference>>
 
 export default class CodegenTypes extends BaseCommand {
-  static commandName = 'codegen:types:routes'
-  static description = 'Generate the routes.d.ts file with routes request and response types'
+  static override commandName = 'codegen:types:routes'
+  static override description = 'Generate the routes.d.ts file with routes request and response types'
 
-  static options: CommandOptions = { startApp: true }
+  static override options: CommandOptions = { startApp: true }
 
   #destination!: URL
   #project!: Project
@@ -77,6 +77,8 @@ export default class CodegenTypes extends BaseCommand {
 
       return `InferInput<typeof import('${relativeImportPath}')['${schema.getText()}']>`
     }
+
+    return undefined
   }
 
   /**
@@ -164,7 +166,7 @@ export default class CodegenTypes extends BaseCommand {
   /**
    * Execute command
    */
-  async run() {
+  override async run() {
     this.#project = new Project({
       tsConfigFilePath: new URL('./tsconfig.json', this.app.appRoot).pathname,
       manipulationSettings: { quoteKind: QuoteKind.Single },
