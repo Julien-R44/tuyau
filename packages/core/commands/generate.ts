@@ -117,7 +117,7 @@ export default class CodegenTypes extends BaseCommand {
     file.insertText(0, (writer) => {
       writer
         .writeLine(
-          `import type { Serialize, Simplify, ConvertReturnTypeToRecordStatusResponse } from '@tuyau/utils/types'`,
+          `import type { MakeOptional, Serialize, Simplify, ConvertReturnTypeToRecordStatusResponse } from '@tuyau/utils/types'`,
         )
         .writeLine(`import type { InferInput } from '@vinejs/vine/types'`)
         .newLine()
@@ -228,7 +228,7 @@ export default class CodegenTypes extends BaseCommand {
         if (i === segments.length - 1) {
           for (const method of methods) {
             currentLevel[method] = {
-              request: schemaImport ?? 'unknown',
+              request: `MakeOptional<${schemaImport}>` ?? 'unknown',
               response: `Simplify<Serialize<ConvertReturnTypeToRecordStatusResponse<Awaited<ReturnType<typeof import('${relativePath}').default['prototype']['${routeHandler.method}']>>>>>`,
             }
           }

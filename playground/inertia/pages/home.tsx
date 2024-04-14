@@ -1,14 +1,16 @@
 import { tuyau } from '~/app/tuyau'
+import type { InferErrorType } from '@tuyau/client'
 import { Match, Switch, createResource } from 'solid-js'
 import type { InferPageProps } from '@adonisjs/inertia/types'
 
 import type InertiaController from '../../app/controllers/inertia_controller'
 
-type InferErrorType<T extends (...args: any) => any> = Awaited<ReturnType<T>>['error']
-
 export default function Home(props: InferPageProps<InertiaController, 'index'>) {
   const [data] = createResource(async () => {
-    const result = await tuyau.users.get()
+    const result = await tuyau.users.get({
+      query: { limit: 10 },
+    })
+
     if (result.error) throw result.error
 
     return result.data

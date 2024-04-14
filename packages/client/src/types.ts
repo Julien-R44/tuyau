@@ -6,26 +6,23 @@ import type { Simplify, Serialize, IsNever, Prettify } from '@tuyau/utils/types'
  */
 export type TuyauResponse<Res extends Record<number, unknown>> =
   | {
-      data: Res[200] extends Simplify<Serialize<infer Response>> ? Response : never
       error: null
-      response: Response
       status: number
+      response: Response
+      data: Res[200] extends Simplify<Serialize<infer Response>> ? Response : never
     }
   | {
       data: null
+      status: number
+      response: Response
       error: Exclude<keyof Res, 200> extends never
-        ? {
-            status: unknown
-            value: unknown
-          }
+        ? { status: unknown; value: unknown }
         : {
             [Status in Exclude<keyof Res, 200>]: {
               status: Status
               value: Res[Status] extends Simplify<Serialize<infer Response>> ? Response : never
             }
           }[Exclude<keyof Res, 200>]
-      response: Response
-      status: number
     }
 
 /**
@@ -68,3 +65,36 @@ export type TuyauOptions = Omit<
   KyOptions,
   'prefixUrl' | 'body' | 'json' | 'method' | 'searchParams'
 >
+
+/**
+ * ------------------------------------------------------------
+ * Helpers for infering types from AdonisAPI
+ * ------------------------------------------------------------
+ */
+
+/**
+ * Infer the error type from a Tuyau call
+ * @example
+ * type Error = InferErrorType<typeof tuyau.users.get>
+ */
+export type InferErrorType<T extends (...args: any) => any> = Awaited<ReturnType<T>>['error']
+
+/**
+ * Infer the response type from a Tuyau call
+ * @example
+ * type Response = InferResponseType<typeof tuyau.users.get>
+ */
+export type InferResponseType<T extends (...args: any) => any> = NonNullable<
+  Awaited<ReturnType<T>>['data']
+>
+
+/**
+ * Infer the request type from a Tuyau call
+ * @example
+ * type Request = InferRequestType<typeof tuyau.users.get>
+ */
+export type InferRequestType<T extends (...args: any) => any> = Parameters<T>[0] extends {
+  query: infer Query
+}
+  ? Query
+  : Parameters<T>[0]

@@ -34,5 +34,10 @@
     "tsup": "^8.0.2",
     "typescript": "^5.4.5"
   },
+  "pnpm": {
+    "overrides": {
+      "@tuyau/utils": "workspace:*"
+    }
+  },
   "prettier": "@julr/tooling-configs/prettier"
 }

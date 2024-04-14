@@ -1,7 +1,11 @@
 import type { HttpContext } from '@adonisjs/core/http'
 
+import { getUsersValidator } from '../validators/main.js'
+
 export default class UsersController {
-  index({ response }: HttpContext) {
+  async index({ response, request }: HttpContext) {
+    await request.validateUsing(getUsersValidator)
+
     if (Math.random() > 0.5) {
       return response.badGateway('Something went wrong' as const)
     }

@@ -4,16 +4,14 @@ import type { Serialize, Simplify } from '@tuyau/utils/types'
 
 import { createTuyau } from '../index.js'
 
-test.group('Client', () => {
-  test('post something', async ({ assert, expectTypeOf }) => {
+test.group('Client | Runtime', () => {
+  test('post something', async ({ assert }) => {
     const tuyau = createTuyau<{
       auth: {
         login: {
           post: {
             request: { email: string; password: string }
-            response: {
-              200: Simplify<Serialize<{ token: string }>>
-            }
+            response: { 200: Simplify<Serialize<{ token: string }>> }
           }
         }
       }
@@ -26,16 +24,10 @@ test.group('Client', () => {
       password: 'secret',
     })
 
-    expectTypeOf(tuyau.auth.login.post).parameter(0).toEqualTypeOf<{
-      email: string
-      password: string
-    }>()
-
-    expectTypeOf(result.data!).toEqualTypeOf<{ token: string }>()
     assert.equal(result.data!.token, '123')
   })
 
-  test('get something', async ({ assert, expectTypeOf }) => {
+  test('get something', async ({ assert }) => {
     const tuyau = createTuyau<{
       users: {
         get: {
@@ -54,71 +46,6 @@ test.group('Client', () => {
 
     const result = await tuyau.users.get({ query: { email: 'foo@ok.com' } })
 
-    expectTypeOf(tuyau.users.get).parameter(0).toMatchTypeOf<{
-      query: { email: string }
-    }>()
-
-    expectTypeOf(result.data!).toEqualTypeOf<{ token: string }>()
-
-    assert.equal(result.data!.token, '123')
-  })
-
-  test('if every request query params are optional, the query should be optional', async ({
-    assert,
-    expectTypeOf,
-  }) => {
-    const tuyau = createTuyau<{
-      users: {
-        get: {
-          request: { email?: string }
-          response: {
-            200: Simplify<Serialize<{ token: string }>>
-          }
-        }
-      }
-    }>('http://localhost:3333')
-
-    nock('http://localhost:3333').get('/users').reply(200, { token: '123' })
-
-    const result = await tuyau.users.get()
-
-    expectTypeOf(tuyau.users.get).parameter(0).toMatchTypeOf<
-      | {
-          query?: { email?: string }
-        }
-      | undefined
-    >()
-
-    expectTypeOf(result.data!).toEqualTypeOf<{ token: string }>()
-    assert.equal(result.data!.token, '123')
-  })
-
-  test('if every request params are optional, the body should be optional', async ({
-    assert,
-    expectTypeOf,
-  }) => {
-    const tuyau = createTuyau<{
-      users: {
-        post: {
-          request: { email?: string }
-          response: {
-            200: Simplify<Serialize<{ token: string }>>
-          }
-        }
-      }
-    }>('http://localhost:3333')
-
-    nock('http://localhost:3333')
-      .post('/users')
-      .matchHeader('x-foo', 'bar')
-      .reply(200, { token: '123' })
-
-    const result = await tuyau.users.post(null, { headers: { 'x-foo': 'bar' } })
-
-    expectTypeOf(tuyau.users.post)
-      .parameter(0)
-      .toMatchTypeOf<{ email?: string } | null | undefined>()
-    expectTypeOf(result.data!).toEqualTypeOf<{ token: string }>()
     assert.equal(result.data!.token, '123')
   })
 
@@ -128,9 +55,7 @@ test.group('Client', () => {
         login: {
           post: {
             request: { email: string; password: string }
-            response: {
-              200: Simplify<Serialize<{ token: string }>>
-            }
+            response: { 200: Simplify<Serialize<{ token: string }>> }
           }
         }
       }
@@ -153,9 +78,7 @@ test.group('Client', () => {
         login: {
           post: {
             request: { email: string; password: string }
-            response: {
-              200: Simplify<Serialize<{ token: string }>>
-            }
+            response: { 200: Simplify<Serialize<{ token: string }>> }
           }
         }
       }
@@ -205,9 +128,7 @@ test.group('Client', () => {
         login: {
           post: {
             request: unknown
-            response: {
-              200: Simplify<Serialize<{ token: string }>>
-            }
+            response: { 200: Simplify<Serialize<{ token: string }>> }
           }
         }
       }
@@ -237,9 +158,7 @@ test.group('Client', () => {
         ':id': {
           get: {
             request: { foo: string }
-            response: {
-              200: Simplify<Serialize<{ id: string }>>
-            }
+            response: { 200: Simplify<Serialize<{ id: string }>> }
           }
         }
       }
@@ -249,47 +168,5 @@ test.group('Client', () => {
     const result = await tuyau.users({ id: '1' }).get({ query: { foo: 'bar' } })
 
     assert.equal(result.data!.id, '1')
-  })
-
-  test('narrow error', async ({ expectTypeOf }) => {
-    const tuyau = createTuyau<{
-      users: {
-        ':id': {
-          get: {
-            request: { foo: string }
-            response: {
-              200: Simplify<Serialize<{ id: string }>>
-              404: Simplify<Serialize<{ messageNotFound: string }>>
-              500: Simplify<Serialize<{ messageServerError: string }>>
-            }
-          }
-        }
-      }
-    }>('http://localhost:3333')
-
-    nock('http://localhost:3333').get('/users/1?foo=bar').reply(200, { id: '1' })
-    const result = await tuyau.users({ id: '1' }).get({ query: { foo: 'bar' } })
-
-    expectTypeOf(result.data).toEqualTypeOf<{ id: string } | null>()
-    if (result.error) {
-      expectTypeOf(result.data).toMatchTypeOf<null>()
-      expectTypeOf(result.error).toMatchTypeOf<
-        | { status: 404; value: { messageNotFound: string } }
-        | { status: 500; value: { messageServerError: string } }
-      >()
-
-      if (result.error.status === 404) {
-        expectTypeOf(result.error.value).toEqualTypeOf<{ messageNotFound: string }>()
-      }
-
-      if (result.error.status === 500) {
-        expectTypeOf(result.error.value).toEqualTypeOf<{ messageServerError: string }>()
-      }
-    }
-
-    if (result.data) {
-      expectTypeOf(result.data).toEqualTypeOf<{ id: string }>()
-      expectTypeOf(result.error).toMatchTypeOf<null>()
-    }
   })
 })
