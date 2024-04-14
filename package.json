@@ -1,7 +1,11 @@
 {
   "name": "@tuyau/monorepo",
-  "description": "",
+  "type": "module",
   "version": "0.0.0",
+  "description": "",
+  "author": "Julien Ripouteau <julien@ripouteau.com>",
+  "license": "ISC",
+  "keywords": [],
   "main": "index.js",
   "scripts": {
     "typecheck": "pnpm run -r --parallel typecheck",
@@ -11,30 +15,22 @@
     "release": "pnpm run build && changeset publish"
   },
   "devDependencies": {
-    "@adonisjs/eslint-config": "^1.3.0",
-    "@adonisjs/prettier-config": "^1.3.0",
-    "@adonisjs/tsconfig": "^1.3.0",
-    "@japa/assert": "^2.1.0",
+    "@japa/assert": "^3.0.0",
     "@japa/expect-type": "^2.0.2",
     "@japa/file-system": "^2.3.0",
-    "@japa/runner": "^3.1.1",
-    "@swc/core": "^1.4.6",
+    "@japa/runner": "^3.1.2",
+    "@julr/tooling-configs": "^2.2.0",
+    "@swc/core": "^1.4.13",
     "c8": "^9.1.0",
     "copyfiles": "^2.4.1",
     "del-cli": "^5.1.0",
-    "eslint": "^8.57.0",
+    "eslint": "^9.0.0",
     "nock": "^14.0.0-beta.5",
     "prettier": "^3.2.5",
-    "release-it": "^17.1.1",
+    "release-it": "^17.2.0",
     "ts-node": "^10.9.2",
     "tsup": "^8.0.2",
-    "typescript": "^5.4.2"
+    "typescript": "^5.4.5"
   },
-  "author": "Julien Ripouteau <julien@ripouteau.com>",
-  "license": "ISC",
-  "keywords": [],
-  "eslintConfig": {
-    "extends": "@adonisjs/eslint-config/package"
-  },
-  "prettier": "@adonisjs/prettier-config"
+  "prettier": "@julr/tooling-configs/prettier"
 }

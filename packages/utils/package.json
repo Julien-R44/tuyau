@@ -1,15 +1,18 @@
 {
   "name": "@tuyau/utils",
-  "description": "Utilities for Tuyau",
-  "version": "0.0.1",
-  "main": "index.js",
   "type": "module",
-  "files": [
-    "build"
-  ],
+  "version": "0.0.1",
+  "description": "Utilities for Tuyau",
+  "author": "Julien Ripouteau <julien@ripouteau.com>",
+  "license": "ISC",
+  "keywords": [],
   "exports": {
     "./types": "./build/types.js"
   },
+  "main": "index.js",
+  "files": [
+    "build"
+  ],
   "scripts": {
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
@@ -17,9 +20,6 @@
     "build": "tsup-node",
     "checks": "pnpm lint && pnpm typecheck"
   },
-  "author": "Julien Ripouteau <julien@ripouteau.com>",
-  "license": "ISC",
-  "keywords": [],
   "publishConfig": {
     "access": "public",
     "tag": "latest"

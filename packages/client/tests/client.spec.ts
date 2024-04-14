@@ -1,7 +1,8 @@
 import nock from 'nock'
 import { test } from '@japa/runner'
+import type { Serialize, Simplify } from '@tuyau/utils/types'
+
 import { createTuyau } from '../index.js'
-import { Serialize, Simplify } from '@tuyau/utils/types'
 
 test.group('Client', () => {
   test('post something', async ({ assert, expectTypeOf }) => {

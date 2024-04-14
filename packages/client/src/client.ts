@@ -85,7 +85,7 @@ function createProxy(client: KyInstance, config: any, paths: string[] = []): any
  */
 export function createTuyau<const T extends Record<string, any>>(
   baseUrl: string,
-  options?: TuyauOptions
+  options?: TuyauOptions,
 ): AdonisClient<T> {
   const client = ky.create({ prefixUrl: baseUrl, throwHttpErrors: false, ...options })
   return createProxy(client, options)

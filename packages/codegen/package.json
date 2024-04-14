@@ -1,18 +1,21 @@
 {
   "name": "@tuyau/codegen",
-  "description": "",
-  "version": "0.0.3",
-  "engines": {
-    "node": ">=20.6.0"
-  },
   "type": "module",
-  "files": [
-    "build"
-  ],
+  "version": "0.0.3",
+  "description": "",
+  "author": "",
+  "license": "MIT",
+  "keywords": [],
   "exports": {
     ".": "./build/index.js",
     "./types": "./build/src/types.js",
     "./commands": "./build/commands/main.js"
+  },
+  "files": [
+    "build"
+  ],
+  "engines": {
+    "node": ">=20.6.0"
   },
   "scripts": {
     "clean": "del-cli build",
@@ -30,22 +33,20 @@
     "version": "npm run build",
     "prepublishOnly": "npm run build"
   },
-  "devDependencies": {
-    "@adonisjs/assembler": "^7.2.3",
-    "@adonisjs/core": "^6.3.1",
-    "@poppinss/matchit": "^3.1.2",
-    "@tuyau/client": "workspace:*",
-    "@tuyau/utils": "workspace:*",
-    "@types/node": "^20.11.25",
-    "nock": "^14.0.0-beta.5",
-    "ts-morph": "^22.0.0"
-  },
   "peerDependencies": {
     "@adonisjs/core": "^6.2.0"
   },
-  "author": "",
-  "license": "MIT",
-  "keywords": [],
+  "dependencies": {
+    "ts-morph": "^22.0.0"
+  },
+  "devDependencies": {
+    "@adonisjs/assembler": "^7.4.0",
+    "@adonisjs/core": "^6.5.0",
+    "@poppinss/matchit": "^3.1.2",
+    "@tuyau/client": "workspace:*",
+    "@tuyau/utils": "workspace:*",
+    "@types/node": "^20.12.7"
+  },
   "publishConfig": {
     "access": "public",
     "tag": "latest"

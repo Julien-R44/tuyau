@@ -1,5 +1,5 @@
 import type { Options as KyOptions } from 'ky'
-import { Simplify, Serialize, IsNever, Prettify } from '@tuyau/utils/types'
+import type { Simplify, Serialize, IsNever, Prettify } from '@tuyau/utils/types'
 
 /**
  * Shape of the response returned by Tuyau

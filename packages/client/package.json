@@ -1,15 +1,18 @@
 {
   "name": "@tuyau/client",
-  "description": "e2e client for AdonisJS",
-  "version": "0.0.3",
-  "main": "build/index.js",
   "type": "module",
-  "files": [
-    "build"
-  ],
+  "version": "0.0.3",
+  "description": "e2e client for AdonisJS",
+  "author": "Julien Ripouteau <julien@ripouteau.com>",
+  "license": "ISC",
+  "keywords": [],
   "exports": {
     ".": "./build/index.js"
   },
+  "main": "build/index.js",
+  "files": [
+    "build"
+  ],
   "scripts": {
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
@@ -19,16 +22,13 @@
     "quick:test": "node --loader ts-node/esm bin/test.ts",
     "checks": "pnpm lint && pnpm typecheck"
   },
-  "devDependencies": {
-    "@tuyau/utils": "workspace:*"
-  },
   "dependencies": {
     "@poppinss/matchit": "^3.1.2",
     "ky": "^1.2.3"
   },
-  "author": "Julien Ripouteau <julien@ripouteau.com>",
-  "license": "ISC",
-  "keywords": [],
+  "devDependencies": {
+    "@tuyau/utils": "workspace:*"
+  },
   "tsup": {
     "entry": [
       "./index.ts"

@@ -1,17 +1,18 @@
 import { existsSync } from 'node:fs'
-import { mkdir, writeFile } from 'node:fs/promises'
+// @ts-expect-error tkt
+import matchit from '@poppinss/matchit'
 import { fileURLToPath } from 'node:url'
-import { dirname, relative, join } from 'node:path'
 import { BaseCommand } from '@adonisjs/core/ace'
+import { mkdir, writeFile } from 'node:fs/promises'
+import { dirname, relative, join } from 'node:path'
 import { Node, Project, QuoteKind } from 'ts-morph'
+import type { RouteJSON } from '@adonisjs/core/types/http'
 import type { MethodDeclaration, SourceFile } from 'ts-morph'
 import type { CommandOptions } from '@adonisjs/core/types/ace'
 import { parseBindingReference } from '@adonisjs/core/helpers'
-import { RouteJSON } from '@adonisjs/core/types/http'
-// @ts-ignore
-import matchit from '@poppinss/matchit'
 
 type HandlerData = { method: MethodDeclaration; body: Node }
+
 type RouteReferenceParsed = Awaited<ReturnType<typeof parseBindingReference>>
 
 export default class CodegenTypes extends BaseCommand {
@@ -146,7 +147,7 @@ export default class CodegenTypes extends BaseCommand {
    */
   #extractClassHandlerData(
     file: SourceFile,
-    routeHandler: RouteReferenceParsed
+    routeHandler: RouteReferenceParsed,
   ): HandlerData | undefined {
     const classDef = file.getClasses().find((c) => c.isDefaultExport())
     if (!classDef) return
@@ -185,7 +186,7 @@ export default class CodegenTypes extends BaseCommand {
        */
       const routeHandler = await parseBindingReference(route.handler.reference)
       const file = sourcesFiles.find((sf) =>
-        sf.getFilePath().endsWith(`${routeHandler.moduleNameOrPath.replace('#', '')}.ts`)
+        sf.getFilePath().endsWith(`${routeHandler.moduleNameOrPath.replace('#', '')}.ts`),
       )
 
       if (!file) continue

@@ -1,9 +1,12 @@
-import { HttpContext } from '@adonisjs/core/http'
+import nock from 'nock'
 import { test } from '@japa/runner'
 import { createTuyau } from '@tuyau/client'
-import { Serialize } from '@tuyau/utils/types'
-import { Simplify, ConvertReturnTypeToRecordStatusResponse } from '@tuyau/utils/types'
-import nock from 'nock'
+import type { HttpContext } from '@adonisjs/core/http'
+import type {
+  Serialize,
+  Simplify,
+  ConvertReturnTypeToRecordStatusResponse,
+} from '@tuyau/utils/types'
 
 test.group('Typings', () => {
   test('status helpers methods', async ({ expectTypeOf }) => {
