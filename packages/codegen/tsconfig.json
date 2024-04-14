@@ -2,7 +2,8 @@
   "extends": "@julr/tooling-configs/tsconfigs/tsconfig.node",
   "compilerOptions": {
     "rootDir": "./",
-    "outDir": "./build"
+    "outDir": "./build",
+    "declaration": true
   },
   "exclude": ["node_modules", "build", "coverage"]
 }

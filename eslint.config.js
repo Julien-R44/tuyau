@@ -3,6 +3,7 @@ import { julr } from '@julr/tooling-configs/eslint'
 
 export default await julr(
   {
+    adonisjs: true,
     enableGitIgnore: {
       files: join(import.meta.dirname, '.gitignore'),
       root: true,

@@ -9,7 +9,8 @@
   "exports": {
     ".": "./build/index.js",
     "./types": "./build/src/types.js",
-    "./commands": "./build/commands/main.js"
+    "./commands": "./build/commands/main.js",
+    "./tuyau_provider": "./build/providers/tuyau_provider.js"
   },
   "files": [
     "build"

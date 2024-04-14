@@ -10,7 +10,7 @@ import type {
 
 test.group('Typings', () => {
   test('status helpers methods', async ({ expectTypeOf }) => {
-    function controllerMethod({ response }: HttpContext) {
+    async function controllerMethod({ response }: HttpContext) {
       if (Math.random()) {
         return response.badRequest({ messageBadRequest: 'Invalid input' })
       } else if (Math.random()) {
@@ -31,7 +31,7 @@ test.group('Typings', () => {
             request: { email: string; password: string }
             response: Simplify<
               Serialize<
-                ConvertReturnTypeToRecordStatusResponse<ReturnType<typeof controllerMethod>>
+                ConvertReturnTypeToRecordStatusResponse<Awaited<ReturnType<typeof controllerMethod>>>
               >
             >
           }

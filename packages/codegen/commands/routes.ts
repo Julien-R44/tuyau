@@ -115,7 +115,7 @@ export default class CodegenTypes extends BaseCommand {
 
     file.insertText(0, (writer) => {
       writer
-        .writeLine(`import type { Serialize, Simplify } from '@tuyau/utils/types'`)
+        .writeLine(`import type { Serialize, Simplify, ConvertReturnTypeToRecordStatusResponse } from '@tuyau/utils/types'`)
         .writeLine(`import type { InferInput } from '@vinejs/vine/types'`)
         .newLine()
         .writeLine(`export interface AdonisApi {`)
@@ -226,7 +226,7 @@ export default class CodegenTypes extends BaseCommand {
           for (const method of methods) {
             currentLevel[method] = {
               request: schemaImport ?? 'unknown',
-              response: `Simplify<Serialize<Awaited<ReturnType<typeof import('${relativePath}').default['prototype']['${routeHandler.method}']>>>>`,
+              response: `Simplify<Serialize<ConvertReturnTypeToRecordStatusResponse<Awaited<ReturnType<typeof import('${relativePath}').default['prototype']['${routeHandler.method}']>>>>>`,
             }
           }
         }
