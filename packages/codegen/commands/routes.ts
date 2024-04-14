@@ -17,7 +17,8 @@ type RouteReferenceParsed = Awaited<ReturnType<typeof parseBindingReference>>
 
 export default class CodegenTypes extends BaseCommand {
   static override commandName = 'codegen:types:routes'
-  static override description = 'Generate the routes.d.ts file with routes request and response types'
+  static override description =
+    'Generate the routes.d.ts file with routes request and response types'
 
   static override options: CommandOptions = { startApp: true }
 
@@ -115,7 +116,9 @@ export default class CodegenTypes extends BaseCommand {
 
     file.insertText(0, (writer) => {
       writer
-        .writeLine(`import type { Serialize, Simplify, ConvertReturnTypeToRecordStatusResponse } from '@tuyau/utils/types'`)
+        .writeLine(
+          `import type { Serialize, Simplify, ConvertReturnTypeToRecordStatusResponse } from '@tuyau/utils/types'`,
+        )
         .writeLine(`import type { InferInput } from '@vinejs/vine/types'`)
         .newLine()
         .writeLine(`export interface AdonisApi {`)

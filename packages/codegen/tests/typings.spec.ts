@@ -31,7 +31,9 @@ test.group('Typings', () => {
             request: { email: string; password: string }
             response: Simplify<
               Serialize<
-                ConvertReturnTypeToRecordStatusResponse<Awaited<ReturnType<typeof controllerMethod>>>
+                ConvertReturnTypeToRecordStatusResponse<
+                  Awaited<ReturnType<typeof controllerMethod>>
+                >
               >
             >
           }
