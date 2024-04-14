@@ -33,9 +33,11 @@
   "devDependencies": {
     "@adonisjs/assembler": "^7.2.3",
     "@adonisjs/core": "^6.3.1",
-    "@tuyau/client": "workspace:*",
     "@poppinss/matchit": "^3.1.2",
+    "@tuyau/client": "workspace:*",
+    "@tuyau/utils": "workspace:*",
     "@types/node": "^20.11.25",
+    "nock": "^14.0.0-beta.5",
     "ts-morph": "^22.0.0"
   },
   "peerDependencies": {

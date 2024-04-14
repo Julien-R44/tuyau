@@ -10,7 +10,9 @@ test.group('Client', () => {
         login: {
           post: {
             request: { email: string; password: string }
-            response: Simplify<Serialize<{ token: string }>>
+            response: {
+              200: Simplify<Serialize<{ token: string }>>
+            }
           }
         }
       }
@@ -37,7 +39,9 @@ test.group('Client', () => {
       users: {
         get: {
           request: { email: string }
-          response: Simplify<Serialize<{ token: string }>>
+          response: {
+            200: Simplify<Serialize<{ token: string }>>
+          }
         }
       }
     }>('http://localhost:3333')
@@ -66,7 +70,9 @@ test.group('Client', () => {
       users: {
         get: {
           request: { email?: string }
-          response: Simplify<Serialize<{ token: string }>>
+          response: {
+            200: Simplify<Serialize<{ token: string }>>
+          }
         }
       }
     }>('http://localhost:3333')
@@ -94,7 +100,9 @@ test.group('Client', () => {
       users: {
         post: {
           request: { email?: string }
-          response: Simplify<Serialize<{ token: string }>>
+          response: {
+            200: Simplify<Serialize<{ token: string }>>
+          }
         }
       }
     }>('http://localhost:3333')
@@ -119,7 +127,9 @@ test.group('Client', () => {
         login: {
           post: {
             request: { email: string; password: string }
-            response: Simplify<Serialize<{ token: string }>>
+            response: {
+              200: Simplify<Serialize<{ token: string }>>
+            }
           }
         }
       }
@@ -142,7 +152,9 @@ test.group('Client', () => {
         login: {
           post: {
             request: { email: string; password: string }
-            response: Simplify<Serialize<{ token: string }>>
+            response: {
+              200: Simplify<Serialize<{ token: string }>>
+            }
           }
         }
       }
@@ -192,7 +204,9 @@ test.group('Client', () => {
         login: {
           post: {
             request: unknown
-            response: Simplify<Serialize<{ token: string }>>
+            response: {
+              200: Simplify<Serialize<{ token: string }>>
+            }
           }
         }
       }
@@ -222,7 +236,9 @@ test.group('Client', () => {
         ':id': {
           get: {
             request: { foo: string }
-            response: Simplify<Serialize<{ id: string }>>
+            response: {
+              200: Simplify<Serialize<{ id: string }>>
+            }
           }
         }
       }
@@ -232,5 +248,47 @@ test.group('Client', () => {
     const result = await tuyau.users({ id: '1' }).get({ query: { foo: 'bar' } })
 
     assert.equal(result.data!.id, '1')
+  })
+
+  test('narrow error', async ({ expectTypeOf }) => {
+    const tuyau = createTuyau<{
+      users: {
+        ':id': {
+          get: {
+            request: { foo: string }
+            response: {
+              200: Simplify<Serialize<{ id: string }>>
+              404: Simplify<Serialize<{ messageNotFound: string }>>
+              500: Simplify<Serialize<{ messageServerError: string }>>
+            }
+          }
+        }
+      }
+    }>('http://localhost:3333')
+
+    nock('http://localhost:3333').get('/users/1?foo=bar').reply(200, { id: '1' })
+    const result = await tuyau.users({ id: '1' }).get({ query: { foo: 'bar' } })
+
+    expectTypeOf(result.data).toEqualTypeOf<{ id: string } | null>()
+    if (result.error) {
+      expectTypeOf(result.data).toMatchTypeOf<null>()
+      expectTypeOf(result.error).toMatchTypeOf<
+        | { status: 404; value: { messageNotFound: string } }
+        | { status: 500; value: { messageServerError: string } }
+      >()
+
+      if (result.error.status === 404) {
+        expectTypeOf(result.error.value).toEqualTypeOf<{ messageNotFound: string }>()
+      }
+
+      if (result.error.status === 500) {
+        expectTypeOf(result.error.value).toEqualTypeOf<{ messageServerError: string }>()
+      }
+    }
+
+    if (result.data) {
+      expectTypeOf(result.data).toEqualTypeOf<{ id: string }>()
+      expectTypeOf(result.error).toMatchTypeOf<null>()
+    }
   })
 })

@@ -4,9 +4,29 @@ import { Simplify, Serialize, IsNever, Prettify } from '@tuyau/utils/types'
 /**
  * Shape of the response returned by Tuyau
  */
-export type TuyauResponse<Res> =
-  | { data: Res; error: null; response: Response; status: number }
-  | { data: null; error: { message: string }; response: Response; status: number }
+export type TuyauResponse<Res extends Record<number, unknown>> =
+  | {
+      data: Res[200] extends Simplify<Serialize<infer Response>> ? Response : never
+      error: null
+      response: Response
+      status: number
+    }
+  | {
+      data: null
+      error: Exclude<keyof Res, 200> extends never
+        ? {
+            status: unknown
+            value: unknown
+          }
+        : {
+            [Status in Exclude<keyof Res, 200>]: {
+              status: Status
+              value: Res[Status] extends Simplify<Serialize<infer Response>> ? Response : never
+            }
+          }[Exclude<keyof Res, 200>]
+      response: Response
+      status: number
+    }
 
 /**
  * Shape of the Adonis Client. This is a recursive type that generate
@@ -16,7 +36,7 @@ export type TuyauResponse<Res> =
  */
 export type AdonisClient<in out Route extends Record<string, any>> = {
   [K in keyof Route as K extends `:${string}` ? never : K]: Route[K] extends {
-    response: Simplify<Serialize<infer Res>>
+    response: infer Res extends Record<number, unknown>
     request: infer Request
   }
     ? K extends 'get' | 'head'

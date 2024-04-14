@@ -60,3 +60,11 @@ export type IsNever<T> = [T] extends [never] ? true : false
 export type Prettify<T> = {
   [K in keyof T]: T[K]
 } & {}
+
+export type ConvertReturnTypeToRecordStatusResponse<T> = {
+  [P in T as P extends { __status: infer S extends number } ? S : 200]: P extends {
+    __response: infer R
+  }
+    ? R
+    : P
+}
