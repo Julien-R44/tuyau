@@ -23,7 +23,6 @@
     "checks": "pnpm lint && pnpm typecheck"
   },
   "dependencies": {
-    "@poppinss/matchit": "^3.1.2",
     "ky": "^1.2.3"
   },
   "devDependencies": {
