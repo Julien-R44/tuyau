@@ -16,7 +16,7 @@ type HandlerData = { method: MethodDeclaration; body: Node }
 type RouteReferenceParsed = Awaited<ReturnType<typeof parseBindingReference>>
 
 export default class CodegenTypes extends BaseCommand {
-  static override commandName = 'codegen:types:routes'
+  static override commandName = 'tuyau:generate'
   static override description =
     'Generate the routes.d.ts file with routes request and response types'
 

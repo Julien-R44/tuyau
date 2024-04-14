@@ -5,16 +5,25 @@
 
 Set of tools to create typesafe APIs using AdonisJS. The monorepo includes the following packages:
 
-- `@tuyau/tuyau` : Core package that you must install in your AdonisJS project.
+- `@tuyau/core` : Core package that you must install in your AdonisJS project.
 - `@tuyau/client` : E2E typesafe client to consume your AdonisJS APIs.
 - `@tuyau/utils` : Set of utilities and helpers for the other packages.
+
+## Goals of the project
+
+The main goal of this project is to provide some utilities to have better typesafety when creating APIs with AdonisJS. Goals on the long term are :
+
+- **In Progress** : Provide an RPC-like client that is fully e2e typesafe ( like tRPC, Elysia Eden, Hono etc. )
+- **Not started** : Provide a [Ziggy](https://github.com/tighten/ziggy)-like helper to generate and use routes in the frontend.
+- **Not started** : Provide a specific Controller class that will allow to have better typesafety when creating your endpoints.
+- **Not started** : Having an automatic OpenAPI generation + Swagger/Scalar UI viewer.
 
 ## Installation
 
 First make sure to install the core package in your AdonisJS project:
 
 ```bash
-node ace add @tuyau/tuyau
+node ace add @tuyau/core
 ```
 
 Then, you can install the client package in your frontend project:

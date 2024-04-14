@@ -18,6 +18,7 @@ export async function configure(command: ConfigureCommand) {
   const codemods = await command.createCodemods()
 
   codemods.updateRcFile((rcFile) => {
-    rcFile.addCommand('@tuyau/codegen/commands')
+    rcFile.addCommand('@tuyau/core/commands')
+    rcFile.addProvider('@tuyau/core/providers/tuyau_provider')
   })
 }

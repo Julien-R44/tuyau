@@ -1,5 +1,5 @@
 {
-  "name": "@tuyau/codegen",
+  "name": "@tuyau/core",
   "type": "module",
   "version": "0.0.3",
   "description": "",
@@ -64,13 +64,13 @@
   },
   "release-it": {
     "git": {
-      "commitMessage": "chore(release): @tuyau/codegen@${version}",
+      "commitMessage": "chore(release): @tuyau/core@${version}",
       "tagAnnotation": "release ${version}",
-      "tagName": "@tuyau/codegen@${version}"
+      "tagName": "@tuyau/core@${version}"
     },
     "github": {
       "release": true,
-      "releaseName": "@tuyau/codegen@${version}",
+      "releaseName": "@tuyau/core@${version}",
       "web": true
     }
   },
@@ -78,7 +78,7 @@
     "entry": [
       "./index.ts",
       "./src/types.ts",
-      "./commands/main.ts",
+      "./commands/generate.ts",
       "./providers/tuyau_provider.ts"
     ],
     "outDir": "./build",

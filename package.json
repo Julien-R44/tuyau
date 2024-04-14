@@ -12,6 +12,7 @@
     "lint": "eslint .",
     "test": "pnpm run -r --parallel test",
     "build": "pnpm run -r build",
+    "checks": "pnpm lint && pnpm typecheck && pnpm test",
     "release": "pnpm run build && changeset publish"
   },
   "devDependencies": {

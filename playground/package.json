@@ -42,7 +42,7 @@
     "@adonisjs/vite": "^3.0.0-11",
     "@solidjs/meta": "^0.29.3",
     "@tuyau/client": "workspace:*",
-    "@tuyau/codegen": "workspace:*",
+    "@tuyau/core": "workspace:*",
     "@vinejs/vine": "^1.8.0",
     "better-sqlite3": "^9.5.0",
     "edge.js": "^6.0.2",
