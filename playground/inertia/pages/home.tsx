@@ -1,11 +1,12 @@
 import { tuyau } from '~/app/tuyau'
 import type { InferErrorType } from '@tuyau/client'
-import { Match, Switch, createResource } from 'solid-js'
 import type { InferPageProps } from '@adonisjs/inertia/types'
+import { Match, Show, Switch, createResource, createSignal } from 'solid-js'
 
 import type InertiaController from '../../app/controllers/inertia_controller'
 
 export default function Home(props: InferPageProps<InertiaController, 'index'>) {
+  const [file, setFile] = createSignal<File | null>(null)
   const [data] = createResource(async () => {
     const result = await tuyau.users.get({ query: { limit: 10 } })
     if (result.error) throw result.error
@@ -37,6 +38,30 @@ export default function Home(props: InferPageProps<InertiaController, 'index'>) 
             {(users) => <ul>{users()?.users.map((user) => <li>{user.name}</li>)}</ul>}
           </Match>
         </Switch>
+
+        <input type="file" onChange={(event) => setFile(event.target.files?.[0] || null)} />
+        <Show when={file()}>
+          <div>
+            <div>File Name: {file()?.name}</div>
+            <div>File Size: {file()?.size}</div>
+          </div>
+        </Show>
+
+        <button
+          onClick={async () => {
+            const text = await tuyau['simple-text'].get()
+            console.log(text.data === 'foo')
+
+            const result = await tuyau['file-upload'].post({
+              // @ts-expect-error See https://github.com/adonisjs/core/blob/develop/providers/vinejs_provider.ts#L97
+              file: file(),
+            })
+
+            if (result.error) throw result.error
+          }}
+        >
+          Upload File
+        </button>
       </div>
     </>
   )

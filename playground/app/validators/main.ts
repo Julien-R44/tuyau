@@ -6,3 +6,11 @@ export const getUsersValidator = vine.compile(
     page: vine.number().optional(),
   }),
 )
+
+export const uploadFileValidator = vine.compile(
+  vine.object({
+    file: vine.file({
+      size: '2mb',
+    }),
+  }),
+)

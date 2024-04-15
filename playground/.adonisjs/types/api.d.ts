@@ -8,10 +8,16 @@ export interface AdonisApi {
       'response': Simplify<Serialize<ConvertReturnTypeToRecordStatusResponse<Awaited<ReturnType<typeof import('../../app/controllers/users_controller.ts').default['prototype']['index']>>>>>;
     };
   };
-  'backoffice': {
+  'simple-text': {
     'get': {
-      'request': MakeOptional<undefined>;
-      'response': Simplify<Serialize<ConvertReturnTypeToRecordStatusResponse<Awaited<ReturnType<typeof import('../../app/controllers/inertia_controller.ts').default['prototype']['backoffice']>>>>>;
+      'request': unknown;
+      'response': Simplify<Serialize<ConvertReturnTypeToRecordStatusResponse<Awaited<ReturnType<typeof import('../../app/controllers/users_controller.ts').default['prototype']['simpleText']>>>>>;
+    };
+  };
+  'file-upload': {
+    'post': {
+      'request': MakeOptional<InferInput<typeof import('../../app/validators/main.ts')['uploadFileValidator']>>;
+      'response': Simplify<Serialize<ConvertReturnTypeToRecordStatusResponse<Awaited<ReturnType<typeof import('../../app/controllers/users_controller.ts').default['prototype']['fileUpload']>>>>>;
     };
   };
 }

@@ -23,7 +23,8 @@
     "checks": "pnpm lint && pnpm typecheck"
   },
   "dependencies": {
-    "ky": "^1.2.3"
+    "ky": "^1.2.3",
+    "object-to-formdata": "^4.5.1"
   },
   "devDependencies": {
     "@tuyau/utils": "workspace:*"

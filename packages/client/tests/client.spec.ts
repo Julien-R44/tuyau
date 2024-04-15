@@ -169,4 +169,26 @@ test.group('Client | Runtime', () => {
 
     assert.equal(result.data!.id, '1')
   })
+
+  test('send as form data when payload include file', async ({ assert }) => {
+    const tuyau = createTuyau<{
+      auth: {
+        login: {
+          post: {
+            request: { file: any }
+            response: { 200: Simplify<Serialize<{ token: string }>> }
+          }
+        }
+      }
+    }>('http://localhost:3333')
+
+    nock('http://localhost:3333')
+      .post('/auth/login')
+      .reply(200, { token: '123' })
+      .matchHeader('content-type', /multipart\/form-data/)
+
+    await tuyau.auth.login.post({
+      file: new File(['hello'], 'hello.txt'),
+    })
+  })
 })

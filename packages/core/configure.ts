@@ -21,7 +21,7 @@ export async function configure(command: ConfigureCommand) {
 
   await codemods.updateRcFile((rcFile) => {
     rcFile.addCommand('@tuyau/core/commands')
-    rcFile.addProvider('@tuyau/core/providers/tuyau_provider')
+    rcFile.addProvider('@tuyau/core/tuyau_provider')
   })
 
   await codemods.makeUsingStub(stubsRoot, 'config/tuyau.stub', {})

@@ -5,6 +5,6 @@ export interface TuyauConfig {
     /**
      * List of routes to ignore during code generation
      */
-    ignoreRoutes?: Array<string | RegExp>[] | ((route: RouteJSON) => boolean)
+    ignoreRoutes?: Array<string | RegExp> | ((route: RouteJSON) => boolean)
   }
 }

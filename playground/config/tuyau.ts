@@ -1,6 +1,3 @@
-{{{
-  exports({ to: app.configPath('tuyau.ts') })
-}}}
 import { defineConfig } from '@tuyau/core'
 
 const tuyauConfig = defineConfig({
@@ -8,8 +5,10 @@ const tuyauConfig = defineConfig({
     /**
      * List of routes to ignore during code generation
      */
-    ignoreRoutes: []
-  }
+    ignoreRoutes: (route) => {
+      return route.pattern.includes('/backoffice')
+    },
+  },
 })
 
 export default tuyauConfig

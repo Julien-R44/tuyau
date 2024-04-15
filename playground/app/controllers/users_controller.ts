@@ -1,6 +1,7 @@
+import app from '@adonisjs/core/services/app'
 import type { HttpContext } from '@adonisjs/core/http'
 
-import { getUsersValidator } from '../validators/main.js'
+import { getUsersValidator, uploadFileValidator } from '../validators/main.js'
 
 export default class UsersController {
   async index({ response, request }: HttpContext) {
@@ -20,5 +21,15 @@ export default class UsersController {
         { id: 2, name: 'Jane Doe' },
       ],
     }
+  }
+
+  async simpleText() {
+    return 'foo' as const
+  }
+
+  async fileUpload({ request }: HttpContext) {
+    const payload = await request.validateUsing(uploadFileValidator)
+    await payload.file.move(app.makePath('uploads'))
+    return { message: 'File uploaded' as const }
   }
 }
