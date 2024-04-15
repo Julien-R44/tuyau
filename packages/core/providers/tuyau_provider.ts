@@ -57,4 +57,6 @@ declare module '@adonisjs/core/http' {
 
 export default class TuyauProvider {
   constructor(protected app: ApplicationService) {}
+
+  async register() {}
 }

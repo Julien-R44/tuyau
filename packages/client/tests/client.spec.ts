@@ -170,7 +170,7 @@ test.group('Client | Runtime', () => {
     assert.equal(result.data!.id, '1')
   })
 
-  test('send as form data when payload include file', async ({ assert }) => {
+  test('send as form data when payload include file', async () => {
     const tuyau = createTuyau<{
       auth: {
         login: {
