@@ -1,5 +1,12 @@
 import type { ApplicationService } from '@adonisjs/core/types'
 
+/**
+ * Extending the HTTP response interface to include status and response
+ * in the return type.
+ *
+ * This is ONLY type information and the properties will not be available
+ * at runtime. This is needed to infer the correct response type
+ */
 declare module '@adonisjs/core/http' {
   interface Response {
     continue(): { __status: 100 }
@@ -50,9 +57,4 @@ declare module '@adonisjs/core/http' {
 
 export default class TuyauProvider {
   constructor(protected app: ApplicationService) {}
-
-  /**
-   * Registers the lock manager in the application container
-   */
-  register() {}
 }

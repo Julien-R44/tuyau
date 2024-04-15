@@ -15,3 +15,4 @@ const InertiaController = () => import('#controllers/inertia_controller')
 router.resource('users', UsersController)
 
 router.get('/', [InertiaController, 'index'])
+router.get('/backoffice', [InertiaController, 'backoffice'])

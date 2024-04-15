@@ -1,5 +1,4 @@
 /// <reference path="../../adonisrc.ts" />
-/// <reference types="hot-hook/import-meta" />
 
 import { createTuyau } from '@tuyau/client'
 

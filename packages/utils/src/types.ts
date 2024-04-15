@@ -61,6 +61,14 @@ export type Prettify<T> = {
   [K in keyof T]: T[K]
 } & {}
 
+/**
+ * Convert a Controller Return Type to a Record of status/response
+ *
+ * @example
+ * type Response = { __status: 200, __response: { foo: string } } | { __status: 400, __response: { error: string } }
+ * type ResponseRecord = ConvertReturnTypeToRecordStatusResponse<Response>
+ * // ^? { 200: { foo: string }, 400: { error: string } }
+ */
 export type ConvertReturnTypeToRecordStatusResponse<T> = {
   [P in T as P extends { __status: infer S extends number } ? S : 200]: P extends {
     __response: infer R
@@ -73,4 +81,11 @@ type UndefinedProps<T extends object> = {
   [K in keyof T as undefined extends T[K] ? K : never]?: T[K]
 }
 
+/**
+ * Make all undefined properties optional in an object
+ *
+ * @example
+ * type Foo = { a: string, b: number | undefined, c: boolean }
+ * type Bar = MakeOptional<Foo> // { a: string, b?: number, c: boolean }
+ */
 export type MakeOptional<T extends object> = UndefinedProps<T> & Omit<T, keyof UndefinedProps<T>>

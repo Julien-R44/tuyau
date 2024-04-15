@@ -14,11 +14,15 @@
 
 import type ConfigureCommand from '@adonisjs/core/commands/configure'
 
+import { stubsRoot } from './stubs/main.js'
+
 export async function configure(command: ConfigureCommand) {
   const codemods = await command.createCodemods()
 
-  codemods.updateRcFile((rcFile) => {
+  await codemods.updateRcFile((rcFile) => {
     rcFile.addCommand('@tuyau/core/commands')
     rcFile.addProvider('@tuyau/core/providers/tuyau_provider')
   })
+
+  await codemods.makeUsingStub(stubsRoot, 'config/tuyau.stub', {})
 }

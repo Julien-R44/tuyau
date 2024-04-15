@@ -44,6 +44,7 @@
     "@adonisjs/assembler": "^7.4.0",
     "@adonisjs/core": "^6.5.0",
     "@julr/tooling-configs": "^2.2.0",
+    "@poppinss/cliui": "^6.4.1",
     "@poppinss/matchit": "^3.1.2",
     "@tuyau/client": "workspace:*",
     "@tuyau/utils": "workspace:*",
@@ -82,7 +83,7 @@
       "./providers/tuyau_provider.ts"
     ],
     "outDir": "./build",
-    "clean": true,
+    "clean": false,
     "format": "esm",
     "dts": true,
     "target": "esnext"

@@ -26,6 +26,9 @@ importers:
       '@japa/runner':
         specifier: ^3.1.2
         version: 3.1.2
+      '@japa/snapshot':
+        specifier: ^2.0.5
+        version: 2.0.5(@japa/assert@3.0.0)(@japa/runner@3.1.2)
       '@julr/tooling-configs':
         specifier: ^2.2.0
         version: 2.2.0(eslint@8.57.0)(prettier@3.2.5)(typescript@5.4.5)
@@ -164,6 +167,9 @@ importers:
       '@julr/tooling-configs':
         specifier: ^2.2.0
         version: 2.2.0(eslint@8.57.0)(prettier@3.2.5)(typescript@5.4.5)
+      '@poppinss/cliui':
+        specifier: ^6.4.1
+        version: 6.4.1
       '@poppinss/matchit':
         specifier: ^3.1.2
         version: 3.1.2
@@ -1912,6 +1918,30 @@ packages:
       serialize-error: 11.0.3
       slash: 5.1.0
 
+  /@japa/snapshot@2.0.5(@japa/assert@3.0.0)(@japa/runner@3.1.2):
+    resolution: {integrity: sha512-tlrSLd96mtw3jlrJGsjVAwdWTSnXUTqwo9nWByxWIPInX9WgBSsbyy2sPCZ6xyv3lQIdVqUHLVmb+v5LAGgFXw==}
+    engines: {node: '>=18.16.0'}
+    peerDependencies:
+      '@japa/assert': ^2.0.0 || ^3.0.0
+      '@japa/expect': ^3.0.2
+      '@japa/runner': ^3.1.2
+    peerDependenciesMeta:
+      '@japa/assert':
+        optional: true
+      '@japa/expect':
+        optional: true
+    dependencies:
+      '@japa/assert': 3.0.0(@japa/runner@3.1.2)(openapi-types@12.1.3)
+      '@japa/runner': 3.1.2
+      dedent: 1.5.3
+      jest-message-util: 29.7.0
+      magic-string: 0.30.9
+      pretty-format: 29.7.0
+      stack-utils: 2.0.6
+    transitivePeerDependencies:
+      - babel-plugin-macros
+    dev: true
+
   /@jest/schemas@29.6.3:
     resolution: {integrity: sha512-mo5j5X+jIZmJQveBKeS/clAueipV7KgiX1vMgCxam1RNYiqE1w62n0/tJJnHtjW8ZHcQco5gY85jA3mi0L+nSA==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
@@ -1926,6 +1956,18 @@ packages:
       '@types/istanbul-reports': 1.1.2
       '@types/yargs': 15.0.19
       chalk: 3.0.0
+    dev: true
+
+  /@jest/types@29.6.3:
+    resolution: {integrity: sha512-u3UPsIilWKOM3F9CXtrG8LEJmNxwoCQC/XVj4IKYXvvpx7QIi/Kg1LI5uDmDpKlac62NUtX7eLjRh+jVZcLOzw==}
+    engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
+    dependencies:
+      '@jest/schemas': 29.6.3
+      '@types/istanbul-lib-coverage': 2.0.6
+      '@types/istanbul-reports': 3.0.4
+      '@types/node': 20.12.7
+      '@types/yargs': 17.0.32
+      chalk: 4.1.2
     dev: true
 
   /@jridgewell/gen-mapping@0.3.5:
@@ -2671,6 +2713,12 @@ packages:
       '@types/istanbul-lib-report': 3.0.3
     dev: true
 
+  /@types/istanbul-reports@3.0.4:
+    resolution: {integrity: sha512-pk2B1NWalF9toCRu6gjBzR69syFjP4Od8WRAX+0mmf9lAjCRicLOWc+ZrxZHx/0XRjotgkF9t6iaMJ+aXcOdZQ==}
+    dependencies:
+      '@types/istanbul-lib-report': 3.0.3
+    dev: true
+
   /@types/json-schema@7.0.15:
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
     dev: true
@@ -2722,6 +2770,10 @@ packages:
     resolution: {integrity: sha512-I8EUhyrgfLrcTkzV3TSsGyl1tSuPrEDzr0yd5m90UgNxQkyDXULk3b6MlQqTCpZpNtWe1K0hzclnZkTcLBe2UQ==}
     dev: true
 
+  /@types/stack-utils@2.0.3:
+    resolution: {integrity: sha512-9aEbYZ3TbYMznPdcdr3SmIrLXwC/AKZXQeCf9Pgao5CKb8CyHuEX5jzWPTkvregvhRJHcpRO6BFoGW9ycaOkYw==}
+    dev: true
+
   /@types/unist@2.0.10:
     resolution: {integrity: sha512-IfYcSBWE3hLpBg8+X2SEa8LVkJdJEkT2Ese2aaLs3ptGdVtABxndrMaxuFlQ1qdFf9Q5rDvDpxI3WwgvKFAsQA==}
     dev: true
@@ -2739,6 +2791,12 @@ packages:
 
   /@types/yargs@15.0.19:
     resolution: {integrity: sha512-2XUaGVmyQjgyAZldf0D0c14vvo/yv0MhQBSTJcejMMaitsn3nxCB6TmH4G0ZQf+uxROOa9mpanoSm8h6SG/1ZA==}
+    dependencies:
+      '@types/yargs-parser': 21.0.3
+    dev: true
+
+  /@types/yargs@17.0.32:
+    resolution: {integrity: sha512-xQ67Yc/laOG5uMfX/093MRlGGCIBzZMarVa+gfNKJxWAIgykYpVGkBdbqEzGDDfCrVUj6Hiff4mTZ5BA6TmAog==}
     dependencies:
       '@types/yargs-parser': 21.0.3
     dev: true
@@ -4516,6 +4574,11 @@ packages:
   /escape-string-regexp@1.0.5:
     resolution: {integrity: sha512-vbRorB5FUQWvla16U8R/qgaFIya2qGzwDrNmCZuYKrbdSUMG6I1ZCGQRefkRVhuOkIGVne7BQ35DSfo1qvJqFg==}
     engines: {node: '>=0.8.0'}
+    dev: true
+
+  /escape-string-regexp@2.0.0:
+    resolution: {integrity: sha512-UpzcLCXolUWcNu5HtVMHYdXJjArjsF9C0aNnquZYY4uW/Vu0miy5YoWvbV345HauVvcAUnpRuhMMcqTcGOY2+w==}
+    engines: {node: '>=8'}
     dev: true
 
   /escape-string-regexp@4.0.0:
@@ -6306,6 +6369,21 @@ packages:
       jest-diff: 25.5.0
       jest-get-type: 25.2.6
       pretty-format: 25.5.0
+    dev: true
+
+  /jest-message-util@29.7.0:
+    resolution: {integrity: sha512-GBEV4GRADeP+qtB2+6u61stea8mGcOT4mCtrYISZwfu9/ISHFJ/5zOMXYbpBE9RsS5+Gb63DW4FgmnKJ79Kf6w==}
+    engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
+    dependencies:
+      '@babel/code-frame': 7.24.2
+      '@jest/types': 29.6.3
+      '@types/stack-utils': 2.0.3
+      chalk: 4.1.2
+      graceful-fs: 4.2.11
+      micromatch: 4.0.5
+      pretty-format: 29.7.0
+      slash: 3.0.0
+      stack-utils: 2.0.6
     dev: true
 
   /jiti@1.21.0:
@@ -8973,6 +9051,13 @@ packages:
 
   /sprintf-js@1.1.3:
     resolution: {integrity: sha512-Oo+0REFV59/rz3gfJNKQiBlwfHaSESl1pcGyABQsnnIfWOFt6JNj5gCog2U6MLZ//IGYD+nA8nI+mTShREReaA==}
+    dev: true
+
+  /stack-utils@2.0.6:
+    resolution: {integrity: sha512-XlkWvfIm6RmsWtNJx+uqtKLS8eqFbxUg0ZzLXqY0caEy9l7hruX8IpiDnjsLavoBgqCCR71TqWO8MaXYheJ3RQ==}
+    engines: {node: '>=10'}
+    dependencies:
+      escape-string-regexp: 2.0.0
     dev: true
 
   /stacktracey@2.1.8:
