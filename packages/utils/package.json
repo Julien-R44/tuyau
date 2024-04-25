@@ -18,7 +18,8 @@
     "typecheck": "tsc --noEmit",
     "release": "pnpm build && pnpm release-it",
     "build": "tsup-node",
-    "checks": "pnpm lint && pnpm typecheck"
+    "checks": "pnpm lint && pnpm typecheck",
+    "test": "c8 node --loader ts-node/esm bin/test.ts"
   },
   "publishConfig": {
     "access": "public",
