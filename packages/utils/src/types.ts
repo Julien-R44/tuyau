@@ -17,7 +17,7 @@ type FilterKeys<TObj extends object, TFilter> = {
 export type Serialize<T> =
   IsAny<T> extends true
     ? any
-    : T extends JsonPrimitive
+    : T extends JsonPrimitive | undefined
       ? T
       : T extends Map<any, any> | Set<any>
         ? Record<string, never>
@@ -41,9 +41,9 @@ type SerializeTuple<T extends [unknown, ...unknown[]]> = {
 }
 
 /** JSON serialize objects (not including arrays) and classes */
-type SerializeObject<T extends object> = T extends { [key: string]: JsonPrimitive }
-  ? T
-  : { [k in keyof Omit<T, FilterKeys<T, NonJsonPrimitive>>]: Serialize<T[k]> }
+type SerializeObject<T extends object> = {
+  [k in keyof Omit<T, FilterKeys<T, NonJsonPrimitive>>]: Serialize<T[k]>
+}
 
 /**
  * @see https://github.com/ianstormtaylor/superstruct/blob/7973400cd04d8ad92bbdc2b6f35acbfb3c934079/src/utils.ts#L323-L325

@@ -1,127 +1,92 @@
-// import { test } from '@japa/runner'
+import { test } from '@japa/runner'
 
-// import type { Serialize } from '../src/types.js'
+import type { Simplify, Serialize } from '../src/types.js'
 
-// test.group('Types | Serialize', () => {
-//   test('original interface when every prop are already serialized', ({ expectTypeOf }) => {
-//     interface MyInterface {
-//       id: number
-//       rank: number
-//     }
+test.group('Types | Serialize', () => {
+  test('misc', ({ expectTypeOf }) => {
+    expectTypeOf<Serialize<undefined>>().toEqualTypeOf<undefined>()
+    expectTypeOf<Serialize<{ test?: string }>>().toEqualTypeOf<{
+      test?: string
+    }>()
 
-//     type Serialized = Serialize<MyInterface>
+    expectTypeOf<Serialize<{ test: Date }>>().toEqualTypeOf<{ test: string }>()
+    expectTypeOf<Serialize<{ test?: Date }>>().toEqualTypeOf<{
+      test?: string
+    }>()
 
-//     expectTypeOf<Serialized>().toEqualTypeOf<{
-//       id: number
-//       rank: number
-//     }>()
-//   })
+    expectTypeOf<Serialize<{ test: Map<string, string> }>>().toEqualTypeOf<{
+      test: Record<string, never>
+    }>()
 
-//   test('serialize non-json primitives', ({ expectTypeOf }) => {
-//     interface MyInterface {
-//       id: number
-//       rank: number
-//       date: Date
-//     }
+    expectTypeOf<Serialize<{ nested: { test: Map<string, string> } }>>().toEqualTypeOf<{
+      nested: { test: Record<string, never> }
+    }>()
+  })
 
-//     type Serialized = Serialize<MyInterface>
+  test('original interface when every prop are already serialized', ({ expectTypeOf }) => {
+    interface MyInterface {
+      id: number
+      rank: number
+    }
 
-//     expectTypeOf<Serialized>().toEqualTypeOf<{
-//       id: number
-//       rank: number
-//       date: string
-//     }>()
-//   })
+    type Serialized = Serialize<MyInterface>
 
-//   test('use toJSON method when available', ({ expectTypeOf }) => {
-//     interface MyInterface {
-//       id: number
-//       rank: number
-//       date: Date
-//       toJSON(): {
-//         id: `id-${number}`
-//         rank: `rank-${number}`
-//         date: string
-//       }
-//     }
+    expectTypeOf<Serialized>().toEqualTypeOf<{
+      id: number
+      rank: number
+    }>()
+  })
 
-//     type Serialized = Serialize<MyInterface>
+  test('serialize non-json primitives', ({ expectTypeOf }) => {
+    interface MyInterface {
+      id: number
+      rank: number
+      date: Date
+    }
 
-//     expectTypeOf<Serialized>().toEqualTypeOf<{
-//       id: `id-${number}`
-//       rank: `rank-${number}`
-//       date: string
-//     }>()
-//   })
+    type Serialized = Serialize<MyInterface>
 
-//   test('original interface when nested', ({ expectTypeOf }) => {
-//     interface TranslationDTO {
-//       de: string | null
-//       en: string | null
-//       fr: string | null
-//       it: string | null
-//       [key: string]: string | null | undefined
-//     }
+    expectTypeOf<Serialized>().toEqualTypeOf<{
+      id: number
+      rank: number
+      date: string
+    }>()
+  })
 
-//     interface SponsorDTO {
-//       id: number
-//       name: TranslationDTO
-//       logo: string
-//       url: string
-//       rank: number
-//       createdAt: string
-//       updatedAt: string
-//     }
+  test('use toJSON method when available', ({ expectTypeOf }) => {
+    interface MyInterface {
+      id: number
+      rank: number
+      date: Date
+      toJSON(): {
+        id: `id-${number}`
+        rank: `rank-${number}`
+        date: string
+      }
+    }
 
-//     interface SponsorSectionDTO {
-//       id: number
-//       name: TranslationDTO
-//       sponsors: SponsorDTO[]
-//       rank: number
-//       createdAt: string
-//       updatedAt: string
-//     }
+    type Serialized = Serialize<MyInterface>
 
-//     type Serialized = Serialize<SponsorSectionDTO>
+    expectTypeOf<Serialized>().toEqualTypeOf<{
+      id: `id-${number}`
+      rank: `rank-${number}`
+      date: string
+    }>()
+  })
+})
 
-//     const serialized: SponsorSectionDTO = {
-//       id: 1,
-//       rank: 2,
-//       createdAt: '2021-01-01',
-//       updatedAt: '2021-01-01',
-//       name: {
-//         de: 'de',
-//         en: 'en',
-//         fr: 'fr',
-//         it: 'it',
-//       },
-//       sponsors: [
-//         {
-//           id: 1,
-//           rank: 2,
-//           createdAt: '2021-01-01',
-//           updatedAt: '2021-01-01',
-//           name: {
-//             de: 'de',
-//             en: 'en',
-//             fr: 'fr',
-//             it: 'it',
-//           },
-//           logo: 'logo',
-//           url: 'url',
-//         },
-//       ],
-//     }
+test.group('Types | Simplify', () => {
+  test('Simplify', ({ expectTypeOf }) => {
+    expectTypeOf<Simplify<Serialize<{ test: Date }>>>().toEqualTypeOf<{
+      test: string
+    }>()
 
-//     function data(data: SponsorSectionDTO) {
-//       return data
-//     }
+    expectTypeOf<Simplify<Serialize<{ test: Map<string, string> }>>>().toEqualTypeOf<{
+      test: Record<string, never>
+    }>()
 
-//     data(serialized)
-
-//     // expectTypeOf<Serialized['']>().toEqualTypeOf<{
-//     //   id: number
-//     //   rank: number
-//     // }>()
-//   })
-// })
+    expectTypeOf<Simplify<Serialize<{ nested: { test: Map<string, string> } }>>>().toEqualTypeOf<{
+      nested: { test: Record<string, never> }
+    }>()
+  })
+})
