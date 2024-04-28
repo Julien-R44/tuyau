@@ -2,6 +2,7 @@ import { test } from '@japa/runner'
 import type { Serialize, Simplify } from '@tuyau/utils/types'
 
 import { createTuyau } from '../index.js'
+import type { InferRequestType, InferResponseType } from '../index.js'
 
 test.group('Client | Typings', () => {
   test('post', async ({ expectTypeOf }) => {
@@ -144,5 +145,41 @@ test.group('Client | Typings', () => {
       status: number
       data: { id: string }
     }>()
+  })
+
+  test('InferResponseType', async ({ expectTypeOf }) => {
+    const tuyau = createTuyau<{
+      users: {
+        get: {
+          request: { foo: string }
+          response: {
+            200: Simplify<Serialize<{ id: string }>>
+            404: Simplify<Serialize<{ messageNotFound: string }>>
+            500: Simplify<Serialize<{ messageServerError: string }>>
+          }
+        }
+      }
+    }>('http://localhost:3333')
+
+    expectTypeOf<InferResponseType<typeof tuyau.users.get>>().toEqualTypeOf<{
+      id: string
+    }>()
+  })
+
+  test('InferRequestType', async ({ expectTypeOf }) => {
+    const tuyau = createTuyau<{
+      users: {
+        get: {
+          request: { foo: string }
+          response: {
+            200: Simplify<Serialize<{ id: string }>>
+            404: Simplify<Serialize<{ messageNotFound: string }>>
+            500: Simplify<Serialize<{ messageServerError: string }>>
+          }
+        }
+      }
+    }>('http://localhost:3333')
+
+    expectTypeOf<InferRequestType<typeof tuyau.users.get>>().toEqualTypeOf<{ foo: string }>()
   })
 })

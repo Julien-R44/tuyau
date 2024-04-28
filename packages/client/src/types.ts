@@ -26,6 +26,13 @@ export type TuyauResponse<Res extends Record<number, unknown>> =
     }
 
 /**
+ * Expose the response if awaited or the unwrap method that will return the data or throw an error
+ */
+type ResponseOrUnwrap<Res extends Record<number, unknown>> = Promise<TuyauResponse<Res>> & {
+  unwrap: () => Promise<Res[200]>
+}
+
+/**
  * Shape of the Adonis Client. This is a recursive type that generate
  * all nested calls like `api.users({ id: 'foo' }).get()` and so on.
  *
@@ -38,13 +45,13 @@ export type AdonisClient<in out Route extends Record<string, any>> = {
   }
     ? K extends 'get' | 'head'
       ? unknown extends Request
-        ? (options?: TuyauOptions & { query?: Request }) => Promise<TuyauResponse<Res>>
+        ? (options?: TuyauOptions & { query?: Request }) => ResponseOrUnwrap<Res>
         : {} extends Request
-          ? (options?: TuyauOptions & { query?: Request }) => Promise<TuyauResponse<Res>>
-          : (options: TuyauOptions & { query: Request }) => Promise<TuyauResponse<Res>>
+          ? (options?: TuyauOptions & { query?: Request }) => ResponseOrUnwrap<Res>
+          : (options: TuyauOptions & { query: Request }) => ResponseOrUnwrap<Res>
       : {} extends Request
-        ? (body?: Request | null, options?: TuyauOptions) => Promise<TuyauResponse<Res>>
-        : (body: Request, options?: TuyauOptions) => Promise<TuyauResponse<Res>>
+        ? (body?: Request | null, options?: TuyauOptions) => ResponseOrUnwrap<Res>
+        : (body: Request, options?: TuyauOptions) => ResponseOrUnwrap<Res>
     : CreateParams<Route[K]>
 }
 

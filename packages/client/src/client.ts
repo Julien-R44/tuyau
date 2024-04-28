@@ -3,7 +3,7 @@ import type { KyInstance } from 'ky'
 import { serialize } from 'object-to-formdata'
 
 import { TuyauHTTPError } from './errors.js'
-import type { TuyauOptions as TuyauOptions, AdonisClient, TuyauResponse } from './types.js'
+import type { TuyauOptions as TuyauOptions, AdonisClient } from './types.js'
 
 const methods = ['get', 'post', 'put', 'delete', 'patch', 'head'] as const
 
@@ -81,7 +81,8 @@ function createProxy(client: KyInstance, config: any, paths: string[] = []): any
       if (hasFileInBody) body = serialize(body, { indices: true })
 
       const key = hasFileInBody ? 'body' : 'json'
-      return (async () => {
+
+      async function makeRequest() {
         /**
          * Make the request
          */
@@ -118,7 +119,26 @@ function createProxy(client: KyInstance, config: any, paths: string[] = []): any
         }
 
         return { data, error, response, status }
-      })()
+      }
+
+      return {
+        then: (resolve: typeof Promise.resolve, reject: typeof Promise.reject) =>
+          makeRequest().then(resolve, reject),
+
+        unwrap: () => {
+          return {
+            then: (resolve: typeof Promise.resolve, reject: typeof Promise.reject) => {
+              return makeRequest().then((response: any) => {
+                if (response.error) {
+                  reject(response.error)
+                } else {
+                  resolve(response.data)
+                }
+              }, reject)
+            },
+          }
+        },
+      }
     },
   })
 }
@@ -132,16 +152,4 @@ export function createTuyau<const T extends Record<string, any>>(
 ): AdonisClient<T> {
   const client = ky.create({ prefixUrl: baseUrl, throwHttpErrors: false, ...options })
   return createProxy(client, options)
-}
-
-/**
- * Unwrap a Tuyau response. If the response is an error, throw it
- * otherwise, just return the data
- */
-export async function unwrap<TData extends Record<number, unknown>>(
-  call: Promise<TuyauResponse<TData>>,
-) {
-  const response = await call
-  if (response.error) throw response.error
-  return response.data!
 }

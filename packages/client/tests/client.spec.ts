@@ -2,7 +2,6 @@ import nock from 'nock'
 import { test } from '@japa/runner'
 import type { Serialize, Simplify } from '@tuyau/utils/types'
 
-import { unwrap } from '../src/client.js'
 import { TuyauHTTPError, createTuyau } from '../index.js'
 
 test.group('Client | Runtime', () => {
@@ -207,11 +206,11 @@ test.group('Client | Runtime', () => {
 
     nock('http://localhost:3333').post('/auth/login').reply(200, { token: '123' })
 
-    const result = await unwrap(tuyau.auth.login.post())
+    const result = await tuyau.auth.login.post().unwrap()
     assert.equal(result.token, '123')
   })
 
-  test('unwrap throw error when response is an error', async ({ assert }) => {
+  test('unwrap response throw error when there is an error', async ({ assert }) => {
     assert.plan(2)
 
     const tuyau = createTuyau<{
@@ -228,7 +227,7 @@ test.group('Client | Runtime', () => {
     nock('http://localhost:3333').post('/auth/login').reply(400, { message: 'Invalid credentials' })
 
     try {
-      await unwrap(tuyau.auth.login.post())
+      await tuyau.auth.login.post().unwrap()
     } catch (error) {
       assert.instanceOf(error, TuyauHTTPError)
       assert.equal(error.value.message, 'Invalid credentials')
