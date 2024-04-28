@@ -2,7 +2,8 @@ import nock from 'nock'
 import { test } from '@japa/runner'
 import type { Serialize, Simplify } from '@tuyau/utils/types'
 
-import { createTuyau } from '../index.js'
+import { unwrap } from '../src/client.js'
+import { TuyauHTTPError, createTuyau } from '../index.js'
 
 test.group('Client | Runtime', () => {
   test('post something', async ({ assert }) => {
@@ -190,5 +191,47 @@ test.group('Client | Runtime', () => {
     await tuyau.auth.login.post({
       file: new File(['hello'], 'hello.txt'),
     })
+  })
+
+  test('unwrap response', async ({ assert }) => {
+    const tuyau = createTuyau<{
+      auth: {
+        login: {
+          post: {
+            request: unknown
+            response: { 200: Simplify<Serialize<{ token: string }>> }
+          }
+        }
+      }
+    }>('http://localhost:3333')
+
+    nock('http://localhost:3333').post('/auth/login').reply(200, { token: '123' })
+
+    const result = await unwrap(tuyau.auth.login.post())
+    assert.equal(result.token, '123')
+  })
+
+  test('unwrap throw error when response is an error', async ({ assert }) => {
+    assert.plan(2)
+
+    const tuyau = createTuyau<{
+      auth: {
+        login: {
+          post: {
+            request: unknown
+            response: { 200: Simplify<Serialize<{ token: string }>> }
+          }
+        }
+      }
+    }>('http://localhost:3333')
+
+    nock('http://localhost:3333').post('/auth/login').reply(400, { message: 'Invalid credentials' })
+
+    try {
+      await unwrap(tuyau.auth.login.post())
+    } catch (error) {
+      assert.instanceOf(error, TuyauHTTPError)
+      assert.equal(error.value.message, 'Invalid credentials')
+    }
   })
 })
