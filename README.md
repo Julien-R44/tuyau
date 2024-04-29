@@ -255,3 +255,7 @@ console.log(url) // http://localhost:3333/users
 const url = tuyau.users({ id: 1 }).posts({ postId: 2 }).$url()
 console.log(url) // http://localhost:3333/users/1/posts/2
 ```
+
+## Credits
+
+Tuyau was inspired a lot by [Elysia](https://elysiajs.com/eden/treaty/overview), [tRPC](https://trpc.io/) and [Hono](https://hono.dev/). Thanks to the authors of these projects for the inspiration !
