@@ -38,8 +38,8 @@
     "ts-morph": "^22.0.0"
   },
   "devDependencies": {
-    "@adonisjs/assembler": "^7.4.0",
-    "@adonisjs/core": "^6.5.0",
+    "@adonisjs/assembler": "^7.5.1",
+    "@adonisjs/core": "^6.8.0",
     "@julr/tooling-configs": "^2.2.0",
     "@poppinss/cliui": "^6.4.1",
     "@poppinss/matchit": "^3.1.2",

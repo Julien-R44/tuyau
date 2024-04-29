@@ -31,12 +31,12 @@
     "#config/*": "./config/*.js"
   },
   "dependencies": {
-    "@adonisjs/auth": "^9.2.0",
-    "@adonisjs/core": "^6.6.0",
+    "@adonisjs/auth": "^9.2.1",
+    "@adonisjs/core": "^6.8.0",
     "@adonisjs/cors": "^2.2.1",
     "@adonisjs/inertia": "1.0.0-25",
     "@adonisjs/lucid": "^20.5.1",
-    "@adonisjs/session": "^7.3.0",
+    "@adonisjs/session": "^7.4.0",
     "@adonisjs/shield": "^8.1.1",
     "@adonisjs/static": "^1.1.1",
     "@adonisjs/vite": "^3.0.0-11",
@@ -44,22 +44,22 @@
     "@tuyau/client": "workspace:*",
     "@tuyau/core": "workspace:*",
     "@vinejs/vine": "^2.0.0",
-    "better-sqlite3": "^9.5.0",
+    "better-sqlite3": "^9.6.0",
     "edge.js": "^6.0.2",
     "inertia-adapter-solid": "^0.2.0",
     "luxon": "^3.4.4",
     "reflect-metadata": "^0.2.2",
-    "solid-js": "^1.8.16"
+    "solid-js": "^1.8.17"
   },
   "devDependencies": {
-    "@adonisjs/assembler": "^7.4.0",
+    "@adonisjs/assembler": "^7.5.1",
     "@japa/plugin-adonisjs": "^3.0.1",
     "@tuyau/utils": "workspace:*",
     "@types/luxon": "^3.4.2",
     "@types/node": "^20.12.7",
     "hot-hook": "^0.1.10",
     "pino-pretty": "^11.0.0",
-    "vite": "^5.2.8",
+    "vite": "^5.2.10",
     "vite-plugin-solid": "^2.10.2"
   },
   "hotHook": {
