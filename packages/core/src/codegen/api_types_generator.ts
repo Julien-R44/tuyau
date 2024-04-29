@@ -233,6 +233,7 @@ export class ApiTypesGenerator {
         currentLevel = currentLevel[segment]
 
         if (i === segments.length - 1) {
+          currentLevel['$url'] = {}
           for (const method of methods) {
             currentLevel[method] = {
               request: schemaImport ? `MakeOptional<${schemaImport}>` : 'unknown',

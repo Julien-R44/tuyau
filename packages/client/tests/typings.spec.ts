@@ -182,4 +182,18 @@ test.group('Client | Typings', () => {
 
     expectTypeOf<InferRequestType<typeof tuyau.users.$get>>().toEqualTypeOf<{ foo: string }>()
   })
+
+  test('$url method', async ({ expectTypeOf }) => {
+    const tuyau = createTuyau<{
+      users: {
+        $url: {}
+        $get: {
+          request: { foo: string }
+        }
+      }
+    }>('http://localhost:3333')
+
+    const result = tuyau.users.$url()
+    expectTypeOf(result).toEqualTypeOf<string>()
+  })
 })

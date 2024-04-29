@@ -47,10 +47,25 @@ function hasFile(obj: Record<string, any>) {
   return false
 }
 
-function createProxy(client: KyInstance, config: any, paths: string[] = []): any {
+function createProxy({
+  client,
+  config,
+  paths = [],
+  baseUrl,
+}: {
+  client: KyInstance
+  baseUrl: string
+  config: any
+  paths?: string[]
+}): any {
   return new Proxy(() => {}, {
     get(_, param: string) {
-      return createProxy(client, config, param === 'index' ? paths : [...paths, param])
+      return createProxy({
+        client,
+        config,
+        paths: param === 'index' ? paths : [...paths, param],
+        baseUrl,
+      })
     },
 
     /**
@@ -62,9 +77,19 @@ function createProxy(client: KyInstance, config: any, paths: string[] = []): any
       /**
        * If last path is not a method, we should continue to build the path.
        */
-      const isMethodCall = prefixedMethods.includes(paths.at(-1) as any)
+      const lastPath = paths.at(-1)
+      const isMethodCall = prefixedMethods.includes(lastPath as any)
       if (!isMethodCall && typeof body === 'object') {
-        return createProxy(client, config, [...paths, Object.values(body)[0] as string])
+        return createProxy({
+          client,
+          config,
+          paths: [...paths, Object.values(body)[0] as string],
+          baseUrl,
+        })
+      }
+
+      if (lastPath === '$url') {
+        return new URL(paths.join('/').replace('/$url', ''), baseUrl).toString()
       }
 
       /**
@@ -152,5 +177,5 @@ export function createTuyau<const T extends Record<string, any>>(
   options?: TuyauOptions,
 ): AdonisClient<T> {
   const client = ky.create({ prefixUrl: baseUrl, throwHttpErrors: false, ...options })
-  return createProxy(client, options)
+  return createProxy({ client, baseUrl, config: options })
 }

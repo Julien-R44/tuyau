@@ -52,7 +52,9 @@ export type AdonisClient<in out Route extends Record<string, any>> = {
       : {} extends Request
         ? (body?: Request | null, options?: TuyauOptions) => ResponseOrUnwrap<Res>
         : (body: Request, options?: TuyauOptions) => ResponseOrUnwrap<Res>
-    : CreateParams<Route[K]>
+    : K extends '$url'
+      ? () => string
+      : CreateParams<Route[K]>
 }
 
 export type CreateParams<Route extends Record<string, any>> =

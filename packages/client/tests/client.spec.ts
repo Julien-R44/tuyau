@@ -233,4 +233,36 @@ test.group('Client | Runtime', () => {
       assert.equal(error.value.message, 'Invalid credentials')
     }
   })
+
+  test('generate url using $url', async ({ assert }) => {
+    const tuyau = createTuyau<{
+      users: {
+        '$url': {}
+        '$get': {
+          request: { email: string }
+          response: { 200: Simplify<Serialize<{ token: string }>> }
+        }
+        ':id': {
+          $url: {}
+          $get: {
+            request: { email: string }
+            response: { 200: Simplify<Serialize<{ token: string }>> }
+          }
+        }
+      }
+      auth: {
+        login: {
+          $url: {}
+          $post: {
+            request: unknown
+            response: { 200: Simplify<Serialize<{ token: string }>> }
+          }
+        }
+      }
+    }>('http://localhost:3333')
+
+    assert.deepEqual(tuyau.users.$url(), 'http://localhost:3333/users')
+    assert.deepEqual(tuyau.auth.login.$url(), 'http://localhost:3333/auth/login')
+    assert.deepEqual(tuyau.users({ id: '1' }).$url(), 'http://localhost:3333/users/1')
+  })
 })
