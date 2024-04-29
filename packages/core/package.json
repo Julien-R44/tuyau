@@ -28,7 +28,6 @@
     "index:commands": "adonis-kit index build/commands",
     "prebuild": "npm run clean",
     "build": "pnpm clean && tsup-node && pnpm copy:templates && pnpm index:commands",
-    "release": "pnpm build && pnpm release-it",
     "version": "npm run build",
     "prepublishOnly": "npm run build"
   },
@@ -60,18 +59,6 @@
     "exclude": [
       "tests/**"
     ]
-  },
-  "release-it": {
-    "git": {
-      "commitMessage": "chore(release): @tuyau/core@${version}",
-      "tagAnnotation": "release ${version}",
-      "tagName": "@tuyau/core@${version}"
-    },
-    "github": {
-      "release": true,
-      "releaseName": "@tuyau/core@${version}",
-      "web": true
-    }
   },
   "tsup": {
     "entry": [

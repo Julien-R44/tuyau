@@ -16,7 +16,6 @@
   "scripts": {
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "release": "pnpm build && pnpm release-it",
     "build": "tsup-node",
     "checks": "pnpm lint && pnpm typecheck",
     "test": "c8 node --loader ts-node/esm bin/test.ts"
@@ -34,17 +33,5 @@
     "format": "esm",
     "dts": true,
     "target": "esnext"
-  },
-  "release-it": {
-    "git": {
-      "commitMessage": "chore(release): @tuyau/utils@${version}",
-      "tagAnnotation": "release ${version}",
-      "tagName": "@tuyau/utils@${version}"
-    },
-    "github": {
-      "release": true,
-      "releaseName": "@tuyau/utils@${version}",
-      "web": true
-    }
   }
 }
