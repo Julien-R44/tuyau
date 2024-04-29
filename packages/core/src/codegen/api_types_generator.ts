@@ -218,7 +218,7 @@ export class ApiTypesGenerator {
        * Get the methods associated with this route
        */
       const methods = route.methods
-        .map((method) => method.toLowerCase())
+        .map((method) => '$' + method.toLowerCase())
         .filter((method) => method !== 'head')
 
       const segments = route.pattern.split('/').filter(Boolean) as string[]

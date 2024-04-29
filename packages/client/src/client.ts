@@ -6,6 +6,7 @@ import { TuyauHTTPError } from './errors.js'
 import type { TuyauOptions as TuyauOptions, AdonisClient } from './types.js'
 
 const methods = ['get', 'post', 'put', 'delete', 'patch', 'head'] as const
+const prefixedMethods = methods.map((method) => `$${method}`)
 
 const isReactNative = typeof navigator === 'object' && navigator['product'] === 'ReactNative'
 
@@ -61,7 +62,7 @@ function createProxy(client: KyInstance, config: any, paths: string[] = []): any
       /**
        * If last path is not a method, we should continue to build the path.
        */
-      const isMethodCall = methods.includes(paths.at(-1) as any)
+      const isMethodCall = prefixedMethods.includes(paths.at(-1) as any)
       if (!isMethodCall && typeof body === 'object') {
         return createProxy(client, config, [...paths, Object.values(body)[0] as string])
       }
@@ -69,7 +70,7 @@ function createProxy(client: KyInstance, config: any, paths: string[] = []): any
       /**
        * Otherwise, it's time to make the request.
        */
-      const method = paths[paths.length - 1] as (typeof methods)[number]
+      const method = paths[paths.length - 1].slice(1) as (typeof methods)[number]
       const path = paths.slice(0, -1).join('/')
 
       /**

@@ -59,7 +59,7 @@ test.group('Api Types Generator', () => {
 
       export interface AdonisApi {
         'users': {
-          'get': {
+          '$get': {
             'request': unknown;
             'response': Simplify<Serialize<ConvertReturnTypeToRecordStatusResponse<Awaited<ReturnType<typeof import('../../app/controllers/users_controller.ts').default['prototype']['index']>>>>>;
           };
@@ -120,7 +120,7 @@ test.group('Api Types Generator', () => {
 
       export interface AdonisApi {
         'users': {
-          'get': {
+          '$get': {
             'request': MakeOptional<InferInput<typeof import('../../app/controllers/validator.ts')['getUsersValidator']>>;
             'response': Simplify<Serialize<ConvertReturnTypeToRecordStatusResponse<Awaited<ReturnType<typeof import('../../app/controllers/users_controller.ts').default['prototype']['index']>>>>>;
           };

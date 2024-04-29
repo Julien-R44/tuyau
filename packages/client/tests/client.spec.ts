@@ -9,7 +9,7 @@ test.group('Client | Runtime', () => {
     const tuyau = createTuyau<{
       auth: {
         login: {
-          post: {
+          $post: {
             request: { email: string; password: string }
             response: { 200: Simplify<Serialize<{ token: string }>> }
           }
@@ -19,7 +19,7 @@ test.group('Client | Runtime', () => {
 
     nock('http://localhost:3333').post('/auth/login').reply(200, { token: '123' })
 
-    const result = await tuyau.auth.login.post({
+    const result = await tuyau.auth.login.$post({
       email: 'foo@ok.com',
       password: 'secret',
     })
@@ -30,7 +30,7 @@ test.group('Client | Runtime', () => {
   test('get something', async ({ assert }) => {
     const tuyau = createTuyau<{
       users: {
-        get: {
+        $get: {
           request: { email: string }
           response: {
             200: Simplify<Serialize<{ token: string }>>
@@ -44,7 +44,7 @@ test.group('Client | Runtime', () => {
       .query({ email: 'foo@ok.com' })
       .reply(200, { token: '123' })
 
-    const result = await tuyau.users.get({ query: { email: 'foo@ok.com' } })
+    const result = await tuyau.users.$get({ query: { email: 'foo@ok.com' } })
 
     assert.equal(result.data!.token, '123')
   })
@@ -53,7 +53,7 @@ test.group('Client | Runtime', () => {
     const tuyau = createTuyau<{
       auth: {
         login: {
-          post: {
+          $post: {
             request: { email: string; password: string }
             response: { 200: Simplify<Serialize<{ token: string }>> }
           }
@@ -63,7 +63,7 @@ test.group('Client | Runtime', () => {
 
     nock('http://localhost:3333').post('/auth/login').times(2).reply(200, { token: '123' })
 
-    const request = tuyau.auth.login.post
+    const request = tuyau.auth.login.$post
 
     const r1 = await request({ email: 'foo@ok.com', password: 'secret' })
     const r2 = await request({ email: 'foo@ok.com', password: 'secret' })
@@ -76,7 +76,7 @@ test.group('Client | Runtime', () => {
     const tuyau = createTuyau<{
       auth: {
         login: {
-          post: {
+          $post: {
             request: { email: string; password: string }
             response: { 200: Simplify<Serialize<{ token: string }>> }
           }
@@ -88,7 +88,7 @@ test.group('Client | Runtime', () => {
       .post('/auth/login')
       .reply(200, 'hello', { 'Content-Type': 'application/octet-stream' })
 
-    const result = await tuyau.auth.login.post({
+    const result = await tuyau.auth.login.$post({
       email: 'foo@ok.com',
       password: 'secret',
     })
@@ -100,7 +100,7 @@ test.group('Client | Runtime', () => {
     const tuyau = createTuyau<{
       auth: {
         login: {
-          post: {
+          $post: {
             request: { email: string; password: string }
             response: string
           }
@@ -112,7 +112,7 @@ test.group('Client | Runtime', () => {
       .post('/auth/login')
       .reply(200, 'hello', { 'Content-Type': 'text/plain' })
 
-    const result = await tuyau.auth.login.post({
+    const result = await tuyau.auth.login.$post({
       email: 'test@ok.com',
       password: 'secret',
     })
@@ -126,7 +126,7 @@ test.group('Client | Runtime', () => {
     const tuyau = createTuyau<{
       auth: {
         login: {
-          post: {
+          $post: {
             request: unknown
             response: { 200: Simplify<Serialize<{ token: string }>> }
           }
@@ -147,7 +147,7 @@ test.group('Client | Runtime', () => {
       .post('/auth/login')
       .reply(200, { token: '123' })
       .matchHeader('x-foo', 'bar')
-    await tuyau.auth.login.post()
+    await tuyau.auth.login.$post()
 
     assert.isTrue(hookCalled)
   })
@@ -156,7 +156,7 @@ test.group('Client | Runtime', () => {
     const tuyau = createTuyau<{
       users: {
         ':id': {
-          get: {
+          $get: {
             request: { foo: string }
             response: { 200: Simplify<Serialize<{ id: string }>> }
           }
@@ -165,7 +165,7 @@ test.group('Client | Runtime', () => {
     }>('http://localhost:3333')
 
     nock('http://localhost:3333').get('/users/1?foo=bar').reply(200, { id: '1' })
-    const result = await tuyau.users({ id: '1' }).get({ query: { foo: 'bar' } })
+    const result = await tuyau.users({ id: '1' }).$get({ query: { foo: 'bar' } })
 
     assert.equal(result.data!.id, '1')
   })
@@ -174,7 +174,7 @@ test.group('Client | Runtime', () => {
     const tuyau = createTuyau<{
       auth: {
         login: {
-          post: {
+          $post: {
             request: { file: any }
             response: { 200: Simplify<Serialize<{ token: string }>> }
           }
@@ -187,7 +187,7 @@ test.group('Client | Runtime', () => {
       .reply(200, { token: '123' })
       .matchHeader('content-type', /multipart\/form-data/)
 
-    await tuyau.auth.login.post({
+    await tuyau.auth.login.$post({
       file: new File(['hello'], 'hello.txt'),
     })
   })
@@ -196,7 +196,7 @@ test.group('Client | Runtime', () => {
     const tuyau = createTuyau<{
       auth: {
         login: {
-          post: {
+          $post: {
             request: unknown
             response: { 200: Simplify<Serialize<{ token: string }>> }
           }
@@ -206,7 +206,7 @@ test.group('Client | Runtime', () => {
 
     nock('http://localhost:3333').post('/auth/login').reply(200, { token: '123' })
 
-    const result = await tuyau.auth.login.post().unwrap()
+    const result = await tuyau.auth.login.$post().unwrap()
     assert.equal(result.token, '123')
   })
 
@@ -216,7 +216,7 @@ test.group('Client | Runtime', () => {
     const tuyau = createTuyau<{
       auth: {
         login: {
-          post: {
+          $post: {
             request: unknown
             response: { 200: Simplify<Serialize<{ token: string }>> }
           }
@@ -227,7 +227,7 @@ test.group('Client | Runtime', () => {
     nock('http://localhost:3333').post('/auth/login').reply(400, { message: 'Invalid credentials' })
 
     try {
-      await tuyau.auth.login.post().unwrap()
+      await tuyau.auth.login.$post().unwrap()
     } catch (error) {
       assert.instanceOf(error, TuyauHTTPError)
       assert.equal(error.value.message, 'Invalid credentials')

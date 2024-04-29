@@ -43,7 +43,7 @@ export type AdonisClient<in out Route extends Record<string, any>> = {
     response: infer Res extends Record<number, unknown>
     request: infer Request
   }
-    ? K extends 'get' | 'head'
+    ? K extends '$get' | '$head'
       ? unknown extends Request
         ? (options?: TuyauOptions & { query?: Request }) => ResponseOrUnwrap<Res>
         : {} extends Request

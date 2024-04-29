@@ -25,16 +25,16 @@ export default class CodegenTypes extends BaseCommand {
    */
   override async run() {
     const project = new Project({
-      tsConfigFilePath: new URL('./tsconfig.json', this.app.appRoot).pathname,
       manipulationSettings: { quoteKind: QuoteKind.Single },
+      tsConfigFilePath: new URL('./tsconfig.json', this.app.appRoot).pathname,
     })
 
     const apiTypesGenerator = new ApiTypesGenerator({
       project,
+      logger: this.logger,
       appRoot: this.app.appRoot,
       routes: await this.#getRoutes(),
       config: this.app.config.get('tuyau'),
-      logger: this.logger,
     })
 
     await apiTypesGenerator.generate()

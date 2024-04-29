@@ -13,7 +13,7 @@ Set of tools to create typesafe APIs using AdonisJS. The monorepo includes the f
 
 The main goal of this project is to provide some utilities to have better typesafety when creating APIs with AdonisJS. Goals on the long term are :
 
-- **In Progress** : Provide an RPC-like client that is fully e2e typesafe ( like tRPC, Elysia Eden, Hono etc. )
+- **Done** : Provide an RPC-like client that is fully e2e typesafe ( like tRPC, Elysia Eden, Hono etc. )
 - **Not started** : Provide a [Ziggy](https://github.com/tighten/ziggy)-like helper to generate and use routes in the frontend.
 - **Not started** : Provide a specific Controller class that will allow to have better typesafety when creating your endpoints.
 - **Not started** : Having an automatic OpenAPI generation + Swagger/Scalar UI viewer.
@@ -36,14 +36,14 @@ pnpm add @tuyau/client
 
 ### Core package
 
-The core package expose a single command called `node ace tuyau:generate`. This command will generate the typescript types needed for the client package to work. 
+The core package expose a single command called `node ace tuyau:generate`. This command will generate the typescript types needed for the client package to work.
 
 This command will NOT run automatically for now. You will need to run it manually after some specific changes in your AdonisJS project :
 
 - When adding a new route/controller in your project
 - When adding a `request.validateUsing` call in your controller method.
 
-Other than that, you will not need to run this command. Let's say you update the return type of a controller method, or you update the Vine schema : you DON'T need to run the command. 
+Other than that, you will not need to run this command. Let's say you update the return type of a controller method, or you update the Vine schema : you DON'T need to run the command.
 
 Later on, we will use the [`onSourceFileChanged` hook](https://docs.adonisjs.com/guides/experimental-assembler-hooks#onsourcefilechanged) to run the command automatically when needed.
 
@@ -76,13 +76,13 @@ Now, you can use the `tuyau` object to make requests to your AdonisJS API. Here 
 ```typescript
 import { tuyau } from './tuyau'
 
-const result = await tuyau.users.get()
-const result = await tuyau.users.post({ name: 'John Doe' })
+const result = await tuyau.users.$get()
+const result = await tuyau.users.$post({ name: 'John Doe' })
 
-const result = await tuyau.users({ id: 1 }).get()
-const result = await tuyau.users({ id: 1 }).put({ name: 'John Doe' })
+const result = await tuyau.users({ id: 1 }).$get()
+const result = await tuyau.users({ id: 1 }).$put({ name: 'John Doe' })
 
-const result = await tuyau.users.get({
-  query: { page: 1, limit: 10 }
+const result = await tuyau.users.$get({
+  query: { page: 1, limit: 10 },
 })
 ```

@@ -27,7 +27,7 @@ test.group('Typings', () => {
     const tuyau = createTuyau<{
       auth: {
         login: {
-          post: {
+          $post: {
             request: { email: string; password: string }
             response: Simplify<
               Serialize<
@@ -43,7 +43,7 @@ test.group('Typings', () => {
 
     nock('http://localhost:3333').post('/auth/login').reply(200, { token: '123' })
 
-    const res = await tuyau.auth.login.post({ email: 'foo@ok.com', password: 'secret' })
+    const res = await tuyau.auth.login.$post({ email: 'foo@ok.com', password: 'secret' })
 
     if (res.data) {
       expectTypeOf(res.data).toEqualTypeOf<
