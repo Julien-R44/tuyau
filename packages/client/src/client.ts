@@ -47,6 +47,31 @@ function hasFile(obj: Record<string, any>) {
   return false
 }
 
+/**
+ * Build query string from the given object.
+ * It will use `duplicate` format for arrays. ?ids[]=1&ids[]=2 since it is
+ * handled by AdonisJS out of the box.
+ */
+function buildSearchParams(query: Record<string, string>) {
+  if (!query) return ''
+
+  let stringified = ''
+  const append = (key: string, value: string) => {
+    const keyValuePair = `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
+    stringified += (stringified ? '&' : '?') + keyValuePair
+  }
+
+  for (const [key, value] of Object.entries(query)) {
+    if (Array.isArray(value)) {
+      for (const v of value) append(key, v)
+    } else {
+      append(key, `${value}`)
+    }
+  }
+
+  return stringified
+}
+
 function createProxy({
   client,
   config,
@@ -113,7 +138,7 @@ function createProxy({
          * Make the request
          */
         const response = await client[method](path, {
-          searchParams: query,
+          searchParams: buildSearchParams(query),
           [key]: !isGetOrHead ? body : undefined,
           ...options,
         })

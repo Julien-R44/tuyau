@@ -170,6 +170,36 @@ test.group('Client | Runtime', () => {
     assert.equal(result.data!.id, '1')
   })
 
+  test('pass query params array the right way', async ({ assert }) => {
+    const tuyau = createTuyau<{
+      users: {
+        $get: {
+          request: { ids: (string | number)[] }
+          response: { 200: Simplify<Serialize<{ id: string }>> }
+        }
+      }
+    }>('http://localhost:3333')
+
+    nock('http://localhost:3333').get('/users?ids=1&ids=2').reply(200, { id: '1' })
+
+    await tuyau.users.$get({ query: { ids: [1, 2] } })
+  })
+
+  test('multiple query params', async ({ assert }) => {
+    const tuyau = createTuyau<{
+      users: {
+        $get: {
+          request: { foo: string; bar: string; ids: (string | number)[] }
+          response: { 200: Simplify<Serialize<{ id: string }>> }
+        }
+      }
+    }>('http://localhost:3333')
+
+    nock('http://localhost:3333').get('/users?foo=bar&bar=baz&ids=1&ids=2').reply(200, { id: '1' })
+
+    await tuyau.users.$get({ query: { foo: 'bar', bar: 'baz', ids: [1, 2] } })
+  })
+
   test('send as form data when payload include file', async () => {
     const tuyau = createTuyau<{
       auth: {
