@@ -133,4 +133,40 @@ test.group('Api Types Generator', () => {
       "
     `)
   })
+
+  test('warning when schema implementation is not found', async ({ fs, assert }) => {
+    await fs.create(
+      'app/controllers/users_controller.ts',
+      `
+      export default class UsersController {
+        public async index() {
+          await request.validateUsing(getUsersValidator)
+        }
+      }`,
+    )
+
+    const raw = cliui({ mode: 'raw' })
+    const apiTypesGenerator = new ApiTypesGenerator({
+      logger: raw.logger,
+      project: await setupProject(),
+      config: {},
+      appRoot: fs.baseUrl,
+      routes: [
+        {
+          pattern: '/users',
+          methods: ['GET'],
+          handler: { reference: '#controllers/users_controller.index', handle: () => {} },
+          domain: 'root',
+        },
+      ] as any,
+    })
+
+    await apiTypesGenerator.generate()
+
+    const logs = raw.logger.getLogs()
+    const warning = logs.find((log) =>
+      log.message.includes('Unable to find the schema file for getUsersValidator'),
+    )
+    assert.exists(warning)
+  })
 })

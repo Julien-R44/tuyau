@@ -98,7 +98,13 @@ export class ApiTypesGenerator {
       const schema = validateUsingCallNode.getArguments()[0]
       if (!Node.isIdentifier(schema)) return
 
-      const importPath = schema.getImplementations()[0].getSourceFile().getFilePath()
+      const implementation = schema.getImplementations().at(0)
+      if (!implementation) {
+        this.#logger.warning(`Unable to find the schema file for ${schema.getText()}`)
+        return
+      }
+
+      const importPath = implementation.getSourceFile().getFilePath()
       const relativeImportPath = relative(this.#getDestinationDirectory(), importPath)
 
       return `InferInput<typeof import('${relativeImportPath}')['${schema.getText()}']>`
