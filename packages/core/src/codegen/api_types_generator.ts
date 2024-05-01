@@ -147,9 +147,7 @@ export class ApiTypesGenerator {
 
     file.insertText(0, (writer) => {
       writer
-        .writeLine(
-          `import type { MakeOptional, Serialize, Simplify, ConvertReturnTypeToRecordStatusResponse } from '@tuyau/utils/types'`,
-        )
+        .writeLine(`import type { MakeTuyauRequest, MakeTuyauResponse } from '@tuyau/utils/types'`)
         .writeLine(`import type { InferInput } from '@vinejs/vine/types'`)
         .newLine()
         .writeLine(`export interface AdonisApi {`)
@@ -242,8 +240,8 @@ export class ApiTypesGenerator {
           currentLevel['$url'] = {}
           for (const method of methods) {
             currentLevel[method] = {
-              request: schemaImport ? `MakeOptional<${schemaImport}>` : 'unknown',
-              response: `Simplify<Serialize<ConvertReturnTypeToRecordStatusResponse<Awaited<ReturnType<typeof import('${relativePath}').default['prototype']['${routeHandler.method}']>>>>>`,
+              request: schemaImport ? `MakeTuyauRequest<${schemaImport}>` : 'unknown',
+              response: `MakeTuyauResponse<import('${relativePath}').default['${routeHandler.method}']>`,
             }
           }
         }

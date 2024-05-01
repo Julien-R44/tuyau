@@ -89,3 +89,15 @@ type UndefinedProps<T extends object> = {
  * type Bar = MakeOptional<Foo> // { a: string, b?: number, c: boolean }
  */
 export type MakeOptional<T extends object> = UndefinedProps<T> & Omit<T, keyof UndefinedProps<T>>
+
+/**
+ * Shortcut for computing the Tuyau response type
+ */
+export type MakeTuyauResponse<T extends (...args: any) => any> = Simplify<
+  Serialize<ConvertReturnTypeToRecordStatusResponse<Awaited<ReturnType<T>>>>
+>
+
+/**
+ * Shortcut for computing the Tuyau request type
+ */
+export type MakeTuyauRequest<T extends object> = MakeOptional<T>

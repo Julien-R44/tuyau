@@ -1,5 +1,5 @@
 import { Project, QuoteKind } from 'ts-morph'
-import { BaseCommand } from '@adonisjs/core/ace'
+import { BaseCommand, flags } from '@adonisjs/core/ace'
 import type { CommandOptions } from '@adonisjs/core/types/ace'
 
 import { ApiTypesGenerator } from '../src/codegen/api_types_generator.js'
@@ -7,8 +7,10 @@ import { ApiTypesGenerator } from '../src/codegen/api_types_generator.js'
 export default class CodegenTypes extends BaseCommand {
   static override commandName = 'tuyau:generate'
   static override description = 'Tuyau generator command'
-
   static override options: CommandOptions = { startApp: true }
+
+  @flags.boolean({ description: 'Verbose logs', default: false, alias: 'v' })
+  declare verbose: boolean
 
   /**
    * Get routes from the router instance

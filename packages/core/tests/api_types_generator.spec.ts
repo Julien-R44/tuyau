@@ -54,7 +54,7 @@ test.group('Api Types Generator', () => {
 
     const file = await fs.contents('./.adonisjs/types/api.d.ts')
     assert.snapshot(file).matchInline(`
-      "import type { MakeOptional, Serialize, Simplify, ConvertReturnTypeToRecordStatusResponse } from '@tuyau/utils/types'
+      "import type { MakeTuyauRequest, MakeTuyauResponse } from '@tuyau/utils/types'
       import type { InferInput } from '@vinejs/vine/types'
 
       export interface AdonisApi {
@@ -63,7 +63,7 @@ test.group('Api Types Generator', () => {
           };
           '$get': {
             'request': unknown;
-            'response': Simplify<Serialize<ConvertReturnTypeToRecordStatusResponse<Awaited<ReturnType<typeof import('../../app/controllers/users_controller.ts').default['prototype']['index']>>>>>;
+            'response': MakeTuyauResponse<import('../../app/controllers/users_controller.ts').default['index']>;
           };
         };
       }
@@ -117,7 +117,7 @@ test.group('Api Types Generator', () => {
 
     const file = await fs.contents('./.adonisjs/types/api.d.ts')
     assert.snapshot(file).matchInline(`
-      "import type { MakeOptional, Serialize, Simplify, ConvertReturnTypeToRecordStatusResponse } from '@tuyau/utils/types'
+      "import type { MakeTuyauRequest, MakeTuyauResponse } from '@tuyau/utils/types'
       import type { InferInput } from '@vinejs/vine/types'
 
       export interface AdonisApi {
@@ -125,8 +125,8 @@ test.group('Api Types Generator', () => {
           '$url': {
           };
           '$get': {
-            'request': MakeOptional<InferInput<typeof import('../../app/controllers/validator.ts')['getUsersValidator']>>;
-            'response': Simplify<Serialize<ConvertReturnTypeToRecordStatusResponse<Awaited<ReturnType<typeof import('../../app/controllers/users_controller.ts').default['prototype']['index']>>>>>;
+            'request': MakeTuyauRequest<InferInput<typeof import('../../app/controllers/validator.ts')['getUsersValidator']>>;
+            'response': MakeTuyauResponse<import('../../app/controllers/users_controller.ts').default['index']>;
           };
         };
       }
