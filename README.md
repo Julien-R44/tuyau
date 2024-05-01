@@ -1,4 +1,4 @@
-# Tuyau
+![banner](./assets/banner.png)
 
 > [!WARNING]
 > Tuyau is still in early development. I will **NOT follow semver until 1.0.0**. Use at your own risk.
