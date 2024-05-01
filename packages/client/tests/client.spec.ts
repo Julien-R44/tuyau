@@ -170,7 +170,7 @@ test.group('Client | Runtime', () => {
     assert.equal(result.data!.id, '1')
   })
 
-  test('pass query params array the right way', async ({ assert }) => {
+  test('pass query params array the right way', async () => {
     const tuyau = createTuyau<{
       users: {
         $get: {
@@ -185,7 +185,7 @@ test.group('Client | Runtime', () => {
     await tuyau.users.$get({ query: { ids: [1, 2] } })
   })
 
-  test('multiple query params', async ({ assert }) => {
+  test('multiple query params', async () => {
     const tuyau = createTuyau<{
       users: {
         $get: {
