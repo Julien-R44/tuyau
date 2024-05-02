@@ -180,9 +180,24 @@ test.group('Client | Runtime', () => {
       }
     }>('http://localhost:3333')
 
-    nock('http://localhost:3333').get('/users?ids=1&ids=2').reply(200, { id: '1' })
+    nock('http://localhost:3333').get('/users?ids[]=1&ids[]=2').reply(200, { id: '1' })
 
     await tuyau.users.$get({ query: { ids: [1, 2] } })
+  })
+
+  test('pass query params array with single item the right way', async () => {
+    const tuyau = createTuyau<{
+      users: {
+        $get: {
+          request: { ids: (string | number)[] }
+          response: { 200: Simplify<Serialize<{ id: string }>> }
+        }
+      }
+    }>('http://localhost:3333')
+
+    nock('http://localhost:3333').get('/users?ids[]=1').reply(200, { id: '1' })
+
+    await tuyau.users.$get({ query: { ids: [1] } })
   })
 
   test('multiple query params', async () => {
@@ -195,7 +210,9 @@ test.group('Client | Runtime', () => {
       }
     }>('http://localhost:3333')
 
-    nock('http://localhost:3333').get('/users?foo=bar&bar=baz&ids=1&ids=2').reply(200, { id: '1' })
+    nock('http://localhost:3333')
+      .get('/users?foo=bar&bar=baz&ids[]=1&ids[]=2')
+      .reply(200, { id: '1' })
 
     await tuyau.users.$get({ query: { foo: 'bar', bar: 'baz', ids: [1, 2] } })
   })

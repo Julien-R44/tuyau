@@ -56,14 +56,17 @@ function buildSearchParams(query: Record<string, string>) {
   if (!query) return ''
 
   let stringified = ''
-  const append = (key: string, value: string) => {
-    const keyValuePair = `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
+  const append = (key: string, value: string, isArray = false) => {
+    const encodedKey = encodeURIComponent(key)
+    const encodedValue = encodeURIComponent(value)
+    const keyValuePair = `${encodedKey}${isArray ? '[]' : ''}=${encodedValue}`
+
     stringified += (stringified ? '&' : '?') + keyValuePair
   }
 
   for (const [key, value] of Object.entries(query)) {
     if (Array.isArray(value)) {
-      for (const v of value) append(key, v)
+      for (const v of value) append(key, v, true)
     } else {
       append(key, `${value}`)
     }
