@@ -49,8 +49,9 @@ function hasFile(obj: Record<string, any>) {
 
 /**
  * Build query string from the given object.
- * It will use `duplicate` format for arrays. ?ids[]=1&ids[]=2 since it is
+ * - It will use `bracket` format for arrays. ?ids[]=1&ids[]=2 since it is
  * handled by AdonisJS out of the box.
+ * - It will skip the key/value if value is `null` or `undefined`
  */
 function buildSearchParams(query: Record<string, string>) {
   if (!query) return ''
@@ -65,6 +66,8 @@ function buildSearchParams(query: Record<string, string>) {
   }
 
   for (const [key, value] of Object.entries(query)) {
+    if (!value) continue
+
     if (Array.isArray(value)) {
       for (const v of value) append(key, v, true)
     } else {

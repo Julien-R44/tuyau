@@ -200,6 +200,21 @@ test.group('Client | Runtime', () => {
     await tuyau.users.$get({ query: { ids: [1] } })
   })
 
+  test('handle undefined query params', async () => {
+    const tuyau = createTuyau<{
+      users: {
+        $get: {
+          request: { ids?: (string | number)[] }
+          response: { 200: Simplify<Serialize<{ id: string }>> }
+        }
+      }
+    }>('http://localhost:3333')
+
+    nock('http://localhost:3333').get('/users').reply(200, { id: '1' })
+
+    await tuyau.users.$get({ query: { ids: undefined } })
+  })
+
   test('multiple query params', async () => {
     const tuyau = createTuyau<{
       users: {
