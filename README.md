@@ -173,6 +173,30 @@ await tuyau.users.$get({
 })
 ```
 
+Note that the `query` object will be automatically serialized to a query string with the following rules :
+
+- If the value is an array, it will be serialized using the `brackets` format. For example, `{ ids: [1, 2, 3] }` will be serialized to `ids[]=1&ids[]=2&ids[]=3`.
+<!-- - If the value you pass is an object, it will be serialized as a JSON string. For example, `{ filter: { name: 'John Doe' } }` will be serialized to `filter={"name":"John Doe"}`. -->
+- If the value is null or undefined, it will be ignored and not added to the query string.
+
+
+#### File uploads
+
+You can pass `File` instances to the request to upload files. Here is an example :
+
+```html
+<input type="file" id="file" />
+```
+
+```ts
+const fileInput = document.getElementById('file') as HTMLInputElement
+const file = fileInput.files[0]
+
+await tuyau.users.$post({ avatar: file })
+```
+
+As soon as you pass a `File` instance in the request, Tuyau will automatically convert it to a `FormData` instance and set the correct headers for you. The payload will be serialized using the [`object-to-formdata`](https://www.npmjs.com/package/object-to-formdata) package.
+
 #### Responses
 
 For every request, Tuyau will return a promise with the following types : 

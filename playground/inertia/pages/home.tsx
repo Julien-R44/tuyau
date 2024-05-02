@@ -8,7 +8,7 @@ import type InertiaController from '../../app/controllers/inertia_controller'
 export default function Home(props: InferPageProps<InertiaController, 'index'>) {
   const [file, setFile] = createSignal<File | null>(null)
   const [data] = createResource(async () => {
-    const result = await tuyau.users.get({ query: { limit: 10 } })
+    const result = await tuyau.users.$get({ query: { limit: 10 } })
     if (result.error) throw result.error
 
     return result.data
@@ -49,10 +49,10 @@ export default function Home(props: InferPageProps<InertiaController, 'index'>) 
 
         <button
           onClick={async () => {
-            const text = await tuyau['simple-text'].get()
+            const text = await tuyau['simple-text'].$get()
             console.log(text.data === 'foo')
 
-            const result = await tuyau['file-upload'].post({
+            const result = await tuyau['file-upload'].$post({
               // @ts-expect-error See https://github.com/adonisjs/core/blob/develop/providers/vinejs_provider.ts#L97
               file: file(),
             })
