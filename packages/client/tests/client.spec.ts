@@ -327,4 +327,22 @@ test.group('Client | Runtime', () => {
     assert.deepEqual(tuyau.auth.login.$url(), 'http://localhost:3333/auth/login')
     assert.deepEqual(tuyau.users({ id: '1' }).$url(), 'http://localhost:3333/users/1')
   })
+
+  test('upload file pass the right content type', async () => {
+    const tuyau = createTuyau<{
+      users: {
+        $post: {
+          request: { file: any }
+          response: { 200: Simplify<Serialize<{ token: string }>> }
+        }
+      }
+    }>('http://localhost:3333')
+
+    nock('http://localhost:3333')
+      .post('/users')
+      .reply(200, { token: '123' })
+      .matchHeader('content-type', /multipart\/form-data/)
+
+    await tuyau.users.$post({ file: new File(['hello'], 'hello.txt') })
+  })
 })
