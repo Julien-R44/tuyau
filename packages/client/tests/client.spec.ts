@@ -345,4 +345,48 @@ test.group('Client | Runtime', () => {
 
     await tuyau.users.$post({ file: new File(['hello'], 'hello.txt') })
   })
+
+  test('send blob', async () => {
+    const tuyau = createTuyau<{
+      users: {
+        $post: {
+          request: { file: any }
+          response: { 200: Simplify<Serialize<{ token: string }>> }
+        }
+      }
+    }>('http://localhost:3333')
+
+    const blob = new Blob(['hello'], { type: 'image/jpeg' })
+
+    nock('http://localhost:3333')
+      .post('/users')
+      .reply(200, { token: '123' })
+      .matchHeader('content-type', /multipart\/form-data/)
+
+    const result = await tuyau.users.$post({ file: blob })
+
+    console.log(result)
+  })
+
+  test('pass form data directly', async () => {
+    const tuyau = createTuyau<{
+      users: {
+        $post: {
+          request: { name: string; email: string }
+          response: { 200: Simplify<Serialize<{ token: string }>> }
+        }
+      }
+    }>('http://localhost:3333')
+
+    nock('http://localhost:3333')
+      .post('/users')
+      .reply(200, { token: '123' })
+      .matchHeader('content-type', /multipart\/form-data/)
+
+    const formData = new FormData()
+    formData.append('name', 'julien')
+    formData.append('email', 'foo@ok.com')
+
+    await tuyau.users.$post(formData as any)
+  })
 })

@@ -8,31 +8,11 @@ import type { TuyauOptions as TuyauOptions, AdonisClient } from './types.js'
 const methods = ['get', 'post', 'put', 'delete', 'patch', 'head'] as const
 const prefixedMethods = methods.map((method) => `$${method}`)
 
-const isReactNative = typeof navigator === 'object' && navigator['product'] === 'ReactNative'
+const isServer = typeof FileList === 'undefined'
+const isFile = (v: any) => {
+  if (isServer) return v instanceof Blob
 
-function isObject(value: unknown) {
-  return value === Object(value)
-}
-
-function isUndefined(value: unknown) {
-  return value === undefined
-}
-
-function isBlob(value: any) {
-  return isReactNative
-    ? isObject(value) && !isUndefined(value.uri)
-    : isObject(value) &&
-        typeof value.size === 'number' &&
-        typeof value.type === 'string' &&
-        typeof value.slice === 'function'
-}
-
-function isFile(value: any) {
-  return (
-    isBlob(value) &&
-    typeof value.name === 'string' &&
-    (isObject(value.lastModifiedDate) || typeof value.lastModified === 'number')
-  )
+  return v instanceof FileList || v instanceof File
 }
 
 function hasFile(obj: Record<string, any>) {
@@ -134,10 +114,17 @@ function createProxy({
        */
       const isGetOrHead = method === 'get' || method === 'head'
       const query = isGetOrHead ? (body as Record<string, string>)?.query : options?.query
-      const hasFileInBody = hasFile(body)
-      if (hasFileInBody) body = serialize(body, { indices: true })
 
-      const key = hasFileInBody ? 'body' : 'json'
+      /**
+       * If the body has a file, then we should move to multipart form data.
+       */
+      let key = 'json'
+      if (!(body instanceof FormData) && hasFile(body)) {
+        body = serialize(body, { indices: true })
+        key = 'body'
+      } else if (body instanceof FormData) {
+        key = 'body'
+      }
 
       async function makeRequest() {
         /**
