@@ -235,14 +235,13 @@ export class ApiTypesGenerator {
         }
 
         currentLevel = currentLevel[segment]
+        if (i !== segments.length - 1) return
 
-        if (i === segments.length - 1) {
-          currentLevel['$url'] = {}
-          for (const method of methods) {
-            currentLevel[method] = {
-              request: schemaImport ? `MakeTuyauRequest<${schemaImport}>` : 'unknown',
-              response: `MakeTuyauResponse<import('${relativePath}').default['${routeHandler.method}']>`,
-            }
+        currentLevel.$url = {}
+        for (const method of methods) {
+          currentLevel[method] = {
+            request: schemaImport ? `MakeTuyauRequest<${schemaImport}>` : 'unknown',
+            response: `MakeTuyauResponse<import('${relativePath}').default['${routeHandler.method}']>`,
           }
         }
       })
