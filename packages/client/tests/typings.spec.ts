@@ -3,7 +3,7 @@
 import vine from '@vinejs/vine'
 import { test } from '@japa/runner'
 import type { InferInput } from '@vinejs/vine/types'
-import type { MakeOptional, MakeTuyauRequest, Serialize, Simplify } from '@tuyau/utils/types'
+import type { MakeTuyauRequest, Serialize, Simplify } from '@tuyau/utils/types'
 
 import { createTuyau } from '../index.js'
 import type { InferRequestType, InferResponseType } from '../index.js'
@@ -201,7 +201,8 @@ test.group('Client | Typings', () => {
     expectTypeOf(result).toEqualTypeOf<string>()
   })
 
-  test('file typing', async ({ expectTypeOf }) => {
+  test('file typing', async ({}) => {
+    // @ts-expect-error
     vine.file = () => vine.string()
 
     const request = vine.compile(
