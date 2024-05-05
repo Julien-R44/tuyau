@@ -197,6 +197,18 @@ await tuyau.users.$post({ avatar: file })
 
 As soon as you pass a `File` instance in the request, Tuyau will automatically convert it to a `FormData` instance and set the correct headers for you. The payload will be serialized using the [`object-to-formdata`](https://www.npmjs.com/package/object-to-formdata) package.
 
+Note that if you are using React Native, you should pass your file as follows :
+
+```ts
+await tuyau.users.$post({ 
+  avatar: { 
+    uri: 'file://path/to/file',
+    type: 'image/jpeg',
+    name: 'avatar.jpg'
+  } 
+})
+```
+
 #### Responses
 
 For every request, Tuyau will return a promise with the following types : 
