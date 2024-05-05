@@ -53,8 +53,7 @@ export default function Home(props: InferPageProps<InertiaController, 'index'>) 
             console.log(text.data === 'foo')
 
             const result = await tuyau['file-upload'].$post({
-              // @ts-expect-error See https://github.com/adonisjs/core/blob/develop/providers/vinejs_provider.ts#L97
-              file: file(),
+              file: file()!,
             })
 
             if (result.error) throw result.error

@@ -9,9 +9,18 @@ const methods = ['get', 'post', 'put', 'delete', 'patch', 'head'] as const
 const prefixedMethods = methods.map((method) => `$${method}`)
 
 const isServer = typeof FileList === 'undefined'
-const isFile = (v: any) => {
-  if (isServer) return v instanceof Blob
+const isReactNative = typeof navigator !== 'undefined' && navigator.product === 'ReactNative'
 
+function isObject(value: any) {
+  return typeof value === 'object' && !Array.isArray(value) && value !== null
+}
+
+const isFile = (v: any) => {
+  if (isReactNative) {
+    if (isObject(v) && v.uri) return true
+  }
+
+  if (isServer) return v instanceof Blob
   return v instanceof FileList || v instanceof File
 }
 

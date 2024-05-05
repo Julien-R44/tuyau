@@ -1,5 +1,9 @@
+/// <reference types="@adonisjs/core/providers/vinejs_provider" />
+
+import vine from '@vinejs/vine'
 import { test } from '@japa/runner'
-import type { Serialize, Simplify } from '@tuyau/utils/types'
+import type { InferInput } from '@vinejs/vine/types'
+import type { MakeOptional, MakeTuyauRequest, Serialize, Simplify } from '@tuyau/utils/types'
 
 import { createTuyau } from '../index.js'
 import type { InferRequestType, InferResponseType } from '../index.js'
@@ -195,5 +199,41 @@ test.group('Client | Typings', () => {
 
     const result = tuyau.users.$url()
     expectTypeOf(result).toEqualTypeOf<string>()
+  })
+
+  test('file typing', async ({ expectTypeOf }) => {
+    vine.file = () => vine.string()
+
+    const request = vine.compile(
+      vine.object({
+        picture: vine.file({ extnames: ['jpg', 'jpeg', 'png', 'gif'], size: '1mb' }),
+      }),
+    )
+
+    const tuyau = createTuyau<{
+      user: {
+        $post: {
+          request: MakeTuyauRequest<InferInput<typeof request>>
+          response: { 200: Simplify<Serialize<{ id: string }>> }
+        }
+      }
+    }>('http://localhost:3333')
+
+    tuyau.user.$post({
+      picture: new File([], 'filename.jpg'),
+    })
+
+    tuyau.user.$post({
+      picture: new Blob([], { type: 'image/jpeg' }),
+    })
+
+    // This is how you would use it in React Native
+    tuyau.user.$post({
+      picture: {
+        uri: 'http://example.com/filename.jpg',
+        name: 'filename.jpg',
+        type: 'image/jpeg',
+      },
+    })
   })
 })

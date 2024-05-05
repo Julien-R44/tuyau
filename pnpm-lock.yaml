@@ -151,9 +151,15 @@ importers:
         specifier: ^4.5.1
         version: 4.5.1
     devDependencies:
+      '@adonisjs/core':
+        specifier: ^6.8.0
+        version: 6.8.0(@adonisjs/assembler@7.5.1(typescript@5.4.5))(@vinejs/vine@2.0.0)(edge.js@6.0.2)
       '@tuyau/utils':
         specifier: workspace:*
         version: link:../utils
+      '@vinejs/vine':
+        specifier: ^2.0.0
+        version: 2.0.0
 
   packages/core:
     dependencies:
@@ -186,7 +192,11 @@ importers:
         specifier: ^20.12.7
         version: 20.12.7
 
-  packages/utils: {}
+  packages/utils:
+    devDependencies:
+      '@adonisjs/bodyparser':
+        specifier: ^10.0.2
+        version: 10.0.2(@adonisjs/http-server@7.2.2(@adonisjs/application@8.2.2(@adonisjs/config@5.0.2)(@adonisjs/fold@10.1.2))(@adonisjs/encryption@6.0.2)(@adonisjs/events@9.0.2(@adonisjs/application@8.2.2(@adonisjs/config@5.0.2)(@adonisjs/fold@10.1.2))(@adonisjs/fold@10.1.2))(@adonisjs/fold@10.1.2)(@adonisjs/logger@6.0.3))
 
   playground:
     dependencies:
