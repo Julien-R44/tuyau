@@ -1,8 +1,12 @@
+import type { MultipartFile } from '@adonisjs/bodyparser/types'
+
 type JsonPrimitive = string | number | boolean | string | number | boolean | null
 
 type NonJsonPrimitive = undefined | Function | symbol
 
 type IsAny<T> = 0 extends 1 & T ? true : false
+
+type ReactNativeFile = { uri: string; type: string; name: string }
 
 type FilterKeys<TObj extends object, TFilter> = {
   [TKey in keyof TObj]: TObj[TKey] extends TFilter ? TKey : never
@@ -99,5 +103,9 @@ export type MakeTuyauResponse<T extends (...args: any) => any> = Simplify<
 
 /**
  * Shortcut for computing the Tuyau request type
+ *
+ * Also Remap MultipartFile to Blob | File | ReactNativeFile
  */
-export type MakeTuyauRequest<T extends object> = MakeOptional<T>
+export type MakeTuyauRequest<T extends object> = MakeOptional<{
+  [K in keyof T]: T[K] extends MultipartFile ? Blob | File | ReactNativeFile : T[K]
+}>

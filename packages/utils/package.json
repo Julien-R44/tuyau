@@ -20,6 +20,9 @@
     "checks": "pnpm lint && pnpm typecheck",
     "test": "c8 node --loader ts-node/esm bin/test.ts"
   },
+  "devDependencies": {
+    "@adonisjs/bodyparser": "^10.0.2"
+  },
   "publishConfig": {
     "access": "public",
     "tag": "latest"
