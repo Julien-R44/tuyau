@@ -28,7 +28,7 @@ export type TuyauResponse<Res extends Record<number, unknown>> =
 /**
  * Expose the response if awaited or the unwrap method that will return the data or throw an error
  */
-type ResponseOrUnwrap<Res extends Record<number, unknown>> = Promise<TuyauResponse<Res>> & {
+export type ResponseOrUnwrap<Res extends Record<number, unknown>> = Promise<TuyauResponse<Res>> & {
   unwrap: () => Promise<Res[200]>
 }
 
@@ -45,13 +45,13 @@ export type AdonisClient<in out Route extends Record<string, any>> = {
   }
     ? K extends '$get' | '$head'
       ? unknown extends Request
-        ? (options?: TuyauOptions & { query?: Request }) => ResponseOrUnwrap<Res>
+        ? (options?: TuyauQueryOptions & { query?: Request }) => ResponseOrUnwrap<Res>
         : {} extends Request
-          ? (options?: TuyauOptions & { query?: Request }) => ResponseOrUnwrap<Res>
-          : (options: TuyauOptions & { query: Request }) => ResponseOrUnwrap<Res>
+          ? (options?: TuyauQueryOptions & { query?: Request }) => ResponseOrUnwrap<Res>
+          : (options: TuyauQueryOptions & { query: Request }) => ResponseOrUnwrap<Res>
       : {} extends Request
-        ? (body?: Request | null, options?: TuyauOptions) => ResponseOrUnwrap<Res>
-        : (body: Request, options?: TuyauOptions) => ResponseOrUnwrap<Res>
+        ? (body?: Request | null, options?: TuyauQueryOptions) => ResponseOrUnwrap<Res>
+        : (body: Request, options?: TuyauQueryOptions) => ResponseOrUnwrap<Res>
     : K extends '$url'
       ? () => string
       : CreateParams<Route[K]>
@@ -67,13 +67,92 @@ export type CreateParams<Route extends Record<string, any>> =
           Prettify<AdonisClient<Route>>
     : never
 
+export type GeneratedRoutes = readonly {
+  params: readonly string[]
+  name: string
+  path: string
+  method: readonly string[]
+  types?: {
+    request: any
+    response: Record<number, unknown>
+  }
+}[]
+
+export type ApiDefinition = {
+  routes?: GeneratedRoutes
+  definition: Record<string, any>
+}
+
 /**
  * Options accepted by Tuyau
  */
-export type TuyauOptions = Omit<
+export type TuyauOptions<T extends ApiDefinition> = {
+  baseUrl: string
+  api?: T
+} & TuyauQueryOptions
+
+export type TuyauQueryOptions = Omit<
   KyOptions,
   'prefixUrl' | 'body' | 'json' | 'method' | 'searchParams'
+> & { query?: QueryParameters }
+
+export type QueryParameters = Record<
+  string,
+  MaybeArray<string | number | boolean | null | undefined>
 >
+
+/**
+ * ------------------------------------------------------------
+ * Types for the $route and related methods
+ * ------------------------------------------------------------
+ */
+
+export type RouteName<T extends GeneratedRoutes> = T[number]['name']
+
+export type RouteByName<T extends GeneratedRoutes, K extends T[number]['name']> = Extract<
+  T[number],
+  { name: K }
+>
+
+export type RoutesNameParams<
+  T extends GeneratedRoutes,
+  K extends T[number]['name'],
+> = K extends T[number]['name'] ? Extract<T[number], { name: K }>['params'] : never
+
+type MultipleFormatsParams<T extends readonly string[]> = T extends readonly []
+  ? undefined
+  :
+      | { [K in keyof T]: string | number }
+      | {
+          [K in CamelCase<T[number]>]: string | number
+        }
+
+export type RouteUrlParams<T extends GeneratedRoutes, RouteName extends T[number]['name']> =
+  MultipleFormatsParams<RoutesNameParams<T, RouteName>> extends undefined
+    ? { query?: QueryParameters }
+    : { query?: QueryParameters; params: MultipleFormatsParams<RoutesNameParams<T, RouteName>> }
+
+export type RouteReturnType<T extends GeneratedRoutes, K extends T[number]['name']> = {
+  [Method in RouteByName<T, K>['method'][number] as `$${Lowercase<Method>}`]: RouteByName<
+    T,
+    K
+  >['types'] extends {
+    request: infer Req
+    response: infer res extends Record<number, unknown>
+  }
+    ? Method extends 'GET' | 'HEAD'
+      ? Req extends undefined
+        ? (options?: TuyauQueryOptions) => ResponseOrUnwrap<res>
+        : {} extends Req
+          ? (options?: TuyauQueryOptions & { query?: Req }) => ResponseOrUnwrap<res>
+          : (options: TuyauQueryOptions & { query: Req }) => ResponseOrUnwrap<res>
+      : Req extends undefined
+        ? (body?: null, options?: TuyauQueryOptions) => ResponseOrUnwrap<res>
+        : {} extends Req
+          ? (body?: Req, options?: TuyauQueryOptions) => ResponseOrUnwrap<res>
+          : (body: Req, options?: TuyauQueryOptions) => ResponseOrUnwrap<res>
+    : (body?: unknown, options?: TuyauQueryOptions) => Promise<unknown>
+}
 
 /**
  * ------------------------------------------------------------
@@ -107,3 +186,21 @@ export type InferRequestType<T extends (...args: any) => any> = Parameters<T>[0]
 }
   ? Query
   : Parameters<T>[0]
+
+/**
+ * ------------------------------------------------------------
+ * Utility types
+ * ------------------------------------------------------------
+ */
+
+/**
+ * CamelCase a string
+ */
+export type CamelCase<S extends string> = S extends `${infer P1}_${infer P2}${infer P3}`
+  ? `${P1}${Uppercase<P2>}${CamelCase<P3>}`
+  : S
+
+/**
+ * Array or not of T
+ */
+type MaybeArray<T> = T | T[]

@@ -25,21 +25,24 @@ test.group('Typings', () => {
     }
 
     const tuyau = createTuyau<{
-      auth: {
-        login: {
-          $post: {
-            request: { email: string; password: string }
-            response: Simplify<
-              Serialize<
-                ConvertReturnTypeToRecordStatusResponse<
-                  Awaited<ReturnType<typeof controllerMethod>>
+      routes: []
+      definition: {
+        auth: {
+          login: {
+            $post: {
+              request: { email: string; password: string }
+              response: Simplify<
+                Serialize<
+                  ConvertReturnTypeToRecordStatusResponse<
+                    Awaited<ReturnType<typeof controllerMethod>>
+                  >
                 >
               >
-            >
+            }
           }
         }
       }
-    }>('http://localhost:3333')
+    }>({ baseUrl: 'http://localhost:3333' })
 
     nock('http://localhost:3333').post('/auth/login').reply(200, { token: '123' })
 

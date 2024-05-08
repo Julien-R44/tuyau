@@ -36,7 +36,9 @@ export type Serialize<T> =
                 : T extends ReadonlyArray<infer U>
                   ? (U extends NonJsonPrimitive ? null : Serialize<U>)[]
                   : T extends object
-                    ? SerializeObject<T>
+                    ? T extends { [key: string]: JsonPrimitive }
+                      ? T
+                      : SerializeObject<T>
                     : never
 
 /** JSON serialize [tuples](https://www.typescriptlang.org/docs/handbook/2/objects.html#tuple-types) */

@@ -7,15 +7,18 @@ import { TuyauHTTPError, createTuyau } from '../index.js'
 test.group('Client | Runtime', () => {
   test('post something', async ({ assert }) => {
     const tuyau = createTuyau<{
-      auth: {
-        login: {
-          $post: {
-            request: { email: string; password: string }
-            response: { 200: Simplify<Serialize<{ token: string }>> }
+      routes: []
+      definition: {
+        auth: {
+          login: {
+            $post: {
+              request: { email: string; password: string }
+              response: { 200: Simplify<Serialize<{ token: string }>> }
+            }
           }
         }
       }
-    }>('http://localhost:3333')
+    }>({ baseUrl: 'http://localhost:3333' })
 
     nock('http://localhost:3333').post('/auth/login').reply(200, { token: '123' })
 
@@ -27,17 +30,46 @@ test.group('Client | Runtime', () => {
     assert.equal(result.data!.token, '123')
   })
 
-  test('get something', async ({ assert }) => {
+  test('post with query parameters', async ({}) => {
     const tuyau = createTuyau<{
-      users: {
-        $get: {
-          request: { email: string }
-          response: {
-            200: Simplify<Serialize<{ token: string }>>
+      routes: []
+      definition: {
+        auth: {
+          login: {
+            $post: {
+              request: { email: string; password: string }
+              response: { 200: Simplify<Serialize<{ token: string }>> }
+            }
           }
         }
       }
-    }>('http://localhost:3333')
+    }>({ baseUrl: 'http://localhost:3333' })
+
+    nock('http://localhost:3333')
+      .post('/auth/login')
+      .query({ foo: 'bar' })
+      .reply(200, { token: '123' })
+
+    await tuyau.auth.login.$post(
+      { email: 'foo@ok.com', password: 'test' },
+      { query: { foo: 'bar' } },
+    )
+  })
+
+  test('get something', async ({ assert }) => {
+    const tuyau = createTuyau<{
+      routes: []
+      definition: {
+        users: {
+          $get: {
+            request: { email: string }
+            response: {
+              200: Simplify<Serialize<{ token: string }>>
+            }
+          }
+        }
+      }
+    }>({ baseUrl: 'http://localhost:3333' })
 
     nock('http://localhost:3333')
       .get('/users')
@@ -51,15 +83,18 @@ test.group('Client | Runtime', () => {
 
   test('store and reuse query', async ({ assert }) => {
     const tuyau = createTuyau<{
-      auth: {
-        login: {
-          $post: {
-            request: { email: string; password: string }
-            response: { 200: Simplify<Serialize<{ token: string }>> }
+      routes: []
+      definition: {
+        auth: {
+          login: {
+            $post: {
+              request: { email: string; password: string }
+              response: { 200: Simplify<Serialize<{ token: string }>> }
+            }
           }
         }
       }
-    }>('http://localhost:3333')
+    }>({ baseUrl: 'http://localhost:3333' })
 
     nock('http://localhost:3333').post('/auth/login').times(2).reply(200, { token: '123' })
 
@@ -74,15 +109,18 @@ test.group('Client | Runtime', () => {
 
   test('parse as ArrayBuffer when octet-stream response', async ({ assert }) => {
     const tuyau = createTuyau<{
-      auth: {
-        login: {
-          $post: {
-            request: { email: string; password: string }
-            response: { 200: Simplify<Serialize<{ token: string }>> }
+      routes: []
+      definition: {
+        auth: {
+          login: {
+            $post: {
+              request: { email: string; password: string }
+              response: { 200: Simplify<Serialize<{ token: string }>> }
+            }
           }
         }
       }
-    }>('http://localhost:3333')
+    }>({ baseUrl: 'http://localhost:3333' })
 
     nock('http://localhost:3333')
       .post('/auth/login')
@@ -98,15 +136,18 @@ test.group('Client | Runtime', () => {
 
   test('parse as text when content type is not recognized', async ({ assert }) => {
     const tuyau = createTuyau<{
-      auth: {
-        login: {
-          $post: {
-            request: { email: string; password: string }
-            response: string
+      routes: []
+      definition: {
+        auth: {
+          login: {
+            $post: {
+              request: { email: string; password: string }
+              response: string
+            }
           }
         }
       }
-    }>('http://localhost:3333')
+    }>({ baseUrl: 'http://localhost:3333' })
 
     nock('http://localhost:3333')
       .post('/auth/login')
@@ -124,15 +165,19 @@ test.group('Client | Runtime', () => {
   test('pass ky options when creating instance', async ({ assert }) => {
     let hookCalled = false
     const tuyau = createTuyau<{
-      auth: {
-        login: {
-          $post: {
-            request: unknown
-            response: { 200: Simplify<Serialize<{ token: string }>> }
+      routes: []
+      definition: {
+        auth: {
+          login: {
+            $post: {
+              request: unknown
+              response: { 200: Simplify<Serialize<{ token: string }>> }
+            }
           }
         }
       }
-    }>('http://localhost:3333', {
+    }>({
+      baseUrl: 'http://localhost:3333',
       headers: { 'x-foo': 'bar' },
       hooks: {
         beforeRequest: [
@@ -154,15 +199,18 @@ test.group('Client | Runtime', () => {
 
   test('route params', async ({ assert }) => {
     const tuyau = createTuyau<{
-      users: {
-        ':id': {
-          $get: {
-            request: { foo: string }
-            response: { 200: Simplify<Serialize<{ id: string }>> }
+      routes: []
+      definition: {
+        users: {
+          ':id': {
+            $get: {
+              request: { foo: string }
+              response: { 200: Simplify<Serialize<{ id: string }>> }
+            }
           }
         }
       }
-    }>('http://localhost:3333')
+    }>({ baseUrl: 'http://localhost:3333' })
 
     nock('http://localhost:3333').get('/users/1?foo=bar').reply(200, { id: '1' })
     const result = await tuyau.users({ id: '1' }).$get({ query: { foo: 'bar' } })
@@ -172,13 +220,16 @@ test.group('Client | Runtime', () => {
 
   test('pass query params array the right way', async () => {
     const tuyau = createTuyau<{
-      users: {
-        $get: {
-          request: { ids: (string | number)[] }
-          response: { 200: Simplify<Serialize<{ id: string }>> }
+      routes: []
+      definition: {
+        users: {
+          $get: {
+            request: { ids: (string | number)[] }
+            response: { 200: Simplify<Serialize<{ id: string }>> }
+          }
         }
       }
-    }>('http://localhost:3333')
+    }>({ baseUrl: 'http://localhost:3333' })
 
     nock('http://localhost:3333').get('/users?ids[]=1&ids[]=2').reply(200, { id: '1' })
 
@@ -187,13 +238,16 @@ test.group('Client | Runtime', () => {
 
   test('pass query params array with single item the right way', async () => {
     const tuyau = createTuyau<{
-      users: {
-        $get: {
-          request: { ids: (string | number)[] }
-          response: { 200: Simplify<Serialize<{ id: string }>> }
+      routes: []
+      definition: {
+        users: {
+          $get: {
+            request: { ids: (string | number)[] }
+            response: { 200: Simplify<Serialize<{ id: string }>> }
+          }
         }
       }
-    }>('http://localhost:3333')
+    }>({ baseUrl: 'http://localhost:3333' })
 
     nock('http://localhost:3333').get('/users?ids[]=1').reply(200, { id: '1' })
 
@@ -202,28 +256,52 @@ test.group('Client | Runtime', () => {
 
   test('handle undefined query params', async () => {
     const tuyau = createTuyau<{
-      users: {
-        $get: {
-          request: { ids?: (string | number)[] }
-          response: { 200: Simplify<Serialize<{ id: string }>> }
+      routes: []
+      definition: {
+        users: {
+          $get: {
+            request: { ids?: (string | number)[] }
+            response: { 200: Simplify<Serialize<{ id: string }>> }
+          }
         }
       }
-    }>('http://localhost:3333')
+    }>({ baseUrl: 'http://localhost:3333' })
 
     nock('http://localhost:3333').get('/users').reply(200, { id: '1' })
 
     await tuyau.users.$get({ query: { ids: undefined } })
   })
 
-  test('multiple query params', async () => {
+  test('handle undefined query params in array', async () => {
     const tuyau = createTuyau<{
-      users: {
-        $get: {
-          request: { foo: string; bar: string; ids: (string | number)[] }
-          response: { 200: Simplify<Serialize<{ id: string }>> }
+      routes: []
+      definition: {
+        users: {
+          $get: {
+            request: { ids?: any[] }
+            response: { 200: Simplify<Serialize<{ id: string }>> }
+          }
         }
       }
-    }>('http://localhost:3333')
+    }>({ baseUrl: 'http://localhost:3333' })
+
+    nock('http://localhost:3333').get('/users?ids[]=1&ids[]=2').reply(200, { id: 1 })
+
+    await tuyau.users.$get({ query: { ids: [1, undefined, 2, null] } })
+  })
+
+  test('multiple query params', async () => {
+    const tuyau = createTuyau<{
+      routes: []
+      definition: {
+        users: {
+          $get: {
+            request: { foo: string; bar: string; ids: (string | number)[] }
+            response: { 200: Simplify<Serialize<{ id: string }>> }
+          }
+        }
+      }
+    }>({ baseUrl: 'http://localhost:3333' })
 
     nock('http://localhost:3333')
       .get('/users?foo=bar&bar=baz&ids[]=1&ids[]=2')
@@ -234,15 +312,18 @@ test.group('Client | Runtime', () => {
 
   test('send as form data when payload include file', async () => {
     const tuyau = createTuyau<{
-      auth: {
-        login: {
-          $post: {
-            request: { file: any }
-            response: { 200: Simplify<Serialize<{ token: string }>> }
+      routes: []
+      definition: {
+        auth: {
+          login: {
+            $post: {
+              request: { file: any }
+              response: { 200: Simplify<Serialize<{ token: string }>> }
+            }
           }
         }
       }
-    }>('http://localhost:3333')
+    }>({ baseUrl: 'http://localhost:3333' })
 
     nock('http://localhost:3333')
       .post('/auth/login')
@@ -256,15 +337,18 @@ test.group('Client | Runtime', () => {
 
   test('unwrap response', async ({ assert }) => {
     const tuyau = createTuyau<{
-      auth: {
-        login: {
-          $post: {
-            request: unknown
-            response: { 200: Simplify<Serialize<{ token: string }>> }
+      routes: []
+      definition: {
+        auth: {
+          login: {
+            $post: {
+              request: unknown
+              response: { 200: Simplify<Serialize<{ token: string }>> }
+            }
           }
         }
       }
-    }>('http://localhost:3333')
+    }>({ baseUrl: 'http://localhost:3333' })
 
     nock('http://localhost:3333').post('/auth/login').reply(200, { token: '123' })
 
@@ -276,15 +360,18 @@ test.group('Client | Runtime', () => {
     assert.plan(2)
 
     const tuyau = createTuyau<{
-      auth: {
-        login: {
-          $post: {
-            request: unknown
-            response: { 200: Simplify<Serialize<{ token: string }>> }
+      routes: []
+      definition: {
+        auth: {
+          login: {
+            $post: {
+              request: unknown
+              response: { 200: Simplify<Serialize<{ token: string }>> }
+            }
           }
         }
       }
-    }>('http://localhost:3333')
+    }>({ baseUrl: 'http://localhost:3333' })
 
     nock('http://localhost:3333').post('/auth/login').reply(400, { message: 'Invalid credentials' })
 
@@ -298,30 +385,33 @@ test.group('Client | Runtime', () => {
 
   test('generate url using $url', async ({ assert }) => {
     const tuyau = createTuyau<{
-      users: {
-        '$url': {}
-        '$get': {
-          request: { email: string }
-          response: { 200: Simplify<Serialize<{ token: string }>> }
-        }
-        ':id': {
-          $url: {}
-          $get: {
+      routes: []
+      definition: {
+        users: {
+          '$url': {}
+          '$get': {
             request: { email: string }
             response: { 200: Simplify<Serialize<{ token: string }>> }
           }
+          ':id': {
+            $url: {}
+            $get: {
+              request: { email: string }
+              response: { 200: Simplify<Serialize<{ token: string }>> }
+            }
+          }
         }
-      }
-      auth: {
-        login: {
-          $url: {}
-          $post: {
-            request: unknown
-            response: { 200: Simplify<Serialize<{ token: string }>> }
+        auth: {
+          login: {
+            $url: {}
+            $post: {
+              request: unknown
+              response: { 200: Simplify<Serialize<{ token: string }>> }
+            }
           }
         }
       }
-    }>('http://localhost:3333')
+    }>({ baseUrl: 'http://localhost:3333' })
 
     assert.deepEqual(tuyau.users.$url(), 'http://localhost:3333/users')
     assert.deepEqual(tuyau.auth.login.$url(), 'http://localhost:3333/auth/login')
@@ -330,13 +420,16 @@ test.group('Client | Runtime', () => {
 
   test('upload file pass the right content type', async () => {
     const tuyau = createTuyau<{
-      users: {
-        $post: {
-          request: { file: any }
-          response: { 200: Simplify<Serialize<{ token: string }>> }
+      routes: []
+      definition: {
+        users: {
+          $post: {
+            request: { file: any }
+            response: { 200: Simplify<Serialize<{ token: string }>> }
+          }
         }
       }
-    }>('http://localhost:3333')
+    }>({ baseUrl: 'http://localhost:3333' })
 
     nock('http://localhost:3333')
       .post('/users')
@@ -348,13 +441,16 @@ test.group('Client | Runtime', () => {
 
   test('send blob', async () => {
     const tuyau = createTuyau<{
-      users: {
-        $post: {
-          request: { file: any }
-          response: { 200: Simplify<Serialize<{ token: string }>> }
+      routes: []
+      definition: {
+        users: {
+          $post: {
+            request: { file: any }
+            response: { 200: Simplify<Serialize<{ token: string }>> }
+          }
         }
       }
-    }>('http://localhost:3333')
+    }>({ baseUrl: 'http://localhost:3333' })
 
     const blob = new Blob(['hello'], { type: 'image/jpeg' })
 
@@ -363,20 +459,21 @@ test.group('Client | Runtime', () => {
       .reply(200, { token: '123' })
       .matchHeader('content-type', /multipart\/form-data/)
 
-    const result = await tuyau.users.$post({ file: blob })
-
-    console.log(result)
+    await tuyau.users.$post({ file: blob })
   })
 
   test('pass form data directly', async () => {
     const tuyau = createTuyau<{
-      users: {
-        $post: {
-          request: { name: string; email: string }
-          response: { 200: Simplify<Serialize<{ token: string }>> }
+      routes: []
+      definition: {
+        users: {
+          $post: {
+            request: { name: string; email: string }
+            response: { 200: Simplify<Serialize<{ token: string }>> }
+          }
         }
       }
-    }>('http://localhost:3333')
+    }>({ baseUrl: 'http://localhost:3333' })
 
     nock('http://localhost:3333')
       .post('/users')
