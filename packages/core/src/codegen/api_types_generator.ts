@@ -163,6 +163,22 @@ export class ApiTypesGenerator {
     })
   }
 
+  /**
+   * Generate a type name based on the route pattern and methods
+   *
+   * GET /users/:id => UsersIdGet
+   */
+  #generateTypeName(route: { pattern: string; methods: string[] }) {
+    const remappedSegments = route.pattern
+      .split('/')
+      .filter(Boolean)
+      .map((segment) => (segment.startsWith(':') ? 'id' : segment))
+      .join(' ')
+
+    const methods = string.pascalCase(route.methods.join(' '))
+    return string.pascalCase(remappedSegments) + methods
+  }
+
   #generateRoutesNameArray(
     routes: RouteJSON[],
     typesByPattern: Record<string, any>,
@@ -175,12 +191,10 @@ export class ApiTypesGenerator {
           .filter((node: any) => node.type !== 0)
           .map((node: any) => node.val)
 
-        let typeName =
-          string.pascalCase(string.slug(pattern)) + string.pascalCase(methods.join(' '))
-
         /**
          * If the types wasn't generated, we fallback to `unknown` type
          */
+        let typeName = this.#generateTypeName({ pattern, methods })
         if (!typesByPattern[typeName]) typeName = 'unknown'
 
         return { params, name, path: pattern, method: methods, types: typeName }
@@ -316,23 +330,16 @@ export class ApiTypesGenerator {
         if (i !== segments.length - 1) return
 
         /**
-         * Create a name for the Type
-         */
-        const typeName =
-          string.pascalCase(string.slug(route.pattern)) + string.pascalCase(methods.join(''))
-
-        /**
          * Store the request and response types by pattern
          */
+        const typeName = this.#generateTypeName(route)
         typesByPattern[typeName] = {
           request: schemaImport ? `MakeTuyauRequest<${schemaImport}>` : 'unknown',
           response: `MakeTuyauResponse<import('${relativePath}').default['${routeHandler.method}']>`,
         }
 
         currentLevel.$url = {}
-        for (const method of methods) {
-          currentLevel[method] = `${string.pascalCase(typeName)}`
-        }
+        for (const method of methods) currentLevel[method] = typeName
       })
     }
 
