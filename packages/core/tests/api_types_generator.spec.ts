@@ -183,4 +183,47 @@ test.group('Api Types Generator', () => {
     )
     assert.exists(warning)
   })
+
+  test('should use unknown in route name array if type is not found', async ({ fs, assert }) => {
+    const apiTypesGenerator = new ApiTypesGenerator({
+      logger,
+      project: await setupProject(),
+      config: {},
+      appRoot: fs.baseUrl,
+      routes: [
+        {
+          pattern: '/users',
+          methods: ['GET'],
+          name: 'users',
+          handler: { reference: '#controllers/users_controller.index', handle: () => {} },
+          domain: 'root',
+        },
+      ] as any,
+    })
+
+    await apiTypesGenerator.generate()
+
+    const file = await fs.contents('./.adonisjs/api.ts')
+    assert.snapshot(file).matchInline(`
+      "import type { MakeTuyauRequest, MakeTuyauResponse } from '@tuyau/utils/types'
+      import type { InferInput } from '@vinejs/vine/types'
+
+      interface AdonisApi {
+      }
+      const routes = [
+        {
+          params: [],
+          name: 'users',
+          path: '/users',
+          method: [\\"GET\\"],
+          types: {} as unknown,
+        },
+      ] as const;
+      export const api = {
+        routes,
+        definition: {} as AdonisApi
+      }
+      "
+    `)
+  })
 })

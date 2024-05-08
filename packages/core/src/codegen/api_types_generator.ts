@@ -163,7 +163,10 @@ export class ApiTypesGenerator {
     })
   }
 
-  #generateRoutesNameArray(routes: RouteJSON[]): RouteNameArray {
+  #generateRoutesNameArray(
+    routes: RouteJSON[],
+    typesByPattern: Record<string, any>,
+  ): RouteNameArray {
     return routes
       .map(({ name, pattern, methods }) => {
         // type != 0 === dynamic
@@ -172,8 +175,13 @@ export class ApiTypesGenerator {
           .filter((node: any) => node.type !== 0)
           .map((node: any) => node.val)
 
-        const typeName =
+        let typeName =
           string.pascalCase(string.slug(pattern)) + string.pascalCase(methods.join(' '))
+
+        /**
+         * If the types wasn't generated, we fallback to `unknown` type
+         */
+        if (!typesByPattern[typeName]) typeName = 'unknown'
 
         return { params, name, path: pattern, method: methods, types: typeName }
       })
@@ -334,7 +342,7 @@ export class ApiTypesGenerator {
     await this.#writeApiFile({
       definition,
       typesByPattern,
-      routesNameArray: this.#generateRoutesNameArray(routes),
+      routesNameArray: this.#generateRoutesNameArray(routes, typesByPattern),
     })
   }
 }
