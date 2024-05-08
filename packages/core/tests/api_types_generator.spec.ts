@@ -52,20 +52,27 @@ test.group('Api Types Generator', () => {
 
     await apiTypesGenerator.generate()
 
-    const file = await fs.contents('./.adonisjs/types/api.d.ts')
+    const file = await fs.contents('./.adonisjs/api.ts')
     assert.snapshot(file).matchInline(`
       "import type { MakeTuyauRequest, MakeTuyauResponse } from '@tuyau/utils/types'
       import type { InferInput } from '@vinejs/vine/types'
 
-      export interface AdonisApi {
+      type UsersGet = {
+        request: unknown
+        response: MakeTuyauResponse<import('../app/controllers/users_controller.ts').default['index']>
+      }
+      interface AdonisApi {
         'users': {
           '$url': {
           };
-          '$get': {
-            'request': unknown;
-            'response': MakeTuyauResponse<import('../../app/controllers/users_controller.ts').default['index']>;
-          };
+          '$get': UsersGet;
         };
+      }
+      const routes = [
+      ] as const;
+      export const api = {
+        routes,
+        definition: {} as AdonisApi
       }
       "
     `)
@@ -115,20 +122,27 @@ test.group('Api Types Generator', () => {
 
     await apiTypesGenerator.generate()
 
-    const file = await fs.contents('./.adonisjs/types/api.d.ts')
+    const file = await fs.contents('./.adonisjs/api.ts')
     assert.snapshot(file).matchInline(`
       "import type { MakeTuyauRequest, MakeTuyauResponse } from '@tuyau/utils/types'
       import type { InferInput } from '@vinejs/vine/types'
 
-      export interface AdonisApi {
+      type UsersGet = {
+        request: MakeTuyauRequest<InferInput<typeof import('../app/controllers/validator.ts')['getUsersValidator']>>
+        response: MakeTuyauResponse<import('../app/controllers/users_controller.ts').default['index']>
+      }
+      interface AdonisApi {
         'users': {
           '$url': {
           };
-          '$get': {
-            'request': MakeTuyauRequest<InferInput<typeof import('../../app/controllers/validator.ts')['getUsersValidator']>>;
-            'response': MakeTuyauResponse<import('../../app/controllers/users_controller.ts').default['index']>;
-          };
+          '$get': UsersGet;
         };
+      }
+      const routes = [
+      ] as const;
+      export const api = {
+        routes,
+        definition: {} as AdonisApi
       }
       "
     `)

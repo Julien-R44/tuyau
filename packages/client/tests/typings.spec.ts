@@ -11,15 +11,18 @@ import type { InferRequestType, InferResponseType } from '../index.js'
 test.group('Client | Typings', () => {
   test('post', async ({ expectTypeOf }) => {
     const tuyau = createTuyau<{
-      auth: {
-        login: {
-          $post: {
-            request: { email: string; password: string }
-            response: { 200: Simplify<Serialize<{ token: string }>> }
+      routes: []
+      definition: {
+        auth: {
+          login: {
+            $post: {
+              request: { email: string; password: string }
+              response: { 200: Simplify<Serialize<{ token: string }>> }
+            }
           }
         }
       }
-    }>('http://localhost:3333')
+    }>({ baseUrl: 'http://localhost:3333' })
 
     expectTypeOf(tuyau.auth.login.$post).parameter(0).toEqualTypeOf<{
       email: string
@@ -32,13 +35,16 @@ test.group('Client | Typings', () => {
 
   test('get', async ({ expectTypeOf }) => {
     const tuyau = createTuyau<{
-      users: {
-        $get: {
-          request: { email: string }
-          response: { 200: Simplify<Serialize<{ token: string }>> }
+      routes: []
+      definition: {
+        users: {
+          $get: {
+            request: { email: string }
+            response: { 200: Simplify<Serialize<{ token: string }>> }
+          }
         }
       }
-    }>('http://localhost:3333')
+    }>({ baseUrl: 'http://localhost:3333' })
 
     expectTypeOf(tuyau.users.$get).parameter(0).toMatchTypeOf<{
       query: { email: string }
@@ -50,13 +56,16 @@ test.group('Client | Typings', () => {
 
   test('get | every params optionals', async ({ expectTypeOf }) => {
     const tuyau = createTuyau<{
-      users: {
-        $get: {
-          request: { email?: string }
-          response: { 200: Simplify<Serialize<{ token: string }>> }
+      routes: []
+      definition: {
+        users: {
+          $get: {
+            request: { email?: string }
+            response: { 200: Simplify<Serialize<{ token: string }>> }
+          }
         }
       }
-    }>('http://localhost:3333')
+    }>({ baseUrl: 'http://localhost:3333' })
 
     expectTypeOf(tuyau.users.$get)
       .parameter(0)
@@ -65,13 +74,16 @@ test.group('Client | Typings', () => {
 
   test('get | only one optional props', async ({ expectTypeOf }) => {
     const tuyau = createTuyau<{
-      users: {
-        $get: {
-          request: { email: string; page?: number }
-          response: { 200: Simplify<Serialize<{ token: string }>> }
+      routes: []
+      definition: {
+        users: {
+          $get: {
+            request: { email: string; page?: number }
+            response: { 200: Simplify<Serialize<{ token: string }>> }
+          }
         }
       }
-    }>('http://localhost:3333')
+    }>({ baseUrl: 'http://localhost:3333' })
 
     expectTypeOf(tuyau.users.$get)
       .parameter(0)
@@ -80,15 +92,18 @@ test.group('Client | Typings', () => {
 
   test('result as string', async ({ expectTypeOf }) => {
     const tuyau = createTuyau<{
-      auth: {
-        login: {
-          $post: {
-            request: { email: string; password: string }
-            response: { 200: Simplify<Serialize<string>> }
+      routes: []
+      definition: {
+        auth: {
+          login: {
+            $post: {
+              request: { email: string; password: string }
+              response: { 200: Simplify<Serialize<string>> }
+            }
           }
         }
       }
-    }>('http://localhost:3333')
+    }>({ baseUrl: 'http://localhost:3333' })
 
     type Response = Awaited<ReturnType<typeof tuyau.auth.login.$post>>
     expectTypeOf<NonNullable<Response['data']>>().toEqualTypeOf<string>()
@@ -96,15 +111,18 @@ test.group('Client | Typings', () => {
 
   test('route params', async ({ expectTypeOf }) => {
     const tuyau = createTuyau<{
-      users: {
-        ':id': {
-          $get: {
-            request: { foo: string }
-            response: { 200: Simplify<Serialize<{ id: string }>> }
+      routes: []
+      definition: {
+        users: {
+          ':id': {
+            $get: {
+              request: { foo: string }
+              response: { 200: Simplify<Serialize<{ id: string }>> }
+            }
           }
         }
       }
-    }>('http://localhost:3333')
+    }>({ baseUrl: 'http://localhost:3333' })
 
     expectTypeOf(tuyau.users).parameter(0).toEqualTypeOf<{ id: string | number }>()
     expectTypeOf(tuyau.users({ id: '1' }).$get)
@@ -114,17 +132,20 @@ test.group('Client | Typings', () => {
 
   test('narrow error', async ({ expectTypeOf }) => {
     const tuyau = createTuyau<{
-      users: {
-        $get: {
-          request: { foo: string }
-          response: {
-            200: Simplify<Serialize<{ id: string }>>
-            404: Simplify<Serialize<{ messageNotFound: string }>>
-            500: Simplify<Serialize<{ messageServerError: string }>>
+      routes: []
+      definition: {
+        users: {
+          $get: {
+            request: { foo: string }
+            response: {
+              200: Simplify<Serialize<{ id: string }>>
+              404: Simplify<Serialize<{ messageNotFound: string }>>
+              500: Simplify<Serialize<{ messageServerError: string }>>
+            }
           }
         }
       }
-    }>('http://localhost:3333')
+    }>({ baseUrl: 'http://localhost:3333' })
 
     type Error = Awaited<ReturnType<typeof tuyau.users.$get>>['error']
 
@@ -153,17 +174,20 @@ test.group('Client | Typings', () => {
 
   test('InferResponseType', async ({ expectTypeOf }) => {
     const tuyau = createTuyau<{
-      users: {
-        $get: {
-          request: { foo: string }
-          response: {
-            200: Simplify<Serialize<{ id: string }>>
-            404: Simplify<Serialize<{ messageNotFound: string }>>
-            500: Simplify<Serialize<{ messageServerError: string }>>
+      routes: []
+      definition: {
+        users: {
+          $get: {
+            request: { foo: string }
+            response: {
+              200: Simplify<Serialize<{ id: string }>>
+              404: Simplify<Serialize<{ messageNotFound: string }>>
+              500: Simplify<Serialize<{ messageServerError: string }>>
+            }
           }
         }
       }
-    }>('http://localhost:3333')
+    }>({ baseUrl: 'http://localhost:3333' })
 
     expectTypeOf<InferResponseType<typeof tuyau.users.$get>>().toEqualTypeOf<{
       id: string
@@ -172,30 +196,62 @@ test.group('Client | Typings', () => {
 
   test('InferRequestType', async ({ expectTypeOf }) => {
     const tuyau = createTuyau<{
-      users: {
-        $get: {
-          request: { foo: string }
-          response: {
-            200: Simplify<Serialize<{ id: string }>>
-            404: Simplify<Serialize<{ messageNotFound: string }>>
-            500: Simplify<Serialize<{ messageServerError: string }>>
+      routes: [
+        {
+          name: 'users'
+          path: '/users'
+          params: []
+          method: ['GET', 'POST']
+          types: {
+            request: { foo: string }
+            response: {
+              200: Simplify<Serialize<{ id: string }>>
+              404: Simplify<Serialize<{ messageNotFound: string }>>
+              500: Simplify<Serialize<{ messageServerError: string }>>
+            }
+          }
+        },
+      ]
+      definition: {
+        users: {
+          $get: {
+            request: { foo: string }
+            response: {
+              200: Simplify<Serialize<{ id: string }>>
+              404: Simplify<Serialize<{ messageNotFound: string }>>
+              500: Simplify<Serialize<{ messageServerError: string }>>
+            }
+          }
+          $post: {
+            request: { foo: string }
+            response: {
+              200: Simplify<Serialize<{ id: string }>>
+              404: Simplify<Serialize<{ messageNotFound: string }>>
+              500: Simplify<Serialize<{ messageServerError: string }>>
+            }
           }
         }
       }
-    }>('http://localhost:3333')
+    }>({ baseUrl: 'http://localhost:3333' })
 
-    expectTypeOf<InferRequestType<typeof tuyau.users.$get>>().toEqualTypeOf<{ foo: string }>()
-  })
+    const getUsers = tuyau.$route('users').$get
+    expectTypeOf<InferRequestType<typeof tuyau.users.$get>>().toMatchTypeOf<{ foo: string }>()
+    expectTypeOf<InferRequestType<typeof tuyau.users.$post>>().toEqualTypeOf<{ foo: string }>()
+    expectTypeOf<InferRequestType<typeof getUsers>>().toMatchTypeOf<{ foo: string }>()
+  }).fails()
 
   test('$url method', async ({ expectTypeOf }) => {
     const tuyau = createTuyau<{
-      users: {
-        $url: {}
-        $get: {
-          request: { foo: string }
+      routes: []
+      definition: {
+        users: {
+          $url: {}
+          $get: {
+            request: { foo: string }
+          }
         }
       }
-    }>('http://localhost:3333')
+    }>({ baseUrl: 'http://localhost:3333' })
 
     const result = tuyau.users.$url()
     expectTypeOf(result).toEqualTypeOf<string>()
@@ -212,13 +268,16 @@ test.group('Client | Typings', () => {
     )
 
     const tuyau = createTuyau<{
-      user: {
-        $post: {
-          request: MakeTuyauRequest<InferInput<typeof request>>
-          response: { 200: Simplify<Serialize<{ id: string }>> }
+      routes: []
+      definition: {
+        user: {
+          $post: {
+            request: MakeTuyauRequest<InferInput<typeof request>>
+            response: { 200: Simplify<Serialize<{ id: string }>> }
+          }
         }
       }
-    }>('http://localhost:3333')
+    }>({ baseUrl: 'http://localhost:3333' })
 
     tuyau.user.$post({
       picture: new File([], 'filename.jpg'),

@@ -1,8 +1,11 @@
 import { Node } from 'ts-morph'
+// @ts-expect-error tkt
+import matchit from '@poppinss/matchit'
 import { fileURLToPath } from 'node:url'
 import type { Logger } from '@poppinss/cliui'
 import { dirname, relative } from 'node:path'
 import { existsSync, mkdirSync } from 'node:fs'
+import string from '@adonisjs/core/helpers/string'
 import type { RouteJSON } from '@adonisjs/core/types/http'
 import { parseBindingReference } from '@adonisjs/core/helpers'
 import type { MethodDeclaration, Project, SourceFile } from 'ts-morph'
@@ -12,6 +15,14 @@ import type { TuyauConfig } from '../types.js'
 type HandlerData = { method: MethodDeclaration; body: Node }
 
 type RouteReferenceParsed = Awaited<ReturnType<typeof parseBindingReference>>
+
+type RouteNameArray = {
+  params: any
+  name: string | undefined
+  path: string
+  method: string[]
+  types: string
+}[]
 
 export class ApiTypesGenerator {
   #appRoot: URL
@@ -46,7 +57,7 @@ export class ApiTypesGenerator {
    * Create the destination directory if it does not exists
    */
   #prepareDestination() {
-    this.#destination = new URL('./.adonisjs/types/api.d.ts', this.#appRoot)
+    this.#destination = new URL('./.adonisjs/api.ts', this.#appRoot)
     const directory = this.#getDestinationDirectory()
     if (!existsSync(directory)) {
       mkdirSync(directory, { recursive: true })
@@ -116,13 +127,13 @@ export class ApiTypesGenerator {
   /**
    * Generate the final interface containing all routes, request, and response
    */
-  #generateFinalInterface(types: Record<string, any>, indent = '  ') {
+  #generateDefinitionInterface(types: Record<string, any>, indent = '  ') {
     let interfaceContent = ''
 
     Object.entries(types).forEach(([key, value]) => {
       if (typeof value === 'object') {
         interfaceContent += `${indent}'${key}': {\n`
-        interfaceContent += this.#generateFinalInterface(value, indent + '  ')
+        interfaceContent += this.#generateDefinitionInterface(value, indent + '  ')
         interfaceContent += `${indent}};\n`
       } else {
         interfaceContent += `${indent}'${key}': ${value};\n`
@@ -130,32 +141,6 @@ export class ApiTypesGenerator {
     })
 
     return interfaceContent
-  }
-
-  /**
-   * Write the final interface containing all routes, request, and response
-   * in a routes.d.ts file
-   */
-  async #writeFinalInterface(types: Record<string, any>) {
-    const file = this.#project.createSourceFile(fileURLToPath(this.#destination), '', {
-      overwrite: true,
-    })
-
-    if (!file) throw new Error('Unable to create the api.d.ts file')
-
-    file?.removeText()
-
-    file.insertText(0, (writer) => {
-      writer
-        .writeLine(`import type { MakeTuyauRequest, MakeTuyauResponse } from '@tuyau/utils/types'`)
-        .writeLine(`import type { InferInput } from '@vinejs/vine/types'`)
-        .newLine()
-        .writeLine(`export interface AdonisApi {`)
-        .write(this.#generateFinalInterface(types, '  '))
-        .writeLine(`}`)
-    })
-
-    await file.save()
   }
 
   /**
@@ -178,8 +163,95 @@ export class ApiTypesGenerator {
     })
   }
 
+  #generateRoutesNameArray(routes: RouteJSON[]): RouteNameArray {
+    return routes
+      .map(({ name, pattern, methods }) => {
+        // type != 0 === dynamic
+        const params = matchit
+          .parse(pattern)
+          .filter((node: any) => node.type !== 0)
+          .map((node: any) => node.val)
+
+        const typeName =
+          string.pascalCase(string.slug(pattern)) + string.pascalCase(methods.join(' '))
+
+        return { params, name, path: pattern, method: methods, types: typeName }
+      })
+      .filter((route) => !!route.name)
+  }
+
+  async #writeApiFile(options: {
+    routesNameArray: RouteNameArray
+    definition: Record<string, any>
+    typesByPattern: Record<string, any>
+  }) {
+    const path = fileURLToPath(this.#destination)
+    const file = this.#project.createSourceFile(path, '', { overwrite: true })
+    if (!file) throw new Error('Unable to create the api.ts file')
+
+    file.removeText().insertText(0, (writer) => {
+      writer
+        .writeLine(`import type { MakeTuyauRequest, MakeTuyauResponse } from '@tuyau/utils/types'`)
+        .writeLine(`import type { InferInput } from '@vinejs/vine/types'`)
+        .newLine()
+
+      /**
+       * Write every type by route pattern
+       */
+      Object.entries(options.typesByPattern).forEach(([key, value]) => {
+        writer.writeLine(`type ${key} = {`)
+        writer.writeLine(`  request: ${value.request}`)
+        writer.writeLine(`  response: ${value.response}`)
+        writer.writeLine(`}`)
+      })
+
+      /**
+       * Write the nested AdonisApi interface
+       */
+      writer
+        .writeLine(`interface AdonisApi {`)
+        .write(this.#generateDefinitionInterface(options.definition, '  '))
+        .writeLine(`}`)
+
+      /**
+       * Write the array of routes with their names
+       */
+      writer.writeLine(`const routes = [`)
+      for (const route of options.routesNameArray) {
+        writer.writeLine(`  {`)
+        writer.writeLine(`    params: ${JSON.stringify(route.params)},`)
+        writer.writeLine(`    name: '${route.name}',`)
+        writer.writeLine(`    path: '${route.path}',`)
+        writer.writeLine(`    method: ${JSON.stringify(route.method)},`)
+        writer.writeLine(`    types: {} as ${route.types},`)
+        writer.writeLine(`  },`)
+      }
+      writer.writeLine(`] as const;`)
+
+      /**
+       * The final API object that will be exported and used by the client
+       */
+      writer
+        .writeLine(`export const api = {`)
+        .writeLine(`  routes,`)
+        .writeLine(`  definition: {} as AdonisApi`)
+        .writeLine(`}`)
+    })
+
+    await file.save()
+  }
+
   async generate() {
-    const types: Record<string, any> = {}
+    /**
+     * The definition object to generate
+     */
+    const definition: Record<string, any> = {}
+
+    /**
+     * A map of types { request, response } by route pattern
+     */
+    const typesByPattern: Record<string, any> = {}
+
     const sourcesFiles = this.#project.getSourceFiles()
     const routes = this.#filterRoutesToGenerate(this.#routes)
 
@@ -227,26 +299,42 @@ export class ApiTypesGenerator {
 
       const segments = route.pattern.split('/').filter(Boolean) as string[]
 
-      let currentLevel = types
+      let currentLevel = definition
       const relativePath = relative(this.#getDestinationDirectory(), file.getFilePath())
       segments.forEach((segment, i) => {
-        if (!currentLevel[segment]) {
-          currentLevel[segment] = {}
-        }
+        if (!currentLevel[segment]) currentLevel[segment] = {}
 
         currentLevel = currentLevel[segment]
         if (i !== segments.length - 1) return
 
+        /**
+         * Create a name for the Type
+         */
+        const typeName =
+          string.pascalCase(string.slug(route.pattern)) + string.pascalCase(methods.join(''))
+
+        /**
+         * Store the request and response types by pattern
+         */
+        typesByPattern[typeName] = {
+          request: schemaImport ? `MakeTuyauRequest<${schemaImport}>` : 'unknown',
+          response: `MakeTuyauResponse<import('${relativePath}').default['${routeHandler.method}']>`,
+        }
+
         currentLevel.$url = {}
         for (const method of methods) {
-          currentLevel[method] = {
-            request: schemaImport ? `MakeTuyauRequest<${schemaImport}>` : 'unknown',
-            response: `MakeTuyauResponse<import('${relativePath}').default['${routeHandler.method}']>`,
-          }
+          currentLevel[method] = `${string.pascalCase(typeName)}`
         }
       })
     }
 
-    await this.#writeFinalInterface(types)
+    /**
+     * Write final API file
+     */
+    await this.#writeApiFile({
+      definition,
+      typesByPattern,
+      routesNameArray: this.#generateRoutesNameArray(routes),
+    })
   }
 }
