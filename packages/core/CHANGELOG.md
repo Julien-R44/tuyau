@@ -1,5 +1,10 @@
 # @tuyau/core
 
+## 0.1.1
+
+- Fix: The `node ace configure @tuyau/core` was failing due to a stub file not being copied correctly. This has been fixed.
+- Fix: use `unknown` instead of an inexistent type when this same type hasn't been generated.
+
 ## 0.1.0
 
 ### Minor Changes
