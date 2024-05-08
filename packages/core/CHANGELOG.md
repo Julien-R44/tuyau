@@ -1,4 +1,4 @@
-# @tuyau/client
+# @tuyau/core
 
 ## 0.1.0
 
@@ -90,9 +90,3 @@
   tuyau.$has("users.*"); // true
   tuyau.$has("non-existent"); // false
   ```
-
-## 0.0.9
-
-### Patch Changes
-
-- Fix query params
