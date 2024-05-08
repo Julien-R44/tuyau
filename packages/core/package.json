@@ -20,7 +20,7 @@
   },
   "scripts": {
     "clean": "del-cli build",
-    "copy:templates": "copyfiles \"stubs/**/*.stub\" build",
+    "copy:templates": "copyfiles --up 1 \"stubs/**/*.stub\" build",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
     "quick:test": "node --import=./tsnode.esm.js --enable-source-maps bin/test.ts",
