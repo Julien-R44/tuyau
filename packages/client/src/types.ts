@@ -72,10 +72,7 @@ export type GeneratedRoutes = readonly {
   name: string
   path: string
   method: readonly string[]
-  types?: {
-    request: any
-    response: Record<number, unknown>
-  }
+  types?: { request: any; response: Record<number, unknown> } | unknown
 }[]
 
 export type ApiDefinition = {
