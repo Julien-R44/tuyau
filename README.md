@@ -54,6 +54,58 @@ To run the command manually, you must run :
 node ace tuyau:generate
 ```
 
+### Sharing the API definition
+
+The command will generate a file called `.adonisjs/api.ts` in your project. This file will contain the definition of your API. You must export this file in your project to use the client package.
+
+So, let's say your monorepo structure is like this :
+
+```
+apps
+  frontend
+  server
+```
+
+You must export the `.adonisjs/api.ts` file from your server workspace using [subpath exports](https://nodejs.org/api/packages.html#subpath-exports) : 
+
+```jsonc
+// package.json
+{
+  "name": "@acme/server",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    "./api": "./.adonisjs/api.ts"
+  },
+}
+```
+
+Once done, make sure to include `@acme/server` as a dependency in your frontend workspace :
+
+```jsonc
+// package.json
+{
+  "name": "@acme/frontend",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {
+    "@acme/server": "workspace:*"
+  }
+}
+```
+
+> [!WARNING]
+> Make sure you package manager or monorepo tool is able to resolve the `workspace:*` syntax. If not, you will need to use whatever syntax your tool is using.
+
+Then you should be able to import the API definition in your frontend project :
+
+```ts
+import { api } from '@acme/server/api'
+```
+
+
 #### Initializing the client
 
 Once installed, you must create the tuyau client in your frontend project : 
