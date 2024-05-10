@@ -6,6 +6,7 @@ import type { InferInput } from '@vinejs/vine/types'
 import type { MakeTuyauRequest, Serialize, Simplify } from '@tuyau/utils/types'
 
 import { createTuyau } from '../index.js'
+import type { api } from './fixtures/routes.js'
 import type { InferRequestType, InferResponseType } from '../index.js'
 
 test.group('Client | Typings', () => {
@@ -298,7 +299,7 @@ test.group('Client | Typings', () => {
   })
 
   test('if no routes passed, $route and co should not be available', async ({}) => {
-    const tuyau = createTuyau<{ definition: { users: { $get: {} } } }>({
+    const tuyau = createTuyau<{ definition: (typeof api)['definition'] }>({
       baseUrl: 'http://localhost:3333',
     })
 

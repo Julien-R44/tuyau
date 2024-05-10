@@ -158,7 +158,7 @@ export type RouteReturnType<T extends GeneratedRoutes, K extends T[number]['name
 
 /**
  * ------------------------------------------------------------
- * Helpers for infering types from AdonisAPI
+ * Helpers for infering types from ApiDefinition
  * ------------------------------------------------------------
  */
 

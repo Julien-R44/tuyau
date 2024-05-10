@@ -5,7 +5,7 @@ type UsersGet = {
   request: unknown
   response: MakeTuyauResponse<import('../app/controllers/users_controller.ts').default['index']>
 }
-interface AdonisApi {
+export interface ApiDefinition {
   'users': {
     '$url': {
     };
@@ -16,7 +16,7 @@ const routes = [
 ] as const;
 export const api = {
   routes,
-  definition: {} as AdonisApi
+  definition: {} as ApiDefinition
 }
 "`
 
@@ -27,7 +27,7 @@ type UsersGet = {
   request: MakeTuyauRequest<InferInput<typeof import('../app/validators/get_users_validator.ts')['getUsersValidator']>>
   response: MakeTuyauResponse<import('../app/controllers/users_controller.ts').default['index']>
 }
-interface AdonisApi {
+export interface ApiDefinition {
   'users': {
     '$url': {
     };
@@ -38,14 +38,14 @@ const routes = [
 ] as const;
 export const api = {
   routes,
-  definition: {} as AdonisApi
+  definition: {} as ApiDefinition
 }
 "`
 
 exports[`Api Types Generator > should use unknown in route name array if type is not found 1`] = `"import type { MakeTuyauRequest, MakeTuyauResponse } from '@tuyau/utils/types'
 import type { InferInput } from '@vinejs/vine/types'
 
-interface AdonisApi {
+export interface ApiDefinition {
 }
 const routes = [
   {
@@ -58,7 +58,7 @@ const routes = [
 ] as const;
 export const api = {
   routes,
-  definition: {} as AdonisApi
+  definition: {} as ApiDefinition
 }
 "`
 
@@ -69,7 +69,7 @@ type UsersGet = {
   request: unknown
   response: MakeTuyauResponse<import('../app/controllers/users_controller.ts').default['index']>
 }
-interface AdonisApi {
+export interface ApiDefinition {
   'users': {
     '$url': {
     };
@@ -80,7 +80,7 @@ const routes = [
 ] as const;
 export const api = {
   routes,
-  definition: {} as AdonisApi
+  definition: {} as ApiDefinition
 }
 "`
 
@@ -91,7 +91,7 @@ type PostsGet = {
   request: unknown
   response: MakeTuyauResponse<import('../app/controllers/posts_controller.ts').default['index']>
 }
-interface AdonisApi {
+export interface ApiDefinition {
   'posts': {
     '$url': {
     };
@@ -102,7 +102,7 @@ const routes = [
 ] as const;
 export const api = {
   routes,
-  definition: {} as AdonisApi
+  definition: {} as ApiDefinition
 }
 "`
 
@@ -113,7 +113,7 @@ type UsersGet = {
   request: unknown
   response: MakeTuyauResponse<import('../app/controllers/users_controller.ts').default['index']>
 }
-interface AdonisApi {
+export interface ApiDefinition {
   'users': {
     '$url': {
     };
@@ -124,7 +124,7 @@ const routes = [
 ] as const;
 export const api = {
   routes,
-  definition: {} as AdonisApi
+  definition: {} as ApiDefinition
 }
 "`
 
@@ -135,7 +135,7 @@ type PostsGet = {
   request: unknown
   response: MakeTuyauResponse<import('../app/controllers/posts_controller.ts').default['index']>
 }
-interface AdonisApi {
+export interface ApiDefinition {
   'posts': {
     '$url': {
     };
@@ -146,7 +146,7 @@ const routes = [
 ] as const;
 export const api = {
   routes,
-  definition: {} as AdonisApi
+  definition: {} as ApiDefinition
 }
 "`
 

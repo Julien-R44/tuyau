@@ -126,6 +126,24 @@ Multiple things to note here :
 
 - We must reference the `adonisrc.ts` file at the top of the file. By doing that, the frontend project will be aware of some types defined in the AdonisJS project.
 - We must import `api` from the `.adonisjs/api` file in your AdonisJS project. You should change the path to match your project structure.
+- As you can see, the `api` is not a type, but a real object. You may ask why ? `api` is an object that contains two things :
+  - The definition of you API. This is just a type. No runtime code for that.
+  - The routes of your API. This is a "real" object that contains all the routes with their names and paths. Since we need to map the route names to the paths, we need to have some runtime code for that.
+
+If you are not interested in using the route names in your frontend project, you can just import the `ApiDefinition` type from the `@tuyau/client` package and ignore the `api` object :
+
+```ts
+/// <reference path="../../adonisrc.ts" />
+
+import { createTuyau } from '@tuyau/client'
+import type { ApiDefinition } from '@your-monorepo/server/.adonisjs/api'
+
+export const tuyau = createTuyau<{ definition: ApiDefinition }>({
+  baseUrl: 'http://localhost:3333',
+})
+```
+
+By doing that, you will not have additional runtime code in your frontend project but you will lose the ability to use the route names in your frontend project ( `$has`, `$current`, `$route` and other route helpers ). However, you will still benefit from the typesafety of the API definition when calling your routes by their path ( e.g. `tuyau.users.$get()` ).
 
 ##### Options
 
@@ -434,7 +452,7 @@ export default defineConfig({
 
 Only one of `only` or `except` can be used at the same time. Both accept either an array of strings, an array of regular expressions or a function that will receive the route name and must return a boolean.
 
-`definitions` will filter the generated types in the `AdonisApi` interface. `routes` will the filter the route names that are generated in the `routes` object.
+`definitions` will filter the generated types in the `ApiDefinition` interface. `routes` will the filter the route names that are generated in the `routes` object.
 
 ## Sponsors
 

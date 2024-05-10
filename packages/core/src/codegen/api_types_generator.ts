@@ -241,10 +241,10 @@ export class ApiTypesGenerator {
       })
 
       /**
-       * Write the nested AdonisApi interface
+       * Write the nested ApiDefinition interface
        */
       writer
-        .writeLine(`interface AdonisApi {`)
+        .writeLine(`export interface ApiDefinition {`)
         .write(this.#generateDefinitionInterface(options.definition, '  '))
         .writeLine(`}`)
 
@@ -269,7 +269,7 @@ export class ApiTypesGenerator {
       writer
         .writeLine(`export const api = {`)
         .writeLine(`  routes,`)
-        .writeLine(`  definition: {} as AdonisApi`)
+        .writeLine(`  definition: {} as ApiDefinition`)
         .writeLine(`}`)
     })
 

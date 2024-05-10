@@ -73,7 +73,7 @@ type PostsPostIdcommentsIdDelete = {
   response: MakeTuyauResponse<() => Promise<{ test: string }>>
 }
 
-interface AdonisApi {
+export interface ApiDefinition {
   'users': {
     $url: {}
     $get: UsersGetHead
@@ -269,5 +269,5 @@ const routes = [
 ] as const
 export const api = {
   routes,
-  definition: {} as AdonisApi,
+  definition: {} as ApiDefinition,
 }
