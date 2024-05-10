@@ -1,8 +1,11 @@
 import type { KyInstance } from 'ky'
+// @ts-expect-error untyped
+import { match, parse, exec } from '@poppinss/matchit'
 
 import { TuyauRequest } from './request.js'
-import { buildSearchParams, snakeCase } from './utils.js'
+import { buildSearchParams, camelCase, snakeCase } from './utils.js'
 import type {
+  DeepPartial,
   GeneratedRoutes,
   RouteName,
   RouteReturnType,
@@ -14,18 +17,29 @@ import type {
  * RouteHelper is responsible for dealing with named routes registered inside Tuyau
  */
 export class RouteHelper<Routes extends GeneratedRoutes> {
+  #parsedRoutes: any
+
   constructor(
     private baseUrl: string,
     private routes: Routes,
     private client: KyInstance,
-  ) {}
+  ) {
+    this.#parsedRoutes = routes?.map((route) => parse(route.path))
+  }
 
   /**
    * Get a route by its name and throw an error if it doesn't exist
    */
-  #getRoute(name: string) {
+  #getRouteByName(name: string) {
     const route = this.routes.find((route) => route.name === name)
     if (!route) throw new Error(`Route ${name} not found`)
+
+    return route
+  }
+
+  #getRouteByPath(path: string) {
+    const route = this.routes.find((route) => route.path === path)
+    if (!route) throw new Error(`Route ${path} not found`)
 
     return route
   }
@@ -55,13 +69,90 @@ export class RouteHelper<Routes extends GeneratedRoutes> {
   }
 
   /**
+   * Get the current location URL
+   */
+  #location() {
+    const {
+      host = '',
+      pathname = '',
+      search = '',
+    } = typeof window !== 'undefined' ? window.location : {}
+
+    return { host, pathname, search }
+  }
+
+  /**
+   * Check if the given params match another params object
+   */
+  #matchParams(current: Record<string, any>, params: RouteUrlParams<Routes, any, true>) {
+    if (!('params' in params) || !params.params) return true
+
+    return Object.entries(params.params!).every(([key, value]) => {
+      return value.toString() === current[key].toString()
+    })
+  }
+
+  /**
+   * Check if the route name matches the given wildcard pattern
+   *
+   * @example
+   * #wildcardMatch('users.*', { name: 'users.index' }) // true
+   */
+  #wildcardMatch(name: string, route: Routes[number]) {
+    const regex = new RegExp(`^${name.replace('*', '.*')}$`)
+    return regex.test(route.name)
+  }
+
+  /**
+   * Check if the current route matches the given route name and params
+   * If no route name is passed, just return the current route name
+   */
+  $current<K extends RouteName<Routes> | (string & {})>(
+    routeName?: K,
+    params?: DeepPartial<RouteUrlParams<Routes, K, true>>,
+  ) {
+    const { pathname, search } = this.#location()
+    const segments = match(pathname, this.#parsedRoutes)
+
+    /**
+     * If no route name is passed, just return the current route name
+     */
+    if (!routeName) return this.#getRouteByPath(segments[0].old).name
+
+    const route = this.#getRouteByPath(segments[0].old)
+
+    if (!this.#wildcardMatch(routeName as string, route)) return false
+    if (segments[0].old !== route.path) return false
+    if (!params) return true
+
+    /**
+     * Parse the params from the URL and camelCase them
+     */
+    const parsedParams = exec(pathname, segments)
+    const paramsObject = Object.fromEntries(
+      Object.entries(parsedParams).map(([key, value]) => [camelCase(key), value]),
+    )
+
+    /**
+     * Ensure passed params and query params match with the current URL
+     */
+    const paramsMatch = this.#matchParams(paramsObject, params as any)
+    const queryMatch = params.query
+      ? new URLSearchParams(search).toString() ===
+        new URLSearchParams(buildSearchParams(params.query)).toString()
+      : true
+
+    return paramsMatch && queryMatch
+  }
+
+  /**
    * Make a request to a route by its name
    */
   $route<K extends RouteName<Routes>>(
     name: K,
     params?: RouteUrlParams<Routes, K> extends { params: infer P } ? P : never,
   ): RouteReturnType<Routes, K> {
-    const route = this.#getRoute(name)
+    const route = this.#getRouteByName(name)
 
     /**
      * Generate methods like `$get`, `$post`, `$put`, etc
@@ -92,7 +183,7 @@ export class RouteHelper<Routes extends GeneratedRoutes> {
    * tuyau.$url('users.show', { params: ['1'] })
    */
   $url<K extends RouteName<Routes>>(name: K, options?: RouteUrlParams<Routes, K>) {
-    const route = this.#getRoute(name)
+    const route = this.#getRouteByName(name)
     const pathParams = (options as any)?.params || {}
     const path = this.#buildUrl(route.path, pathParams)
 
@@ -115,8 +206,6 @@ export class RouteHelper<Routes extends GeneratedRoutes> {
    */
   $has(name: RouteName<Routes> | (string & {})) {
     if (!name.includes('*')) return this.routes.some((route) => route.name === name)
-
-    const regex = new RegExp(`^${name.replace('*', '.*')}$`)
-    return this.routes.some((route) => regex.test(route.name))
+    return this.routes.some((route) => this.#wildcardMatch(name, route))
   }
 }

@@ -33,7 +33,7 @@ function createProxy(options: {
       /**
        * First, check if it's a route helper method.
        */
-      if (paths.length === 1 && ['$has', '$route', '$url'].includes(lastPath!)) {
+      if (paths.length === 1 && ['$has', '$route', '$url', '$current'].includes(lastPath!)) {
         const method = lastPath as '$has' | '$route' | '$url'
         return routeHelper[method](body, queryOptions)
       }

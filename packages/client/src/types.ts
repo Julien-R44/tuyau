@@ -116,18 +116,23 @@ export type RoutesNameParams<
   K extends T[number]['name'],
 > = K extends T[number]['name'] ? Extract<T[number], { name: K }>['params'] : never
 
-type MultipleFormatsParams<T extends readonly string[]> = T extends readonly []
+type MultipleFormatsParams<T extends readonly string[], OnlyObject = false> = T extends readonly []
   ? undefined
-  :
-      | { [K in keyof T]: string | number }
-      | {
-          [K in CamelCase<T[number]>]: string | number
-        }
+  : OnlyObject extends true
+    ? { [K in CamelCase<T[number]>]: string | number }
+    : { [K in keyof T]: string | number } | { [K in CamelCase<T[number]>]: string | number }
 
-export type RouteUrlParams<T extends GeneratedRoutes, RouteName extends T[number]['name']> =
+export type RouteUrlParams<
+  T extends GeneratedRoutes,
+  RouteName extends T[number]['name'],
+  OnlyObject = false,
+> =
   MultipleFormatsParams<RoutesNameParams<T, RouteName>> extends undefined
     ? { query?: QueryParameters }
-    : { query?: QueryParameters; params: MultipleFormatsParams<RoutesNameParams<T, RouteName>> }
+    : {
+        query?: QueryParameters
+        params: MultipleFormatsParams<RoutesNameParams<T, RouteName>, OnlyObject>
+      }
 
 export type RouteReturnType<T extends GeneratedRoutes, K extends T[number]['name']> = {
   [Method in RouteByName<T, K>['method'][number] as `$${Lowercase<Method>}`]: RouteByName<
@@ -201,3 +206,8 @@ export type CamelCase<S extends string> = S extends `${infer P1}_${infer P2}${in
  * Array or not of T
  */
 type MaybeArray<T> = T | T[]
+
+/**
+ * DeepPartial type
+ */
+export type DeepPartial<T> = T extends object ? { [P in keyof T]?: DeepPartial<T[P]> } : T

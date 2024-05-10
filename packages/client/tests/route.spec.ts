@@ -1,15 +1,13 @@
 import nock from 'nock'
 import { test } from '@japa/runner'
 
+import { setWindow } from './helpers.js'
 import { api } from './fixtures/routes.js'
 import { createTuyau } from '../src/client.js'
 
 test.group('Route Helpers', () => {
   test('basic', ({ assert }) => {
-    const tuyau = createTuyau({
-      api,
-      baseUrl: 'http://localhost:3333',
-    })
+    const tuyau = createTuyau({ api, baseUrl: 'http://localhost:3333' })
 
     const r1 = tuyau.$url('home')
     const r2 = tuyau.$url('home', { query: { id: 1 } })
@@ -23,10 +21,7 @@ test.group('Route Helpers', () => {
   })
 
   test('params as object', ({ assert }) => {
-    const tuyau = createTuyau({
-      api,
-      baseUrl: 'http://localhost:3333',
-    })
+    const tuyau = createTuyau({ api, baseUrl: 'http://localhost:3333' })
 
     const r1 = tuyau.$url('posts_comments.show', { params: { postId: 2, id: 1 } })
     assert.equal(r1, 'http://localhost:3333/posts/2/comments/1')
@@ -46,10 +41,7 @@ test.group('Route Helpers', () => {
   })
 
   test('query params', ({ assert }) => {
-    const tuyau = createTuyau({
-      api,
-      baseUrl: 'http://localhost:3333',
-    })
+    const tuyau = createTuyau({ api, baseUrl: 'http://localhost:3333' })
 
     const r1 = tuyau.$url('home', { query: { id: 1 } })
     const r2 = tuyau.$url('home', { query: { id: [1, 2] } })
@@ -73,10 +65,7 @@ test.group('Route Helpers', () => {
   })
 
   test('$has', ({ assert }) => {
-    const tuyau = createTuyau({
-      api,
-      baseUrl: 'http://localhost:3333',
-    })
+    const tuyau = createTuyau({ api, baseUrl: 'http://localhost:3333' })
 
     assert.isTrue(tuyau.$has('home'))
     assert.isFalse(tuyau.$has('non-existing-route'))
@@ -116,11 +105,8 @@ test.group('Route Helpers', () => {
     assert.isFalse(tuyau.$has('posts_comments.*.edit'))
   })
 
-  test('$route', async ({}) => {
-    const tuyau = createTuyau({
-      api,
-      baseUrl: 'http://localhost:3333',
-    })
+  test('$route', async () => {
+    const tuyau = createTuyau({ api, baseUrl: 'http://localhost:3333' })
 
     nock('http://localhost:3333')
       .get('/posts/1/comments/2/edit')
@@ -128,14 +114,137 @@ test.group('Route Helpers', () => {
 
     await tuyau.$route('posts_comments.edit', { id: 2, postId: 1 }).$get().unwrap()
   })
+
+  test('$current', async ({ assert }) => {
+    const tuyau = createTuyau({ api, baseUrl: 'http://localhost:3333' })
+
+    setWindow({
+      location: {
+        host: 'localhost:3333',
+        search: '?id=1',
+        pathname: '/posts/1/comments/2/edit',
+      },
+    })
+
+    const result = tuyau.$current()
+    assert.deepEqual(result, 'posts_comments.edit')
+  })
+
+  test('$current with given route', async ({ assert }) => {
+    const tuyau = createTuyau({ api, baseUrl: 'http://localhost:3333' })
+
+    setWindow({
+      location: {
+        host: 'localhost:3333',
+        search: '?id=1',
+        pathname: '/posts/1/comments/2/edit',
+      },
+    })
+
+    const r1 = tuyau.$current('home')
+    assert.deepEqual(r1, false)
+
+    const r2 = tuyau.$current('posts_comments.edit')
+    assert.deepEqual(r2, true)
+  })
+
+  test('$current with given route and specific parameters', async ({ assert }) => {
+    const tuyau = createTuyau({ api, baseUrl: 'http://localhost:3333' })
+
+    setWindow({
+      location: {
+        host: 'localhost:3333',
+        search: '?id=1',
+        pathname: '/posts/1/comments/2/edit',
+      },
+    })
+
+    const r3 = tuyau.$current('posts_comments.edit', {
+      params: { id: 2, postId: 1 },
+    })
+
+    assert.deepEqual(r3, true)
+
+    const r4 = tuyau.$current('posts_comments.edit', {
+      params: { id: 3, postId: 1 },
+    })
+    assert.deepEqual(r4, false)
+  })
+
+  test('$current with given route and only some parameters', async ({ assert }) => {
+    const tuyau = createTuyau({ api, baseUrl: 'http://localhost:3333' })
+
+    setWindow({
+      location: {
+        host: 'localhost:3333',
+        search: '?id=1',
+        pathname: '/posts/1/comments/2/edit',
+      },
+    })
+
+    const r5 = tuyau.$current('posts_comments.edit', {
+      params: { id: 2 },
+    })
+
+    assert.deepEqual(r5, true)
+
+    const r6 = tuyau.$current('posts_comments.edit', {
+      params: { id: 3 },
+    })
+
+    assert.deepEqual(r6, false)
+  })
+
+  test('$current with given route and specific query params', async ({ assert }) => {
+    const tuyau = createTuyau({ api, baseUrl: 'http://localhost:3333' })
+
+    setWindow({
+      location: {
+        host: 'localhost:3333',
+        search: '?id=1',
+        pathname: '/posts/1/comments/2/edit',
+      },
+    })
+
+    const r5 = tuyau.$current('posts_comments.edit', {
+      query: { id: 1 },
+    })
+
+    assert.deepEqual(r5, true)
+
+    const r6 = tuyau.$current('posts_comments.edit', {
+      query: { id: 2 },
+    })
+
+    assert.deepEqual(r6, false)
+  })
+
+  test('$current with wildcard', async ({ assert }) => {
+    const tuyau = createTuyau({ api, baseUrl: 'http://localhost:3333' })
+
+    setWindow({
+      location: {
+        host: 'localhost:3333',
+        search: '?id=1',
+        pathname: '/posts/1/comments/2/edit',
+      },
+    })
+
+    const r1 = tuyau.$current('posts_comments.*')
+    const r2 = tuyau.$current('posts_comments.*.edit')
+    const r3 = tuyau.$current('users.*')
+    const r4 = tuyau.$current('*')
+
+    assert.deepEqual(r1, true)
+    assert.deepEqual(r2, false)
+    assert.deepEqual(r3, false)
+    assert.deepEqual(r4, true)
+  })
 })
 
 test.group('Route Helpers | Typings', () => {
   test('$url typings', () => {
-    const tuyau = createTuyau({
-      api,
-      baseUrl: 'http://localhost:3333',
-    })
+    const tuyau = createTuyau({ api, baseUrl: 'http://localhost:3333' })
 
     // @ts-expect-error Should error cause route doesnt exist
     tuyau.$url('non-existing-route')

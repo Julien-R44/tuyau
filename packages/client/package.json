@@ -22,6 +22,7 @@
     "checks": "pnpm lint && pnpm typecheck"
   },
   "dependencies": {
+    "@poppinss/matchit": "^3.1.2",
     "ky": "^1.2.4",
     "object-to-formdata": "^4.5.1"
   },
