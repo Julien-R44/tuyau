@@ -296,4 +296,18 @@ test.group('Client | Typings', () => {
       },
     })
   })
+
+  test('if no routes passed, $route and co should not be available', async ({}) => {
+    const tuyau = createTuyau<{ definition: { users: { $get: {} } } }>({
+      baseUrl: 'http://localhost:3333',
+    })
+
+    // @ts-expect-error $route should not be available
+    tuyau.$route
+
+    // @ts-expect-error $route should not be available
+    tuyau.$has
+
+    tuyau.users.$get
+  })
 })

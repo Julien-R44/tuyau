@@ -1,163 +1,66 @@
+import { test } from '@japa/runner'
 import { cliui } from '@poppinss/cliui'
-import { Project, QuoteKind } from 'ts-morph'
-import { getActiveTest, test } from '@japa/runner'
 
+import { defineConfig } from '../src/define_config.js'
 import { ApiTypesGenerator } from '../src/codegen/api_types_generator.js'
+import { createController, createValidator, setupProject } from './helpers.js'
 
 const logger = cliui().logger
 
-async function setupProject() {
-  const test = getActiveTest()
-  if (!test) {
-    throw new Error('Missing active test')
-  }
-
-  await test.context.fs.createJson('tsconfig.json', { include: ['**/*'] })
-  await test.context.fs.createJson('package.json', {
-    type: 'module',
-    imports: { '#controllers/*': './app/controllers/*.js' },
-  })
-
-  return new Project({
-    tsConfigFilePath: new URL('./tsconfig.json', test.context.fs.baseUrl).pathname,
-    manipulationSettings: { quoteKind: QuoteKind.Single },
-  })
-}
-
 test.group('Api Types Generator', () => {
   test('works fine', async ({ fs, assert }) => {
-    await fs.create(
-      'app/controllers/users_controller.ts',
-      `export default class UsersController {
-        public async index() {
-          return { foo: 'bar' }
-        }
-      }`,
-    )
+    const route = await createController({ name: 'UsersController', returnType: "{ foo: 'bar' }" })
 
     const apiTypesGenerator = new ApiTypesGenerator({
       logger,
       project: await setupProject(),
       config: {},
       appRoot: fs.baseUrl,
-      routes: [
-        {
-          pattern: '/users',
-          methods: ['GET'],
-          handler: { reference: '#controllers/users_controller.index', handle: () => {} },
-          domain: 'root',
-        },
-      ] as any,
+      routes: [route],
     })
 
     await apiTypesGenerator.generate()
 
     const file = await fs.contents('./.adonisjs/api.ts')
-    assert.snapshot(file).matchInline(`
-      "import type { MakeTuyauRequest, MakeTuyauResponse } from '@tuyau/utils/types'
-      import type { InferInput } from '@vinejs/vine/types'
-
-      type UsersGet = {
-        request: unknown
-        response: MakeTuyauResponse<import('../app/controllers/users_controller.ts').default['index']>
-      }
-      interface AdonisApi {
-        'users': {
-          '$url': {
-          };
-          '$get': UsersGet;
-        };
-      }
-      const routes = [
-      ] as const;
-      export const api = {
-        routes,
-        definition: {} as AdonisApi
-      }
-      "
-    `)
+    assert.snapshot(file).match()
   })
 
   test('extract validateUsing request', async ({ fs, assert }) => {
-    await fs.create(
-      'app/controllers/validator.ts',
-      `
-      import vine from '@vinejs/vine'
-
-      export const getUsersValidator = vine.compile(
-        vine.object({
+    const route = await createController({
+      name: 'UsersController',
+      returnType: "{ foo: 'bar' }",
+      validator: await createValidator({
+        name: 'getUsersValidator',
+        schema: `
           limit: vine.number(),
           page: vine.number().optional(),
-        }),
-      )`,
-    )
-
-    await fs.create(
-      'app/controllers/users_controller.ts',
-      `
-      import { getUsersValidator } from './validator.ts'
-
-      export default class UsersController {
-        public async index({ request }) {
-          await request.validateUsing(getUsersValidator)
-          return { foo: 'bar' }
-        }
-      }`,
-    )
+        `,
+      }),
+    })
 
     const apiTypesGenerator = new ApiTypesGenerator({
       logger,
       project: await setupProject(),
       config: {},
       appRoot: fs.baseUrl,
-      routes: [
-        {
-          pattern: '/users',
-          methods: ['GET'],
-          handler: { reference: '#controllers/users_controller.index', handle: () => {} },
-          domain: 'root',
-        },
-      ] as any,
+      routes: [route],
     })
 
     await apiTypesGenerator.generate()
 
     const file = await fs.contents('./.adonisjs/api.ts')
-    assert.snapshot(file).matchInline(`
-      "import type { MakeTuyauRequest, MakeTuyauResponse } from '@tuyau/utils/types'
-      import type { InferInput } from '@vinejs/vine/types'
-
-      type UsersGet = {
-        request: MakeTuyauRequest<InferInput<typeof import('../app/controllers/validator.ts')['getUsersValidator']>>
-        response: MakeTuyauResponse<import('../app/controllers/users_controller.ts').default['index']>
-      }
-      interface AdonisApi {
-        'users': {
-          '$url': {
-          };
-          '$get': UsersGet;
-        };
-      }
-      const routes = [
-      ] as const;
-      export const api = {
-        routes,
-        definition: {} as AdonisApi
-      }
-      "
-    `)
+    assert.snapshot(file).match()
   })
 
   test('warning when schema implementation is not found', async ({ fs, assert }) => {
-    await fs.create(
-      'app/controllers/users_controller.ts',
-      `
-      export default class UsersController {
-        public async index() {
-          await request.validateUsing(getUsersValidator)
-        }
-      }`,
-    )
+    const route = await createController({
+      name: 'UsersController',
+      returnType: "{ foo: 'bar' }",
+      validator: {
+        name: 'getUsersValidator',
+        path: 'app/validators/get_users_validator.ts',
+      },
+    })
 
     const raw = cliui({ mode: 'raw' })
     const apiTypesGenerator = new ApiTypesGenerator({
@@ -165,14 +68,7 @@ test.group('Api Types Generator', () => {
       project: await setupProject(),
       config: {},
       appRoot: fs.baseUrl,
-      routes: [
-        {
-          pattern: '/users',
-          methods: ['GET'],
-          handler: { reference: '#controllers/users_controller.index', handle: () => {} },
-          domain: 'root',
-        },
-      ] as any,
+      routes: [route],
     })
 
     await apiTypesGenerator.generate()
@@ -204,26 +100,84 @@ test.group('Api Types Generator', () => {
     await apiTypesGenerator.generate()
 
     const file = await fs.contents('./.adonisjs/api.ts')
-    assert.snapshot(file).matchInline(`
-      "import type { MakeTuyauRequest, MakeTuyauResponse } from '@tuyau/utils/types'
-      import type { InferInput } from '@vinejs/vine/types'
+    assert.snapshot(file).match()
+  })
+})
 
-      interface AdonisApi {
-      }
-      const routes = [
-        {
-          params: [],
-          name: 'users',
-          path: '/users',
-          method: [\\"GET\\"],
-          types: {} as unknown,
-        },
-      ] as const;
-      export const api = {
-        routes,
-        definition: {} as AdonisApi
-      }
-      "
-    `)
+test.group('Api Types Generator | Filters', () => {
+  test('filter definitions using codegen.only function', async ({ fs, assert }) => {
+    const routeA = await createController({ name: 'UsersController', returnType: "{ foo: 'bar' }" })
+    const routeB = await createController({ name: 'PostsController', returnType: "{ foo: 'bar' }" })
+
+    const apiTypesGenerator = new ApiTypesGenerator({
+      logger,
+      project: await setupProject(),
+      config: defineConfig({
+        codegen: { definitions: { only: (route) => route.pattern === '/users' } },
+      }),
+      appRoot: fs.baseUrl,
+      routes: [routeA, routeB],
+    })
+
+    await apiTypesGenerator.generate()
+    const file = await fs.contents('./.adonisjs/api.ts')
+    assert.snapshot(file).match()
+  })
+
+  test('filter definitions using codegen.except function', async ({ fs, assert }) => {
+    const routeA = await createController({ name: 'UsersController', returnType: "{ foo: 'bar' }" })
+    const routeB = await createController({ name: 'PostsController', returnType: "{ foo: 'bar' }" })
+
+    const apiTypesGenerator = new ApiTypesGenerator({
+      logger,
+      project: await setupProject(),
+      config: defineConfig({
+        codegen: { definitions: { except: (route) => route.pattern === '/users' } },
+      }),
+      appRoot: fs.baseUrl,
+      routes: [routeA, routeB],
+    })
+
+    await apiTypesGenerator.generate()
+    const file = await fs.contents('./.adonisjs/api.ts')
+    assert.snapshot(file).match()
+  })
+
+  test('filter definitions using codegen.only array', async ({ fs, assert }) => {
+    const routeA = await createController({ name: 'UsersController', returnType: "{ foo: 'bar' }" })
+    const routeB = await createController({ name: 'PostsController', returnType: "{ foo: 'bar' }" })
+
+    const apiTypesGenerator = new ApiTypesGenerator({
+      logger,
+      project: await setupProject(),
+      config: defineConfig({
+        codegen: { definitions: { only: [/users/] } },
+      }),
+      appRoot: fs.baseUrl,
+      routes: [routeA, routeB],
+    })
+
+    await apiTypesGenerator.generate()
+    const file = await fs.contents('./.adonisjs/api.ts')
+    assert.snapshot(file).match()
+  })
+
+  test('filter definitions using codegen.except array', async ({ fs, assert }) => {
+    const routeA = await createController({ name: 'UsersController', returnType: "{ foo: 'bar' }" })
+    const routeB = await createController({ name: 'PostsController', returnType: "{ foo: 'bar' }" })
+
+    const apiTypesGenerator = new ApiTypesGenerator({
+      logger,
+      project: await setupProject(),
+      config: defineConfig({
+        codegen: { definitions: { except: [/users/] } },
+      }),
+      appRoot: fs.baseUrl,
+      routes: [routeA, routeB],
+    })
+
+    await apiTypesGenerator.generate()
+    const file = await fs.contents('./.adonisjs/api.ts')
+    assert.snapshot(file).match()
   })
 })

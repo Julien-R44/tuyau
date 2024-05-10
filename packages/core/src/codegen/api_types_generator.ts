@@ -144,19 +144,32 @@ export class ApiTypesGenerator {
   }
 
   /**
-   * Filter routes to generate based on the ignoreRoutes config
+   * Filter routes to generate based on the config
    */
-  #filterRoutesToGenerate(routes: Array<RouteJSON>) {
-    return routes.filter((route) => {
-      if (!this.#config.codegen?.ignoreRoutes) return true
+  #filterRoutes(routes: Array<RouteJSON>, mode: 'definitions' | 'routes') {
+    const config = this.#config.codegen?.[mode]
+    if (!config || (!config.only && !config.except)) return routes
 
-      if (typeof this.#config.codegen?.ignoreRoutes === 'function') {
-        return !this.#config.codegen.ignoreRoutes(route)
+    return routes.filter((route) => {
+      if (typeof config.only === 'function') return config.only(route)
+      if (typeof config.except === 'function') return !config.except(route)
+
+      if (config.only) {
+        for (const pattern of config.only) {
+          if (pattern instanceof RegExp && pattern.test(route.pattern)) return true
+          if (route.pattern === pattern) return true
+        }
+
+        return false
       }
 
-      for (const ignore of this.#config.codegen.ignoreRoutes) {
-        if (typeof ignore === 'string' && route.pattern === ignore) return false
-        if (ignore instanceof RegExp && ignore.test(route.pattern)) return false
+      if (config.except) {
+        for (const pattern of config.except) {
+          if (pattern instanceof RegExp && pattern.test(route.pattern)) return false
+          if (route.pattern === pattern) return false
+        }
+
+        return true
       }
 
       return true
@@ -275,7 +288,7 @@ export class ApiTypesGenerator {
     const typesByPattern: Record<string, any> = {}
 
     const sourcesFiles = this.#project.getSourceFiles()
-    const routes = this.#filterRoutesToGenerate(this.#routes)
+    const routes = this.#filterRoutes(this.#routes, 'definitions')
 
     for (const route of routes) {
       /**
@@ -344,12 +357,16 @@ export class ApiTypesGenerator {
     }
 
     /**
-     * Write final API file
+     * Generate named routes values
      */
-    await this.#writeApiFile({
-      definition,
+    const routesNameArray = this.#generateRoutesNameArray(
+      this.#filterRoutes(routes, 'routes'),
       typesByPattern,
-      routesNameArray: this.#generateRoutesNameArray(routes, typesByPattern),
-    })
+    )
+
+    /**
+     * Write the final api.ts file
+     */
+    await this.#writeApiFile({ definition, typesByPattern, routesNameArray })
   }
 }
