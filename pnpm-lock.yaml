@@ -222,6 +222,40 @@ importers:
         specifier: ^3.4.27
         version: 3.4.27(typescript@5.4.5)
 
+  packages/openapi:
+    dependencies:
+      '@tuyau/core':
+        specifier: ^0.1.1
+        version: 0.1.1(@adonisjs/core@6.8.0(@adonisjs/assembler@7.5.1(typescript@5.4.5))(@vinejs/vine@2.0.0)(edge.js@6.0.2))
+      ts-morph:
+        specifier: ^22.0.0
+        version: 22.0.0
+    devDependencies:
+      '@adonisjs/assembler':
+        specifier: ^7.5.1
+        version: 7.5.1(typescript@5.4.5)
+      '@adonisjs/core':
+        specifier: ^6.8.0
+        version: 6.8.0(@adonisjs/assembler@7.5.1(typescript@5.4.5))(@vinejs/vine@2.0.0)(edge.js@6.0.2)
+      '@julr/tooling-configs':
+        specifier: ^2.2.0
+        version: 2.2.0(eslint@8.57.0)(prettier@3.2.5)(typescript@5.4.5)
+      '@poppinss/cliui':
+        specifier: ^6.4.1
+        version: 6.4.1
+      '@poppinss/matchit':
+        specifier: ^3.1.2
+        version: 3.1.2
+      '@tuyau/client':
+        specifier: workspace:*
+        version: link:../client
+      '@tuyau/utils':
+        specifier: workspace:*
+        version: link:../utils
+      '@types/node':
+        specifier: ^20.12.7
+        version: 20.12.7
+
   packages/utils:
     devDependencies:
       '@adonisjs/bodyparser':
@@ -617,10 +651,6 @@ packages:
 
   '@adonisjs/encryption@6.0.2':
     resolution: {integrity: sha512-37XqVPsZi6zXMbC0Me1/qlcTP0uE+KAtYOFx7D7Tvtz377NL/6gqxqgpW/BopgOSD+CVDXjzO/Wx3M2UrbkJRQ==}
-    engines: {node: '>=18.16.0'}
-
-  '@adonisjs/env@6.0.0':
-    resolution: {integrity: sha512-LpHBcl8dp8wAmQ0JajNko8QO+mzMk1vUPDaHbEAGV4zPWyngmOCrGWJnsx4FCzKPpzlZ1ITpt5dU9C7M3C6Rsw==}
     engines: {node: '>=18.16.0'}
 
   '@adonisjs/env@6.1.0':
@@ -1848,6 +1878,12 @@ packages:
 
   '@tsconfig/node16@1.0.4':
     resolution: {integrity: sha512-vxhUy4J8lyeyinH7Azl1pdd43GJhZH/tP2weN8TntQblOY+A0XbT8DJk1/oCPuOOyg/Ja757rG0CgHcWC8OfMA==}
+
+  '@tuyau/core@0.1.1':
+    resolution: {integrity: sha512-+iAFRukSsUdwJ0IeEid+Z5MR94yhaiWfE+2ZYlFsuMM8IVS7pFfNqhczfCsnEndRkLUITKi9JF8yiKT9L/hUvQ==}
+    engines: {node: '>=20.6.0'}
+    peerDependencies:
+      '@adonisjs/core': ^6.2.0
 
   '@types/babel__core@7.20.5':
     resolution: {integrity: sha512-qoQprZvz5wQFJwMDqeseRXWv3rqMvhgpbXFfVyWhbx9X47POIA6i/+dXefEmZKoAgOaTdaIgNSMqMIU61yRyzA==}
@@ -5904,7 +5940,7 @@ snapshots:
 
   '@adonisjs/assembler@7.5.1(typescript@5.4.5)':
     dependencies:
-      '@adonisjs/env': 6.0.0
+      '@adonisjs/env': 6.1.0
       '@antfu/install-pkg': 0.3.2
       '@poppinss/chokidar-ts': 4.1.4(typescript@5.4.5)
       '@poppinss/cliui': 6.4.1
@@ -6093,13 +6129,6 @@ snapshots:
   '@adonisjs/encryption@6.0.2':
     dependencies:
       '@poppinss/utils': 6.7.3
-
-  '@adonisjs/env@6.0.0':
-    dependencies:
-      '@poppinss/utils': 6.7.3
-      '@poppinss/validator-lite': 1.0.3
-      dotenv: 16.4.5
-      split-lines: 3.0.0
 
   '@adonisjs/env@6.1.0':
     dependencies:
@@ -7525,6 +7554,11 @@ snapshots:
   '@tsconfig/node14@1.0.3': {}
 
   '@tsconfig/node16@1.0.4': {}
+
+  '@tuyau/core@0.1.1(@adonisjs/core@6.8.0(@adonisjs/assembler@7.5.1(typescript@5.4.5))(@vinejs/vine@2.0.0)(edge.js@6.0.2))':
+    dependencies:
+      '@adonisjs/core': 6.8.0(@adonisjs/assembler@7.5.1(typescript@5.4.5))(@vinejs/vine@2.0.0)(edge.js@6.0.2)
+      ts-morph: 22.0.0
 
   '@types/babel__core@7.20.5':
     dependencies:
