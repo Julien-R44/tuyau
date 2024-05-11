@@ -6,6 +6,7 @@ import { getDirname } from '@adonisjs/core/helpers'
 
 export default defineConfig({
   plugins: [
+    // @ts-expect-error tkt
     inertia({ ssr: { enabled: false } }),
     solid({ ssr: true }),
     adonisjs({ entrypoints: ['inertia/app/app.tsx'], reload: ['resources/views/**/*.edge'] }),
