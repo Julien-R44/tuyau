@@ -25,6 +25,7 @@
     "@japa/snapshot": "^2.0.5",
     "@julr/tooling-configs": "^2.2.0",
     "@swc/core": "^1.4.17",
+    "@types/node": "^20.12.11",
     "c8": "^9.1.0",
     "copyfiles": "^2.4.1",
     "del-cli": "^5.1.0",
@@ -33,7 +34,8 @@
     "prettier": "^3.2.5",
     "ts-node": "^10.9.2",
     "tsup": "^8.0.2",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "vite": "^5.2.11"
   },
   "pnpm": {
     "overrides": {

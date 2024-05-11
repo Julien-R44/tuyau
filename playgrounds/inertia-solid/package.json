@@ -1,0 +1,69 @@
+{
+  "name": "playground",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "node bin/server.js",
+    "build": "node ace build",
+    "dev": "node ace --import=hot-hook/register serve",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "typecheck": "tsc --noEmit"
+  },
+  "imports": {
+    "#controllers/*": "./app/controllers/*.js",
+    "#exceptions/*": "./app/exceptions/*.js",
+    "#models/*": "./app/models/*.js",
+    "#mails/*": "./app/mails/*.js",
+    "#services/*": "./app/services/*.js",
+    "#listeners/*": "./app/listeners/*.js",
+    "#events/*": "./app/events/*.js",
+    "#middleware/*": "./app/middleware/*.js",
+    "#validators/*": "./app/validators/*.js",
+    "#providers/*": "./providers/*.js",
+    "#policies/*": "./app/policies/*.js",
+    "#abilities/*": "./app/abilities/*.js",
+    "#database/*": "./database/*.js",
+    "#tests/*": "./tests/*.js",
+    "#start/*": "./start/*.js",
+    "#config/*": "./config/*.js"
+  },
+  "dependencies": {
+    "@adonisjs/auth": "^9.2.1",
+    "@adonisjs/core": "^6.8.0",
+    "@adonisjs/cors": "^2.2.1",
+    "@adonisjs/inertia": "1.0.0-25",
+    "@adonisjs/lucid": "^20.5.1",
+    "@adonisjs/session": "^7.4.0",
+    "@adonisjs/shield": "^8.1.1",
+    "@adonisjs/static": "^1.1.1",
+    "@adonisjs/vite": "^3.0.0-11",
+    "@solidjs/meta": "^0.29.3",
+    "@tuyau/client": "workspace:*",
+    "@tuyau/core": "workspace:*",
+    "@vinejs/vine": "^2.0.0",
+    "better-sqlite3": "^9.6.0",
+    "edge.js": "^6.0.2",
+    "inertia-adapter-solid": "^0.2.0",
+    "luxon": "^3.4.4",
+    "reflect-metadata": "^0.2.2",
+    "solid-js": "^1.8.17"
+  },
+  "devDependencies": {
+    "@adonisjs/assembler": "^7.5.1",
+    "@japa/plugin-adonisjs": "^3.0.1",
+    "@tuyau/utils": "workspace:*",
+    "@types/luxon": "^3.4.2",
+    "hot-hook": "^0.1.10",
+    "pino-pretty": "^11.0.0",
+    "vite-plugin-solid": "^2.10.2"
+  },
+  "hotHook": {
+    "boundaries": [
+      "../app/controllers/*.ts",
+      "../app/middleware/*.ts"
+    ]
+  }
+}

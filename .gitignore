@@ -15,4 +15,4 @@ package-lock.json
 todo.md
 .adonisjs
 playground/public/assets
-docs/public/assets
+public/assets

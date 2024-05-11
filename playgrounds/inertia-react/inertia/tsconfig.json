@@ -1,13 +1,12 @@
 {
   "extends": "@adonisjs/tsconfig/tsconfig.client.json",
   "compilerOptions": {
-    "jsx": "preserve",
-    "jsxImportSource": "solid-js",
     "baseUrl": ".",
     "module": "ESNext",
+    "jsx": "react-jsx",
     "paths": {
-      "~/*": ["./*"]
-    }
+      "~/*": ["./*"],
+    },
   },
-  "include": ["./**/*.ts", "./**/*.tsx"]
+  "include": ["./**/*.ts", "./**/*.tsx"],
 }

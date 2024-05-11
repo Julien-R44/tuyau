@@ -17,7 +17,7 @@ export default defineConfig({
    * Options for the server-side rendering
    */
   ssr: {
-    enabled: false,
-    entrypoint: 'inertia/app/ssr.tsx',
-  },
+    enabled: true,
+    entrypoint: 'inertia/app/ssr.tsx'
+  }
 })
