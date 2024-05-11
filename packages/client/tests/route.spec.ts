@@ -115,6 +115,16 @@ test.group('Route Helpers', () => {
     await tuyau.$route('posts_comments.edit', { id: 2, postId: 1 }).$get().unwrap()
   })
 
+  test('$route get route data', async ({ assert }) => {
+    const tuyau = createTuyau({ api, baseUrl: 'http://localhost:3333' })
+
+    const route = tuyau.$route('posts_comments.edit', { id: 2, postId: 1 })
+    assert.deepEqual(route.method, ['GET', 'HEAD'])
+    assert.deepEqual(route.name, 'posts_comments.edit')
+    assert.deepEqual(route.path, '/posts/:post_id/comments/:id/edit')
+    assert.deepEqual(route.params, ['post_id', 'id'])
+  })
+
   test('$current', async ({ assert }) => {
     const tuyau = createTuyau({ api, baseUrl: 'http://localhost:3333' })
 

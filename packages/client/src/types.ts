@@ -154,6 +154,11 @@ export type RouteReturnType<T extends GeneratedRoutes, K extends T[number]['name
           ? (body?: Req, options?: TuyauQueryOptions) => ResponseOrUnwrap<res>
           : (body: Req, options?: TuyauQueryOptions) => ResponseOrUnwrap<res>
     : (body?: unknown, options?: TuyauQueryOptions) => Promise<unknown>
+} & {
+  params: RouteByName<T, K>['params']
+  method: RouteByName<T, K>['method']
+  name: RouteByName<T, K>['name']
+  path: RouteByName<T, K>['path']
 }
 
 /**

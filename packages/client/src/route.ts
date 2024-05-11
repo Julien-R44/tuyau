@@ -157,7 +157,7 @@ export class RouteHelper<Routes extends GeneratedRoutes> {
     /**
      * Generate methods like `$get`, `$post`, `$put`, etc
      */
-    return route.method.reduce((result, method) => {
+    const result = route.method.reduce((result, method) => {
       result[`$${method.toLowerCase()}`] = (body: any, options: TuyauQueryOptions = {}) => {
         const path = this.#buildUrl(route.path, params as any)
 
@@ -172,6 +172,13 @@ export class RouteHelper<Routes extends GeneratedRoutes> {
 
       return result
     }, {} as any)
+
+    result.method = route.method
+    result.name = route.name
+    result.path = route.path
+    result.params = route.params
+
+    return result
   }
 
   /**
