@@ -1,0 +1,1 @@
+import{g as i,i as s,t as l}from"./app-DPRTKUiA.js";var n=l("<div class=container><div class=title>Server Error</div><span>");function v(e){return(()=>{var r=i(n),t=r.firstChild,a=t.nextSibling;return s(a,()=>e.error.message),r})()}export{v as default};

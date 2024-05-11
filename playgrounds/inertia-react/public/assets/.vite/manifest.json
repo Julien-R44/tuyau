@@ -1,0 +1,43 @@
+{
+  "inertia/app/app.tsx": {
+    "file": "app-DPRTKUiA.js",
+    "name": "app",
+    "src": "inertia/app/app.tsx",
+    "isEntry": true,
+    "dynamicImports": [
+      "inertia/pages/errors/not_found.tsx",
+      "inertia/pages/errors/server_error.tsx",
+      "inertia/pages/home.tsx"
+    ],
+    "css": [
+      "app-CmF2H2ns.css"
+    ]
+  },
+  "inertia/pages/errors/not_found.tsx": {
+    "file": "not_found-C8L5ESD_.js",
+    "name": "not_found",
+    "src": "inertia/pages/errors/not_found.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "inertia/app/app.tsx"
+    ]
+  },
+  "inertia/pages/errors/server_error.tsx": {
+    "file": "server_error-BD4xwSAI.js",
+    "name": "server_error",
+    "src": "inertia/pages/errors/server_error.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "inertia/app/app.tsx"
+    ]
+  },
+  "inertia/pages/home.tsx": {
+    "file": "home-BsQwUvOW.js",
+    "name": "home",
+    "src": "inertia/pages/home.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "inertia/app/app.tsx"
+    ]
+  }
+}

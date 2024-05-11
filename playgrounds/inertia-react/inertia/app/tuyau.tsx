@@ -1,4 +1,4 @@
-/// <reference path="../../adonisrc.ts" />
+/// <reference path="../../inertia-react/adonisrc.ts" />
 
 import { createTuyau } from '@tuyau/client'
 
