@@ -26,7 +26,7 @@ export class TuyauRequest {
   /**
    * Check if the value is a file
    */
-  private isFile(v: any) {
+  #isFile(v: any) {
     if (isReactNative && isObject(v) && v.uri) return true
     if (isServer) return v instanceof Blob
 
@@ -36,12 +36,12 @@ export class TuyauRequest {
   /**
    * Check if the object has a file inside it
    */
-  private hasFile(obj: Record<string, any>) {
+  #hasFile(obj: Record<string, any>) {
     if (!obj) return false
 
     return Object.values(obj).some((val) => {
-      if (Array.isArray(val)) return val.some(this.isFile)
-      return this.isFile(val)
+      if (Array.isArray(val)) return val.some(this.#isFile)
+      return this.#isFile(val)
     })
   }
 
@@ -51,7 +51,7 @@ export class TuyauRequest {
      */
     let key = 'json'
     let body = this.#options.body
-    if (!(body instanceof FormData) && this.hasFile(body)) {
+    if (!(body instanceof FormData) && this.#hasFile(body)) {
       body = serialize(body, { indices: true })
       key = 'body'
     } else if (body instanceof FormData) {
