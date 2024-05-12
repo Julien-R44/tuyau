@@ -1,14 +1,8 @@
 import '@tuyau/inertia/types'
 
 import { createTuyau } from '@tuyau/client'
-import type { TuyauClient, TuyauRpcClient } from '@tuyau/client'
 
 import { api } from '../../.adonisjs/api'
-
-declare module '@tuyau/inertia/types' {
-  type ApiDefinition = typeof api
-  export interface Api extends ApiDefinition {}
-}
 
 export const tuyau = createTuyau({
   api,
