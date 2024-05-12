@@ -1,6 +1,8 @@
 import type { Options as KyOptions } from 'ky'
 import type { Simplify, Serialize, IsNever, Prettify } from '@tuyau/utils/types'
 
+import type { RouteHelper } from './route.js'
+
 /**
  * Shape of the response returned by Tuyau
  */
@@ -38,7 +40,7 @@ export type ResponseOrUnwrap<Res extends Record<number, unknown>> = Promise<Tuya
  *
  * The real implementation of this type is done with a Proxy object
  */
-export type AdonisClient<in out Route extends Record<string, any>> = {
+export type TuyauRpcClient<in out Route extends Record<string, any>> = {
   [K in keyof Route as K extends `:${string}` ? never : K]: Route[K] extends {
     response: infer Res extends Record<number, unknown>
     request: infer Request
@@ -60,11 +62,11 @@ export type AdonisClient<in out Route extends Record<string, any>> = {
 export type CreateParams<Route extends Record<string, any>> =
   Extract<keyof Route, `:${string}`> extends infer Path extends string
     ? IsNever<Path> extends true
-      ? Prettify<AdonisClient<Route>>
+      ? Prettify<TuyauRpcClient<Route>>
       : ((params: {
           [param in Path extends `:${infer Param}` ? Param : never]: string | number
-        }) => Prettify<AdonisClient<Route[Path]>> & CreateParams<Route[Path]>) &
-          Prettify<AdonisClient<Route>>
+        }) => Prettify<TuyauRpcClient<Route[Path]>> & CreateParams<Route[Path]>) &
+          Prettify<TuyauRpcClient<Route>>
     : never
 
 export type GeneratedRoutes = readonly {
@@ -216,3 +218,8 @@ type MaybeArray<T> = T | T[]
  * DeepPartial type
  */
 export type DeepPartial<T> = T extends object ? { [P in keyof T]?: DeepPartial<T[P]> } : T
+
+export type TuyauClient<
+  Definition extends Record<string, any>,
+  Routes extends GeneratedRoutes,
+> = RouteHelper<Routes> & TuyauRpcClient<Definition>
