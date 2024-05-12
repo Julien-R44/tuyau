@@ -1,5 +1,5 @@
 {
-  "name": "inertia-vue",
+  "name": "@tuyau/playground-inertia-vue",
   "type": "module",
   "version": "0.0.0",
   "private": true,

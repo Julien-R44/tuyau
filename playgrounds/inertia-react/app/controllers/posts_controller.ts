@@ -9,7 +9,7 @@ export default class PostsController {
   /**
    * Display form to create a new record
    */
-  async create({ request, inertia }: HttpContext) {
+  async create({ inertia }: HttpContext) {
     return inertia.render('posts/create')
   }
 
