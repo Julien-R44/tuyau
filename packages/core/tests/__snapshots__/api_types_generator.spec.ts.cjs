@@ -18,6 +18,10 @@ export const api = {
   routes,
   definition: {} as ApiDefinition
 }
+declare module '@tuyau/inertia/types' {
+  type ApiDefinition = typeof api
+  export interface Api extends ApiDefinition {}
+}
 "`
 
 exports[`Api Types Generator > extract validateUsing request 1`] = `"import type { MakeTuyauRequest, MakeTuyauResponse } from '@tuyau/utils/types'
@@ -40,6 +44,10 @@ export const api = {
   routes,
   definition: {} as ApiDefinition
 }
+declare module '@tuyau/inertia/types' {
+  type ApiDefinition = typeof api
+  export interface Api extends ApiDefinition {}
+}
 "`
 
 exports[`Api Types Generator > should use unknown in route name array if type is not found 1`] = `"import type { MakeTuyauRequest, MakeTuyauResponse } from '@tuyau/utils/types'
@@ -59,6 +67,10 @@ const routes = [
 export const api = {
   routes,
   definition: {} as ApiDefinition
+}
+declare module '@tuyau/inertia/types' {
+  type ApiDefinition = typeof api
+  export interface Api extends ApiDefinition {}
 }
 "`
 
@@ -82,6 +94,10 @@ export const api = {
   routes,
   definition: {} as ApiDefinition
 }
+declare module '@tuyau/inertia/types' {
+  type ApiDefinition = typeof api
+  export interface Api extends ApiDefinition {}
+}
 "`
 
 exports[`Api Types Generator | Filters > filter definitions using codegen.except function 1`] = `"import type { MakeTuyauRequest, MakeTuyauResponse } from '@tuyau/utils/types'
@@ -103,6 +119,10 @@ const routes = [
 export const api = {
   routes,
   definition: {} as ApiDefinition
+}
+declare module '@tuyau/inertia/types' {
+  type ApiDefinition = typeof api
+  export interface Api extends ApiDefinition {}
 }
 "`
 
@@ -126,6 +146,10 @@ export const api = {
   routes,
   definition: {} as ApiDefinition
 }
+declare module '@tuyau/inertia/types' {
+  type ApiDefinition = typeof api
+  export interface Api extends ApiDefinition {}
+}
 "`
 
 exports[`Api Types Generator | Filters > filter definitions using codegen.except array 1`] = `"import type { MakeTuyauRequest, MakeTuyauResponse } from '@tuyau/utils/types'
@@ -147,6 +171,10 @@ const routes = [
 export const api = {
   routes,
   definition: {} as ApiDefinition
+}
+declare module '@tuyau/inertia/types' {
+  type ApiDefinition = typeof api
+  export interface Api extends ApiDefinition {}
 }
 "`
 
