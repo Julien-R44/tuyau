@@ -15,7 +15,7 @@ The main goal of this project is to provide some utilities to have better typesa
 
 - **Done (Experimental)** : Provide an RPC-like client that is fully e2e typesafe ( like tRPC, Elysia Eden, Hono etc. )
 - **Done (Experimental)** : Provide a [Ziggy](https://github.com/tighten/ziggy)-like helper to generate and use routes in the frontend.
-- **Not started** : Provide some Inertia helpers to have better typesafety when using Inertia in your AdonisJS project. Things like typesafe `<Link />` and `useForm`.
+- **In Progress** : Provide some Inertia helpers to have better typesafety when using Inertia in your AdonisJS project. Things like typesafe `<Link />` and `useForm`.
 - **Not started** : Provide a specific Controller class that will allow to have better typesafety when creating your endpoints.
 - **Not started** : Having an automatic OpenAPI generation + Swagger/Scalar UI viewer based on Tuyau codegen. Still not sure about this one.
 
