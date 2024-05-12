@@ -545,4 +545,7 @@ import { Link } from '@tuyau/inertia/vue'
 
 ## Credits
 
-Tuyau was inspired a lot by [Elysia](https://elysiajs.com/eden/treaty/overview), [tRPC](https://trpc.io/) and [Hono](https://hono.dev/). Thanks to the authors of these projects for the inspiration !
+- Tuyau was inspired a lot by [Elysia](https://elysiajs.com/eden/treaty/overview), [tRPC](https://trpc.io/) and [Hono](https://hono.dev/) for the RPC client.
+- Route helpers were inspired by [Ziggy](https://github.com/tighten/ziggy)
+
+Thanks to the authors of these projects for the inspiration !
