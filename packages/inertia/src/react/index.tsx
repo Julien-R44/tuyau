@@ -30,8 +30,6 @@ function LinkInner<Route extends RouteName<AssertedApi['routes']>>(
 
   const result = tuyau.$route(props.route, props.params as any)
 
-  console.log(result)
-
   return <InertiaLink {...props} href={result.path} method={result.method[0]} ref={ref} />
 }
 

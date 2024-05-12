@@ -442,6 +442,18 @@ importers:
       '@inertiajs/vue3':
         specifier: ^1.0.16
         version: 1.0.16(vue@3.4.27(typescript@5.4.5))
+      '@tuyau/client':
+        specifier: workspace:*
+        version: link:../../packages/client
+      '@tuyau/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@tuyau/inertia':
+        specifier: workspace:*
+        version: link:../../packages/inertia
+      '@tuyau/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
       '@vinejs/vine':
         specifier: ^2.0.0
         version: 2.0.0

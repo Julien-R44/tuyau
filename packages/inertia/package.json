@@ -9,6 +9,7 @@
   "exports": {
     ".": "./build/index.js",
     "./react": "./build/react/index.js",
+    "./vue": "./build/vue/index.js",
     "./types": "./build/types.js"
   },
   "main": "index.js",
@@ -55,6 +56,7 @@
     "entry": [
       "./src/index.ts",
       "./src/react/index.tsx",
+      "./src/vue/index.tsx",
       "./src/types.ts"
     ],
     "outDir": "./build",
