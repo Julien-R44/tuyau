@@ -15,7 +15,7 @@
   "scripts": {
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "build": "tsup-node && tsc --emitDeclarationOnly --declaration",
+    "build": "tsup-node",
     "test": "c8 node --enable-source-maps --loader ts-node/esm bin/test.ts",
     "quick:test": "node --enable-source-maps --loader ts-node/esm bin/test.ts",
     "checks": "pnpm lint && pnpm typecheck"
@@ -60,7 +60,7 @@
     "outDir": "./build",
     "clean": true,
     "format": "esm",
-    "dts": false,
+    "dts": true,
     "target": "esnext"
   }
 }
