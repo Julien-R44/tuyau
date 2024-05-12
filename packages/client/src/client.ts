@@ -4,10 +4,11 @@ import type { KyInstance } from 'ky'
 import { RouteHelper } from './route.js'
 import { TuyauRequest } from './request.js'
 import type {
-  TuyauOptions as TuyauOptions,
-  AdonisClient,
+  TuyauOptions,
   GeneratedRoutes,
+  TuyauRpcClient,
   ApiDefinition,
+  TuyauClient,
 } from './types.js'
 
 const methods = ['get', 'post', 'put', 'delete', 'patch', 'head'] as const
@@ -70,8 +71,8 @@ function createProxy(options: {
 export function createTuyau<const Api extends ApiDefinition>(
   options: TuyauOptions<Api>,
 ): Api['routes'] extends GeneratedRoutes
-  ? RouteHelper<Api['routes']> & AdonisClient<Api['definition']>
-  : AdonisClient<Api['definition']> {
+  ? TuyauClient<Api['definition'], Api['routes']>
+  : TuyauRpcClient<Api['definition']> {
   const baseUrl = options.baseUrl
   const client = ky.create({ prefixUrl: baseUrl, throwHttpErrors: false, ...options })
 

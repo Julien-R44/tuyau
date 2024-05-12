@@ -40,7 +40,6 @@
     "medium-zoom": "^1.1.0",
     "reflect-metadata": "^0.2.2",
     "undici": "^6.15.0",
-    "unpoly": "^3.7.3",
-    "vite": "^5.2.10"
+    "unpoly": "^3.7.3"
   }
 }

@@ -8,10 +8,10 @@
   "keywords": [],
   "main": "index.js",
   "scripts": {
-    "typecheck": "pnpm run -r --parallel typecheck",
+    "typecheck": "pnpm run --parallel --filter=!@tuyau/playground* typecheck",
     "lint": "eslint .",
-    "test": "pnpm run -r --parallel test",
-    "build": "pnpm run -r build",
+    "test": "pnpm run --parallel --filter=!@tuyau/playground* test",
+    "build": "pnpm run -r --filter=!@tuyau/playground* build",
     "checks": "pnpm lint && pnpm typecheck && pnpm test",
     "release": "pnpm run build && changeset publish"
   },

@@ -1,5 +1,5 @@
 {
-  "name": "inertia-react",
+  "name": "@tuyau/playground-inertia-react",
   "type": "module",
   "version": "0.0.0",
   "private": true,
@@ -42,6 +42,10 @@
     "@adonisjs/static": "^1.1.1",
     "@adonisjs/vite": "^3.0.0-11",
     "@inertiajs/react": "^1.0.16",
+    "@tuyau/client": "workspace:*",
+    "@tuyau/core": "workspace:*",
+    "@tuyau/inertia": "workspace:*",
+    "@tuyau/utils": "workspace:*",
     "@vinejs/vine": "^2.0.0",
     "better-sqlite3": "^9.6.0",
     "edge.js": "^6.0.2",

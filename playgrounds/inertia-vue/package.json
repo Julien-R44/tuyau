@@ -1,5 +1,5 @@
 {
-  "name": "inertia-vue",
+  "name": "@tuyau/playground-inertia-vue",
   "type": "module",
   "version": "0.0.0",
   "private": true,
@@ -42,6 +42,10 @@
     "@adonisjs/static": "^1.1.1",
     "@adonisjs/vite": "^3.0.0-11",
     "@inertiajs/vue3": "^1.0.16",
+    "@tuyau/client": "workspace:*",
+    "@tuyau/core": "workspace:*",
+    "@tuyau/inertia": "workspace:*",
+    "@tuyau/utils": "workspace:*",
     "@vinejs/vine": "^2.0.0",
     "@vue/server-renderer": "^3.4.27",
     "better-sqlite3": "^9.6.0",

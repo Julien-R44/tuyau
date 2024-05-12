@@ -1,5 +1,5 @@
 import { Node } from 'ts-morph'
-// @ts-expect-error tkt
+// @ts-expect-error untyped
 import matchit from '@poppinss/matchit'
 import { fileURLToPath } from 'node:url'
 import type { Logger } from '@poppinss/cliui'
@@ -271,6 +271,14 @@ export class ApiTypesGenerator {
         .writeLine(`  routes,`)
         .writeLine(`  definition: {} as ApiDefinition`)
         .writeLine(`}`)
+
+      /**
+       * Write the module augmentation for the tuyau/inertia/types module
+       */
+      writer.writeLine(`declare module '@tuyau/inertia/types' {`)
+      writer.writeLine(`  type ApiDefinition = typeof api`)
+      writer.writeLine(`  export interface Api extends ApiDefinition {}`)
+      writer.writeLine(`}`)
     })
 
     await file.save()

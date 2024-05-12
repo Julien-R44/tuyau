@@ -1,5 +1,5 @@
 {
-  "name": "playground",
+  "name": "@tuyau/playground-inertia-solid",
   "type": "module",
   "version": "0.0.0",
   "private": true,
