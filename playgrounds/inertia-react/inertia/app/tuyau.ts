@@ -4,7 +4,6 @@ import { api } from '../../.adonisjs/api'
 
 declare module '@tuyau/inertia/types' {
   type ApiDefinition = typeof api
-
   export interface Api extends ApiDefinition {}
 }
 

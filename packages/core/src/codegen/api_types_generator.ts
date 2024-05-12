@@ -1,5 +1,5 @@
 import { Node } from 'ts-morph'
-// @ts-expect-error tkt
+// @ts-expect-error untyped
 import matchit from '@poppinss/matchit'
 import { fileURLToPath } from 'node:url'
 import type { Logger } from '@poppinss/cliui'

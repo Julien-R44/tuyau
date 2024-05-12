@@ -6,7 +6,8 @@ import { getDirname } from '@adonisjs/core/helpers'
 
 export default defineConfig({
   plugins: [
-    // @ts-expect-error tkt
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment, @typescript-eslint/prefer-ts-expect-error
+    // @ts-ignore
     inertia({ ssr: { enabled: true, entrypoint: 'inertia/app/ssr.ts' } }),
     vue(),
     adonisjs({ entrypoints: ['inertia/app/app.ts'], reload: ['resources/views/**/*.edge'] }),
