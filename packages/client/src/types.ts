@@ -118,7 +118,13 @@ export type RoutesNameParams<
   K extends T[number]['name'],
 > = K extends T[number]['name'] ? Extract<T[number], { name: K }>['params'] : never
 
-type MultipleFormatsParams<T extends readonly string[], OnlyObject = false> = T extends readonly []
+/**
+ * Represents the parameters for multiple formats.
+ */
+export type MultipleFormatsParams<
+  T extends readonly string[],
+  OnlyObject = false,
+> = T extends readonly []
   ? undefined
   : OnlyObject extends true
     ? { [K in CamelCase<T[number]>]: string | number }

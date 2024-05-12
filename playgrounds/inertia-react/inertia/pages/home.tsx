@@ -9,8 +9,9 @@ export default function Home(props: { version: number }) {
       <div className="container">
         <div className="title">AdonisJS {props.version} x Inertia x React</div>
 
-        <Link route="posts.create" params={[]}>
-          Go Post create
+        <Link route="posts.create">Go Post create</Link>
+        <Link route="posts_comments.create" params={{ postId: 1 }}>
+          Create comment for post 1
         </Link>
 
         <span>

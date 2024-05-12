@@ -2,7 +2,7 @@ import React from 'react'
 import { Link as InertiaLink } from '@inertiajs/react'
 import type { TuyauClient, RouteName } from '@tuyau/client'
 
-import type { AssertedApi, LinkParams } from '../types.js'
+import type { ValidatedApi, LinkParams } from '../types.js'
 
 const TuyauContext = React.createContext<TuyauClient<any, any> | null>(null)
 
@@ -13,13 +13,13 @@ export const TuyauProvider = (props: {
 
 export const useTuyau = () => React.useContext(TuyauContext)
 
-type LinkProps<Route extends RouteName<AssertedApi['routes']>> = Omit<
+type LinkProps<Route extends RouteName<ValidatedApi['routes']>> = Omit<
   React.ComponentPropsWithoutRef<typeof InertiaLink>,
   'href' | 'method'
 > &
   LinkParams<Route>
 
-function LinkInner<Route extends RouteName<AssertedApi['routes']>>(
+function LinkInner<Route extends RouteName<ValidatedApi['routes']>>(
   props: LinkProps<Route>,
   ref?: React.ForwardedRef<React.ElementRef<typeof InertiaLink>>,
 ) {
@@ -30,7 +30,7 @@ function LinkInner<Route extends RouteName<AssertedApi['routes']>>(
   return <InertiaLink {...props} href={route.path} method={route.method[0]} ref={ref} />
 }
 
-export const Link: <Route extends RouteName<AssertedApi['routes']>>(
+export const Link: <Route extends RouteName<ValidatedApi['routes']>>(
   props: LinkProps<Route> & {
     ref?: React.Ref<React.ElementRef<typeof InertiaLink>>
   },

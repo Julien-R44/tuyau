@@ -11,7 +11,7 @@ const tuyauConfig = defineConfig({
     // routes: {
     //  only: [],
     // }
-  }
+  },
 })
 
 export default tuyauConfig

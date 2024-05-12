@@ -8,7 +8,7 @@ export default function Home() {
 
       <div className="container">
         <p>Create post</p>
-        <Link route="home" params={[]}></Link>
+        <Link route="home"></Link>
       </div>
     </>
   )

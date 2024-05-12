@@ -4,7 +4,7 @@ import { Link as InertiaLink } from '@inertiajs/vue3'
 import type { InertiaLinkProps } from '@inertiajs/vue3'
 import type { RouteName, TuyauClient } from '@tuyau/client'
 
-import type { AssertedApi, LinkParams } from '../types.js'
+import type { ValidatedApi, LinkParams } from '../types.js'
 
 export const TUYAU_PLUGIN = 'TUYAU_PLUGIN'
 
@@ -24,12 +24,12 @@ export const TuyauPlugin = {
  * Typescript will resolve the generic and replace it with a `never` at build time. So
  * kind of unusable.
  */
-type LinkComponentType<T extends RouteName<AssertedApi['routes']>> = DefineSetupFnComponent<
+type LinkComponentType<T extends RouteName<ValidatedApi['routes']>> = DefineSetupFnComponent<
   LinkParams<T> & Omit<InertiaLinkProps, 'href' | 'method'>
 >
 
 // @ts-expect-error fine
-export const Link: <Route extends RouteName<AssertedApi['routes']>>(
+export const Link: <Route extends RouteName<ValidatedApi['routes']>>(
   props: LinkParams<Route> & Omit<InertiaLinkProps, 'href' | 'method'>,
 ) => LinkComponentType<Route> = defineComponent(
   (props: { route: string; params?: any }, ctx) => {
