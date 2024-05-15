@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url'
 import { getActiveTest } from '@japa/runner'
 import { Project, QuoteKind } from 'ts-morph'
 import string from '@adonisjs/core/helpers/string'
@@ -22,7 +23,7 @@ export async function setupProject() {
   })
 
   return new Project({
-    tsConfigFilePath: new URL('./tsconfig.json', fs.baseUrl).pathname,
+    tsConfigFilePath: fileURLToPath(new URL('./tsconfig.json', fs.baseUrl)),
     manipulationSettings: { quoteKind: QuoteKind.Single },
   })
 }

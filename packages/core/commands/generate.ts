@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url'
 import { Project, QuoteKind } from 'ts-morph'
 import { BaseCommand, flags } from '@adonisjs/core/ace'
 import type { CommandOptions } from '@adonisjs/core/types/ace'
@@ -28,7 +29,7 @@ export default class CodegenTypes extends BaseCommand {
   override async run() {
     const project = new Project({
       manipulationSettings: { quoteKind: QuoteKind.Single },
-      tsConfigFilePath: new URL('./tsconfig.json', this.app.appRoot).pathname,
+      tsConfigFilePath: fileURLToPath(new URL('./tsconfig.json', this.app.appRoot)),
     })
 
     const apiTypesGenerator = new ApiTypesGenerator({

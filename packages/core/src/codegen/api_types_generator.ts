@@ -31,7 +31,7 @@ export class ApiTypesGenerator {
   #config: TuyauConfig
   #routes: Array<RouteJSON>
 
-  #destination!: URL
+  #destination!: string
 
   constructor(options: {
     appRoot: URL
@@ -50,14 +50,14 @@ export class ApiTypesGenerator {
   }
 
   #getDestinationDirectory() {
-    return dirname(this.#destination.pathname)
+    return dirname(this.#destination)
   }
 
   /**
    * Create the destination directory if it does not exists
    */
   #prepareDestination() {
-    this.#destination = new URL('./.adonisjs/api.ts', this.#appRoot)
+    this.#destination = fileURLToPath(new URL('./.adonisjs/api.ts', this.#appRoot))
     const directory = this.#getDestinationDirectory()
     if (!existsSync(directory)) {
       mkdirSync(directory, { recursive: true })
@@ -220,8 +220,7 @@ export class ApiTypesGenerator {
     definition: Record<string, any>
     typesByPattern: Record<string, any>
   }) {
-    const path = fileURLToPath(this.#destination)
-    const file = this.#project.createSourceFile(path, '', { overwrite: true })
+    const file = this.#project.createSourceFile(this.#destination, '', { overwrite: true })
     if (!file) throw new Error('Unable to create the api.ts file')
 
     file.removeText().insertText(0, (writer) => {
