@@ -22,3 +22,10 @@ export const getMiscValidator = vine.compile(
     params: vine.number().optional(),
   })
 )
+
+export const showUserValidator = vine.compile(
+  vine.object({
+    withPosts: vine.boolean().optional(),
+    withComments: vine.boolean().optional(),
+  })
+)

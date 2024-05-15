@@ -1,3 +1,13 @@
+/**
+ * Code was stolen from https://gist.github.com/zaripych/963fa6584524e5b446b70548dbabbf65
+ * and tweaked a bit to work with tuyau
+ *
+ * Purpose is to generates a "resolved" typescript type definition for a given type in a given file.
+ *
+ * Means if we pass an interface like `interface A { b: User }` to this function, it will generate a
+ * resolved type like : `interface A { b: { id: string, name: string } }`
+ */
+
 import type { Type, Symbol, Signature, Node } from 'ts-morph'
 import { Project, SymbolFlags, TypeFormatFlags } from 'ts-morph'
 
@@ -5,106 +15,54 @@ const projects = new Map<string, Project>()
 
 const project = (tsConfigFilePath: string) => {
   const project = projects.get(tsConfigFilePath)
-  const result =
-    project ??
-    new Project({
-      tsConfigFilePath,
-    })
+  const result = project ?? new Project({ tsConfigFilePath })
   projects.set(tsConfigFilePath, result)
+
   return result
 }
 
-/**
- * You have a type A that depends on type C that depends on type B through
- * a complex or just somewhat complex set of manipulations - Pick, Omit,
- * typeof const or whatever else.
- *
- * You want to make it visible that changes in type B change type A in
- * a more explicit way.
- *
- * Solution:
- * Create a test where you have a snapshot of a type which turns a complex type
- * into plain structure without all the complexities. That is - when type B changes
- * you would explicitly see all the types/interfaces it affected.
- */
 export function typeFootprint(
   fileName: string,
   typeName: string,
-  opts: {
-    // NOTE: because TypeScript does interning for equivalent types
-    // some aliases are going to be erased and unavailable - so it wouldn't
-    // be possible to override output for any type we wish, but should be possible
-    // for top-level types and types containing this: Type & { _SpecialType?: undefined }
-    // for more information: https://stackoverflow.com/questions/64745962/use-typescript-compiler-api-to-get-the-type-alias-declaration-node-from-a-type-r
-    overrides?: Record<string, string>
-    tsConfigFilePath: string
-  },
+  opts: { overrides?: Record<string, string>; tsConfigFilePath: string },
 ) {
   const p = project(opts.tsConfigFilePath)
   const s = p.addSourceFileAtPath(fileName)
   const a = s.getInterfaceOrThrow(typeName)
   const t = a.getType()
 
-  const text = footprintOfType({
-    type: t,
-    node: a,
-    overrides: opts?.overrides,
-  })
+  const text = footprintOfType({ type: t, node: a, overrides: opts?.overrides })
 
-  return `type ${typeName} = ` + text
+  return `interface ${typeName} ` + text
 }
 
 function isPrimitive(type: Type) {
-  if (type.isString()) {
-    return true
-  }
-  if (type.isStringLiteral()) {
-    return true
-  }
-  if (type.isUndefined()) {
-    return true
-  }
-  if (type.isNull()) {
-    return true
-  }
-  if (type.isUnknown()) {
-    return true
-  }
-  if (type.isAny()) {
-    return true
-  }
-  if (type.isNumber()) {
-    return true
-  }
-  if (type.isNumberLiteral()) {
-    return true
-  }
-  if (type.isBoolean()) {
-    return true
-  }
-  if (type.isBooleanLiteral()) {
-    return true
-  }
-  if (intrinsicNameOf(type) === 'void') {
-    // isVoid
-    return true
-  }
+  if (type.isString()) return true
+  if (type.isStringLiteral()) return true
+  if (type.isUndefined()) return true
+  if (type.isNull()) return true
+  if (type.isUnknown()) return true
+  if (type.isAny()) return true
+  if (type.isNumber()) return true
+  if (type.isNumberLiteral()) return true
+  if (type.isBoolean()) return true
+  if (type.isBooleanLiteral()) return true
+  if (intrinsicNameOf(type) === 'void') return true
+
   return false
 }
 
 function isPromise(type: Type) {
   const symbol = type.getSymbol()
-  if (!type.isObject() || !symbol) {
-    return false
-  }
+  if (!type.isObject() || !symbol) return false
+
   const args = type.getTypeArguments()
   return symbol.getName() === 'Promise' && args.length === 1
 }
 
 function isSimpleSignature(type: Type) {
-  if (!type.isObject()) {
-    return false
-  }
+  if (!type.isObject()) return false
+
   const sigs = type.getCallSignatures()
   const props = type.getProperties()
   const args = type.getTypeArguments()
@@ -163,11 +121,14 @@ function footprintOfType(params: {
     return defaultFormat()
   }
 
+  if (type.getText() === 'Blob') {
+    return defaultFormat()
+  }
+
   if (type.isArray()) {
     const subType = type.getArrayElementTypeOrThrow()
-    if (isPrimitive(subType)) {
-      return `${next(subType)}[]`
-    }
+    if (isPrimitive(subType)) return `${next(subType)}[]`
+
     return `Array<\n${indent(next(subType))}\n>`
   }
 
@@ -178,12 +139,9 @@ function footprintOfType(params: {
 
   if (type.isObject() && isPromise(type)) {
     const first = type.getTypeArguments()[0]
-    if (!first) {
-      throw new Error('This should not have happened')
-    }
-    if (isPrimitive(first)) {
-      return `Promise<${next(first)}>`
-    }
+    if (!first) throw new Error('This should not have happened')
+    if (isPrimitive(first)) return `Promise<${next(first)}>`
+
     return `Promise<\n${indent(next(first))}\n>`
   }
 
@@ -258,9 +216,10 @@ function property(
   if (isSimpleSignature(type) && !prop.hasFlags(SymbolFlags.Optional) && firstSig) {
     return signature(firstSig, 'declaration', next, prop.getName()) + ';'
   }
+
   const isOptional = prop.hasFlags(SymbolFlags.Optional)
   return [
-    prop.getName(),
+    `'${prop.getName()}'`,
     isOptional ? '?' : '',
     ': ',
     next(type, [isOptional && 'remove-undefined-from-intersections']),
@@ -285,12 +244,13 @@ function signature(
   const name = sig.getDeclaration().getSymbol()?.getName()
   const nameToUse = methodName ?? (['__type', '__call'].includes(name ?? '') ? '' : name)
   const params = sig.getParameters()
+
   return [
     variant === 'declaration' ? nameToUse : '',
     '(',
     params
-      .map((param) =>
-        [
+      .map((param) => {
+        return [
           param.getName(),
           param.hasFlags(SymbolFlags.Optional) ? '?' : '',
           ': ',
@@ -298,8 +258,8 @@ function signature(
             .getDeclarations()
             .map((decl) => next(decl.getType(), []))
             .join(','),
-        ].join(''),
-      )
+        ].join('')
+      })
       .join(', '),
     ')',
     variant === 'declaration' ? ': ' : ' => ',

@@ -1,16 +1,25 @@
-import type { MakeTuyauRequest, MakeTuyauResponse } from '@tuyau/utils/types'
+import type { MakeTuyauRequest, MakeTuyauResponse, Prettify, Serialize } from '@tuyau/utils/types'
 
-type UsersGetHead = {
-  request: MakeTuyauRequest<{ limit: number; page?: number }>
-  response: MakeTuyauResponse<() => Promise<{ id: number; name: string; email: string }>>
-}
+type UsersGetHead = Prettify<{
+  request: Prettify<MakeTuyauRequest<{ limit: number; page?: number }>>
+  response: MakeTuyauResponse<
+    () => Promise<
+      | { id: number; name: string; email: string }
+      | {
+          __response: { error: 'not found' }
+          __status: 404
+        }
+    >
+  >
+}>
+
 type SimpleTextGetHead = {
   request: unknown
   response: MakeTuyauResponse<() => Promise<{ text: string }>>
 }
 type FileUploadPost = {
-  request: MakeTuyauRequest<{ file: Blob }>
-  response: MakeTuyauResponse<() => Promise<{ id: number; name: string; email: string }>>
+  request: Prettify<MakeTuyauRequest<{ file: Blob }>>
+  response: MakeTuyauResponse<() => Promise<Serialize<{ id: number; name: string; email: Date }>>>
 }
 type PostsGetHead = {
   request: unknown
@@ -36,7 +45,7 @@ type PostsIdeditGetHead = {
   response: MakeTuyauResponse<() => Promise<{ id: number; title: string; comment: string }>>
 }
 type PostsIdPutPatch = {
-  request: MakeTuyauRequest<{ comment: string; title: string }>
+  request: MakeTuyauRequest<{ comment?: string; title: string }>
   response: MakeTuyauResponse<() => Promise<{ id: number; title: string; comment: string }>>
 }
 
@@ -76,17 +85,17 @@ type PostsPostIdcommentsIdDelete = {
 interface AdonisApi {
   'users': {
     $url: {}
-    $get: UsersGetHead
-    $head: UsersGetHead
+    $get: Prettify<UsersGetHead>
+    $head: Prettify<UsersGetHead>
   }
   'simple-text': {
     $url: {}
-    $get: SimpleTextGetHead
-    $head: SimpleTextGetHead
+    $get: Prettify<SimpleTextGetHead>
+    $head: Prettify<SimpleTextGetHead>
   }
   'file-upload': {
     $url: {}
-    $post: FileUploadPost
+    $post: Prettify<FileUploadPost>
   }
   'posts': {
     '$url': {}
@@ -94,18 +103,18 @@ interface AdonisApi {
     '$head': PostsGetHead
     'create': {
       $url: {}
-      $get: PostscreateGetHead
-      $head: PostscreateGetHead
+      $get: Prettify<PostscreateGetHead>
+      $head: Prettify<PostscreateGetHead>
     }
-    '$post': PostsPost
+    '$post': Prettify<PostsPost>
     ':id': {
       $url: {}
-      $get: PostsIdGetHead
-      $head: PostsIdGetHead
+      $get: Prettify<PostsIdGetHead>
+      $head: Prettify<PostsIdGetHead>
       edit: {
         $url: {}
-        $get: PostsIdeditGetHead
-        $head: PostsIdeditGetHead
+        $get: Prettify<PostsIdeditGetHead>
+        $head: Prettify<PostsIdeditGetHead>
       }
       $put: PostsIdPutPatch
       $patch: PostsIdPutPatch
@@ -118,18 +127,18 @@ interface AdonisApi {
         '$head': PostsPostIdcommentsGetHead
         'create': {
           $url: {}
-          $get: PostsPostIdcommentscreateGetHead
-          $head: PostsPostIdcommentscreateGetHead
+          $get: Prettify<PostsPostIdcommentscreateGetHead>
+          $head: Prettify<PostsPostIdcommentscreateGetHead>
         }
-        '$post': PostsPostIdcommentsPost
+        '$post': Prettify<PostsPostIdcommentsPost>
         ':id': {
           $url: {}
-          $get: PostsPostIdcommentsIdGetHead
-          $head: PostsPostIdcommentsIdGetHead
+          $get: Prettify<PostsPostIdcommentsIdGetHead>
+          $head: Prettify<PostsPostIdcommentsIdGetHead>
           edit: {
             $url: {}
-            $get: PostsPostIdcommentsIdeditGetHead
-            $head: PostsPostIdcommentsIdeditGetHead
+            $get: Prettify<PostsPostIdcommentsIdeditGetHead>
+            $head: Prettify<PostsPostIdcommentsIdeditGetHead>
           }
           $put: PostsPostIdcommentsIdPutPatch
           $patch: PostsPostIdcommentsIdPutPatch
