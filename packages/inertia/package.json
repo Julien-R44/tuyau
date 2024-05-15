@@ -17,8 +17,8 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "build": "tsup-node",
-    "test": "c8 node --enable-source-maps --loader ts-node/esm bin/test.ts",
-    "quick:test": "node --enable-source-maps --loader ts-node/esm bin/test.ts",
+    "test": "c8 npm run quick:test",
+    "quick:test": "node --import=./tsnode.esm.js --enable-source-maps bin/test.ts",
     "checks": "pnpm lint && pnpm typecheck"
   },
   "peerDependencies": {
