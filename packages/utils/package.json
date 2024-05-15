@@ -18,7 +18,8 @@
     "typecheck": "tsc --noEmit",
     "build": "tsup-node",
     "checks": "pnpm lint && pnpm typecheck",
-    "test": "c8 node --loader ts-node/esm bin/test.ts"
+    "test": "c8 npm run quick:test",
+    "quick:test": "node --import=./tsnode.esm.js --enable-source-maps bin/test.ts"
   },
   "devDependencies": {
     "@adonisjs/bodyparser": "^10.0.2"
