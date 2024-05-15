@@ -7,7 +7,7 @@ import { dirname, relative } from 'node:path'
 import { existsSync, mkdirSync } from 'node:fs'
 import string from '@adonisjs/core/helpers/string'
 import type { RouteJSON } from '@adonisjs/core/types/http'
-import { parseBindingReference } from '@adonisjs/core/helpers'
+import { parseBindingReference, slash } from '@adonisjs/core/helpers'
 import type { MethodDeclaration, Project, SourceFile } from 'ts-morph'
 
 import type { TuyauConfig } from '../types.js'
@@ -116,7 +116,7 @@ export class ApiTypesGenerator {
       }
 
       const importPath = implementation.getSourceFile().getFilePath()
-      const relativeImportPath = relative(this.#getDestinationDirectory(), importPath)
+      const relativeImportPath = slash(relative(this.#getDestinationDirectory(), importPath))
 
       return `InferInput<typeof import('${relativeImportPath}')['${schema.getText()}']>`
     }
@@ -342,7 +342,7 @@ export class ApiTypesGenerator {
       const segments = route.pattern.split('/').filter(Boolean) as string[]
 
       let currentLevel = definition
-      const relativePath = relative(this.#getDestinationDirectory(), file.getFilePath())
+      const relativePath = slash(relative(this.#getDestinationDirectory(), file.getFilePath()))
       segments.forEach((segment, i) => {
         if (!currentLevel[segment]) currentLevel[segment] = {}
 
