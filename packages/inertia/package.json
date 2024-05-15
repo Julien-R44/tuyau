@@ -52,6 +52,10 @@
     "solid-js": "^1.8.17",
     "vue": "^3.4.27"
   },
+  "publishConfig": {
+    "access": "public",
+    "tag": "latest"
+  },
   "tsup": {
     "entry": [
       "./src/index.ts",
