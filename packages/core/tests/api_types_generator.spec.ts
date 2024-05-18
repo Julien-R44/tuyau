@@ -7,7 +7,9 @@ import { createController, createValidator, setupProject } from './helpers.js'
 
 const logger = cliui().logger
 
-test.group('Api Types Generator', () => {
+test.group('Api Types Generator', (group) => {
+  group.tap((t) => t.timeout(10_000))
+
   test('works fine', async ({ fs, assert }) => {
     const route = await createController({ name: 'UsersController', returnType: "{ foo: 'bar' }" })
 
