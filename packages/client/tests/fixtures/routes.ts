@@ -79,66 +79,65 @@ export interface ApiDefinition {
     $get: UsersGetHead
     $head: UsersGetHead
   }
-}
-  // 'simple-text': {
-  //   $url: {}
-  //   $get: SimpleTextGetHead
-  //   $head: SimpleTextGetHead
-  // }
-  // 'file-upload': {
-  //   $url: {}
-  //   $post: FileUploadPost
-  // }
-  // 'posts': {
-  //   '$url': {}
-  //   '$get': PostsGetHead
-  //   '$head': PostsGetHead
-  //   'create': {
-  //     $url: {}
-  //     $get: PostscreateGetHead
-  //     $head: PostscreateGetHead
-  //   }
-  //   '$post': PostsPost
-  //   ':id': {
-  //     $url: {}
-  //     $get: PostsIdGetHead
-  //     $head: PostsIdGetHead
-  //     edit: {
-  //       $url: {}
-  //       $get: PostsIdeditGetHead
-  //       $head: PostsIdeditGetHead
-  //     }
-  //     $put: PostsIdPutPatch
-  //     $patch: PostsIdPutPatch
-  //     $delete: PostsIdDelete
-  //   }
-  //   ':post_id': {
-  //     comments: {
-  //       '$url': {}
-  //       '$get': PostsPostIdcommentsGetHead
-  //       '$head': PostsPostIdcommentsGetHead
-  //       'create': {
-  //         $url: {}
-  //         $get: PostsPostIdcommentscreateGetHead
-  //         $head: PostsPostIdcommentscreateGetHead
-  //       }
-  //       '$post': PostsPostIdcommentsPost
-  //       ':id': {
-  //         $url: {}
-  //         $get: PostsPostIdcommentsIdGetHead
-  //         $head: PostsPostIdcommentsIdGetHead
-  //         edit: {
-  //           $url: {}
-  //           $get: PostsPostIdcommentsIdeditGetHead
-  //           $head: PostsPostIdcommentsIdeditGetHead
-  //         }
-  //         $put: PostsPostIdcommentsIdPutPatch
-  //         $patch: PostsPostIdcommentsIdPutPatch
-  //         $delete: PostsPostIdcommentsIdDelete
-  //       }
-  //     }
-  //   }
-  // }
+  'simple-text': {
+    $url: {}
+    $get: SimpleTextGetHead
+    $head: SimpleTextGetHead
+  }
+  'file-upload': {
+    $url: {}
+    $post: FileUploadPost
+  }
+  'posts': {
+    '$url': {}
+    '$get': PostsGetHead
+    '$head': PostsGetHead
+    'create': {
+      $url: {}
+      $get: PostscreateGetHead
+      $head: PostscreateGetHead
+    }
+    '$post': PostsPost
+    ':id': {
+      $url: {}
+      $get: PostsIdGetHead
+      $head: PostsIdGetHead
+      edit: {
+        $url: {}
+        $get: PostsIdeditGetHead
+        $head: PostsIdeditGetHead
+      }
+      $put: PostsIdPutPatch
+      $patch: PostsIdPutPatch
+      $delete: PostsIdDelete
+    }
+    ':post_id': {
+      comments: {
+        '$url': {}
+        '$get': PostsPostIdcommentsGetHead
+        '$head': PostsPostIdcommentsGetHead
+        'create': {
+          $url: {}
+          $get: PostsPostIdcommentscreateGetHead
+          $head: PostsPostIdcommentscreateGetHead
+        }
+        '$post': PostsPostIdcommentsPost
+        ':id': {
+          $url: {}
+          $get: PostsPostIdcommentsIdGetHead
+          $head: PostsPostIdcommentsIdGetHead
+          edit: {
+            $url: {}
+            $get: PostsPostIdcommentsIdeditGetHead
+            $head: PostsPostIdcommentsIdeditGetHead
+          }
+          $put: PostsPostIdcommentsIdPutPatch
+          $patch: PostsPostIdcommentsIdPutPatch
+          $delete: PostsPostIdcommentsIdDelete
+        }
+      }
+    }
+  }
 }
 const routes = [
   {

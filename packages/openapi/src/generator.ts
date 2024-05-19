@@ -4,36 +4,15 @@ import YAML from 'json-to-pretty-yaml'
 import type { OpenAPIV3_1 } from 'openapi-types'
 import type { TuyauConfig } from '@tuyau/core/types'
 
-import type { MetaStore } from '../providers/openapi_provider.js'
-
-// import { typeFootprint } from './footprint.js'
-
-interface DefinitionRequestResponse {
-  request: string
-  responses: {
-    [status: number]: {
-      type: string
-      properties: Record<string, any>
-    }
-  }
-}
-
-interface FlattenDefinition {
-  [path: string]: {
-    $get?: DefinitionRequestResponse
-    $head?: DefinitionRequestResponse
-    $post?: DefinitionRequestResponse
-    $put?: DefinitionRequestResponse
-    $patch?: DefinitionRequestResponse
-    $delete?: DefinitionRequestResponse
-  }
-}
+import { objectMap } from './utils.js'
+import { typeFootprint } from './footprint.js'
+import type { MetaStore } from './meta_store.js'
 
 export class OpenApiGenerator {
   constructor(
-    private apiDefinition: tsMorph.InterfaceDeclaration,
     private config: TuyauConfig,
     private metaStore: MetaStore,
+    private tsConfigFilePath: string,
   ) {}
 
   #typeToOpenApiType(type: tsMorph.Type<tsMorph.ts.Type>) {
@@ -55,12 +34,18 @@ export class OpenApiGenerator {
     return 'object'
   }
 
+  /**
+   * Check if the type is a primitive type
+   */
   #isPrimitive(type: tsMorph.Type<tsMorph.ts.Type>) {
     return (
       type.isString() || type.isNumber() || type.isBoolean() || type.isEnum() || type.isLiteral()
     )
   }
 
+  /**
+   * Check if the type is an optional primitive type
+   */
   #isOptionalPrimitive(type: tsMorph.Type<tsMorph.ts.Type>) {
     if (!type.isUnion()) {
       return false
@@ -70,114 +55,65 @@ export class OpenApiGenerator {
     return unionTypes.some((t) => t.isUndefined()) && unionTypes.some((t) => this.#isPrimitive(t))
   }
 
+  /**
+   * Extract the main type from an optional union type
+   */
   #extractTypeFromOptionalUnion(type: tsMorph.Type<tsMorph.ts.Type>) {
     if (!type.isUnion()) return type
 
     return type.getUnionTypes().find((t) => !t.isUndefined())!
   }
 
+  /**
+   * Convert a `request` or `response` type to openapi properties
+   */
   #typeToOpenApiProperties(type: tsMorph.Type<tsMorph.ts.Type>) {
     const properties: Record<string, any> = {}
 
     for (const prop of type.getProperties()) {
-      const propType = prop.getValueDeclaration()?.getType()!
+      const type = prop.getValueDeclaration()?.getType()
+      if (!type) continue
 
-      if (!propType) {
-        continue
-      }
-
-      if (propType.isArray()) {
+      if (type.isArray()) {
         properties[prop.getName()] = {
           type: 'array',
           items: {
-            type: this.#typeToOpenApiType(propType.getArrayElementTypeOrThrow()),
-            properties: this.#typeToOpenApiProperties(propType.getArrayElementTypeOrThrow()),
+            type: this.#typeToOpenApiType(type.getArrayElementTypeOrThrow()),
+            properties: this.#typeToOpenApiProperties(type.getArrayElementTypeOrThrow()),
           },
         }
         continue
       }
 
-      const isPrimitive = this.#isPrimitive(propType)
-      const isOptionalPrimitive = this.#isOptionalPrimitive(propType)
-      const isLiteral = propType.isLiteral()
+      const isPrimitive = this.#isPrimitive(type)
+      const isOptionalPrimitive = this.#isOptionalPrimitive(type)
+      const isLiteral = type.isLiteral()
 
-      let type = 'object'
+      let specType = 'object'
       if (isPrimitive) {
-        type = isLiteral ? 'string' : propType.getText()
+        specType = isLiteral ? 'string' : type.getText()
       } else if (isOptionalPrimitive) {
-        type = this.#extractTypeFromOptionalUnion(propType).getText()
+        specType = this.#extractTypeFromOptionalUnion(type).getText()
       }
 
       properties[prop.getName()] = {
-        type,
+        type: specType,
         required: isOptionalPrimitive ? false : true,
-        properties: isPrimitive ? undefined : this.#typeToOpenApiProperties(propType),
+        properties: isPrimitive ? undefined : this.#typeToOpenApiProperties(type),
       }
     }
 
     return properties
   }
 
-  #flattenInterface(
-    definition: tsMorph.InterfaceDeclaration,
-    prefix = '',
-    result: Record<string, any> = {},
-  ) {
-    const methods = ['$get', '$head', '$post', '$put', '$patch', '$delete']
-    for (const prop of definition.getProperties()) {
-      const type = prop.getType()
-      const properties = type.getProperties()
-      const isEndpoint = type.isObject() && properties.some((p) => p.getName() === '$url')
-      const hasChild = properties.some(
-        (p) => p.getName() !== '$url' && methods.includes(p.getName()),
-      )
-
-      const childElements = properties.filter(
-        (p) => p.getName() !== '$url' && !methods.includes(p.getName()),
-      )
-
-      if (isEndpoint) {
-        const name = prop.getName().replace(/'/g, '')
-        for (const method of methods) {
-          const methodSymbol = type.getProperty(method)
-          if (methodSymbol) {
-            const methodType = methodSymbol.getValueDeclaration()?.getType()
-            const requestType = methodType?.getProperty('request')
-            const responseType = methodType?.getProperty('response')
-
-            const requestDefinition = requestType?.getValueDeclarationOrThrow().getType()
-            const responseDefinition = responseType?.getValueDeclarationOrThrow().getType()
-
-            result[`${prefix}/${name}`] = {
-              ...result[`${prefix}/${name}`],
-              [method]: {
-                request: this.#typeToOpenApiProperties(requestDefinition!),
-                // response: responseDefinition?.getText(),
-                responses: this.#typeToOpenApiProperties(responseDefinition!),
-              },
-            }
-          }
-        }
-
-        console.log('Endpoint:', prop.getName(), 'hasChild:', hasChild)
-        const isNotUrlOrMethods = prop.getName() !== '$url' && !methods.includes(prop.getName())
-        if (hasChild && isNotUrlOrMethods && childElements.length > 0) {
-          result = this.#flattenInterface(
-            type.getSymbolOrThrow().getDeclarations()[0] as tsMorph.InterfaceDeclaration,
-            `${prefix}/${name}`,
-            result,
-          )
-        }
-      }
-    }
-
-    return result
-  }
-
   #requestToOpenApi(method: string, request: any) {
+    /**
+     * When method is `get` or `head`, we need to define the request as
+     * query parameters
+     */
     if (method === 'get' || method === 'head') {
       return {
-        parameters: Object.entries(request).map(([name, type]) => {
+        parameters: Object.entries(request).map(([name, type]: any) => {
           return {
             name,
             in: 'query',
@@ -188,6 +124,9 @@ export class OpenApiGenerator {
       }
     }
 
+    /**
+     * Otherwise, define the request as a request body
+     */
     return {
       requestBody: {
         content: {
@@ -196,10 +135,8 @@ export class OpenApiGenerator {
               type: 'object',
               properties: request,
               required: Object.entries(request)
-                .filter(([, type]) => type.required)
-                .map(([name]) => {
-                  return name
-                }),
+                .filter(([, type]: any) => type.required)
+                .map(([name]) => name),
             },
           },
         },
@@ -207,6 +144,58 @@ export class OpenApiGenerator {
     }
   }
 
+  #generateEndpointSpec(options: {
+    path: string
+    method: 'get' | 'head' | 'post' | 'put' | 'patch' | 'delete'
+    type: tsMorph.Type<tsMorph.ts.ObjectType>
+  }) {
+    const method = options.method
+    if (method === 'head') return
+
+    const methodSymbol = options.type.getProperty(`$${method}`)
+    if (!methodSymbol) return
+
+    const methodType = methodSymbol.getValueDeclaration()?.getType()
+    const requestType = methodType?.getProperty('request')
+    const responseType = methodType?.getProperty('response')
+
+    const requestDefinition = requestType?.getValueDeclarationOrThrow().getType()
+    const responseDefinition = responseType?.getValueDeclarationOrThrow().getType()
+
+    const request = this.#typeToOpenApiProperties(requestDefinition!)
+    const responses = this.#typeToOpenApiProperties(responseDefinition!)
+
+    const { openApiPath, openApiParameters } = this.#pathToOpenApiPathAndParameters(options.path)
+
+    const parameters = defu(
+      { parameters: openApiParameters },
+      this.#requestToOpenApi(method, request),
+    )
+
+    return {
+      method,
+      path: openApiPath,
+      spec: {
+        ...this.metaStore.getComputed(options.path),
+        ...parameters,
+        responses: objectMap(responses, (status, schema) => {
+          return [
+            status,
+            {
+              description: status === '200' ? 'Successful response' : 'Error response',
+              content: { 'application/json': { schema } },
+            },
+          ]
+        }),
+      },
+    }
+  }
+
+  /**
+   * Given a path like `/users/:id`, it returns :
+   * - openApiPath: `/users/{id}`
+   * - and parameters to be passed to the openapi spec
+   */
   #pathToOpenApiPathAndParameters(path: string) {
     const parameters = path.match(/:(\w+)/g) || []
     const openApiPath = path.replace(/:(\w+)/g, '{$1}')
@@ -221,49 +210,111 @@ export class OpenApiGenerator {
     return { openApiPath, parameters, openApiParameters }
   }
 
-  async generate() {
-    const result: FlattenDefinition = this.#flattenInterface(this.apiDefinition)
+  /**
+   * Check if the given path is excluded. Excluded path are defined
+   * inside the config/tuyau.ts file
+   */
+  #isPathExcluded(path: string) {
+    for (const ignoreRoute of this.config.openapi?.exclude || []) {
+      if (typeof ignoreRoute === 'string' && ignoreRoute === path) {
+        return true
+      }
 
-    const openApi: OpenAPIV3_1.Document = defu(this.config.openapi?.documentation, {
+      if (ignoreRoute instanceof RegExp && ignoreRoute.test(path)) {
+        return true
+      }
+    }
+
+    return false
+  }
+
+  #generateApiDoc(options: {
+    prefix?: string
+    definition: tsMorph.InterfaceDeclaration
+    openApiDoc: OpenAPIV3_1.Document
+  }) {
+    const { prefix = '', definition, openApiDoc } = options
+    const methods = ['$get', '$head', '$post', '$put', '$patch', '$delete'] as const
+
+    /**
+     * Loop over all properties and look for endpoints definitions
+     */
+    for (const prop of definition.getProperties()) {
+      const type = prop.getType()
+      const properties = type.getProperties()
+      const name = prop.getName().replace(/'/g, '')
+
+      /**
+       * If the property is an endpoint definition, then check for
+       * every method existence and generate the openapi spec for it
+       */
+      const isEndpoint = type.isObject() && properties.some((p) => p.getName() === '$url')
+      if (isEndpoint) {
+        for (const method of methods) {
+          if (this.#isPathExcluded(`${prefix}/${name}`)) continue
+
+          const doc = this.#generateEndpointSpec({
+            path: `${prefix}/${name}`,
+            method: method.replace('$', '') as any,
+            type,
+          })
+
+          if (!doc) continue
+
+          openApiDoc.paths = openApiDoc.paths || {}
+          openApiDoc.paths[doc.path] = openApiDoc.paths[doc.path] || {}
+          // @ts-expect-error tkt
+          openApiDoc.paths[doc.path][doc.method] = doc.spec
+        }
+      }
+
+      /**
+       * If the property has nested elements, then recursively
+       * generate the openapi spec for it
+       */
+      const hasNestedElements = properties.some(
+        (p) => p.getName() !== '$url' && !methods.includes(p.getName() as any),
+      )
+      if (hasNestedElements && !methods.includes(name as any)) {
+        this.#generateApiDoc({
+          definition: type.getSymbolOrThrow().getDeclarations()[0] as tsMorph.InterfaceDeclaration,
+          prefix: `${prefix}/${name}`,
+          openApiDoc,
+        })
+      }
+    }
+  }
+
+  /**
+   * Generate the openapi documentation from the typescript api definition
+   */
+  async generate() {
+    const { Project, QuoteKind } = await import('ts-morph')
+
+    const project = new Project({
+      manipulationSettings: { quoteKind: QuoteKind.Single },
+      tsConfigFilePath: this.tsConfigFilePath,
+    })
+
+    const footprint = typeFootprint('.adonisjs/api.ts', 'ApiDefinition', {
+      tsConfigFilePath: this.tsConfigFilePath,
+    })
+
+    const footprintFile = project.createSourceFile('.adonisjs/__footprint.ts', footprint, {
+      overwrite: true,
+    })
+
+    const definition = footprintFile.getInterfaceOrThrow('ApiDefinition')
+
+    const openApiDoc: OpenAPIV3_1.Document = defu(this.config.openapi?.documentation, {
       openapi: '3.1.0',
       info: { title: 'AdonisJS API', version: '1.0.0' },
       servers: [{ url: 'http://localhost:3333' }],
       paths: {},
     })
 
-    for (const [path, methods] of Object.entries(result)) {
-      // replace params format like `:id` to `{id}`
-      const { openApiPath, openApiParameters } = this.#pathToOpenApiPathAndParameters(path)
+    this.#generateApiDoc({ definition, openApiDoc })
 
-      openApi.paths[openApiPath] = {}
-
-      for (let [method, { request, responses }] of Object.entries(methods)) {
-        method = method.replace('$', '') as 'get' | 'head' | 'post' | 'put' | 'patch' | 'delete'
-        if (method === 'head') continue
-
-        const parameters = defu(
-          { parameters: openApiParameters },
-          this.#requestToOpenApi(method, request),
-        )
-
-        openApi.paths[openApiPath][method] = {
-          ...this.metaStore.get(path),
-          ...parameters,
-          responses: Object.fromEntries(
-            Object.entries(responses).map(([status, schema]) => {
-              return [
-                status,
-                {
-                  description: status === '200' ? 'Successful response' : 'Error response',
-                  content: { 'application/json': { schema } },
-                },
-              ]
-            }),
-          ),
-        }
-      }
-    }
-
-    return YAML.stringify(openApi)
+    return YAML.stringify(openApiDoc)
   }
 }

@@ -3,6 +3,7 @@ import { defineConfig } from '@tuyau/core'
 const tuyauConfig = defineConfig({
   openapi: {
     provider: 'scalar',
+
     documentation: {
       info: {
         title: 'My Super AdonisJS API !!',
@@ -11,6 +12,12 @@ const tuyauConfig = defineConfig({
         description: 'This is a sample OpenAPI documentation for AdonisJS',
         summary: 'This is a summary',
       },
+      tags: [
+        {
+          name: 'me',
+          description: 'Operations about connected user',
+        },
+      ],
     },
   },
 })

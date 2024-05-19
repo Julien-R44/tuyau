@@ -224,6 +224,9 @@ importers:
 
   packages/openapi:
     dependencies:
+      '@vavite/multibuild':
+        specifier: ^4.1.1
+        version: 4.1.1(vite@5.2.11(@types/node@20.12.7))
       defu:
         specifier: ^6.1.4
         version: 6.1.4
@@ -8391,6 +8394,13 @@ snapshots:
       picocolors: 1.0.0
       vite: 5.2.11(@types/node@20.12.11)
 
+  '@vavite/multibuild@4.1.1(vite@5.2.11(@types/node@20.12.7))':
+    dependencies:
+      '@types/node': 20.12.11
+      cac: 6.7.14
+      picocolors: 1.0.0
+      vite: 5.2.11(@types/node@20.12.7)
+
   '@vinejs/compiler@2.5.0': {}
 
   '@vinejs/vine@2.0.0':
@@ -12844,6 +12854,15 @@ snapshots:
       rollup: 4.14.2
     optionalDependencies:
       '@types/node': 20.12.11
+      fsevents: 2.3.3
+
+  vite@5.2.11(@types/node@20.12.7):
+    dependencies:
+      esbuild: 0.20.2
+      postcss: 8.4.38
+      rollup: 4.14.2
+    optionalDependencies:
+      '@types/node': 20.12.7
       fsevents: 2.3.3
 
   vitefu@0.2.5(vite@5.2.11(@types/node@20.12.11)):

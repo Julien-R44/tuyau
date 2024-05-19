@@ -1,7 +1,11 @@
-import { Project, QuoteKind } from 'ts-morph'
+import { join } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { writeFile } from 'node:fs/promises'
+import type { TuyauConfig } from '@tuyau/core/types'
 import { BaseCommand, flags } from '@adonisjs/core/ace'
 import type { CommandOptions } from '@adonisjs/core/types/ace'
 
+import { metaStore } from '../src/meta_store.js'
 import { OpenApiGenerator } from '../src/generator.js'
 
 export default class CodegenTypes extends BaseCommand {
@@ -13,41 +17,16 @@ export default class CodegenTypes extends BaseCommand {
   declare verbose: boolean
 
   /**
-   * Get routes from the router instance
-   */
-  async #getRoutes() {
-    const router = await this.app.container.make('router')
-    router.commit()
-
-    return router.toJSON().root
-  }
-
-  /**
    * Execute command
    */
   override async run() {
-    const project = new Project({
-      manipulationSettings: { quoteKind: QuoteKind.Single },
-      tsConfigFilePath: new URL('./tsconfig.json', this.app.appRoot).pathname,
-    })
+    const config = this.app.config.get<TuyauConfig>('tuyau')
+    const tsConfigFilePath = join(fileURLToPath(this.app.appRoot), './tsconfig.json')
+    const destination = join(fileURLToPath(this.app.appRoot), './openapi.yaml')
 
-    const routes = this.#getRoutes()
+    const openApiSpec = await new OpenApiGenerator(config, metaStore, tsConfigFilePath).generate()
 
-    // @ts-expect-error tkt
-    const apiTypesGenerator = new OpenApiGenerator({
-      // project,
-      // logger: this.logger,
-      // appRoot: this.app.appRoot,
-      // routes: await this.#getRoutes(),
-      // config: this.app.config.get('tuyau'),
-    })
-
-    project
-    routes
-    apiTypesGenerator
-
-    // await apiTypesGenerator.generate()
-
-    this.logger.success('Types generated successfully')
+    writeFile(destination, openApiSpec, 'utf-8')
+    this.logger.success(`OpenAPI spec generated at ${destination}`)
   }
 }

@@ -26,7 +26,14 @@ router
     },
   })
 
-router.get('/random', [MiscController, 'index']).detail({
-  description: 'Get a random thing',
-  tags: ['misc'],
-})
+router
+  .group(() => {
+    router.get('/random', [MiscController, 'index']).detail({
+      description: 'Get a random thing',
+    })
+    router.get('/random/:id', [MiscController, 'show']).detail({
+      description: 'Get a random thing by id',
+    })
+  })
+  .prefix('/misc')
+  .detail({ tags: ['misc'] })

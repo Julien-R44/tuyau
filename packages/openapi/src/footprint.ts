@@ -88,16 +88,16 @@ function footprintOfType(params: {
 }): string {
   const { type, node, overrides, flags = [], callStackLevel = 0 } = params
 
-  if (callStackLevel > 9) {
+  if (callStackLevel > 20) {
     // too deep?
     return "'...'"
   }
 
   const next = (nextType: Type, nextFlags: FormatFlags[] = []) => {
     return footprintOfType({
-      type: nextType,
       node,
       overrides,
+      type: nextType,
       flags: nextFlags,
       callStackLevel: callStackLevel + 1,
     })
@@ -193,7 +193,7 @@ function footprintOfType(params: {
       .join(' & ')
   }
 
-  // when you encounter this, consider changing the function
+  // when you encounter this, consider opening an issue to add support for it
   return 'TODO'
 }
 

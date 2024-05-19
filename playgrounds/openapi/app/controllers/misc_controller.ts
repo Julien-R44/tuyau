@@ -7,4 +7,11 @@ export default class MiscController {
     await request.validateUsing(getMiscValidator)
     return 'Hello, world!' as const
   }
+
+  async show({ params }: HttpContext) {
+    return {
+      id: params.id as number,
+      name: 'Random thing',
+    }
+  }
 }

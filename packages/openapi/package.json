@@ -37,23 +37,18 @@
   "dependencies": {
     "defu": "^6.1.4",
     "json-to-pretty-yaml": "^1.2.2",
-    "openapi-types": "^12.1.3",
-    "ts-morph": "^22.0.0"
+    "openapi-types": "^12.1.3"
   },
   "devDependencies": {
     "@adonisjs/assembler": "^7.5.1",
     "@adonisjs/core": "^6.8.0",
     "@julr/tooling-configs": "^2.2.0",
-    "@poppinss/cliui": "^6.4.1",
-    "@poppinss/matchit": "^3.1.2",
     "@tuyau/client": "workspace:*",
     "@tuyau/core": "workspace:*",
     "@tuyau/utils": "workspace:*",
     "@types/json-to-pretty-yaml": "^1.2.1",
     "@types/node": "^20.12.7",
-    "ts-to-zod": "^3.8.5",
-    "typedoc": "^0.25.13",
-    "zod": "^3.23.8"
+    "ts-morph": "^22.0.0"
   },
   "publishConfig": {
     "access": "public",

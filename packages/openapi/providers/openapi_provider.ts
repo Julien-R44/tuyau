@@ -1,37 +1,34 @@
-import tsMorph from 'ts-morph'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { readFile } from 'node:fs/promises'
 import type { OpenAPIV3_1 } from 'openapi-types'
+import type { Router } from '@adonisjs/core/http'
 import type { TuyauConfig } from '@tuyau/core/types'
-import { Route, RouteResource } from '@adonisjs/core/http'
 import type { ApplicationService } from '@adonisjs/core/types'
 import type { ResourceActionNames } from '@adonisjs/core/types/http'
 
-import { typeFootprint } from '../src/footprint.js'
-import { OpenApiGenerator } from '../src/generator.js'
+import { metaStore } from '../src/meta_store.js'
 import { scalarRenderer } from '../src/scalar/renderer.js'
 import { swaggerUiRenderer } from '../src/swagger/renderer.js'
 import type { SwaggerUIOptions } from '../src/swagger/types.js'
+import { registerRouteMacros } from '../src/bindings/routes.js'
+import type { RouteResourceDetailOptions } from '../src/bindings/routes.js'
 import type { ReferenceConfiguration as ScalarConfiguration } from '../src/scalar/types/index.js'
 
-type RouteResourceDetailOptions<ActionNames extends ResourceActionNames> = {
-  global?: OpenAPIV3_1.OperationObject
-  actions?: { [K in ActionNames]?: OpenAPIV3_1.OperationObject }
-}
-
-declare module '@adonisjs/core/http' {
-  export interface Route {
-    detail: (detail: OpenAPIV3_1.OperationObject) => this
-  }
-
-  export interface RouteResource<ActionNames extends ResourceActionNames = ResourceActionNames> {
-    detail: (options: RouteResourceDetailOptions<ActionNames>) => this
-  }
-}
-
+/**
+ * Extend the TuyauConfig interface to include the OpenAPI configuration
+ */
 declare module '@tuyau/core/types' {
   export interface TuyauConfig {
     openapi?: {
+      /*
+       * The location of the OpenAPI spec file to serve
+       * when in production mode
+       *
+       * @default .adonisjs/openapi.yaml
+       */
+      buildSpecPath?: string
+
       /**
        * Provider to use for the OpenAPI UI
        *
@@ -67,7 +64,7 @@ declare module '@tuyau/core/types' {
         | 'parameterMacro'
       >
 
-      paths?: {
+      endpoints?: {
         /**
          * Endpoint that serves the OpenAPI UI
          *
@@ -101,87 +98,85 @@ declare module '@tuyau/core/types' {
   }
 }
 
-export class MetaStore {
-  #store = new Map<string, any>()
-
-  set(key: string, value: any) {
-    this.#store.set(key, value)
+/**
+ * Extend the Route interface to include the `detail` macro
+ */
+declare module '@adonisjs/core/http' {
+  export interface Route {
+    detail: (detail: OpenAPIV3_1.OperationObject) => this
   }
 
-  get(key: string) {
-    return this.#store.get(key)
+  export interface RouteResource<ActionNames extends ResourceActionNames = ResourceActionNames> {
+    detail: (options: RouteResourceDetailOptions<ActionNames>) => this
+  }
+
+  export interface RouteGroup {
+    detail: (detail: OpenAPIV3_1.OperationObject) => this
   }
 }
 
 export default class OpenApiProvider {
-  #config!: TuyauConfig
-  #metaStore = new MetaStore()
+  #cachedSpec: string | null = null
 
   constructor(protected app: ApplicationService) {}
 
   register() {
-    const metaStore = this.#metaStore
-    Route.macro('detail', function (this: Route, detail: OpenAPIV3_1.OperationObject) {
-      metaStore.set(this.getPattern(), detail)
-      return this
-    })
-
-    RouteResource.macro(
-      'detail',
-      function (this: RouteResource, options: RouteResourceDetailOptions<any>) {
-        this.routes.forEach((route) => {
-          metaStore.set(route.getPattern(), {
-            ...(options.global || {}),
-            ...(options.actions?.[route.name] || {}),
-          })
-        })
-
-        return this
-      },
-    )
+    registerRouteMacros(metaStore)
   }
 
-  async #devMode() {
-    this.#config = this.app.config.get<TuyauConfig>('tuyau')
+  /**
+   * Register /openapi route
+   *
+   * - In development, the OpenAPI spec is generated on the fly
+   * - In production, the OpenAPI spec is read from the disk
+   */
+  async #registerOpenApiRoute(config: TuyauConfig, router: Router) {
+    const tsConfigFilePath = join(fileURLToPath(this.app.appRoot), './tsconfig.json')
 
-    const router = await this.app.container.make('router')
-    const tsConfigPath = join(fileURLToPath(this.app.appRoot), './tsconfig.json')
-
-    const openApiPath = this.#config.openapi?.paths?.spec ?? '/openapi'
+    const openApiPath = config.openapi?.endpoints?.spec ?? '/openapi'
     router.get(openApiPath, async () => {
-      const project = new tsMorph.Project({
-        manipulationSettings: { quoteKind: tsMorph.QuoteKind.Single },
-        tsConfigFilePath: tsConfigPath,
-      })
-
-      const footprintString = typeFootprint('.adonisjs/api.ts', 'ApiDefinition', {
-        tsConfigFilePath: tsConfigPath,
-      })
-
-      const footprint = project.createSourceFile('.adonisjs/__footprint.ts', footprintString, {
-        overwrite: true,
-      })
-      const apiDefinition = footprint.getInterfaceOrThrow('ApiDefinition')
-      const yaml = new OpenApiGenerator(apiDefinition, this.#config, this.#metaStore).generate()
-
-      return yaml
-    })
-  }
-
-  async boot() {
-    const router = await this.app.container.make('router')
-
-    this.#devMode()
-
-    const uiPath = this.#config.openapi?.paths?.ui ?? '/docs'
-
-    router.get(uiPath, async ({}) => {
-      console.log(this.#config.openapi?.provider)
-      if (this.#config.openapi?.provider === 'scalar' || !this.#config.openapi?.provider) {
-        return scalarRenderer('/openapi', this.#config.openapi?.scalar || {})
+      if (this.app.inDev) {
+        const { OpenApiGenerator } = await import('../src/generator.js')
+        return new OpenApiGenerator(config, metaStore, tsConfigFilePath).generate()
       }
 
-      return swaggerUiRenderer('/openapi', this.#config.openapi.swagger || {})
+      if (this.#cachedSpec) return this.#cachedSpec
+
+      const buildPath = this.app.makePath(config.openapi?.buildSpecPath ?? '.adonisjs/openapi.yaml')
+      this.#cachedSpec = await readFile(buildPath, 'utf-8')
+      return this.#cachedSpec
     })
+  }
+
+  /**
+   * Register /docs route. The OpenAPI UI rendered using scalar or swagger-ui
+   */
+  #registerDocsRoute(config: TuyauConfig, router: Router) {
+    const uiPath = config.openapi?.endpoints?.ui ?? '/docs'
+    router.get(uiPath, async ({}) => {
+      if (config.openapi?.provider === 'scalar' || !config.openapi?.provider) {
+        return scalarRenderer('/openapi', config.openapi?.scalar || {})
+      }
+
+      return swaggerUiRenderer('/openapi', config.openapi.swagger || {})
+    })
+  }
+
+  /**
+   * Register /docs and /openapi routes
+   */
+  async boot() {
+    const config = this.app.config.get<TuyauConfig>('tuyau')
+    const router = await this.app.container.make('router')
+
+    this.#registerOpenApiRoute(config, router)
+    this.#registerDocsRoute(config, router)
+  }
+
+  /**
+   * Compute meta store paths
+   */
+  async ready() {
+    metaStore.compute()
   }
 }
