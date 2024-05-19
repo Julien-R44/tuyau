@@ -88,7 +88,7 @@ function footprintOfType(params: {
 }): string {
   const { type, node, overrides, flags = [], callStackLevel = 0 } = params
 
-  if (callStackLevel > 20) {
+  if (callStackLevel > 10) {
     // too deep?
     return "'...'"
   }
