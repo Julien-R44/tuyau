@@ -563,20 +563,20 @@ Once the package is configured, you can directly access your API's OpenAPI speci
 
 ### Customizing the Specification
 
-To customize the specification, the package exposes `detail` macros on the routes. These macros allow you to add additional information to the OpenAPI specification. For example, you can add tags, descriptions, responses, parameters, etc.
+To customize the specification, the package exposes `openapi` macros on the routes. These macros allow you to add additional information to the OpenAPI specification. For example, you can add tags, descriptions, responses, parameters, etc.
 
 ```ts
 router.group(() => {
   router
     .get("/random", [MiscController, "index"])
-    .detail({ summary: "Get a random thing" });
+    .openapi({ summary: "Get a random thing" });
 
   router
     .get("/random/:id", [MiscController, "show"])
-    .detail({ summary: "Get a random thing by id" });
+    .openapi({ summary: "Get a random thing by id" });
 })
   .prefix("/misc")
-  .detail({ tags: ["misc"] });
+  .openapi({ tags: ["misc"] });
 ```
 
 Feel free to use your editor's autocomplete to see all available options.

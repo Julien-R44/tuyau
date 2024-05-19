@@ -4,20 +4,20 @@ import { Route, RouteResource, RouteGroup, BriskRoute } from '@adonisjs/core/htt
 
 import type { MetaStore } from '../meta_store.js'
 
-export type RouteResourceDetailOptions<ActionNames extends ResourceActionNames> = {
+export type RouteResourceOpenApiOptions<ActionNames extends ResourceActionNames> = {
   global?: OpenAPIV3_1.OperationObject
   actions?: { [K in ActionNames]?: OpenAPIV3_1.OperationObject }
 }
 
 export function registerRouteMacros(metaStore: MetaStore) {
-  Route.macro('detail', function (this: Route, detail: OpenAPIV3_1.OperationObject) {
+  Route.macro('openapi', function (this: Route, detail: OpenAPIV3_1.OperationObject) {
     metaStore.set(this, detail)
     return this
   })
 
   RouteResource.macro(
-    'detail',
-    function (this: RouteResource, options: RouteResourceDetailOptions<any>) {
+    'openapi',
+    function (this: RouteResource, options: RouteResourceOpenApiOptions<any>) {
       this.routes.forEach((route) => {
         metaStore.set(route, {
           ...(options.global || {}),
@@ -30,7 +30,7 @@ export function registerRouteMacros(metaStore: MetaStore) {
     },
   )
 
-  RouteGroup.macro('detail', function (this: RouteGroup, detail: OpenAPIV3_1.OperationObject) {
+  RouteGroup.macro('openapi', function (this: RouteGroup, detail: OpenAPIV3_1.OperationObject) {
     this.routes.forEach((route) => {
       if (route instanceof Route) {
         metaStore.set(route, { ...detail, ...metaStore.get(route) })

@@ -12,7 +12,7 @@ import { scalarRenderer } from '../src/scalar/renderer.js'
 import { swaggerUiRenderer } from '../src/swagger/renderer.js'
 import type { SwaggerUIOptions } from '../src/swagger/types.js'
 import { registerRouteMacros } from '../src/bindings/routes.js'
-import type { RouteResourceDetailOptions } from '../src/bindings/routes.js'
+import type { RouteResourceOpenApiOptions } from '../src/bindings/routes.js'
 import type { ReferenceConfiguration as ScalarConfiguration } from '../src/scalar/types/index.js'
 
 /**
@@ -103,15 +103,15 @@ declare module '@tuyau/core/types' {
  */
 declare module '@adonisjs/core/http' {
   export interface Route {
-    detail: (detail: OpenAPIV3_1.OperationObject) => this
+    openapi: (detail: OpenAPIV3_1.OperationObject) => this
   }
 
   export interface RouteResource<ActionNames extends ResourceActionNames = ResourceActionNames> {
-    detail: (options: RouteResourceDetailOptions<ActionNames>) => this
+    openapi: (options: RouteResourceOpenApiOptions<ActionNames>) => this
   }
 
   export interface RouteGroup {
-    detail: (detail: OpenAPIV3_1.OperationObject) => this
+    openapi: (detail: OpenAPIV3_1.OperationObject) => this
   }
 }
 
