@@ -12,3 +12,14 @@ export function objectMap<K extends string, V, NK = K, NV = V>(
       .filter(notNullish),
   )
 }
+
+export function uniqBy<T, K>(arr: T[], key: (v: T) => K): T[] {
+  const seen = new Set<K>()
+  return arr.filter((v) => {
+    const k = key(v)
+    if (seen.has(k)) return false
+
+    seen.add(k)
+    return true
+  })
+}

@@ -209,8 +209,7 @@ export class OpenApiGenerator {
     return {
       method,
       path: openApiPath,
-      spec: {
-        ...this.metaStore.getComputed(options.path),
+      spec: defu(this.metaStore.getComputed(options.path), {
         ...parameters,
         responses: objectMap(responses, (status, schema) => {
           return [
@@ -221,7 +220,7 @@ export class OpenApiGenerator {
             },
           ]
         }),
-      },
+      }),
     }
   }
 
