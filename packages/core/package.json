@@ -10,7 +10,8 @@
     ".": "./build/index.js",
     "./types": "./build/src/types.js",
     "./commands": "./build/commands/main.js",
-    "./tuyau_provider": "./build/providers/tuyau_provider.js"
+    "./tuyau_provider": "./build/providers/tuyau_provider.js",
+    "./build_hook": "./build/src/hooks/build_hook.js"
   },
   "files": [
     "build"
@@ -64,6 +65,7 @@
     "entry": [
       "./index.ts",
       "./src/types.ts",
+      "./src/hooks/build_hook.ts",
       "./commands/generate.ts",
       "./providers/tuyau_provider.ts"
     ],

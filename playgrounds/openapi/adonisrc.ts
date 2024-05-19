@@ -14,6 +14,7 @@ export default defineConfig({
     () => import('@adonisjs/core/commands'),
     () => import('@adonisjs/lucid/commands'),
     () => import('@tuyau/core/commands'),
+    () => import('@tuyau/openapi/commands'),
   ],
 
   /*
@@ -74,5 +75,12 @@ export default defineConfig({
       },
     ],
     forceExit: false,
+  },
+
+  unstable_assembler: {
+    onBuildStarting: [
+      () => import('@tuyau/core/build_hook'),
+      () => import('@tuyau/openapi/build_hook'),
+    ],
   },
 })

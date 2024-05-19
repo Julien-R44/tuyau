@@ -16,17 +16,20 @@ export default class CodegenTypes extends BaseCommand {
   @flags.boolean({ description: 'Verbose logs', default: false, alias: 'v' })
   declare verbose: boolean
 
+  @flags.string({ description: 'Destination file' })
+  declare destination: string
+
   /**
    * Execute command
    */
   override async run() {
     const config = this.app.config.get<TuyauConfig>('tuyau')
     const tsConfigFilePath = join(fileURLToPath(this.app.appRoot), './tsconfig.json')
-    const destination = join(fileURLToPath(this.app.appRoot), './openapi.yaml')
+    this.destination = this.destination || join(fileURLToPath(this.app.appRoot), './openapi.yaml')
 
     const openApiSpec = await new OpenApiGenerator(config, metaStore, tsConfigFilePath).generate()
 
-    writeFile(destination, openApiSpec, 'utf-8')
-    this.logger.success(`OpenAPI spec generated at ${destination}`)
+    writeFile(this.destination, openApiSpec, 'utf-8')
+    this.logger.success(`OpenAPI spec generated at ${this.destination}`)
   }
 }

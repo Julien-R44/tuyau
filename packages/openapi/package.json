@@ -10,7 +10,8 @@
     ".": "./build/index.js",
     "./types": "./build/src/types.js",
     "./commands": "./build/commands/main.js",
-    "./openapi_provider": "./build/providers/openapi_provider.js"
+    "./openapi_provider": "./build/providers/openapi_provider.js",
+    "./build_hook": "./build/src/hooks/build_hook.js"
   },
   "files": [
     "build"
@@ -68,6 +69,7 @@
       "./index.ts",
       "./src/types.ts",
       "./commands/generate.ts",
+      "./src/hooks/build_hook.ts",
       "./providers/openapi_provider.ts"
     ],
     "outDir": "./build",
