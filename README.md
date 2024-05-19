@@ -6,9 +6,10 @@
 Set of tools to create typesafe APIs using AdonisJS. The monorepo includes the following packages:
 
 - `@tuyau/core` : Core package that you must install in your AdonisJS project.
-- `@tuyau/client` : E2E typesafe client to consume your AdonisJS APIs.
 - `@tuyau/utils` : Set of utilities and helpers for the other packages.
+- `@tuyau/client` : E2E typesafe client to consume your AdonisJS APIs.
 - `@tuyau/inertia` : Set of components and helpers for AdonisJS + Inertia projects.
+- `@tuyau/openapi` : Experimental package to generate a "not-so-bad" OpenAPI definition from your AdonisJS project based on the Tuyau codegen.
 
 ## Goals of the project
 
@@ -16,9 +17,9 @@ The main goal of this project is to provide some utilities to have better typesa
 
 - **Done (Experimental)** : Provide an RPC-like client that is fully e2e typesafe ( like tRPC, Elysia Eden, Hono etc. )
 - **Done (Experimental)** : Provide a [Ziggy](https://github.com/tighten/ziggy)-like helper to generate and use routes in the frontend.
+- **Done (Experimental)** : Having an automatic OpenAPI generation + Swagger/Scalar UI viewer based on Tuyau codegen.
 - **In Progress** : Provide some Inertia helpers to have better typesafety when using Inertia in your AdonisJS project. Things like typesafe `<Link />` and `useForm`.
 - **Not started** : Provide a specific Controller class that will allow to have better typesafety when creating your endpoints.
-- **Not started** : Having an automatic OpenAPI generation + Swagger/Scalar UI viewer based on Tuyau codegen. Still not sure about this one.
 
 ## Installation
 
