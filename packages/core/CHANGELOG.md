@@ -1,5 +1,11 @@
 # @tuyau/core
 
+## 0.1.4
+
+### Patch Changes
+
+- dae1f80: When a vine validator referenced in a `validateUsing` was imported with a `default export`, then the validator was not found. This is now fixed.
+
 ## 0.1.1
 
 - Fix: The `node ace configure @tuyau/core` was failing due to a stub file not being copied correctly. This has been fixed.

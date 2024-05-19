@@ -1,7 +1,7 @@
 {
   "name": "@tuyau/openapi",
   "type": "module",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "",
   "author": "",
   "license": "MIT",
@@ -33,7 +33,7 @@
     "prepublishOnly": "npm run build"
   },
   "peerDependencies": {
-    "@tuyau/core": "^0.1.1"
+    "@tuyau/core": "^0.1.4"
   },
   "dependencies": {
     "defu": "^6.1.4",
