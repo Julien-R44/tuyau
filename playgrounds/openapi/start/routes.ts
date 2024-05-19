@@ -15,7 +15,7 @@ const UsersController = () => import('#controllers/users_controller')
 router
   .resource('users', UsersController)
   .apiOnly()
-  .detail({
+  .openapi({
     global: { tags: ['users'] },
     actions: {
       destroy: { description: 'Delete a user' },
@@ -28,12 +28,12 @@ router
 
 router
   .group(() => {
-    router.get('/random', [MiscController, 'index']).detail({
+    router.get('/random', [MiscController, 'index']).openapi({
       description: 'Get a random thing',
     })
-    router.get('/random/:id', [MiscController, 'show']).detail({
+    router.get('/random/:id', [MiscController, 'show']).openapi({
       description: 'Get a random thing by id',
     })
   })
   .prefix('/misc')
-  .detail({ tags: ['misc'] })
+  .openapi({ tags: ['misc'] })
