@@ -20,6 +20,7 @@ export const getMiscValidator = vine.compile(
   vine.object({
     foo: vine.string(),
     params: vine.number().optional(),
+    myString: vine.string().optional(),
   })
 )
 

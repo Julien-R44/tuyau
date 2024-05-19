@@ -4,7 +4,7 @@ import YAML from 'json-to-pretty-yaml'
 import type { OpenAPIV3_1 } from 'openapi-types'
 import type { TuyauConfig } from '@tuyau/core/types'
 
-import { objectMap } from './utils.js'
+import { objectMap, uniqBy } from './utils.js'
 import { typeFootprint } from './footprint.js'
 import type { MetaStore } from './meta_store.js'
 
@@ -15,18 +15,21 @@ export class OpenApiGenerator {
     private tsConfigFilePath: string,
   ) {}
 
-  #typeToOpenApiType(type: tsMorph.Type<tsMorph.ts.Type>) {
+  #typeToOpenApiType(type: tsMorph.Type<tsMorph.ts.Type>, mode: 'request' | 'response') {
+    if (type.getText() === 'true' || type.getText() === 'false') return 'boolean'
+
     if (type.isString()) return 'string'
     if (type.isNumber()) return 'number'
     if (type.isBoolean()) return 'boolean'
     if (type.isLiteral()) return 'string'
+    if (type.isBooleanLiteral()) return 'boolean'
 
     if (type.isArray()) {
       return {
         type: 'array',
         items: {
           type: 'object',
-          properties: this.#typeToOpenApiProperties(type.getArrayElementTypeOrThrow()),
+          properties: this.#typeToOpenApiSchema({ type: type.getArrayElementTypeOrThrow(), mode }),
         },
       }
     }
@@ -39,67 +42,91 @@ export class OpenApiGenerator {
    */
   #isPrimitive(type: tsMorph.Type<tsMorph.ts.Type>) {
     return (
-      type.isString() || type.isNumber() || type.isBoolean() || type.isEnum() || type.isLiteral()
+      type.isString() ||
+      type.isNumber() ||
+      type.isBoolean() ||
+      type.isEnum() ||
+      type.isLiteral() ||
+      type.isUndefined() ||
+      type.isNull() ||
+      type.isBooleanLiteral()
     )
-  }
-
-  /**
-   * Check if the type is an optional primitive type
-   */
-  #isOptionalPrimitive(type: tsMorph.Type<tsMorph.ts.Type>) {
-    if (!type.isUnion()) {
-      return false
-    }
-
-    const unionTypes = type.getUnionTypes()
-    return unionTypes.some((t) => t.isUndefined()) && unionTypes.some((t) => this.#isPrimitive(t))
-  }
-
-  /**
-   * Extract the main type from an optional union type
-   */
-  #extractTypeFromOptionalUnion(type: tsMorph.Type<tsMorph.ts.Type>) {
-    if (!type.isUnion()) return type
-
-    return type.getUnionTypes().find((t) => !t.isUndefined())!
   }
 
   /**
    * Convert a `request` or `response` type to openapi properties
    */
-  #typeToOpenApiProperties(type: tsMorph.Type<tsMorph.ts.Type>) {
+  #typeToOpenApiSchema(options: {
+    type: tsMorph.Type<tsMorph.ts.Type>
+    mode: 'request' | 'response'
+    addRequiredKey?: boolean
+  }) {
+    const { type, mode, addRequiredKey = true } = options
     const properties: Record<string, any> = {}
 
     for (const prop of type.getProperties()) {
+      const propName = prop.getName()
       const type = prop.getValueDeclaration()?.getType()
       if (!type) continue
 
+      /**
+       * Array
+       */
       if (type.isArray()) {
-        properties[prop.getName()] = {
+        properties[propName] = {
           type: 'array',
           items: {
-            type: this.#typeToOpenApiType(type.getArrayElementTypeOrThrow()),
-            properties: this.#typeToOpenApiProperties(type.getArrayElementTypeOrThrow()),
+            type: this.#typeToOpenApiType(type.getArrayElementTypeOrThrow(), mode),
+            properties: this.#typeToOpenApiSchema({
+              ...options,
+              type: type.getArrayElementTypeOrThrow(),
+            }),
           },
         }
         continue
       }
 
-      const isPrimitive = this.#isPrimitive(type)
-      const isOptionalPrimitive = this.#isOptionalPrimitive(type)
-      const isLiteral = type.isLiteral()
+      /**
+       * Union of primitives
+       */
+      const isUnionOfPrimitives =
+        type.isUnion() && type.getUnionTypes().every(this.#isPrimitive.bind(this))
 
-      let specType = 'object'
-      if (isPrimitive) {
-        specType = isLiteral ? 'string' : type.getText()
-      } else if (isOptionalPrimitive) {
-        specType = this.#extractTypeFromOptionalUnion(type).getText()
+      if (isUnionOfPrimitives) {
+        const possiblesTypes = type
+          .getUnionTypes()
+          .filter((t) => {
+            if (mode === 'request') return !t.isUndefined() && !t.isNull()
+            return true
+          })
+          .map((t) => ({ type: this.#typeToOpenApiType(t, mode) }))
+
+        properties[propName] = {
+          ...(addRequiredKey ? { required: !type.isUndefined() && !type.isNull() } : {}),
+          oneOf: uniqBy(possiblesTypes, (t) => t.type),
+        }
+        continue
       }
 
-      properties[prop.getName()] = {
-        type: specType,
-        required: isOptionalPrimitive ? false : true,
-        properties: isPrimitive ? undefined : this.#typeToOpenApiProperties(type),
+      /**
+       * Primitive
+       */
+      const isPrimitive = this.#isPrimitive(type)
+      if (isPrimitive) {
+        properties[propName] = {
+          ...(addRequiredKey ? { required: !type.isUndefined() && !type.isNull() } : {}),
+          type: type.isLiteral() ? 'string' : type.getText(),
+        }
+        continue
+      }
+
+      /**
+       * Finally, if the type is an object, then recursively
+       * generate the properties for it
+       */
+      properties[propName] = {
+        type: 'object',
+        properties: this.#typeToOpenApiSchema({ type, mode, addRequiredKey }),
       }
     }
 
@@ -108,17 +135,16 @@ export class OpenApiGenerator {
 
   #requestToOpenApi(method: string, request: any) {
     /**
-     * When method is `get` or `head`, we need to define the request as
+     * When method is `get` `head` or `delete`, we need to define the request as
      * query parameters
      */
-    if (method === 'get' || method === 'head') {
+    if (method === 'get' || method === 'head' || method === 'delete') {
       return {
         parameters: Object.entries(request).map(([name, type]: any) => {
           return {
             name,
             in: 'query',
-            ...(type.required ? { required: true } : {}),
-            schema: { type: type.type },
+            schema: { type: 'object', ...type },
           }
         }),
       }
@@ -133,7 +159,11 @@ export class OpenApiGenerator {
           'application/json': {
             schema: {
               type: 'object',
-              properties: request,
+              properties: objectMap(request, (key, value: any) => {
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                const { required, ...type } = value
+                return [key, { ...type }]
+              }),
               required: Object.entries(request)
                 .filter(([, type]: any) => type.required)
                 .map(([name]) => name),
@@ -162,8 +192,12 @@ export class OpenApiGenerator {
     const requestDefinition = requestType?.getValueDeclarationOrThrow().getType()
     const responseDefinition = responseType?.getValueDeclarationOrThrow().getType()
 
-    const request = this.#typeToOpenApiProperties(requestDefinition!)
-    const responses = this.#typeToOpenApiProperties(responseDefinition!)
+    const request = this.#typeToOpenApiSchema({ type: requestDefinition!, mode: 'request' })
+    const responses = this.#typeToOpenApiSchema({
+      type: responseDefinition!,
+      mode: 'response',
+      addRequiredKey: false,
+    })
 
     const { openApiPath, openApiParameters } = this.#pathToOpenApiPathAndParameters(options.path)
 
