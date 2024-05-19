@@ -54,6 +54,34 @@ test.group('Api Types Generator', (group) => {
     assert.snapshot(file).match()
   })
 
+  test('extract default exported schema from validator', async ({ fs, assert }) => {
+    const route = await createController({
+      name: 'UsersController',
+      returnType: "{ foo: 'bar' }",
+      validator: await createValidator({
+        defaultExport: true,
+        name: 'getUsersValidator',
+        schema: `
+          limit: vine.number(),
+          page: vine.number().optional(),
+        `,
+      }),
+    })
+
+    const apiTypesGenerator = new ApiTypesGenerator({
+      logger,
+      project: await setupProject(),
+      config: {},
+      appRoot: fs.baseUrl,
+      routes: [route],
+    })
+
+    await apiTypesGenerator.generate()
+
+    const file = await fs.contents('./.adonisjs/api.ts')
+    assert.snapshot(file).match()
+  })
+
   test('warning when schema implementation is not found', async ({ fs, assert }) => {
     const route = await createController({
       name: 'UsersController',

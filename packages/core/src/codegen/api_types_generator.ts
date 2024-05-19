@@ -12,7 +12,7 @@ import type { MethodDeclaration, Project, SourceFile } from 'ts-morph'
 
 import type { TuyauConfig } from '../types.js'
 
-type HandlerData = { method: MethodDeclaration; body: Node }
+type HandlerData = { method: MethodDeclaration; body: Node; file: SourceFile }
 
 type RouteReferenceParsed = Awaited<ReturnType<typeof parseBindingReference>>
 
@@ -80,7 +80,37 @@ export class ApiTypesGenerator {
     const body = method.getBody()
     if (!body) return
 
-    return { method, body }
+    return { method, body, file }
+  }
+
+  /**
+   * Get the import type of an identifier
+   */
+  #getIdentifierImportType(identifier: Node) {
+    const sourceFile = identifier.getSourceFile()
+
+    const namedImport = sourceFile.getImportDeclaration((importNode) => {
+      const namedImports = importNode.getNamedImports()
+      if (namedImports.find((namedImport) => namedImport.getName() === identifier.getText())) {
+        return true
+      }
+
+      return false
+    })
+
+    const defaultImport = sourceFile.getImportDeclaration((importNode) => {
+      if (importNode.getDefaultImport()?.getText() === identifier.getText()) return true
+
+      return false
+    })
+
+    const isValidFile = (namedImport || defaultImport)?.getModuleSpecifierSourceFile()
+    if (!isValidFile) return undefined
+
+    if (namedImport) return 'named'
+    if (defaultImport) return 'default'
+
+    return undefined
   }
 
   /**
@@ -109,16 +139,18 @@ export class ApiTypesGenerator {
       const schema = validateUsingCallNode.getArguments()[0]
       if (!Node.isIdentifier(schema)) return
 
-      const implementation = schema.getImplementations().at(0)
-      if (!implementation) {
+      const definition = schema.getDefinitions().at(0)
+      const importType = this.#getIdentifierImportType(schema)
+      if (!definition || !importType) {
         this.#logger.warning(`Unable to find the schema file for ${schema.getText()}`)
         return
       }
 
-      const importPath = implementation.getSourceFile().getFilePath()
+      const importPath = definition.getSourceFile().getFilePath()
       const relativeImportPath = slash(relative(this.#getDestinationDirectory(), importPath))
 
-      return `InferInput<typeof import('${relativeImportPath}')['${schema.getText()}']>`
+      const propName = importType === 'default' ? 'default' : schema.getText()
+      return `InferInput<typeof import('${relativeImportPath}')['${propName}']>`
     }
 
     return undefined

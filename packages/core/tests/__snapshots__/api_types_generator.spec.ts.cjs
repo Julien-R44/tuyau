@@ -178,3 +178,29 @@ declare module '@tuyau/inertia/types' {
 }
 "`
 
+exports[`Api Types Generator > extract default exported schema from validator 1`] = `"import type { MakeTuyauRequest, MakeTuyauResponse } from '@tuyau/utils/types'
+import type { InferInput } from '@vinejs/vine/types'
+
+type UsersGet = {
+  request: MakeTuyauRequest<InferInput<typeof import('../app/validators/get_users_validator.ts')['default']>>
+  response: MakeTuyauResponse<import('../app/controllers/users_controller.ts').default['index']>
+}
+export interface ApiDefinition {
+  'users': {
+    '$url': {
+    };
+    '$get': UsersGet;
+  };
+}
+const routes = [
+] as const;
+export const api = {
+  routes,
+  definition: {} as ApiDefinition
+}
+declare module '@tuyau/inertia/types' {
+  type ApiDefinition = typeof api
+  export interface Api extends ApiDefinition {}
+}
+"`
+

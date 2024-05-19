@@ -37,6 +37,7 @@ export async function createController(options: {
   validator?: {
     path: string
     name: string
+    defaultExport?: boolean
   }
 }) {
   const { fs } = getActiveTestContextOrThrow()
@@ -46,7 +47,9 @@ export async function createController(options: {
     : ''
 
   const schemaImport = options.validator
-    ? `import { ${options.validator.name} } from '../../${options.validator.path.replace('.ts', '.js')}'`
+    ? options.validator.defaultExport
+      ? `import ${options.validator.name} from '../../${options.validator.path.replace('.ts', '.js')}'`
+      : `import { ${options.validator.name} } from '../../${options.validator.path.replace('.ts', '.js')}'`
     : ''
 
   await fs.create(
@@ -74,15 +77,27 @@ export async function createController(options: {
 /**
  * Create a new validator file
  */
-export async function createValidator(options: { name: string; schema: string }) {
+export async function createValidator(options: {
+  name: string
+  schema: string
+  defaultExport?: boolean
+}) {
   const { fs } = getActiveTestContextOrThrow()
   const path = `app/validators/${string.snakeCase(options.name)}.ts`
 
-  await fs.create(
-    path,
-    `import vine from '@vinejs/vine'
-    export const ${options.name} = vine.compile(vine.object(${options.schema}))`,
-  )
+  if (options.defaultExport) {
+    await fs.create(
+      path,
+      `import vine from '@vinejs/vine'
+      export default vine.compile(vine.object(${options.schema}))`,
+    )
+  } else {
+    await fs.create(
+      path,
+      `import vine from '@vinejs/vine'
+      export const ${options.name} = vine.compile(vine.object(${options.schema}))`,
+    )
+  }
 
-  return { path, name: options.name }
+  return { path, name: options.name, defaultExport: options.defaultExport ?? false }
 }
