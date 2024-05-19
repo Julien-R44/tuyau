@@ -145,6 +145,15 @@ function footprintOfType(params: {
     return `Promise<\n${indent(next(first))}\n>`
   }
 
+  /**
+   * TODO: I didn't find a way to get the type of the enum values
+   * enum.getMembers() returns an array of symbols. Not sure why.
+   * So let's just return a string | number for now
+   */
+  if (type.isEnum()) {
+    return `string | number`
+  }
+
   if (type.isObject() && isSimpleSignature(type)) {
     return signatures(type.getCallSignatures(), 'type', next)
   }
