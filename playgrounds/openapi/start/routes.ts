@@ -34,6 +34,9 @@ router
     router.get('/random/:id', [MiscController, 'show']).openapi({
       description: 'Get a random thing by id',
     })
+    router.post('/random', [MiscController, 'store']).openapi({
+      description: 'Create a random thing',
+    })
   })
   .prefix('/misc')
   .openapi({ tags: ['misc'] })

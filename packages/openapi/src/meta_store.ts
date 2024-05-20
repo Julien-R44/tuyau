@@ -12,13 +12,16 @@ export class MetaStore {
     return this.#store.get(key)
   }
 
-  getComputed(key: string) {
-    return this.#computedStore.get(key)
+  getComputed(options: { method: string; path: string }) {
+    return this.#computedStore.get(`${options.method.toUpperCase()}:${options.path}`)
   }
 
   compute() {
     for (const [route, value] of this.#store) {
-      this.#computedStore.set(route.toJSON().pattern, value)
+      const serialized = route.toJSON()
+      for (const method of serialized.methods) {
+        this.#computedStore.set(`${method}:${serialized.pattern}`, value)
+      }
     }
   }
 }
