@@ -210,4 +210,22 @@ test.group('Api Types Generator | Filters', () => {
     const file = await fs.contents('./.adonisjs/api.ts')
     assert.snapshot(file).match()
   })
+
+  test('add inertia types only when tuyau/inertia is installed', async ({ fs, assert }) => {
+    const route = await createController({ name: 'UsersController', returnType: "{ foo: 'bar' }" })
+
+    const apiTypesGenerator = new ApiTypesGenerator({
+      logger,
+      project: await setupProject({
+        packageJson: { dependencies: { '@tuyau/inertia': 'latest' } },
+      }),
+      config: defineConfig({ codegen: { definitions: { only: [/users/] } } }),
+      appRoot: fs.baseUrl,
+      routes: [route],
+    })
+
+    await apiTypesGenerator.generate()
+
+    assert.fileContains('./.adonisjs/api.ts', '@tuyau/inertia/types')
+  })
 })

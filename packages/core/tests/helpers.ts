@@ -13,13 +13,14 @@ export function getActiveTestContextOrThrow() {
 /**
  * Setup a new project with a tsconfig.json file
  */
-export async function setupProject() {
+export async function setupProject(options?: { packageJson?: Record<string, any> }) {
   const { fs } = getActiveTestContextOrThrow()
 
   await fs.createJson('tsconfig.json', { include: ['**/*'] })
   await fs.createJson('package.json', {
     type: 'module',
     imports: { '#controllers/*': './app/controllers/*.js' },
+    ...options?.packageJson,
   })
 
   return new Project({

@@ -2,6 +2,7 @@ import { Node } from 'ts-morph'
 // @ts-expect-error untyped
 import matchit from '@poppinss/matchit'
 import { fileURLToPath } from 'node:url'
+import { readFile } from 'node:fs/promises'
 import type { Logger } from '@poppinss/cliui'
 import { dirname, relative } from 'node:path'
 import { existsSync, mkdirSync } from 'node:fs'
@@ -32,6 +33,7 @@ export class ApiTypesGenerator {
   #routes: Array<RouteJSON>
 
   #destination!: string
+  #isTuyauInertiaInstalledCached?: boolean
 
   constructor(options: {
     appRoot: URL
@@ -47,6 +49,27 @@ export class ApiTypesGenerator {
     this.#appRoot = options.appRoot
 
     this.#prepareDestination()
+  }
+
+  /**
+   * Check if the @tuyau/inertia package is installed.
+   */
+  async #isTuyauInertiaInstalled() {
+    if (this.#isTuyauInertiaInstalledCached !== undefined)
+      return this.#isTuyauInertiaInstalledCached
+
+    try {
+      const pkgJsonText = await readFile(
+        fileURLToPath(new URL('./package.json', this.#appRoot)),
+        'utf-8',
+      )
+
+      const pkgJson = JSON.parse(pkgJsonText)
+      this.#isTuyauInertiaInstalledCached = !!pkgJson.dependencies?.['@tuyau/inertia']
+      return this.#isTuyauInertiaInstalledCached
+    } catch (error) {
+      throw new Error('Unable to read the package.json file', { cause: error })
+    }
   }
 
   #getDestinationDirectory() {
@@ -254,6 +277,7 @@ export class ApiTypesGenerator {
   }) {
     const file = this.#project.createSourceFile(this.#destination, '', { overwrite: true })
     if (!file) throw new Error('Unable to create the api.ts file')
+    const isTuyauInertiaInstalled = await this.#isTuyauInertiaInstalled()
 
     file.removeText().insertText(0, (writer) => {
       writer
@@ -306,10 +330,12 @@ export class ApiTypesGenerator {
       /**
        * Write the module augmentation for the tuyau/inertia/types module
        */
-      writer.writeLine(`declare module '@tuyau/inertia/types' {`)
-      writer.writeLine(`  type ApiDefinition = typeof api`)
-      writer.writeLine(`  export interface Api extends ApiDefinition {}`)
-      writer.writeLine(`}`)
+      if (isTuyauInertiaInstalled) {
+        writer.writeLine(`declare module '@tuyau/inertia/types' {`)
+        writer.writeLine(`  type ApiDefinition = typeof api`)
+        writer.writeLine(`  export interface Api extends ApiDefinition {}`)
+        writer.writeLine(`}`)
+      }
     })
 
     await file.save()
