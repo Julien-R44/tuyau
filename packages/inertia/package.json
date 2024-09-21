@@ -44,8 +44,8 @@
     }
   },
   "devDependencies": {
-    "@inertiajs/react": "^1.0.16",
-    "@inertiajs/vue3": "^1.0.16",
+    "@inertiajs/react": "^1.2.0",
+    "@inertiajs/vue3": "^1.2.0",
     "@tuyau/client": "workspace:*",
     "@types/react": "^18.3.1",
     "react": "^18.3.1",
