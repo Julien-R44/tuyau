@@ -311,4 +311,30 @@ test.group('Client | Typings', () => {
 
     tuyau.users.$get
   })
+
+  test('validator with params', async ({}) => {
+    const validator = vine.compile(
+      vine.object({
+        params: vine.object({
+          id: vine.number().withoutDecimals().positive(),
+        }),
+      }),
+    )
+
+    const tuyau = createTuyau<{
+      routes: []
+      definition: {
+        users: {
+          ':id': {
+            $get: {
+              request: InferInput<typeof validator>
+              response: { 200: Simplify<Serialize<{ id: string }>> }
+            }
+          }
+        }
+      }
+    }>({ baseUrl: 'http://localhost:3333' })
+
+    tuyau.users({ id: 1 }).$get()
+  })
 })

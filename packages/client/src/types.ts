@@ -35,6 +35,16 @@ export type ResponseOrUnwrap<Res extends Record<number, unknown>> = Promise<Tuya
 }
 
 /**
+ * Cookies, headers and params can be present in the request.
+ * See https://docs.adonisjs.com/guides/basics/validation#validating-cookies-headers-and-route-params
+ *
+ * So they must be excluded from the query options. This helper does that.
+ */
+type CleanRequest<Request> = Request extends { cookies?: any; headers?: any; params?: any }
+  ? Omit<Request, 'cookies' | 'headers' | 'params'>
+  : Request
+
+/**
  * Shape of the Adonis Client. This is a recursive type that generate
  * all nested calls like `api.users({ id: 'foo' }).get()` and so on.
  *
@@ -45,15 +55,19 @@ export type TuyauRpcClient<in out Route extends Record<string, any>> = {
     response: infer Res extends Record<number, unknown>
     request: infer Request
   }
-    ? K extends '$get' | '$head'
+    ? // GET, HEAD
+      K extends '$get' | '$head'
       ? unknown extends Request
         ? (options?: TuyauQueryOptions & { query?: Request }) => ResponseOrUnwrap<Res>
-        : {} extends Request
-          ? (options?: TuyauQueryOptions & { query?: Request }) => ResponseOrUnwrap<Res>
-          : (options: TuyauQueryOptions & { query: Request }) => ResponseOrUnwrap<Res>
-      : {} extends Request
+        : {} extends CleanRequest<Request>
+          ? (
+              options?: TuyauQueryOptions & { query?: CleanRequest<Request> },
+            ) => ResponseOrUnwrap<Res>
+          : (options: TuyauQueryOptions & { query: CleanRequest<Request> }) => ResponseOrUnwrap<Res>
+      : // POST, PUT, PATCH, DELETE
+        {} extends CleanRequest<Request>
         ? (body?: Request | null, options?: TuyauQueryOptions) => ResponseOrUnwrap<Res>
-        : (body: Request, options?: TuyauQueryOptions) => ResponseOrUnwrap<Res>
+        : (body: CleanRequest<Request>, options?: TuyauQueryOptions) => ResponseOrUnwrap<Res>
     : K extends '$url'
       ? () => string
       : CreateParams<Route[K]>
