@@ -34,4 +34,5 @@ export const Link: <Route extends RouteName<ValidatedApi['routes']>>(
   props: LinkProps<Route> & {
     ref?: React.Ref<React.ElementRef<typeof InertiaLink>>
   },
+  // @ts-expect-error TODO: fix this
 ) => ReturnType<typeof LinkInner> = React.forwardRef(LinkInner) as any
