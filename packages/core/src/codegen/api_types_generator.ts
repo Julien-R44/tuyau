@@ -164,12 +164,16 @@ export class ApiTypesGenerator {
 
       const definition = schema.getDefinitions().at(0)
       const importType = this.#getIdentifierImportType(schema)
-      if (!definition || !importType) {
+      const isReExportedFromThisFile = definition
+        ? handlerData.file.getExportedDeclarations().has(definition.getNode().getText())
+        : false
+
+      if (!importType && !isReExportedFromThisFile) {
         this.#logger.warning(`Unable to find the schema file for ${schema.getText()}`)
         return
       }
 
-      const importPath = definition.getSourceFile().getFilePath()
+      const importPath = definition!.getSourceFile().getFilePath()
       const relativeImportPath = slash(relative(this.#getDestinationDirectory(), importPath))
 
       const propName = importType === 'default' ? 'default' : schema.getText()

@@ -172,3 +172,25 @@ export const api = {
 }
 "`
 
+exports[`Api Types Generator > also works with validators defined and exported from the same file 1`] = `"import type { MakeTuyauRequest, MakeTuyauResponse } from '@tuyau/utils/types'
+import type { InferInput } from '@vinejs/vine/types'
+
+type GetUsersGet = {
+  request: MakeTuyauRequest<InferInput<typeof import('../app/controllers/get_users_controller.ts')['getUsersValidator']>>
+  response: MakeTuyauResponse<import('../app/controllers/get_users_controller.ts').default['index']>
+}
+export interface ApiDefinition {
+  'get_users': {
+    '$url': {
+    };
+    '$get': GetUsersGet;
+  };
+}
+const routes = [
+] as const;
+export const api = {
+  routes,
+  definition: {} as ApiDefinition
+}
+"`
+

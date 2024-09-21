@@ -82,7 +82,107 @@ test.group('Api Types Generator', (group) => {
     assert.snapshot(file).match()
   })
 
-  test('warning when schema implementation is not found', async ({ fs, assert }) => {
+  test('also works with validators defined and exported from the same file', async ({
+    fs,
+    assert,
+  }) => {
+    await fs.create(
+      `app/controllers/get_users_controller.ts`,
+      `
+      import vine from '@vinejs/vine'
+
+      export const getUsersValidator = vine.compile(
+        vine.object({
+          limit: vine.number(),
+          page: vine.number().optional(),
+        })
+      )
+
+      export default class GetUsersController {
+        public async index() {
+          await request.validateUsing(getUsersValidator)
+          return { foo: 'bar' }
+        }
+      }
+      `,
+    )
+
+    const route = {
+      pattern: '/get_users',
+      methods: ['GET'],
+      handler: {
+        reference: '#controllers/get_users_controller.index',
+        handle: () => {},
+      },
+      domain: 'root',
+    } as any
+
+    const apiTypesGenerator = new ApiTypesGenerator({
+      logger,
+      project: await setupProject(),
+      config: {},
+      appRoot: fs.baseUrl,
+      routes: [route],
+    })
+
+    await apiTypesGenerator.generate()
+
+    const file = await fs.contents('./.adonisjs/api.ts')
+    assert.snapshot(file).match()
+  })
+
+  test('warning if schema is not exported from the controller file', async ({ fs, assert }) => {
+    await fs.create(
+      `app/controllers/get_users_controller.ts`,
+      `
+      import vine from '@vinejs/vine'
+
+      const getUsersValidator = vine.compile(
+        vine.object({
+          limit: vine.number(),
+          page: vine.number().optional(),
+        })
+      )
+
+      export default class GetUsersController {
+        public async index() {
+          await request.validateUsing(getUsersValidator)
+          return { foo: 'bar' }
+        }
+      }
+      `,
+    )
+
+    const route = {
+      pattern: '/get_users',
+      methods: ['GET'],
+      handler: {
+        reference: '#controllers/get_users_controller.index',
+        handle: () => {},
+      },
+      domain: 'root',
+    } as any
+
+    const raw = cliui({ mode: 'raw' })
+    const apiTypesGenerator = new ApiTypesGenerator({
+      logger: raw.logger,
+      project: await setupProject(),
+      config: {},
+      appRoot: fs.baseUrl,
+      routes: [route],
+    })
+
+    await apiTypesGenerator.generate()
+
+    const logs = raw.logger.getLogs()
+    const warning = logs.find((log) =>
+      log.message.includes('Unable to find the schema file for getUsersValidator'),
+    )
+
+    assert.exists(warning)
+  })
+
+  test('warning when imported schema implementation is not found', async ({ fs, assert }) => {
     const route = await createController({
       name: 'UsersController',
       returnType: "{ foo: 'bar' }",
