@@ -1,5 +1,12 @@
 # @tuyau/openapi
 
+## 1.0.0
+
+### Patch Changes
+
+- Updated dependencies [df82585]
+  - @tuyau/core@0.2.0
+
 ## 0.1.2
 
 ### Patch Changes
@@ -16,15 +23,13 @@
   ```ts
   router
     .group(() => {
+      router.get('/random', [MiscController, 'index']).detail({ description: 'Get a random thing' })
       router
-        .get("/random", [MiscController, "index"])
-        .detail({ description: "Get a random thing" });
-      router
-        .get("/random/:id", [MiscController, "show"])
-        .detail({ description: "Get a random thing by id" });
+        .get('/random/:id', [MiscController, 'show'])
+        .detail({ description: 'Get a random thing by id' })
     })
-    .prefix("/misc")
-    .detail({ tags: ["misc"] });
+    .prefix('/misc')
+    .detail({ tags: ['misc'] })
   ```
 
   These `details` will be merged and added to the auto-generated OpenAPI spec.

@@ -1,5 +1,30 @@
 # @tuyau/core
 
+## 0.2.0
+
+### Minor Changes
+
+- df82585: See https://github.com/Julien-Sponsors/tuyau/issues/4
+
+  Basically we allow the use of a validator directly in the controller file. For example:
+
+  ```ts
+  export const myValidator = vine.compile(
+    vine.object({
+      id: vine.number(),
+    }),
+  )
+
+  export default class MyController {
+    public async handle({ request }: HttpContext) {
+      const payload = await request.validateUsing(myValidator)
+      // ...
+    }
+  }
+  ```
+
+  It didn't work before. Now it's possible
+
 ## 0.1.4
 
 ### Patch Changes
@@ -26,13 +51,13 @@
     ```ts
     /// <reference path="../../adonisrc.ts" />
 
-    import { createTuyau } from "@tuyau/client";
-    import type { api } from "@your-monorepo/server/.adonisjs/api";
+    import { createTuyau } from '@tuyau/client'
+    import type { api } from '@your-monorepo/server/.adonisjs/api'
 
     export const tuyau = createTuyau({
       api,
-      baseUrl: "http://localhost:3333",
-    });
+      baseUrl: 'http://localhost:3333',
+    })
     ```
 
     As you can see, you first need to change the import path and the imported value. Next, you need to pass this `api` object as an argument to the `createTuyau` function.
@@ -47,14 +72,12 @@
 
   ```ts
   // Backend
-  router
-    .get("/posts/:id/generate-invitation", "...")
-    .as("posts.generateInvitation");
+  router.get('/posts/:id/generate-invitation', '...').as('posts.generateInvitation')
 
   // Client
-  await tuyau.$route("posts.generateInvitation", { id: 1 }).$get({
+  await tuyau.$route('posts.generateInvitation', { id: 1 }).$get({
     query: { limit: 10, page: 1 },
-  });
+  })
   ```
 
   ### Generating URL from route name
@@ -62,9 +85,9 @@
   If you need to generate the URL of a route using the route name, you can use the `$url` method. This method is pretty similar to [Ziggy](https://github.com/tighten/ziggy) behavior :
 
   ```ts
-  tuyau.$url("users.posts", { id: 1, postId: 2 }); // http://localhost:3333/users/1/posts/2
-  tuyau.$url("venues.events.show", [1, 2]); // http://localhost:3333/venues/1/events/2
-  tuyau.$url("users", { query: { page: 1, limit: 10 } }); // http://localhost:3333/users?page=1&limit=10
+  tuyau.$url('users.posts', { id: 1, postId: 2 }) // http://localhost:3333/users/1/posts/2
+  tuyau.$url('venues.events.show', [1, 2]) // http://localhost:3333/venues/1/events/2
+  tuyau.$url('users', { query: { page: 1, limit: 10 } }) // http://localhost:3333/users?page=1&limit=10
   ```
 
   If you are used to Ziggy and prefer to have a `route` method instead of `$url`, you can define a custom method in your client file pretty easily :
@@ -72,10 +95,10 @@
   ```ts
   export const tuyau = createTuyau({
     api,
-    baseUrl: "http://localhost:3333",
-  });
+    baseUrl: 'http://localhost:3333',
+  })
 
-  window.route = tuyau.$url.bind(tuyau);
+  window.route = tuyau.$url.bind(tuyau)
   ```
 
   Then you can use the `route` method in your frontend code :
@@ -84,9 +107,9 @@
   export function MyComponent() {
     return (
       <div>
-        <a href={route("users.posts", { id: 1, postId: 2 })}>Go to post</a>
+        <a href={route('users.posts', { id: 1, postId: 2 })}>Go to post</a>
       </div>
-    );
+    )
   }
   ```
 
@@ -95,9 +118,9 @@
   If you need to check if a route name exists, you can use the `$has` method. You can also use wildcards in the route name :
 
   ```ts
-  tuyau.$has("users"); // true
-  tuyau.$has("users.posts"); // true
-  tuyau.$has("users.*.comments"); // true
-  tuyau.$has("users.*"); // true
-  tuyau.$has("non-existent"); // false
+  tuyau.$has('users') // true
+  tuyau.$has('users.posts') // true
+  tuyau.$has('users.*.comments') // true
+  tuyau.$has('users.*') // true
+  tuyau.$has('non-existent') // false
   ```
