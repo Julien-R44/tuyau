@@ -17,8 +17,6 @@ import type { Collection} from '@dimerapp/content';
 import { dimer , RenderingPipeline } from '@dimerapp/edge'
 import { docsHook, docsTheme } from '@dimerapp/docs-theme'
 
-import grammars from '../vscode_grammars/main.js'
-
 type CollectionEntry = Exclude<ReturnType<Collection['findByPermalink']>, undefined>
 
 edge.use(dimer)
@@ -86,8 +84,3 @@ pipeline.use(docsHook).use((node) => {
 export const renderer = new Renderer(edge, pipeline)
   .codeBlocksTheme('material-theme-palenight')
   .useTemplate('docs')
-
-/**
- * Adding grammars
- */
-grammars.forEach((grammar) => renderer.registerLanguage(grammar))

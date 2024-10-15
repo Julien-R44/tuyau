@@ -1,26 +1,17 @@
 {
   "links": {
     "home": {
-      "title": "Your project name",
+      "title": "Tuyau",
       "href": "/"
     },
     "github": {
-      "title": "Your project on Github",
-      "href": "https://github.com/dimerapp"
+      "title": "Tuyau on GitHub",
+      "href": "https://github.com/Julien-R44/tuyau"
     }
   },
-  "sponsors_sources": [
-  ],
+  "sponsors_sources": ["julien-r44"],
   "search": {
   },
-  "advertising_sponsors": [
-    {
-      "link": "",
-      "logo": "",
-      "logo_dark": "",
-      "logo_styles": ""
-    }
-  ],
-  "fileEditBaseUrl": "https://github.com/dimerapp/docs-boilerplate/blob/develop",
-  "copyright": "Your project legal name"
+  "fileEditBaseUrl": "https://github.com/tuyau/tree/main/docs",
+  "copyright": "Tuyau"
 }

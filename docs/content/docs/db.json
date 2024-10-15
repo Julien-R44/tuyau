@@ -4,5 +4,29 @@
     "title": "Introduction",
     "contentPath": "./introduction.md",
     "category": "Guides"
+  },
+  {
+    "permalink": "installation",
+    "title": "Installation",
+    "contentPath": "./installation.md",
+    "category": "Guides"
+  },
+  {
+    "permalink": "Client",
+    "title": "Client",
+    "contentPath": "./client.md",
+    "category": "Guides"
+  },
+  {
+    "permalink": "Inertia",
+    "title": "Inertia",
+    "contentPath": "./inertia.md",
+    "category": "Guides"
+  },
+  {
+    "permalink": "OpenAPI",
+    "title": "OpenAPI",
+    "contentPath": "./openapi.md",
+    "category": "Guides"
   }
 ]
