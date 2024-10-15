@@ -1,8 +1,5 @@
 ![banner](https://static.julr.dev/tuyau.png)
 
-> [!WARNING]
-> Tuyau is still in early development. I will **NOT follow semver until 1.0.0**. Use at your own risk.
-
 Set of tools to create typesafe APIs using AdonisJS. The monorepo includes the following packages:
 
 - `@tuyau/core` : Core package that you must install in your AdonisJS project.
