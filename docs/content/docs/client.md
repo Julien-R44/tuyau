@@ -360,7 +360,3 @@ export default defineConfig({
 You can use only one of `only` or `except` at the same time. Both options accept an array of strings, an array of regular expressions, or a function that receives the route name and returns a boolean.
 
 `definitions` will filter the generated types in the `ApiDefinition` interface. `routes` will filter the route names generated in the `routes` object.
-
---- 
-
-Let me know if you need any adjustments!
