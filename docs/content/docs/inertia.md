@@ -1,3 +1,7 @@
+---
+summary: Inertia helpers for AdonisJS, Ziggy-like API for you frontend application.
+---
+
 # Inertia package
 
 Tuyau also provides a set of helpers for Inertia projects. The package is called `@tuyau/inertia`. First, make sure to have generated the API definition in your AdonisJS project using `@tuyau/core` and also have configured the client in your frontend project using `@tuyau/client`.

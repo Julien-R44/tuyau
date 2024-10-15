@@ -4,9 +4,13 @@ summary: How to use Tuyau RPC / E2E Client in your AdonisJS project
 
 # Client
 
-As mentioned in the [installation](./installation.md), we used `createTuyau` to create our client instance. This instance will be used to make requests to our API. The following options are available:
+As mentioned in the [installation](./installation.md), we used `createTuyau` to create our client instance in our frontend application. This instance will be used to make requests to our API, and it will also provide some helpers to generate URLs, check the current route, etc.
+
+Tuyau client is built on top of [Ky](https://github.com/sindresorhus/ky).
 
 ## Options
+
+The `createTuyau` function accepts an object with the following options:
 
 ### `api`
 
@@ -38,7 +42,12 @@ export const tuyau = createTuyau<{ definition: ApiDefinition }>({
 })
 ```
 
-To clarify, if you don't need to use methods like `tuyau.$url('users.posts.show', { id: 1, postId: 2 })`, `$tuyau.route`, or the `Link` component from `@tuyau/inertia`, you can ignore the `api` object and only pass the `ApiDefinition` type to `createTuyau`.
+To clarify, if you don't need to use methods like :
+- `tuyau.$url('users.posts.show', { id: 1, postId: 2 })`
+- `$tuyau.route(...)`,
+- or the `<Link>` component from `@tuyau/inertia`
+
+You can ignore the `api` object and only pass the `ApiDefinition` type to `createTuyau`.
 
 ### `baseUrl`
 

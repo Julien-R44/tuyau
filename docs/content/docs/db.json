@@ -12,19 +12,19 @@
     "category": "Guides"
   },
   {
-    "permalink": "Client",
+    "permalink": "client",
     "title": "Client",
     "contentPath": "./client.md",
     "category": "Guides"
   },
   {
-    "permalink": "Inertia",
+    "permalink": "inertia",
     "title": "Inertia",
     "contentPath": "./inertia.md",
     "category": "Guides"
   },
   {
-    "permalink": "OpenAPI",
+    "permalink": "openapi",
     "title": "OpenAPI",
     "contentPath": "./openapi.md",
     "category": "Guides"
