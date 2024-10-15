@@ -9,7 +9,7 @@
       "href": "https://github.com/Julien-R44/tuyau"
     }
   },
-  "sponsors_sources": ["julien-r44"],
+  "sponsors_sources": ["https://raw.githubusercontent.com/Julien-R44/static/refs/heads/main/sponsorkit/.cache.json"],
   "search": {
   },
   "fileEditBaseUrl": "https://github.com/tuyau/tree/main/docs",

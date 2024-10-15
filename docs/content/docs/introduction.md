@@ -1,6 +1,6 @@
 # Introduction
 
-![](assets/images/banner.png)
+![](https://static.julr.dev/tuyau.png)
 
 A set of tools to create typesafe APIs with AdonisJS, including an E2E client like tRPC, Inertia helpers, Ziggy-like and more.
 
