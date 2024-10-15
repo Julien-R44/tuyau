@@ -96,7 +96,17 @@ If you’re familiar with [tRPC](https://trpc.io/docs/client/react), [Elysia Ede
 
 This is a minimal example of Tuyau in action. A simple monorepo with an AdonisJS API and a Vite frontend for the client. 
 
-<iframe loading="lazy" src="https://stackblitz.com/~/github.com/Julien-R44/tuyau-stackblitz-demo?file=apps/backend/start/routes.ts&file=apps/app/src/main.ts&view=editor" />
+The API has some routes to get and create posts, comments and users.
+
+<iframe
+  style="width: 100%; height: 500px; border: 0; border-radius: 4px; overflow: hidden; margin-bottom: 1rem;"
+  loading="lazy" 
+  src="https://stackblitz.com/edit/julien-r44-tuyau-stackblitz-demo-tbwnia?embed=1&file=apps%2Fbackend%2Fapp%2Fcontrollers%2Fposts_controller.ts&file=apps%2Fapp%2Fsrc%2Fmain.ts&hideNavigation=1&terminalHeight=1&showSidebar=0&view=editor"
+/>
+
+.
+
+See it in action on [StackBlitz](https://stackblitz.com/edit/julien-r44-tuyau-stackblitz-demo-tbwnia?file=apps%2Fbackend%2Fapp%2Fcontrollers%2Fposts_controller.ts&file=apps%2Fapp%2Fsrc%2Fmain.ts). Or you can [clone the repo](https://github.com/Julien-R44/tuyau-stackblitz-demo) and run it locally.
 
 ## How does it work?
 

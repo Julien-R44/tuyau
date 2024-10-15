@@ -37,6 +37,9 @@
   --code-highlight-border-color: var(--amber-11);
   --sidebar-loading-link-bg-color: var(--amber-a3);
   --docsearch-primary-color: var(--amber-9);
+
+  --content-width: 1000px;
+  --markdown-width: 900px;
 }
 
 html.dark {
