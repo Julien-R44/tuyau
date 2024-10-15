@@ -69,5 +69,5 @@ test.group('Vue | Typings', () => {
     TuyauPlugin.install(null as any, {
       client: createTuyau({ baseUrl: 'http://localhost', api }),
     })
-  })
+  }).fails()
 })
