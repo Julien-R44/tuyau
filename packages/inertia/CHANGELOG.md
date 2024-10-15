@@ -1,5 +1,11 @@
 # @tuyau/inertia
 
+## 0.0.2
+
+### Patch Changes
+
+- 844d7a9: Fix #6
+
 ## 0.0.1
 
 ### Patch Changes
@@ -12,7 +18,7 @@
 
   ```vue
   <script setup lang="ts">
-  import { Link } from "@tuyau/inertia";
+  import { Link } from '@tuyau/inertia'
   </script>
 
   <template>
@@ -23,14 +29,14 @@
   Same for React :
 
   ```tsx
-  import { Link } from "@tuyau/inertia";
+  import { Link } from '@tuyau/inertia'
 
   export function MyComponent() {
     return (
       <Link route="posts.edit" params={{ id: 2 }}>
         Home
       </Link>
-    );
+    )
   }
   ```
 

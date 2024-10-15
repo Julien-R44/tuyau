@@ -1,5 +1,11 @@
 # @tuyau/core
 
+## 0.2.1
+
+### Patch Changes
+
+- 844d7a9: Fix #6
+
 ## 0.2.0
 
 ### Minor Changes
