@@ -92,6 +92,12 @@ Everything in this example is fully typesafe: parameters (like `/posts/:id`), pa
 
 If you’re familiar with [tRPC](https://trpc.io/docs/client/react), [Elysia Eden](https://elysia.dev/), or [Hono](https://hono.dev/), it’s the same concept.
 
+## Demo 
+
+This is a minimal example of Tuyau in action. A simple monorepo with an AdonisJS API and a Vite frontend for the client. 
+
+<iframe loading="lazy" src="https://stackblitz.com/~/github.com/Julien-R44/tuyau-stackblitz-demo?file=apps/backend/start/routes.ts&file=apps/app/src/main.ts&view=editor" />
+
 ## How does it work?
 
 Tuyau uses codegen to generate input and output types for your AdonisJS routes. You’ll need to run the command `node ace tuyau:generate` whenever you add a new route to your project. This will generate a `.adonisjs/api.ts` file containing the following information:
