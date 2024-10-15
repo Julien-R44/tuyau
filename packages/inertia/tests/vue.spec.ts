@@ -1,6 +1,8 @@
 import { test } from '@japa/runner'
+import { createTuyau } from '@tuyau/client'
+import type { ApiDefinition } from '@tuyau/client'
 
-import { Link } from '../src/vue/index.js'
+import { Link, TuyauPlugin } from '../src/vue/index.js'
 
 const routes = [
   {
@@ -21,9 +23,15 @@ const routes = [
 
 declare module '../src/types.js' {
   interface Api {
+    // @ts-expect-error fine
     routes: typeof routes
     definition: Record<string, any>
   }
+}
+
+const api = {
+  routes,
+  definition: {} as ApiDefinition,
 }
 
 test.group('Vue | Typings', () => {
@@ -56,4 +64,10 @@ test.group('Vue | Typings', () => {
     // @ts-expect-error missing params
     Link({ route: 'users.comments.edit' })
   }).fails()
+
+  test('provider typing', () => {
+    TuyauPlugin.install(null as any, {
+      client: createTuyau({ baseUrl: 'http://localhost', api }),
+    })
+  })
 })

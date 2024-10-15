@@ -1,15 +1,18 @@
 import React from 'react'
 import { Link as InertiaLink } from '@inertiajs/react'
-import type { TuyauClient, RouteName } from '@tuyau/client'
+import type { TuyauClient, RouteName, GeneratedRoutes } from '@tuyau/client'
 
 import type { ValidatedApi, LinkParams } from '../types.js'
 
 const TuyauContext = React.createContext<TuyauClient<any, any> | null>(null)
 
-export const TuyauProvider = (props: {
+export function TuyauProvider<D extends Record<string, any>, R extends GeneratedRoutes>(props: {
   children: React.ReactNode
-  client: TuyauClient<any, any>
-}) => <TuyauContext.Provider value={props.client}>{props.children}</TuyauContext.Provider>
+  client: TuyauClient<D, R>
+}) {
+  // @ts-expect-error fine
+  return <TuyauContext.Provider value={props.client}>{props.children}</TuyauContext.Provider>
+}
 
 export const useTuyau = () => React.useContext(TuyauContext)
 

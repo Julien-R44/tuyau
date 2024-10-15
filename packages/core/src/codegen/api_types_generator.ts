@@ -336,8 +336,8 @@ export class ApiTypesGenerator {
        */
       if (isTuyauInertiaInstalled) {
         writer.writeLine(`declare module '@tuyau/inertia/types' {`)
-        writer.writeLine(`  type ApiDefinition = typeof api`)
-        writer.writeLine(`  export interface Api extends ApiDefinition {}`)
+        writer.writeLine(`  type InertiaApi = typeof api`)
+        writer.writeLine(`  export interface Api extends InertiaApi {}`)
         writer.writeLine(`}`)
       }
     })

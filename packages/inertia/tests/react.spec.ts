@@ -1,6 +1,8 @@
 import { test } from '@japa/runner'
+import { createTuyau } from '@tuyau/client'
+import type { ApiDefinition } from '@tuyau/client'
 
-import { Link } from '../src/react/index.js'
+import { Link, TuyauProvider } from '../src/react/index.js'
 
 const routes = [
   {
@@ -11,13 +13,18 @@ const routes = [
     types: {},
   },
   {
-    params: ['id', 'comment_id'],
+    params: ['id', 'commentId'],
     name: 'users.comments.edit',
     path: '/users/:id/comments/:comment_id/edit',
     method: ['GET', 'HEAD'],
     types: {},
   },
 ] as const
+
+const api = {
+  routes,
+  definition: {} as ApiDefinition,
+}
 
 declare module '../src/types.js' {
   interface Api {
@@ -56,4 +63,9 @@ test.group('React | Typings', () => {
     // @ts-expect-error missing params
     Link({ route: 'users.comments.edit' })
   }).fails()
+
+  test('provider typing', () => {
+    const client = createTuyau({ api, baseUrl: 'http://localhost' })
+    TuyauProvider({ client, children: null })
+  })
 })
