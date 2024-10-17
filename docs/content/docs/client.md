@@ -369,3 +369,52 @@ export default defineConfig({
 You can use only one of `only` or `except` at the same time. Both options accept an array of strings, an array of regular expressions, or a function that receives the route name and returns a boolean.
 
 `definitions` will filter the generated types in the `ApiDefinition` interface. `routes` will filter the route names generated in the `routes` object.
+
+## FAQ
+
+### Why do I get a `ModelObject` type when returning a Lucid Model ?
+
+If you try returning an instance of a [Lucid](https://lucid.adonisjs.com) model, you'll quickly realize that you don’t get any type information. Instead, you’ll see `ModelObject`. The reason is simple: [Lucid is not typesafe](https://lucid.adonisjs.com/docs/introduction#lucid-is-not-type-safe). As a result, Tuyau cannot infer the return type correctly. There are several solutions to address this issue:
+
+- Help TypeScript by adding a type cast.
+- Use DTOs to map the data. This is likely the best approach since, beyond providing type safety, DTOs offer other benefits.
+
+:::codegroup
+
+```ts
+// title: Casting
+class UsersController {
+  async edit({ inertia, params }: HttpContext) {
+    const user = users.serialize() as {
+        id: number
+        name: string 
+    }
+
+    return { user }
+  }
+}
+```
+
+```ts
+// title: DTOs
+class UserDto {
+  constructor(private user: User) {}
+
+  toJson() {
+    return {
+      id: this.user.id,
+      name: this.user.name
+    }
+  }
+}
+
+class UsersController {
+  async edit({ inertia, params }: HttpContext) {
+    const user = await User.findOrFail(params.id)
+
+    return { user: new UserDto(user).toJson() }
+  }
+}
+```
+
+:::
