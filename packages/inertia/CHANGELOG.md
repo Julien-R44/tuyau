@@ -1,5 +1,13 @@
 # @tuyau/inertia
 
+## 0.0.3
+
+### Patch Changes
+
+- 8c77893: Link for Vue and React did not work when used with params. See issue #10
+  This is now fixed.
+- a2460d0: Incorrect typing for vue plugin
+
 ## 0.0.2
 
 ### Patch Changes
