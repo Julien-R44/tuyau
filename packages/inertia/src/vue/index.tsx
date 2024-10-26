@@ -2,7 +2,7 @@ import { defineComponent, h, inject } from 'vue'
 import type { DefineSetupFnComponent } from 'vue'
 import { Link as InertiaLink } from '@inertiajs/vue3'
 import type { InertiaLinkProps } from '@inertiajs/vue3'
-import type { GeneratedRoutes, RouteName, TuyauClient } from '@tuyau/client'
+import type { RouteName, TuyauClient } from '@tuyau/client'
 
 import type { ValidatedApi, LinkParams } from '../types.js'
 
@@ -14,10 +14,7 @@ export function getClientKey(key?: string) {
 }
 
 export const TuyauPlugin = {
-  install: <D extends Record<string, any>, R extends GeneratedRoutes>(
-    app: any,
-    options: { client: TuyauClient<D, R> },
-  ) => {
+  install: (app: any, options: { client: { $url: any } }) => {
     app.provide(getClientKey(), options.client)
   },
 }
