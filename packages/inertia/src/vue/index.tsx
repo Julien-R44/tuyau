@@ -40,8 +40,20 @@ export const Link: <Route extends RouteName<ValidatedApi['routes']>>(
     if (!tuyau) throw new Error('You must install the TuyauPlugin before using Link')
 
     const route = tuyau.$route(props.route, props.params)
+    const url = tuyau.$url(props.route, { params: props.params })
 
-    return () => h(InertiaLink, { href: route.path, method: route.method[0], ...props }, ctx.slots)
+    return () =>
+      h(
+        InertiaLink,
+        {
+          ...props,
+          route: undefined,
+          params: undefined,
+          href: url,
+          method: route.method[0],
+        },
+        ctx.slots,
+      )
   },
   { props: ['route', 'params'] },
 )

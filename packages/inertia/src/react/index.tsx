@@ -30,7 +30,18 @@ function LinkInner<Route extends RouteName<ValidatedApi['routes']>>(
   if (!tuyau) throw new Error('You must wrap your app in a TuyauProvider')
 
   const route = tuyau.$route(props.route, (props as any).params)
-  return <InertiaLink {...props} href={route.path} method={route.method[0]} ref={ref} />
+  const url = tuyau.$url(props.route, { params: props.params } as any)
+
+  return (
+    <InertiaLink
+      {...props}
+      route={undefined}
+      params={undefined}
+      href={url}
+      method={route.method[0]}
+      ref={ref}
+    />
+  )
 }
 
 export const Link: <Route extends RouteName<ValidatedApi['routes']>>(

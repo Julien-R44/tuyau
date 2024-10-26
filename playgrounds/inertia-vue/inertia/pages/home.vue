@@ -12,6 +12,7 @@ defineProps<{ version: number }>()
     <div class="title">AdonisJS {{ version }} x Inertia x Vue.js</div>
 
     <Link route="posts.create" :params="[]"> Create a new post </Link>
+    <Link route="posts_comments.create" :params="{ postId: 1 }"> Create comment for post 1 </Link>
     <span>
       Learn more about AdonisJS and Inertia.js by visiting the
       <a href="https://docs.adonisjs.com/guides/inertia">AdonisJS documentation</a>.
