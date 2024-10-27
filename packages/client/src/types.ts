@@ -1,5 +1,5 @@
 import type { Options as KyOptions } from 'ky'
-import type { Simplify, Serialize, IsNever, Prettify } from '@tuyau/utils/types'
+import type { IsNever, Prettify } from '@tuyau/utils/types'
 
 import type { RouteHelper } from './route.js'
 
@@ -11,7 +11,7 @@ export type TuyauResponse<Res extends Record<number, unknown>> =
       error: null
       status: number
       response: Response
-      data: Res[200] extends Simplify<Serialize<infer Response>> ? Response : never
+      data: Res[200]
     }
   | {
       data: null
@@ -22,7 +22,7 @@ export type TuyauResponse<Res extends Record<number, unknown>> =
         : {
             [Status in Exclude<keyof Res, 200>]: {
               status: Status
-              value: Res[Status] extends Simplify<Serialize<infer Response>> ? Response : never
+              value: Res[Status]
             }
           }[Exclude<keyof Res, 200>]
     }

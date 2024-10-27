@@ -337,4 +337,39 @@ test.group('Client | Typings', () => {
 
     tuyau.users({ id: 1 }).$get()
   })
+
+  test('return data correctly 1', async ({}) => {
+    type Response = {
+      200: {
+        token: {
+          type: string
+          name: string | null
+          token: string | undefined
+          abilities: string[]
+          lastUsedAt: Date | null
+          expiresAt: Date | null
+        }
+      }
+    }
+    const tuyau = createTuyau<{
+      routes: []
+      definition: {
+        auth: {
+          login: {
+            $post: {
+              request: { email: string; password: string }
+              response: Simplify<Response>
+            }
+          }
+        }
+      }
+    }>({ baseUrl: 'http://localhost:3333' })
+
+    const result = await tuyau.auth.login.$post({
+      email: 'foo',
+      password: 'bar',
+    })
+
+    result.data?.token.abilities
+  }).fails()
 })
