@@ -32,8 +32,6 @@ As you can see, the `api` is not a type, but a real runtime object. You might as
 If you're not interested in using the route names in your frontend project, you can simply import the `ApiDefinition` type from the `@tuyau/client` package and ignore the `api` object:
 
 ```ts
-/// <reference path="../../adonisrc.ts" />
-
 import { createTuyau } from '@tuyau/client'
 import type { ApiDefinition } from '@your-monorepo/server/.adonisjs/api'
 
