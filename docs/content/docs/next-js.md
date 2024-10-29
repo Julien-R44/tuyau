@@ -2,16 +2,26 @@
 summary: Setup a Monorepo with AdonisJS, Next.js and Tuyau
 ---
 
-In this guide, we'll be setting up a monorepo with AdonisJS, Next.js and Tuyau.
+In this guide, we'll be setting up a Monorepo with AdonisJS, Next.js and Tuyau.
+
+You can find an example of it in this [repository](https://github.com/mohitxskull/tuyau-nextjs-adonisjs-stackblitz-demo).
 
 # Monorepo
 
-We'll be using `pnpm` to manage the dependencies in our monorepo.
+We'll be using `pnpm` to manage the dependencies in our Monorepo.
 
-Let's create an empty folder called `acme` and initialize `pnpm`:
+Let's create an empty folder called `acme` and initialize `package.json` with `pnpm` :
 
 ```sh
 pnpm init
+```
+
+Now we need to tell `pnpm` where our apps are located in the folder and for that we need to add a `apps` folder and [`pnpm-workspace.yaml`](https://pnpm.io/workspaces) file as `pnpm` do not support the `workspaces` field in `package.json`:
+
+```yaml
+# pnpm-workspace.yaml
+packages:
+    - apps/*
 ```
 
 As a result, we'll have a `acme` folder with the following structure:
@@ -19,14 +29,8 @@ As a result, we'll have a `acme` folder with the following structure:
 ```
 acme
 ├── package.json
-```
-
-Now we need to tell `pnpm` where our apps are located in the folder and for that we need to add a [`pnpm-workspace.yaml`](https://pnpm.io/workspaces) file as `pnpm` do not support the `workspaces` field in `package.json`:
-
-```yaml
-# pnpm-workspace.yaml
-packages:
-    - apps
+├── apps
+└── pnpm-workspace.yaml
 ```
 
 ## AdonisJS
@@ -37,13 +41,14 @@ Now let's do a `cd` to our `apps` folder and create a adonisjs project:
 pnpm create adonisjs@latest backend
 ```
 
-For more information on creating an adonisjs project, check out [adonisjs](https://docs.adonisjs.com/guides/getting-started/installation)
+For more information on creating an adonisjs project, check out [adonisjs](https://docs.adonisjs.com/guides/getting-started/installation).
 
 ```
 acme
 ├── package.json
 ├── apps
-└── apps/backend
+├── apps/backend
+└── pnpm-workspace.yaml
 ```
 
 ## Tuyau
@@ -58,14 +63,15 @@ To create a Next.js project, run the following command in `./acme/apps` folder:
 pnpx create-next-app@latest frontend --typescript
 ```
 
-For more information on creating a Next.js project, check out [create-next-app](https://nextjs.org/docs/getting-started/installation)
+For more information on creating a Next.js project, check out [create-next-app](https://nextjs.org/docs/getting-started/installation).
 
 ```
 acme
 ├── package.json
 ├── apps
 ├── apps/backend
-└── apps/frontend
+├── apps/frontend
+└── pnpm-workspace.yaml
 ```
 
 ### Importing the API Definition
@@ -109,11 +115,11 @@ Decorators are not enabled by default in TypeScript, So we need to enable them i
 }
 ```
 
----
+### Testing
 
-We have successfully created a monorepo with AdonisJS, Next.js and Tuyau, but let's check if everything is working as expected.
+We have successfully created a Monorepo with AdonisJS, Next.js and Tuyau, but let's test if everything is working as expected.
 
-Add the `typecheck` script to the `package.json` of `./acme/apps/frontend`:
+For that add the `typecheck` script to the `package.json` in `./acme/apps/frontend`:
 
 ```json
 // package.json
@@ -126,7 +132,7 @@ Add the `typecheck` script to the `package.json` of `./acme/apps/frontend`:
 
 Run the `typecheck` script and see if everything is working as expected.
 
-If you see any errors coming from `../backend` folder, check them and if they are related to missing types, reference them in the `./.adonisjs/index.ts` file like this:
+If you see any errors coming from `../backend` folder, check them and if they are related to missing types, add required reference files in the `./.adonisjs/index.ts` file like this:
 
 ```ts
 /// <reference path="../adonisrc.ts" />
@@ -135,8 +141,4 @@ If you see any errors coming from `../backend` folder, check them and if they ar
 export * from './api.js'
 ```
 
-As your project grows you will need to add more references to the types in the `./.adonisjs/index.ts` file.
-
----
-
-You can find an example of AdonisJS, Next.js and Tuyau in the [examples](https://github.com/Julien-R44/tuyau/tree/main/examples/nextjs) folder.
+As your project grows you will need to add more reference files here.
