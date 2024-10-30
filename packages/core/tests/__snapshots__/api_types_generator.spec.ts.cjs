@@ -25,7 +25,7 @@ import type { InferInput } from '@vinejs/vine/types'
 
 type UsersGet = {
   request: MakeTuyauRequest<InferInput<typeof import('../app/validators/get_users_validator.ts')['getUsersValidator']>>
-  response: MakeTuyauResponse<import('../app/controllers/users_controller.ts').default['index']>
+  response: MakeTuyauResponse<import('../app/controllers/users_controller.ts').default['index']> & { 422: { errors: { message: string, rule: string, field: string }[] } }
 }
 export interface ApiDefinition {
   'users': {
@@ -155,7 +155,7 @@ import type { InferInput } from '@vinejs/vine/types'
 
 type UsersGet = {
   request: MakeTuyauRequest<InferInput<typeof import('../app/validators/get_users_validator.ts')['default']>>
-  response: MakeTuyauResponse<import('../app/controllers/users_controller.ts').default['index']>
+  response: MakeTuyauResponse<import('../app/controllers/users_controller.ts').default['index']> & { 422: { errors: { message: string, rule: string, field: string }[] } }
 }
 export interface ApiDefinition {
   'users': {
@@ -177,7 +177,7 @@ import type { InferInput } from '@vinejs/vine/types'
 
 type GetUsersGet = {
   request: MakeTuyauRequest<InferInput<typeof import('../app/controllers/get_users_controller.ts')['getUsersValidator']>>
-  response: MakeTuyauResponse<import('../app/controllers/get_users_controller.ts').default['index']>
+  response: MakeTuyauResponse<import('../app/controllers/get_users_controller.ts').default['index']> & { 422: { errors: { message: string, rule: string, field: string }[] } }
 }
 export interface ApiDefinition {
   'get_users': {
