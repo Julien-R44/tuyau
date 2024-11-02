@@ -54,12 +54,14 @@ function createProxy(options: {
       /**
        * Otherwise, it's time to make the final request.
        */
+      const method = paths[paths.length - 1].slice(1) as (typeof methods)[number]
+      const isGetOrHead = ['get', 'head'].includes(method)
       return new TuyauRequest({
         body,
         client,
-        queryOptions,
+        method,
         path: paths.slice(0, -1).join('/'),
-        method: paths[paths.length - 1].slice(1) as (typeof methods)[number],
+        queryOptions: isGetOrHead ? body : queryOptions,
       })
     },
   })

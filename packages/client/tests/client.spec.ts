@@ -486,4 +486,96 @@ test.group('Client | Runtime', () => {
 
     await tuyau.users.$post(formData as any)
   })
+
+  test('pass headers from queryOptions', async () => {
+    const tuyau = createTuyau<{
+      routes: []
+      definition: {
+        users: {
+          $get: {
+            request: { email: string }
+            response: { 200: Simplify<Serialize<{ token: string }>> }
+          }
+        }
+      }
+    }>({
+      baseUrl: 'http://localhost:3333',
+      headers: { 'default-header': 'default-value' },
+    })
+
+    nock('http://localhost:3333', {})
+      .get('/users')
+      .query({ email: 'foo@ok.com' })
+      // .matchHeader('default-header', 'default-value')
+      .matchHeader('custom-header', 'custom-value')
+      .reply(200, { token: '123' })
+
+    await tuyau.users.$get({
+      query: { email: 'foo@ok.com' },
+      headers: { 'custom-header': 'custom-value' },
+    })
+  })
+
+  test('pass headers to post request', async () => {
+    const tuyau = createTuyau<{
+      routes: []
+      definition: {
+        users: {
+          $post: {
+            request: { name: string; email: string }
+            response: { 200: Simplify<Serialize<{ token: string }>> }
+          }
+        }
+      }
+    }>({
+      baseUrl: 'http://localhost:3333',
+      headers: {
+        'default-header': 'default-value',
+      },
+    })
+
+    nock('http://localhost:3333')
+      .post('/users')
+      .reply(200, { token: '123' })
+      .matchHeader('content-type', /multipart\/form-data/)
+      .matchHeader('custom-header', 'custom-value')
+      .matchHeader('default-header', 'default-value')
+
+    const formData = new FormData()
+    formData.append('name', 'julien')
+    formData.append('email', 'foo@ok.com')
+
+    await tuyau.users.$post(formData as any, {
+      headers: { 'custom-header': 'custom-value' },
+    })
+  })
+
+  test('pass query options to get request', async () => {
+    const tuyau = createTuyau<{
+      routes: []
+      definition: {
+        users: {
+          $get: {
+            request: { email: string }
+            response: { 200: Simplify<Serialize<{ token: string }>> }
+          }
+        }
+      }
+    }>({ baseUrl: 'http://localhost:3333' })
+
+    nock('http://localhost:3333')
+      .get('/users')
+      .query({ email: 'foo@ok.com' })
+      .reply(200, { token: '123' })
+      .matchHeader('custom-header', 'custom-value')
+      .matchHeader('second-header', 'custom-value')
+
+    await tuyau.users.$get({
+      query: { email: 'foo@ok.com' },
+      headers: { 'custom-header': 'custom-value' },
+      hooks: {
+        beforeRequest: [(request) => request.headers.set('second-header', 'custom-value')],
+      },
+    })
+  })
 })

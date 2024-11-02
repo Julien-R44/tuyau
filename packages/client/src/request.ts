@@ -62,11 +62,10 @@ export class TuyauRequest {
      * Make the request
      */
     const isGetOrHead = ['get', 'head'].includes(this.#options.method)
-    const query = isGetOrHead ? body?.query : this.#options.queryOptions?.query
     const response = await this.#options.client[this.#options.method](
       removeSlash(this.#options.path),
       {
-        searchParams: buildSearchParams(query),
+        searchParams: buildSearchParams(this.#options.queryOptions?.query || {}),
         [key]: !isGetOrHead ? body : undefined,
         ...this.#options.queryOptions,
       },
