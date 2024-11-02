@@ -2,11 +2,13 @@
 summary: Setup a Monorepo with AdonisJS, Next.js and Tuyau
 ---
 
+# Setup Tuyau with Next.js
+
 In this guide, we'll be setting up a Monorepo with AdonisJS, Next.js and Tuyau.
 
+:::tip
 You can find an example of it in this [repository](https://github.com/mohitxskull/tuyau-nextjs-adonisjs-stackblitz-demo).
-
-# Monorepo
+:::
 
 We'll be using `pnpm` to manage the dependencies in our Monorepo.
 
@@ -33,15 +35,15 @@ acme
 └── pnpm-workspace.yaml
 ```
 
-## AdonisJS
+## Adding AdonisJS
 
-Now let's do a `cd` to our `apps` folder and create a adonisjs project:
+Now let's do a `cd` to our `apps` folder and create a AdonisJS project:
 
 ```sh
 pnpm create adonisjs@latest backend
 ```
 
-For more information on creating an adonisjs project, check out [adonisjs](https://docs.adonisjs.com/guides/getting-started/installation).
+For more information on creating an AdonisJS project, check out [adonisjs](https://docs.adonisjs.com/guides/getting-started/installation).
 
 ```
 acme
@@ -51,11 +53,11 @@ acme
 └── pnpm-workspace.yaml
 ```
 
-## Tuyau
+## Adding Tuyau
 
-For installation of the Tuyau framework, check out the [installation](/docs/installation) guide.
+For installation and configuration of Tuyau, check out the [installation](/docs/installation) guide.
 
-## Next.js
+## Adding Next.js
 
 To create a Next.js project, run the following command in `./acme/apps` folder:
 
@@ -141,4 +143,6 @@ If you see any errors coming from `../backend` folder, check them and if they ar
 export * from './api.js'
 ```
 
-As your project grows you will need to add more reference files here.
+As your project grows you may need to add more reference files here.
+
+
