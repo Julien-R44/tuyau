@@ -46,7 +46,21 @@ And an appropriate `.adonisjs/api.ts` file will be generated in your project.
 
 ### Sharing the API definition
 
-The command will generate a file called `.adonisjs/api.ts` in your project. This file will contain the definition of your API. You must export this file in your project to use the client package.
+The command will generate a file called `.adonisjs/api.ts` in your project. This file will contain the definition of your API.
+
+Now let's create a file called `.adonisjs/index.ts` in your server workspace :
+
+```ts
+/// <reference path="../adonisrc.ts" />
+
+export * from './api.ts'
+```
+
+:::warning
+We must reference the `adonisrc.ts` file at the top of the file. By doing that, the frontend project will be aware of some types defined in the AdonisJS project.
+:::
+
+You must export this file in your project to use the client package.
 
 So, let's say your monorepo structure is like this :
 
@@ -56,7 +70,7 @@ apps
   server
 ```
 
-You must export the `.adonisjs/api.ts` file from your server workspace using [subpath exports](https://nodejs.org/api/packages.html#subpath-exports) : 
+You must export the `.adonisjs/index.ts` file from your server workspace using [subpath exports](https://nodejs.org/api/packages.html#subpath-exports) : 
 
 ```jsonc
 // package.json
@@ -66,7 +80,7 @@ You must export the `.adonisjs/api.ts` file from your server workspace using [su
   "version": "0.0.0",
   "private": true,
   "exports": {
-    "./api": "./.adonisjs/api.ts"
+    "./api": "./.adonisjs/index.ts"
   },
 }
 ```
@@ -101,8 +115,6 @@ import { api } from '@acme/server/api'
 Once installed, you must create the tuyau client in your frontend project : 
 
 ```ts
-/// <reference path="../../adonisrc.ts" />
-
 import { createTuyau } from '@tuyau/client'
 import { api } from '@your-monorepo/server/.adonisjs/api'
 
@@ -114,8 +126,7 @@ export const tuyau = createTuyau({
 
 Multiple things to note here :
 
-- We must reference the `adonisrc.ts` file at the top of the file. By doing that, the frontend project will be aware of some types defined in the AdonisJS project.
-- We must import `api` from the `.adonisjs/api` file in your AdonisJS project. You should change the path to match your project structure.
+- We must import `api` from the `.adonisjs/index` file in your AdonisJS project. You should change the path to match your project structure.
 - As you can see, the `api` is not a type, but a real object. You may ask why ? `api` is an object that contains two things :
   - The definition of you API. This is just a type. No runtime code for that.
   - The routes of your API. This is a "real" object that contains all the routes with their names and paths. Since we need to map the route names to the paths, we need to have some runtime code for that.
@@ -123,8 +134,6 @@ Multiple things to note here :
 If you are not interested in using the route names in your frontend project, you can just import the `ApiDefinition` type from the `@tuyau/client` package and ignore the `api` object :
 
 ```ts
-/// <reference path="../../adonisrc.ts" />
-
 import { createTuyau } from '@tuyau/client'
 import type { ApiDefinition } from '@your-monorepo/server/.adonisjs/api'
 

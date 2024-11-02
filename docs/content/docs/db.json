@@ -28,5 +28,11 @@
     "title": "OpenAPI",
     "contentPath": "./openapi.md",
     "category": "Guides"
+  },
+  {
+    "permalink": "next-js",
+    "title": "Next.js",
+    "contentPath": "/next-js.md",
+    "category": "Guides"
   }
 ]
