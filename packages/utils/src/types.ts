@@ -99,9 +99,13 @@ export type MakeOptional<T extends object> = UndefinedProps<T> & Omit<T, keyof U
 /**
  * Shortcut for computing the Tuyau response type
  */
-export type MakeTuyauResponse<T extends (...args: any) => any> = Simplify<
-  Serialize<ConvertReturnTypeToRecordStatusResponse<Awaited<ReturnType<T>>>>
->
+export type MakeTuyauResponse<
+  T extends (...args: any) => any,
+  HasSchema extends boolean = false,
+> = Simplify<Serialize<ConvertReturnTypeToRecordStatusResponse<Awaited<ReturnType<T>>>>> &
+  (HasSchema extends true
+    ? { 422: { errors: { message: string; rule: string; field: string }[] } }
+    : {})
 
 /**
  * Shortcut for computing the Tuyau request type
