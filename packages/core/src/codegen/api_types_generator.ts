@@ -275,7 +275,15 @@ export class ApiTypesGenerator {
   }
 
   async #writeIndexFile() {
-    const file = this.#project.createSourceFile(this.#getDestinationDirectory() + '/index.ts', '', {
+    const filePath = this.#getDestinationDirectory() + '/index.ts'
+
+    const exist = existsSync(filePath)
+
+    if (exist) {
+      return
+    }
+
+    const file = this.#project.createSourceFile(filePath, '', {
       overwrite: true,
     })
 
