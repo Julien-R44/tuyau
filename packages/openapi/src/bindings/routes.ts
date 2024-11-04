@@ -31,7 +31,7 @@ export function registerRouteMacros(metaStore: MetaStore) {
   )
 
   RouteGroup.macro('openapi', function (this: RouteGroup, detail: OpenAPIV3_1.OperationObject) {
-    this.routes.forEach((route) => {
+    function handleAnyRouteType(route: Route | RouteGroup | RouteResource | BriskRoute) {
       if (route instanceof Route) {
         metaStore.set(route, { ...detail, ...metaStore.get(route) })
       } else if (route instanceof RouteResource) {
@@ -40,7 +40,15 @@ export function registerRouteMacros(metaStore: MetaStore) {
         )
       } else if (route instanceof BriskRoute) {
         metaStore.set(route.route!, { ...detail, ...metaStore.get(route.route!) })
+      } else if (route instanceof RouteGroup) {
+        route.routes.forEach((route) => {
+          handleAnyRouteType(route)
+        })
       }
+    }
+
+    this.routes.forEach((route) => {
+      handleAnyRouteType(route)
     })
     return this
   })
