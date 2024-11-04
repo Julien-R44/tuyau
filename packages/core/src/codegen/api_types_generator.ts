@@ -417,7 +417,7 @@ export class ApiTypesGenerator {
         const typeName = this.#generateTypeName(route)
         typesByPattern[typeName] = {
           request: schemaImport ? `MakeTuyauRequest<${schemaImport}>` : 'unknown',
-          response: `MakeTuyauResponse<import('${relativePath}').default['${routeHandler.method}']>${schemaImport ? ' & { 422: { errors: { message: string, rule: string, field: string }[] } }' : ''}`,
+          response: `MakeTuyauResponse<import('${relativePath}').default['${routeHandler.method}'], ${!!schemaImport}>`,
         }
 
         currentLevel.$url = {}
