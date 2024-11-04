@@ -274,13 +274,33 @@ export class ApiTypesGenerator {
       .filter((route) => !!route.name)
   }
 
+  async #writeIndexFile() {
+    const file = this.#project.createSourceFile(this.#getDestinationDirectory() + '/index.ts', '', {
+      overwrite: true,
+    })
+
+    if (!file) throw new Error('Unable to create the index.ts file')
+
+    file.removeText().insertText(0, (writer) => {
+      writer.writeLine(`/// <reference path="../adonisrc.ts" />`)
+
+      writer.newLine()
+
+      writer.writeLine(`export * from './api.js'`)
+    })
+
+    await file.save()
+  }
+
   async #writeApiFile(options: {
     routesNameArray: RouteNameArray
     definition: Record<string, any>
     typesByPattern: Record<string, any>
   }) {
     const file = this.#project.createSourceFile(this.#destination, '', { overwrite: true })
+
     if (!file) throw new Error('Unable to create the api.ts file')
+
     const isTuyauInertiaInstalled = await this.#isTuyauInertiaInstalled()
 
     file.removeText().insertText(0, (writer) => {
@@ -434,8 +454,9 @@ export class ApiTypesGenerator {
     )
 
     /**
-     * Write the final api.ts file
+     * Write the final api.ts & index.ts file
      */
     await this.#writeApiFile({ definition, typesByPattern, routesNameArray })
+    await this.#writeIndexFile()
   }
 }

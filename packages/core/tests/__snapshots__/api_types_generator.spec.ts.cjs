@@ -194,3 +194,8 @@ export const api = {
 }
 "`
 
+exports[`Api Types Generator > works fine 2`] = `"/// <reference path=\\"../adonisrc.ts\\" />
+
+export * from './api.js'
+"`
+
