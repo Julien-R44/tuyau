@@ -46,21 +46,7 @@ And an appropriate `.adonisjs/api.ts` file will be generated in your project.
 
 ### Sharing the API definition
 
-The command will generate a file called `.adonisjs/api.ts` in your project. This file will contain the definition of your API.
-
-Now let's create a file called `.adonisjs/index.ts` in your server workspace :
-
-```ts
-/// <reference path="../adonisrc.ts" />
-
-export * from './api.ts'
-```
-
-:::warning
-We must reference the `adonisrc.ts` file at the top of the file. By doing that, the frontend project will be aware of some types defined in the AdonisJS project.
-:::
-
-You must export this file in your project to use the client package.
+The `node ace tuyau:generate` command will generate two files in your project: `.adonisjs/api.ts` and `.adonisjs/index.ts`, which contain the definition of your API and export the API definition with required types, respectively.
 
 So, let's say your monorepo structure is like this :
 

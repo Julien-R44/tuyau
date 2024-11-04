@@ -23,8 +23,12 @@ test.group('Api Types Generator', (group) => {
 
     await apiTypesGenerator.generate()
 
-    const file = await fs.contents('./.adonisjs/api.ts')
-    assert.snapshot(file).match()
+    const apiFile = await fs.contents('./.adonisjs/api.ts')
+    assert.snapshot(apiFile).match()
+
+    const indexFile = await fs.contents('./.adonisjs/index.ts')
+
+    assert.snapshot(indexFile).match()
   })
 
   test('extract validateUsing request', async ({ fs, assert }) => {
