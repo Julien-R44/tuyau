@@ -1,5 +1,11 @@
 # @tuyau/client
 
+## 0.2.1
+
+### Patch Changes
+
+- 4774ad4: Fix when cookie is not preset
+
 ## 0.2.0
 
 ### Minor Changes
