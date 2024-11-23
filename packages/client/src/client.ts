@@ -74,9 +74,9 @@ function appendCsrfToken(request: Request) {
   const xCsrfToken = globalThis.document?.cookie
     .split('; ')
     .find((row) => row.startsWith('XSRF-TOKEN='))
-    .split('=')[1]
 
-  request.headers.set('X-XSRF-TOKEN', decodeURIComponent(xCsrfToken))
+  if (!xCsrfToken) return
+  request.headers.set('X-XSRF-TOKEN', decodeURIComponent(xCsrfToken.split('=')[1]))
 }
 
 /**
