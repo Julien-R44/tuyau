@@ -578,4 +578,29 @@ test.group('Client | Runtime', () => {
       },
     })
   })
+
+  test('automatically pickup cookie x-csrf-token', async () => {
+    // @ts-ignore osef
+    globalThis.document ||= {}
+    globalThis.document.cookie = 'XSRF-TOKEN=123'
+
+    const tuyau = createTuyau<{
+      routes: []
+      definition: {
+        users: {
+          $get: {
+            request: any
+            response: { 200: Simplify<Serialize<{ token: string }>> }
+          }
+        }
+      }
+    }>({ baseUrl: 'http://localhost:3333' })
+
+    nock('http://localhost:3333')
+      .get('/users')
+      .reply(200, { token: '123' })
+      .matchHeader('X-XSRF-TOKEN', '123')
+
+    await tuyau.users.$get()
+  })
 })

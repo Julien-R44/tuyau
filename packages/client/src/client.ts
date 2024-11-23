@@ -68,6 +68,18 @@ function createProxy(options: {
 }
 
 /**
+ * Automatically append the csrf token to the request headers
+ */
+function appendCsrfToken(request: Request) {
+  const xCsrfToken = globalThis.document?.cookie
+    .split('; ')
+    .find((row) => row.startsWith('XSRF-TOKEN='))
+    .split('=')[1]
+
+  request.headers.set('X-XSRF-TOKEN', decodeURIComponent(xCsrfToken))
+}
+
+/**
  * Create a new Tuyau client
  */
 export function createTuyau<const Api extends ApiDefinition>(
@@ -76,7 +88,15 @@ export function createTuyau<const Api extends ApiDefinition>(
   ? TuyauClient<Api['definition'], Api['routes']>
   : TuyauRpcClient<Api['definition']> {
   const baseUrl = options.baseUrl
-  const client = ky.create({ prefixUrl: baseUrl, throwHttpErrors: false, ...options })
+  const client = ky.create({
+    prefixUrl: baseUrl,
+    throwHttpErrors: false,
+    ...options,
+    hooks: {
+      ...options.hooks,
+      beforeRequest: [...(options.hooks?.beforeRequest || []), appendCsrfToken],
+    },
+  })
 
   return createProxy({ client, baseUrl, config: options })
 }
