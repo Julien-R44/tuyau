@@ -1,5 +1,12 @@
 # @tuyau/core
 
+## 0.2.2
+
+### Patch Changes
+
+- b515810: Automatically generates `.adonisjs/index.ts` to export routes with required types and definitions, eliminating manual type imports for backend route exports.
+- 7678e36: Automatic 422 response if the request input is validated using `validateUsing`.
+
 ## 0.2.1
 
 ### Patch Changes

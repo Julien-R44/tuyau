@@ -1,5 +1,15 @@
 # @tuyau/openapi
 
+## 1.0.1
+
+### Patch Changes
+
+- 58f94ad: Fixed multi-level group route `.openapi()` parsing.
+- 8188e49: Fix multi-level group .openapi(). See https://github.com/Julien-R44/tuyau/pull/19
+- Updated dependencies [b515810]
+- Updated dependencies [7678e36]
+  - @tuyau/core@0.2.2
+
 ## 1.0.0
 
 ### Patch Changes

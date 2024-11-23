@@ -1,5 +1,13 @@
 # @tuyau/client
 
+## 0.2.0
+
+### Minor Changes
+
+- ab51d40: Now the client will automatically add the CSRF token in the headers of each request when present in the cookies, exactly like Axios does.
+
+  Related #21
+
 ## 0.1.3
 
 ### Patch Changes
