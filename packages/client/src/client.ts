@@ -3,6 +3,7 @@ import type { KyInstance } from 'ky'
 
 import { RouteHelper } from './route.js'
 import { TuyauRequest } from './request.js'
+import { buildSearchParams } from './utils.js'
 import type {
   TuyauOptions,
   GeneratedRoutes,
@@ -40,7 +41,9 @@ function createProxy(options: {
       }
 
       if (lastPath === '$url') {
-        return new URL(paths.join('/').replace('/$url', ''), baseUrl).toString()
+        const searchParams = buildSearchParams(body?.query)
+        const url = new URL(paths.join('/').replace('/$url', ''), baseUrl)
+        return url.toString() + searchParams
       }
 
       /**

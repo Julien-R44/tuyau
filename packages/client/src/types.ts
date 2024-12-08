@@ -69,7 +69,7 @@ export type TuyauRpcClient<in out Route extends Record<string, any>> = {
         ? (body?: Request | null, options?: TuyauQueryOptions) => ResponseOrUnwrap<Res>
         : (body: CleanRequest<Request>, options?: TuyauQueryOptions) => ResponseOrUnwrap<Res>
     : K extends '$url'
-      ? () => string
+      ? (options?: { query?: QueryParameters }) => string
       : CreateParams<Route[K]>
 }
 

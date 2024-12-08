@@ -270,6 +270,13 @@ const url = tuyau.users({ id: 1 }).posts({ postId: 2 }).$url()
 console.log(url) // http://localhost:3333/users/1/posts/2
 ```
 
+You can also pass a query object to the `$url` method but note that the query object will NOT be type-safe here, since we have no way to determine which route you're calling and what query parameters are available. `tuyau.users.$url()` could refer to POST `/users` or GET `/users` for example.
+
+```ts
+const url = tuyau.users.$url({ query: { page: 1, limit: 10 } })
+console.log(url) // http://localhost:3333/users?page=1&limit=10
+```
+
 ### Generating URL from route name
 
 To generate a

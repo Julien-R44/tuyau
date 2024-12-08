@@ -418,6 +418,36 @@ test.group('Client | Runtime', () => {
     assert.deepEqual(tuyau.users({ id: '1' }).$url(), 'http://localhost:3333/users/1')
   })
 
+  test('generate url with query parameters', async ({ assert }) => {
+    const tuyau = createTuyau<{
+      routes: []
+      definition: {
+        users: {
+          '$url': {}
+          '$get': {
+            request: { email: string }
+            response: { 200: Simplify<Serialize<{ token: string }>> }
+          }
+          ':id': {
+            $url: {}
+            $get: {
+              request: { email: string }
+              response: { 200: Simplify<Serialize<{ token: string }>> }
+            }
+          }
+        }
+      }
+    }>({ baseUrl: 'http://localhost:3333' })
+
+    const result = tuyau.users.$url({ query: { email: 'foo@ok.com', bar: ['baz', 'qux'] } })
+    assert.deepEqual(result, 'http://localhost:3333/users?email=foo%40ok.com&bar[]=baz&bar[]=qux')
+    assert.deepEqual(tuyau.users({ id: '1' }).$url(), 'http://localhost:3333/users/1')
+    assert.deepEqual(
+      tuyau.users({ id: '1' }).$url({ query: { foo: 'ok' } }),
+      'http://localhost:3333/users/1?foo=ok',
+    )
+  })
+
   test('upload file pass the right content type', async () => {
     const tuyau = createTuyau<{
       routes: []
