@@ -1,5 +1,12 @@
 # @tuyau/client
 
+## 0.2.2
+
+### Patch Changes
+
+- e40e327: Add @tuyau/utils to prod dependencies
+- 18aacee: Query params are now allowed when building an URL with `$url`. See https://github.com/Julien-R44/tuyau/issues/25
+
 ## 0.2.1
 
 ### Patch Changes

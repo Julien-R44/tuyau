@@ -1,5 +1,12 @@
 # @tuyau/core
 
+## 0.2.3
+
+### Patch Changes
+
+- 8c8fe85: Add a //eslint-disable directive in the generated file to avoid linting errors.
+- e40e327: Add @tuyau/utils to prod dependencies
+
 ## 0.2.2
 
 ### Patch Changes
