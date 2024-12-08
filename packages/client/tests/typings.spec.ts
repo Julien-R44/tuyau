@@ -304,11 +304,14 @@ test.group('Client | Typings', () => {
     })
 
     // @ts-expect-error $route should not be available
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     tuyau.$route
 
     // @ts-expect-error $route should not be available
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     tuyau.$has
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     tuyau.users.$get
   })
 
@@ -370,6 +373,7 @@ test.group('Client | Typings', () => {
       password: 'bar',
     })
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     result.data?.token.abilities
   }).fails()
 })

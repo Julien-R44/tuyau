@@ -46,10 +46,10 @@
     "@inertiajs/react": "^1.2.0",
     "@inertiajs/vue3": "^1.2.0",
     "@tuyau/client": "workspace:*",
-    "@types/react": "^18.3.1",
+    "@types/react": "^18.3.14",
     "react": "^18.3.1",
-    "solid-js": "^1.9.2",
-    "vue": "^3.5.12"
+    "solid-js": "^1.9.3",
+    "vue": "^3.5.13"
   },
   "publishConfig": {
     "access": "public",

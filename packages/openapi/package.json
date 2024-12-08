@@ -42,13 +42,12 @@
   },
   "devDependencies": {
     "@adonisjs/assembler": "^7.8.2",
-    "@adonisjs/core": "^6.14.0",
-    "@julr/tooling-configs": "^2.2.0",
+    "@adonisjs/core": "^6.16.0",
     "@tuyau/client": "workspace:*",
     "@tuyau/core": "workspace:*",
     "@tuyau/utils": "workspace:*",
     "@types/json-to-pretty-yaml": "^1.2.1",
-    "@types/node": "^22.5.5",
+    "@types/node": "^22.10.1",
     "ts-morph": "^23.0.0"
   },
   "publishConfig": {

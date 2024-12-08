@@ -16,6 +16,10 @@ export default await julr(
   {
     rules: {
       '@typescript-eslint/ban-types': 'off',
+      '@typescript-eslint/no-empty-object-type': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
+      '@typescript-eslint/consistent-type-imports': 'off',
+      '@typescript-eslint/no-unsafe-function-type': 'off',
     },
   },
 )

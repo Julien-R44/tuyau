@@ -41,12 +41,11 @@
   },
   "devDependencies": {
     "@adonisjs/assembler": "^7.8.2",
-    "@adonisjs/core": "^6.14.0",
-    "@julr/tooling-configs": "^2.2.0",
+    "@adonisjs/core": "^6.16.0",
     "@poppinss/cliui": "^6.4.1",
     "@poppinss/matchit": "^3.1.2",
     "@tuyau/client": "workspace:*",
-    "@types/node": "^20.16.5"
+    "@types/node": "^22.10.1"
   },
   "publishConfig": {
     "access": "public",

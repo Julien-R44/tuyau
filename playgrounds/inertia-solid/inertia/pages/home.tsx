@@ -1,8 +1,8 @@
-import { tuyau } from '~/app/tuyau'
 import type { InferErrorType } from '@tuyau/client'
 import type { InferPageProps } from '@adonisjs/inertia/types'
 import { Match, Show, Switch, createResource, createSignal } from 'solid-js'
 
+import { tuyau } from '~/app/tuyau'
 import type InertiaController from '../../app/controllers/inertia_controller.js'
 
 export default function Home(props: InferPageProps<InertiaController, 'index'>) {

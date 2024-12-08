@@ -160,7 +160,6 @@ export class OpenApiGenerator {
             schema: {
               type: 'object',
               properties: objectMap(request, (key, value: any) => {
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 const { required, ...type } = value
                 return [key, { ...type }]
               }),
