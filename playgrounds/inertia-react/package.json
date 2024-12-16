@@ -32,16 +32,16 @@
     "#config/*": "./config/*.js"
   },
   "dependencies": {
-    "@adonisjs/auth": "^9.2.4",
-    "@adonisjs/core": "^6.16.0",
+    "@adonisjs/auth": "^9.3.0",
+    "@adonisjs/core": "^6.17.0",
     "@adonisjs/cors": "^2.2.1",
-    "@adonisjs/inertia": "1.0.0-27",
-    "@adonisjs/lucid": "^21.5.0",
+    "@adonisjs/inertia": "^2.1.1",
+    "@adonisjs/lucid": "^21.5.1",
     "@adonisjs/session": "^7.5.0",
     "@adonisjs/shield": "^8.1.1",
     "@adonisjs/static": "^1.1.1",
-    "@adonisjs/vite": "^3.0.0",
-    "@inertiajs/react": "^1.2.0",
+    "@adonisjs/vite": "^4.0.0",
+    "@inertiajs/react": "^2.0.0",
     "@tuyau/client": "workspace:*",
     "@tuyau/core": "workspace:*",
     "@tuyau/inertia": "workspace:*",
@@ -50,8 +50,8 @@
     "better-sqlite3": "^11.7.0",
     "edge.js": "^6.2.0",
     "luxon": "^3.5.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "reflect-metadata": "^0.2.2"
   },
   "devDependencies": {
@@ -61,7 +61,7 @@
     "@japa/plugin-adonisjs": "^3.0.1",
     "@types/luxon": "^3.4.2",
     "@types/react": "^19.0.1",
-    "@types/react-dom": "^18.3.2",
+    "@types/react-dom": "^19.0.2",
     "@vitejs/plugin-react": "^4.3.4",
     "hot-hook": "^0.4.0",
     "pino-pretty": "^13.0.0"
