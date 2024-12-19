@@ -1,5 +1,11 @@
 # @tuyau/inertia
 
+## 0.0.8
+
+### Patch Changes
+
+- 6684f44: Support InertiaJS 2
+
 ## 0.0.7
 
 ### Patch Changes
