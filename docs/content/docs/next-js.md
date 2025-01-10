@@ -117,6 +117,20 @@ Decorators are not enabled by default in TypeScript, So we need to enable them i
 }
 ```
 
+### Initializing the client
+
+```
+import { createTuyau } from '@tuyau/client'
+import { api } from '@acme/server/api'
+
+export const tuyau = createTuyau({
+  api,
+  baseUrl: 'http://localhost:3333',
+})
+```
+
+For more details, follow the [installation](/docs/installation) guide from [here](/docs/installation#initializing-the-client).
+
 ### Testing
 
 We have successfully created a Monorepo with AdonisJS, Next.js and Tuyau, but let's test if everything is working as expected.
