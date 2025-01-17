@@ -137,11 +137,6 @@ export class ApiTypesGenerator {
   }
 
   /**
-   * We have multiple ways to get the request payload :
-   * - First we check if a FormRequest is used
-   * - Other we check if we have a Single Action Controller
-   * - Otherwise, we check if a request.validateUsing is used
-   *
    * This method will returns the path to the schema file
    */
   #extractRequest(handlerData: HandlerData) {
@@ -158,10 +153,14 @@ export class ApiTypesGenerator {
       return false
     })
 
-    if (validateUsingCallNode) {
-      const schema = validateUsingCallNode.getArguments()[0]
-      if (!Node.isIdentifier(schema)) return
+    if (!validateUsingCallNode) return
 
+    const schema = validateUsingCallNode.getArguments()[0]
+
+    /**
+     * If the schema is an identifier
+     */
+    if (Node.isIdentifier(schema)) {
       const definition = schema.getDefinitions().at(0)
       const importType = this.#getIdentifierImportType(schema)
       const isReExportedFromThisFile = definition
@@ -180,7 +179,35 @@ export class ApiTypesGenerator {
       return `InferInput<typeof import('${relativeImportPath}')['${propName}']>`
     }
 
-    return undefined
+    /**
+     * Handle case when the schema is defined as a static property in the controller :
+     *
+     * ```ts
+     * export default class UsersController {
+     *  static validator = vine.compile(vine.object({ limit: vine.number() }))
+     *
+     *  async index() {
+     *   await request.validateUsing(UsersController.validator)
+     *  }
+     * }
+     */
+    if (Node.isPropertyAccessExpression(schema)) {
+      const baseExpression = schema.getExpression()
+      const propertyName = schema.getName()
+
+      if (Node.isIdentifier(baseExpression)) {
+        const className = baseExpression.getText()
+        const classDeclaration = handlerData.file.getClass(className)
+        if (!classDeclaration) return
+
+        const staticProperty = classDeclaration.getStaticMember(propertyName)
+        if (!staticProperty) return
+
+        const importPath = classDeclaration.getSourceFile().getFilePath()
+        const relativeImportPath = slash(relative(this.#getDestinationDirectory(), importPath))
+        return `InferInput<typeof import('${relativeImportPath}').default['${propertyName}']>`
+      }
+    }
   }
 
   /**

@@ -214,6 +214,52 @@ test.group('Api Types Generator', (group) => {
     assert.exists(warning)
   })
 
+  test('extract when validator is static in the controller', async ({ fs, assert }) => {
+    await fs.create(
+      `app/controllers/get_users_controller.ts`,
+      `
+      import vine from '@vinejs/vine'
+
+      export default class GetUsersController {
+        static getUsersValidator = vine.compile(
+          vine.object({
+            limit: vine.number(),
+            page: vine.number().optional(),
+          })
+        )
+
+        public async index() {
+          await request.validateUsing(GetUsersController.getUsersValidator)
+          return { foo: 'bar' }
+        }
+      }
+      `,
+    )
+
+    const route = {
+      pattern: '/get_users',
+      methods: ['GET'],
+      handler: {
+        reference: '#controllers/get_users_controller.index',
+        handle: () => {},
+      },
+      domain: 'root',
+    } as any
+
+    const apiTypesGenerator = new ApiTypesGenerator({
+      logger,
+      project: await setupProject(),
+      config: {},
+      appRoot: fs.baseUrl,
+      routes: [route],
+    })
+
+    await apiTypesGenerator.generate()
+
+    const file = await fs.contents('./.adonisjs/api.ts')
+    assert.snapshot(file).match()
+  })
+
   test('should use unknown in route name array if type is not found', async ({ fs, assert }) => {
     const apiTypesGenerator = new ApiTypesGenerator({
       logger,
