@@ -24,11 +24,11 @@
   "dependencies": {
     "@poppinss/matchit": "^3.1.2",
     "@tuyau/utils": "workspace:*",
-    "ky": "^1.7.3",
+    "ky": "^1.7.4",
     "object-to-formdata": "^4.5.1"
   },
   "devDependencies": {
-    "@adonisjs/core": "^6.17.0",
+    "@adonisjs/core": "^6.17.1",
     "@vinejs/vine": "^2.1.0"
   },
   "tsup": {
