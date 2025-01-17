@@ -42,7 +42,7 @@ To run the command manually, you must run :
 node ace tuyau:generate
 ```
 
-And an appropriate `.adonisjs/api.ts` file will be generated in your project.
+And an appropriate `.adonisjs` folder will be created in your project, containing the necessary files for the client package.
 
 ### Sharing the API definition
 
@@ -102,7 +102,7 @@ Once installed, you must create the tuyau client in your frontend project :
 
 ```ts
 import { createTuyau } from '@tuyau/client'
-import { api } from '@your-monorepo/server/.adonisjs/api'
+import { api } from '@your-monorepo/server/api'
 
 export const tuyau = createTuyau({
   api,
@@ -112,7 +112,7 @@ export const tuyau = createTuyau({
 
 Multiple things to note here :
 
-- We must import `api` from the `.adonisjs/index` file in your AdonisJS project. You should change the path to match your project structure.
+- We must import `api` from our AdonisJS workspace. You should change the path to match your project structure.
 - As you can see, the `api` is not a type, but a real object. You may ask why ? `api` is an object that contains two things :
   - The definition of you API. This is just a type. No runtime code for that.
   - The routes of your API. This is a "real" object that contains all the routes with their names and paths. Since we need to map the route names to the paths, we need to have some runtime code for that.
@@ -121,7 +121,7 @@ If you are not interested in using the route names in your frontend project, you
 
 ```ts
 import { createTuyau } from '@tuyau/client'
-import type { ApiDefinition } from '@your-monorepo/server/.adonisjs/api'
+import type { ApiDefinition } from '@your-monorepo/server/api'
 
 export const tuyau = createTuyau<{ definition: ApiDefinition }>({
   baseUrl: 'http://localhost:3333',
