@@ -48,14 +48,14 @@ export class RouteHelper<Routes extends GeneratedRoutes> {
    * Build an URL using the given route path and replace the parameters with
    * the given values
    */
-  #buildUrl(path: string, params: Record<string, string | number> | string[]) {
+  #buildUrl(path: string, params?: Record<string, string | number> | string[]) {
     let objParams: Record<string, string | number> = {}
     let arrayParams: string[] = []
 
     if (Array.isArray(params)) {
       arrayParams = params
     } else {
-      const entries = Object.entries(params).map(([key, value]) => [snakeCase(key), value])
+      const entries = Object.entries(params || {}).map(([key, value]) => [snakeCase(key), value])
       objParams = Object.fromEntries(entries)
     }
 

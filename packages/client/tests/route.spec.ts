@@ -115,6 +115,14 @@ test.group('Route Helpers', () => {
     await tuyau.$route('posts_comments.edit', { id: 2, postId: 1 }).$get().unwrap()
   })
 
+  test('$route without parameters', async () => {
+    const tuyau = createTuyau({ api, baseUrl: 'http://localhost:3333' })
+
+    nock('http://localhost:3333').get('/').reply(200, { text: 'foo' })
+
+    await tuyau.$route('home').$get()
+  })
+
   test('$route get route data', async ({ assert }) => {
     const tuyau = createTuyau({ api, baseUrl: 'http://localhost:3333' })
 
