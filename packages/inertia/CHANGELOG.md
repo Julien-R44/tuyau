@@ -1,5 +1,13 @@
 # @tuyau/inertia
 
+## 0.0.9
+
+### Patch Changes
+
+- 1c7c8ed: Types seem to not have been published on the latest version.
+- Updated dependencies [cb64666]
+  - @tuyau/client@0.2.3
+
 ## 0.0.8
 
 ### Patch Changes

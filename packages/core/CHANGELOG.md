@@ -1,5 +1,21 @@
 # @tuyau/core
 
+## 0.3.0
+
+### Minor Changes
+
+- f82db72: Support static-defined validators. This kind of controller is now supported:
+
+  ```ts
+  export default class ListUsersController {
+    static validator = vine.compile(vine.object({ limit: vine.number() }))
+
+    async index() {
+      await request.validateUsing(ListUsersController.validator)
+    }
+  }
+  ```
+
 ## 0.2.3
 
 ### Patch Changes

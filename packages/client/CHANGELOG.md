@@ -1,5 +1,11 @@
 # @tuyau/client
 
+## 0.2.3
+
+### Patch Changes
+
+- cb64666: Calling `$route` method was causing an error. See #30. This commit fixes the issue.
+
 ## 0.2.2
 
 ### Patch Changes
