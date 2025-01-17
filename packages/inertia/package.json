@@ -13,6 +13,9 @@
     "./types": "./build/types.js"
   },
   "main": "index.js",
+  "files": [
+    "build"
+  ],
   "scripts": {
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
