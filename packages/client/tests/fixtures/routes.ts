@@ -266,6 +266,20 @@ const routes = [
     method: ['DELETE'],
     types: {} as PostsPostIdcommentsIdDelete,
   },
+  {
+    params: ['post_id', 'id'],
+    name: 'posts_comments.destroy',
+    path: '/posts/:post_id/comments/:id',
+    method: ['DELETE'],
+    types: {} as PostsPostIdcommentsIdDelete,
+  },
+  {
+    params: ['postId', 'id'],
+    name: 'test-random',
+    path: '/posts/:postId/comments/:id',
+    method: ['DELETE'],
+    types: {} as any,
+  },
 ] as const
 export const api = {
   routes,

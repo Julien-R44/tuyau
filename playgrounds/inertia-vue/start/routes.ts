@@ -22,6 +22,7 @@ router.get('/', [InertiaController, 'index']).as('home')
 router.get('/backoffice', [InertiaController, 'backoffice']).as('backoffice')
 router.resource('posts', PostsController).as('posts')
 router.resource('posts.comments', CommentsController).as('posts.comments')
+router.delete('/posts/:postId/comments/:id', [CommentsController, 'destroy']).as('test-random')
 
 router.get('/test', () => {
   return 'foo'

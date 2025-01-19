@@ -13,11 +13,13 @@ test.group('Route Helpers', () => {
     const r2 = tuyau.$url('home', { query: { id: 1 } })
     const r3 = tuyau.$url('posts_comments.create', { params: { postId: 2 } })
     const r4 = tuyau.$url('posts_comments.show', { params: { postId: 2, id: 1 } })
+    const r5 = tuyau.$url('test-random', { params: { postId: 2, id: 1 } })
 
     assert.equal(r1, 'http://localhost:3333/')
     assert.equal(r2, 'http://localhost:3333/?id=1')
     assert.equal(r3, 'http://localhost:3333/posts/2/comments/create')
     assert.equal(r4, 'http://localhost:3333/posts/2/comments/1')
+    assert.equal(r5, 'http://localhost:3333/posts/2/comments/1')
   })
 
   test('params as object', ({ assert }) => {

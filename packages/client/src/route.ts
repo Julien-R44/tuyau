@@ -3,7 +3,7 @@ import type { KyInstance } from 'ky'
 import { match, parse, exec } from '@poppinss/matchit'
 
 import { TuyauRequest } from './request.js'
-import { buildSearchParams, camelCase, snakeCase } from './utils.js'
+import { buildSearchParams, camelCase } from './utils.js'
 import type {
   DeepPartial,
   GeneratedRoutes,
@@ -55,16 +55,17 @@ export class RouteHelper<Routes extends GeneratedRoutes> {
     if (Array.isArray(params)) {
       arrayParams = params
     } else {
-      const entries = Object.entries(params || {}).map(([key, value]) => [snakeCase(key), value])
+      const entries = Object.entries(params || {}).map(([key, value]) => [key, value])
       objParams = Object.fromEntries(entries)
     }
 
     let index = 0
     return path.replace(/:([A-Z_a-z]+)/g, (_, key) => {
-      if (objParams[key]) return objParams[key].toString()
+      const camelCaseKey = camelCase(key)
+      if (objParams[camelCaseKey]) return objParams[camelCaseKey].toString()
       if (arrayParams[index]) return arrayParams[index++]
 
-      throw new Error(`Route ${path} is missing the ${key} parameter`)
+      throw new Error(`Route ${path} is missing the ${camelCaseKey} parameter`)
     })
   }
 
