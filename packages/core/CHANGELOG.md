@@ -1,5 +1,11 @@
 # @tuyau/core
 
+## 0.3.1
+
+### Patch Changes
+
+- b6ddc27: Automatically install @tuyau/utils when configuring the package. See #27
+
 ## 0.3.0
 
 ### Minor Changes
