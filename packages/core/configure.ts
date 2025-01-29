@@ -24,5 +24,12 @@ export async function configure(command: ConfigureCommand) {
     rcFile.addProvider('@tuyau/core/tuyau_provider')
   })
 
+  await codemods.installPackages([
+    {
+      isDevDependency: true,
+      name: '@tuyau/utils',
+    },
+  ])
+
   await codemods.makeUsingStub(stubsRoot, 'config/tuyau.stub', {})
 }
