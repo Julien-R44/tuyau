@@ -108,6 +108,18 @@ export type MakeTuyauResponse<
     : {})
 
 /**
+ * Same as MakeTuyauResponse, but without type-level serialization.
+ * Used when @tuyau/superjson is installed.
+ */
+export type MakeNonSerializedTuyauResponse<
+  T extends (...args: any) => any,
+  HasSchema extends boolean = false,
+> = Simplify<ConvertReturnTypeToRecordStatusResponse<Awaited<ReturnType<T>>>> &
+  (HasSchema extends true
+    ? { 422: { errors: { message: string; rule: string; field: string }[] } }
+    : {})
+
+/**
  * Shortcut for computing the Tuyau request type
  *
  * Also Remap MultipartFile to Blob | File | ReactNativeFile
