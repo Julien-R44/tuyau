@@ -1,0 +1,69 @@
+{
+  "name": "@tuyau/superjson",
+  "type": "module",
+  "version": "0.0.1",
+  "description": "Superjson transformer for Tuyau",
+  "author": "Julien Ripouteau <julien@ripouteau.com>",
+  "license": "MIT",
+  "keywords": [],
+  "exports": {
+    ".": "./build/index.js",
+    "./types": "./build/src/types.js",
+    "./superjson_middleware": "./build/middleware/superjson_middleware.js",
+    "./plugin": "./build/client/plugin.js"
+  },
+  "files": [
+    "build"
+  ],
+  "engines": {
+    "node": ">=20.6.0"
+  },
+  "scripts": {
+    "clean": "del-cli build",
+    "typecheck": "tsc --noEmit",
+    "quick:test": "node --import=./tsnode.esm.js --enable-source-maps bin/test.ts",
+    "test": "c8 npm run quick:test",
+    "prebuild": "npm run clean",
+    "build": "pnpm clean && tsup-node",
+    "version": "npm run build",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "@adonisjs/core": "^6.2.0"
+  },
+  "dependencies": {
+    "@tuyau/utils": "workspace:*",
+    "superjson": "^2.2.2"
+  },
+  "devDependencies": {
+    "@adonisjs/assembler": "^7.8.2",
+    "@adonisjs/core": "^6.17.1",
+    "@tuyau/client": "workspace:*",
+    "@types/node": "^22.10.7"
+  },
+  "publishConfig": {
+    "access": "public",
+    "tag": "latest"
+  },
+  "c8": {
+    "reporter": [
+      "text",
+      "html"
+    ],
+    "exclude": [
+      "tests/**"
+    ]
+  },
+  "tsup": {
+    "entry": [
+      "./index.ts",
+      "./middleware/superjson_middleware.ts",
+      "./client/plugin.ts"
+    ],
+    "outDir": "./build",
+    "clean": false,
+    "format": "esm",
+    "dts": true,
+    "target": "esnext"
+  }
+}
