@@ -90,6 +90,8 @@ export function createTuyau<const Api extends ApiDefinition>(
 ): Api['routes'] extends GeneratedRoutes
   ? TuyauClient<Api['definition'], Api['routes']>
   : TuyauRpcClient<Api['definition']> {
+  options.plugins?.forEach((plugin) => plugin({ options }))
+
   const baseUrl = options.baseUrl
   const client = ky.create({
     prefixUrl: baseUrl,

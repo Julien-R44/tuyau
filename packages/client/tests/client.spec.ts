@@ -633,4 +633,30 @@ test.group('Client | Runtime', () => {
 
     await tuyau.users.$get()
   })
+
+  test('plugin should be able to mutate options', async ({ assert }) => {
+    assert.plan(2)
+
+    const tuyau = createTuyau<{
+      routes: []
+      definition: {
+        users: { $get: { request: any; response: { 200: Simplify<Serialize<{ token: string }>> } } }
+      }
+    }>({
+      baseUrl: 'http://localhost:3333',
+      plugins: [
+        ({ options }) => {
+          assert.isTrue(true)
+          options.parseJson = (text) => {
+            assert.deepEqual(text, JSON.stringify({ token: '123' }))
+            return text
+          }
+        },
+      ],
+    })
+
+    nock('http://localhost:3333').get('/users').reply(200, { token: '123' })
+
+    await tuyau.users.$get()
+  })
 })

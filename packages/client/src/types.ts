@@ -97,11 +97,17 @@ export type ApiDefinition = {
 }
 
 /**
+ * Plugin accepted by Tuyau
+ */
+export type TuyauPlugin = (params: { options: TuyauOptions<any> }) => void
+
+/**
  * Options accepted by Tuyau
  */
 export type TuyauOptions<T extends ApiDefinition> = {
   baseUrl: string
   api?: T
+  plugins?: TuyauPlugin[]
 } & TuyauQueryOptions
 
 export type TuyauQueryOptions = Omit<
