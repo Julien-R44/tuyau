@@ -1,7 +1,7 @@
 {
   "name": "@tuyau/superjson",
   "type": "module",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Superjson transformer for Tuyau",
   "author": "Julien Ripouteau <julien@ripouteau.com>",
   "license": "MIT",

@@ -1,5 +1,13 @@
 # @tuyau/core
 
+## 0.3.2
+
+### Patch Changes
+
+- dc0e6bf: `node ace tuyau:generate` will now generate different typing when `@tuyau/superjson` is installed. Because, when `@tuyau/superjson` is installed, the inferred type of returned data should not be "type-serialized" since this is the whole point of superjson
+- Updated dependencies [dc0e6bf]
+  - @tuyau/utils@0.0.7
+
 ## 0.3.1
 
 ### Patch Changes
