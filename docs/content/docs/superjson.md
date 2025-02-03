@@ -6,13 +6,13 @@ summary: SuperJSON is a superset of JSON that supports additional types like Dat
 
 SuperJSON extends JSON by supporting additional types like `Date`, `RegExp`, `BigInt`, and more. This means you can return a `Date` or a `Set` from your API, and when receiving the data in your frontend, it will be automatically converted to the correct type.
 
-Tuyau provides a specific package to work with [SuperJSON](https://github.com/flightcontrolhq/superjson) called `@tuyau/superjson`. efore proceeding, ensure that Tuyau is properly installed and configured in your project. Then, run the following command **in your backend project**:
+Tuyau provides a specific package to work with [SuperJSON](https://github.com/flightcontrolhq/superjson) called `@tuyau/superjson`. Before proceeding, ensure that Tuyau is properly installed and configured in your project. Then, run the following command **in your backend project**:
 
 ```bash
 node ace add @tuyau/superjson
 ```
 
-This command adds a `superjson_middleware` entry to your `start/kernel.ts` file. The middleware will automatically serialize response data using SuperJSON.
+This command adds a `superjson_middleware` entry to your `start/kernel.ts` file. The middleware will automatically serialize response data using SuperJSON when a `x-superjson` header is present in the request.
 
 Next, install the same package in your frontend project:
 
@@ -31,6 +31,8 @@ export const tuyau = createTuyau({
   plugins: [superjson()],
 })
 ```
+
+This plugin will add the `x-superjson` header to every request, ensuring that the API returns data in SuperJSON format, and will also parse the response data correctly using SuperJSON.
 
 Now, go back to your API and run :
 
