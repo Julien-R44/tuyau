@@ -24,6 +24,12 @@
     "category": "Guides"
   },
   {
+    "permalink": "superjson",
+    "title": "SuperJSON",
+    "contentPath": "./superjson.md",
+    "category": "Guides"
+  },
+  {
     "permalink": "openapi",
     "title": "OpenAPI",
     "contentPath": "./openapi.md",
