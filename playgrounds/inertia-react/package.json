@@ -46,7 +46,7 @@
     "@tuyau/core": "workspace:*",
     "@tuyau/inertia": "workspace:*",
     "@tuyau/utils": "workspace:*",
-    "@vinejs/vine": "^2.1.0",
+    "@vinejs/vine": "^3.0.0",
     "better-sqlite3": "^11.8.1",
     "edge.js": "^6.2.1",
     "luxon": "^3.5.0",

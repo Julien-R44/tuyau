@@ -40,7 +40,7 @@
     "@tuyau/core": "workspace:*",
     "@tuyau/openapi": "workspace:*",
     "@tuyau/utils": "workspace:*",
-    "@vinejs/vine": "^2.1.0",
+    "@vinejs/vine": "^3.0.0",
     "better-sqlite3": "^11.8.1",
     "luxon": "^3.5.0",
     "reflect-metadata": "^0.2.2"

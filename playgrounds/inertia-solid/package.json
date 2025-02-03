@@ -43,7 +43,7 @@
     "@solidjs/meta": "^0.29.4",
     "@tuyau/client": "workspace:*",
     "@tuyau/core": "workspace:*",
-    "@vinejs/vine": "^2.1.0",
+    "@vinejs/vine": "^3.0.0",
     "better-sqlite3": "^11.8.1",
     "edge.js": "^6.2.1",
     "inertia-adapter-solid": "^0.2.0",
