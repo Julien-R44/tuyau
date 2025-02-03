@@ -39,7 +39,7 @@
     "@adonisjs/assembler": "^7.8.2",
     "@adonisjs/core": "^6.17.1",
     "@tuyau/client": "workspace:*",
-    "@types/node": "^22.10.7"
+    "@types/node": "^22.13.0"
   },
   "publishConfig": {
     "access": "public",

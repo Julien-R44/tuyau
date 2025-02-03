@@ -45,7 +45,7 @@
     "@poppinss/cliui": "^6.4.2",
     "@poppinss/matchit": "^3.1.2",
     "@tuyau/client": "workspace:*",
-    "@types/node": "^22.10.7"
+    "@types/node": "^22.13.0"
   },
   "publishConfig": {
     "access": "public",
