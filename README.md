@@ -1,7 +1,7 @@
 ![banner](https://static.julr.dev/tuyau.png)
 
 <sub>
-Pronounced as **"twee-yo"** (IPA: /tɥijo/). French word for "pipe" or "tube."
+Pronounced as "twee-yo" (IPA: /tɥijo/). French word for "pipe" or "tube"
 </sub>
 <br/>
 
