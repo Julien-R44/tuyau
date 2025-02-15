@@ -1,5 +1,12 @@
 ![banner](https://static.julr.dev/tuyau.png)
 
+<sub>
+Pronounced as **"twee-yo"** (IPA: /tɥijo/). French word for "pipe" or "tube."
+</sub>
+<br/>
+
+# Tuyau
+
 Set of tools to create typesafe APIs using AdonisJS. The monorepo includes the following packages:
 
 - `@tuyau/core` : Core package that you must install in your AdonisJS project.
