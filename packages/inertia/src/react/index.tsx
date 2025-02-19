@@ -1,6 +1,6 @@
 import React from 'react'
-import { Link as InertiaLink } from '@inertiajs/react'
 import type { TuyauClient, RouteName, GeneratedRoutes } from '@tuyau/client'
+import { Link as InertiaLink, router as InertiaRouter } from '@inertiajs/react'
 
 import type { ValidatedApi, LinkParams } from '../types.js'
 
@@ -50,3 +50,25 @@ export const Link: <Route extends RouteName<ValidatedApi['routes']>>(
   },
   // @ts-expect-error TODO: fix this
 ) => ReturnType<typeof LinkInner> = React.forwardRef(LinkInner) as any
+
+export function useRouter() {
+  const tuyau = useTuyau()
+  if (!tuyau) throw new Error('You must wrap your app in a TuyauProvider')
+
+  const router = {
+    visit: <Route extends RouteName<ValidatedApi['routes']>>(
+      props: LinkProps<Route>,
+      options?: Parameters<typeof InertiaRouter.visit>[1],
+    ) => {
+      const route = tuyau.$route(props.route, (props as any).params)
+      const url = tuyau.$url(props.route, { params: props.params } as any)
+
+      return InertiaRouter.visit(url, {
+        ...options,
+        method: route.method[0],
+      })
+    },
+  }
+
+  return router
+}

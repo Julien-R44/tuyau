@@ -48,6 +48,19 @@ import { Link } from '@tuyau/inertia/react'
 <Link route="users.posts.show" params={{ id: 1, postId: 2 }}>Go to post</Link>
 ```
 
+### Manual visits
+
+The `useRouter` hook is useful to manually visit a route in your application. It returns an object with a `visit` method that you can use to visit a route.
+
+```tsx
+import { useRouter } from '@tuyau/inertia/react'
+
+const router = useRouter()
+
+router.visit('users.posts.show', { id: 1, postId: 2 })
+```
+
+
 ## Vue usage
 
 To use the Inertia helpers in your Vue x Inertia project, you must install the Tuyau plugin :
@@ -83,5 +96,22 @@ import { Link } from '@tuyau/inertia/vue'
 
 <template>
   <Link route="users.posts.show" :params="{ id: 1, postId: 2 }">Go to post</Link>
+</template>
+```
+
+### Manual visits
+
+The `useRouter` hook is useful to manually visit a route in your application. It returns an object with a `visit` method that you can use to visit a route.
+
+
+```vue
+<script setup lang="ts">
+import { useRouter } from '@tuyau/inertia/vue'
+
+const router = useRouter()
+</script>
+
+<template>
+  <button @click="router.visit('users.posts.show', { id: 1, postId: 2 })">Go to post</button>
 </template>
 ```
