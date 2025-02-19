@@ -1,8 +1,8 @@
 import { defineComponent, h, inject } from 'vue'
 import type { DefineSetupFnComponent } from 'vue'
-import { Link as InertiaLink } from '@inertiajs/vue3'
 import type { InertiaLinkProps } from '@inertiajs/vue3'
 import type { RouteName, TuyauClient } from '@tuyau/client'
+import { Link as InertiaLink, router as InertiaRouter } from '@inertiajs/vue3'
 
 import type { ValidatedApi, LinkParams } from '../types.js'
 
@@ -54,3 +54,25 @@ export const Link: <Route extends RouteName<ValidatedApi['routes']>>(
   },
   { props: ['route', 'params'] },
 )
+
+export function useRouter() {
+  const tuyau = inject<TuyauClient<any, any> | null>(getClientKey())
+  if (!tuyau) throw new Error('You must install the TuyauPlugin before using useRouter')
+
+  const router = {
+    visit: <Route extends RouteName<ValidatedApi['routes']>>(
+      props: LinkParams<Route> & Omit<InertiaLinkProps, 'href' | 'method'>,
+      options?: Parameters<typeof InertiaRouter.visit>[1],
+    ) => {
+      const route = tuyau.$route(props.route, (props as any).params)
+      const url = tuyau.$url(props.route, { params: props.params } as any)
+
+      return InertiaRouter.visit(url, {
+        ...options,
+        method: route.method[0],
+      })
+    },
+  }
+
+  return router
+}
