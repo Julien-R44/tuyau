@@ -1,7 +1,6 @@
 {
   "name": "@tuyau/playground-inertia-solid",
   "type": "module",
-  "version": "0.0.2",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {

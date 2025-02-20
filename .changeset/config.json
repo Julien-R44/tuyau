@@ -6,6 +6,5 @@
   "linked": [],
   "access": "restricted",
   "baseBranch": "main",
-  "updateInternalDependencies": "patch",
-  "ignore": ["@tuyau/playground-*", "@tuyau/docs"]
+  "updateInternalDependencies": "patch"
 }
