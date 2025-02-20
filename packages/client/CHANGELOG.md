@@ -1,5 +1,13 @@
 # @tuyau/client
 
+## 0.2.6
+
+### Patch Changes
+
+- ad866b3: Fix `$current` that was broken when used with Vite because of a sub-dependency that was not correctly resolved.
+
+  Close [#41](https://github.com/Julien-R44/tuyau/issues/41)
+
 ## 0.2.5
 
 ### Patch Changes

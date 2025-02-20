@@ -1,5 +1,30 @@
 # @tuyau/inertia
 
+## 0.0.11
+
+### Patch Changes
+
+- 694ffb4: Add `useRouter` hook/composable that expose a typesafe `visit` method to manually visit a route.
+
+  ```tsx
+  import { useRouter } from '@tuyau/inertia/vue'
+
+  const router = useRouter()
+
+  router.visit(
+    {
+      name: 'users.posts.show',
+      params: { id: 1, postId: 2 },
+    },
+    { preserveState: true },
+  )
+  ```
+
+  Also available for React.
+
+- Updated dependencies [ad866b3]
+  - @tuyau/client@0.2.6
+
 ## 0.0.10
 
 ### Patch Changes
