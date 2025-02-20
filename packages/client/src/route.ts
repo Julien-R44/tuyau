@@ -1,8 +1,7 @@
 import type { KyInstance } from 'ky'
-// @ts-expect-error untyped
-import { match, parse, exec } from '@poppinss/matchit'
 
 import { TuyauRequest } from './request.js'
+import { match, parse, exec } from './matchit.js'
 import { buildSearchParams, camelCase } from './utils.js'
 import type {
   DeepPartial,

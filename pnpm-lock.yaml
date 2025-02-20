@@ -147,9 +147,6 @@ importers:
 
   packages/client:
     dependencies:
-      '@poppinss/matchit':
-        specifier: ^3.1.2
-        version: 3.1.2
       '@tuyau/utils':
         specifier: workspace:*
         version: link:../utils
