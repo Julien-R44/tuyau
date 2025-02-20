@@ -2,7 +2,7 @@ import { test } from '@japa/runner'
 import { createTuyau } from '@tuyau/client'
 import type { ApiDefinition } from '@tuyau/client'
 
-import { Link, TuyauPlugin } from '../src/vue/index.js'
+import { useRouter, Link, TuyauPlugin } from '../src/vue/index.js'
 
 const routes = [
   {
@@ -69,5 +69,19 @@ test.group('Vue | Typings', () => {
     TuyauPlugin.install(null as any, {
       client: createTuyau({ baseUrl: 'http://localhost', api }),
     })
+  }).fails()
+
+  test('useRouter typing', () => {
+    const router = useRouter()
+
+    router.visit({ route: 'users.index' })
+    router.visit({ route: 'users.comments.edit', params: ['1', '2'] })
+    router.visit({ route: 'users.comments.edit', params: ['1', '2'] }, { preserveScroll: true })
+
+    // @ts-expect-error inexistent route
+    router.visit({ route: 'foo' })
+
+    // @ts-expect-error missing params
+    router.visit({ route: 'users.comments.edit' })
   }).fails()
 })
