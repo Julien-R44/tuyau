@@ -356,6 +356,27 @@ test.group('Client | Runtime', () => {
     assert.equal(result.token, '123')
   })
 
+  test('unwrap should also work with other 2xx status code', async ({ assert }) => {
+    const tuyau = createTuyau<{
+      routes: []
+      definition: {
+        auth: {
+          login: {
+            $post: {
+              request: unknown
+              response: { 201: Simplify<Serialize<{ token: string }>> }
+            }
+          }
+        }
+      }
+    }>({ baseUrl: 'http://localhost:3333' })
+
+    nock('http://localhost:3333').post('/auth/login').reply(201, { token: '123' })
+
+    const result = await tuyau.auth.login.$post().unwrap()
+    assert.equal(result.token, '123')
+  })
+
   test('unwrap response throw error when there is an error', async ({ assert }) => {
     assert.plan(2)
 

@@ -4,6 +4,14 @@ import type { IsNever, Prettify } from '@tuyau/utils/types'
 import type { RouteHelper } from './route.js'
 
 /**
+ * Create an union type from all response that are successful
+ */
+type UnionFromSuccessStatuses<Res extends Record<number, unknown>> = Res[Extract<
+  keyof Res,
+  200 | 201 | 202 | 203 | 204 | 205 | 206 | 207 | 208 | 226
+>]
+
+/**
  * Shape of the response returned by Tuyau
  */
 export type TuyauResponse<Res extends Record<number, unknown>> =
@@ -11,7 +19,7 @@ export type TuyauResponse<Res extends Record<number, unknown>> =
       error: null
       status: number
       response: Response
-      data: Res[200]
+      data: UnionFromSuccessStatuses<Res>
     }
   | {
       data: null
@@ -31,7 +39,7 @@ export type TuyauResponse<Res extends Record<number, unknown>> =
  * Expose the response if awaited or the unwrap method that will return the data or throw an error
  */
 export type ResponseOrUnwrap<Res extends Record<number, unknown>> = Promise<TuyauResponse<Res>> & {
-  unwrap: () => Promise<Res[200]>
+  unwrap: () => Promise<UnionFromSuccessStatuses<Res>>
 }
 
 /**
