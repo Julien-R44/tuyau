@@ -1,5 +1,13 @@
 # @tuyau/client
 
+## 0.2.7
+
+### Patch Changes
+
+- d7fc509: Fix $current returning PUT/POST methods. See https://github.com/Julien-R44/tuyau/issues/54
+- 3266a06: Fix when returning a 2xx status code ( that is not 201 ), the response type of `unwrap` was `unknown`. See #45
+- 9d24bbb: $route not including query parameters on GET request. See https://github.com/Julien-R44/tuyau/issues/55
+
 ## 0.2.6
 
 ### Patch Changes

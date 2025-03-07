@@ -1,5 +1,11 @@
 # @tuyau/core
 
+## 0.4.0
+
+### Minor Changes
+
+- b9f515b: Add support for relative magic string registered controllers. Will also enable the support of Girouette. See https://github.com/SoftwareCitadel/adonisjs-girouette/pull/14
+
 ## 0.3.2
 
 ### Patch Changes

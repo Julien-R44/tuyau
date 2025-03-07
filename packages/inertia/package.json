@@ -1,7 +1,7 @@
 {
   "name": "@tuyau/inertia",
   "type": "module",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "",
   "author": "Julien Ripouteau <julien@ripouteau.com>",
   "license": "ISC",
