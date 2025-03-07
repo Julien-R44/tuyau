@@ -163,12 +163,13 @@ export class RouteHelper<Routes extends GeneratedRoutes> {
       result[`$${method.toLowerCase()}`] = (body: any, options: TuyauQueryOptions = {}) => {
         const path = this.#buildUrl(route.path, params as any)
 
+        const isGetOrHead = ['get', 'head'].includes(method.toLowerCase())
         return new TuyauRequest({
           body,
           path,
           method: method.toLowerCase() as 'get' | 'post' | 'put' | 'delete' | 'patch' | 'head',
           client: this.client,
-          queryOptions: options,
+          queryOptions: isGetOrHead ? body : options,
         })
       }
 

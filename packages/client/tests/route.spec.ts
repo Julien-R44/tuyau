@@ -135,6 +135,17 @@ test.group('Route Helpers', () => {
     assert.deepEqual(route.params, ['post_id', 'id'])
   })
 
+  test('$route with query params', async () => {
+    const tuyau = createTuyau({ api, baseUrl: 'http://localhost:3333' })
+
+    nock('http://localhost:3333')
+      .get('/posts/1/comments/2/edit')
+      .query({ id: 1 })
+      .reply(200, { id: 1, body: 'Hello world' })
+
+    await tuyau.$route('posts_comments.edit', { id: 2, postId: 1 }).$get({ query: { id: 1 } })
+  })
+
   test('$current', async ({ assert }) => {
     const tuyau = createTuyau({ api, baseUrl: 'http://localhost:3333' })
 
