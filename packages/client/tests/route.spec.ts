@@ -150,6 +150,21 @@ test.group('Route Helpers', () => {
     assert.deepEqual(result, 'posts_comments.edit')
   })
 
+  test('$current with same route defined multiple times', async ({ assert }) => {
+    const tuyau = createTuyau({ api, baseUrl: 'http://localhost:3333' })
+
+    setWindow({
+      location: {
+        host: 'localhost:3333',
+        search: '?id=1',
+        pathname: '/posts/1/comments/2',
+      },
+    })
+
+    const result = tuyau.$current()
+    assert.deepEqual(result, 'posts_comments.show')
+  })
+
   test('$current with given route', async ({ assert }) => {
     const tuyau = createTuyau({ api, baseUrl: 'http://localhost:3333' })
 

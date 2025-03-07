@@ -240,6 +240,13 @@ const routes = [
   },
   {
     params: ['post_id', 'id'],
+    name: 'posts_comments.update',
+    path: '/posts/:post_id/comments/:id',
+    method: ['PUT', 'PATCH'],
+    types: {} as PostsPostIdcommentsIdPutPatch,
+  },
+  {
+    params: ['post_id', 'id'],
     name: 'posts_comments.show',
     path: '/posts/:post_id/comments/:id',
     method: ['GET', 'HEAD'],
@@ -251,13 +258,6 @@ const routes = [
     path: '/posts/:post_id/comments/:id/edit',
     method: ['GET', 'HEAD'],
     types: {} as PostsPostIdcommentsIdeditGetHead,
-  },
-  {
-    params: ['post_id', 'id'],
-    name: 'posts_comments.update',
-    path: '/posts/:post_id/comments/:id',
-    method: ['PUT', 'PATCH'],
-    types: {} as PostsPostIdcommentsIdPutPatch,
   },
   {
     params: ['post_id', 'id'],

@@ -36,8 +36,10 @@ export class RouteHelper<Routes extends GeneratedRoutes> {
     return route
   }
 
-  #getRouteByPath(path: string) {
-    const route = this.routes.find((route) => route.path === path)
+  #getRouteByPath(path: string, onlyGet = false) {
+    const route = this.routes.find(
+      (route) => route.path === path && (onlyGet ? route.method.includes('GET') : true),
+    )
     if (!route) throw new Error(`Route ${path} not found`)
 
     return route
@@ -117,7 +119,7 @@ export class RouteHelper<Routes extends GeneratedRoutes> {
     /**
      * If no route name is passed, just return the current route name
      */
-    if (!routeName) return this.#getRouteByPath(segments[0].old).name
+    if (!routeName) return this.#getRouteByPath(segments[0].old, true).name
 
     const route = this.#getRouteByPath(segments[0].old)
 
