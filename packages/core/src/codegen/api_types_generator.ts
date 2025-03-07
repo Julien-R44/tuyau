@@ -448,9 +448,23 @@ export class ApiTypesGenerator {
        * Get the controller file associated with this route
        */
       const routeHandler = await parseBindingReference(route.handler.reference)
-      const file = sourcesFiles.find((sf) =>
-        sf.getFilePath().endsWith(`${routeHandler.moduleNameOrPath.replace('#', '')}.ts`),
-      )
+      const file = sourcesFiles.find((sf) => {
+        const filePath = sf.getFilePath()
+
+        /**
+         * Handle relative magic string
+         */
+        if (routeHandler.moduleNameOrPath.startsWith('./')) {
+          return filePath.endsWith(
+            routeHandler.moduleNameOrPath.replace('./', '').replace('.js', '.ts'),
+          )
+        }
+
+        /**
+         * Handle sub-paths imports
+         */
+        return filePath.endsWith(`${routeHandler.moduleNameOrPath.replace('#', '')}.ts`)
+      })
 
       if (!file) {
         this.#logger.warning(`Unable to find the controller file for ${route.pattern}`)

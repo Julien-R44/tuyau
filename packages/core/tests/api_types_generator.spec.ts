@@ -378,4 +378,41 @@ test.group('Api Types Generator | Filters', () => {
 
     assert.fileContains('./.adonisjs/api.ts', '@tuyau/inertia/types')
   })
+
+  test('works with magic string', async ({ fs, assert }) => {
+    await fs.create(
+      `app/controllers/auth/auth_controller.ts`,
+      `
+      export default class AuthController {
+        public async index() {
+          return { foo: 'bar' }
+        }
+      }`,
+    )
+
+    const apiTypesGenerator = new ApiTypesGenerator({
+      logger,
+      project: await setupProject({
+        packageJson: { dependencies: { '@tuyau/inertia': 'latest' } },
+      }),
+      config: defineConfig({}),
+      appRoot: fs.baseUrl,
+      routes: [
+        {
+          pattern: '/auth',
+          methods: ['GET'],
+          handler: {
+            reference: './app/controllers/auth/auth_controller.js.index',
+            handle: () => {},
+          },
+          domain: 'root',
+        } as any,
+      ],
+    })
+
+    await apiTypesGenerator.generate()
+
+    const file = await fs.contents('./.adonisjs/api.ts')
+    assert.snapshot(file).match()
+  })
 })
