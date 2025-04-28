@@ -23,12 +23,12 @@
   },
   "dependencies": {
     "@tuyau/utils": "workspace:*",
-    "ky": "^1.7.4",
+    "ky": "^1.8.1",
     "object-to-formdata": "^4.5.1"
   },
   "devDependencies": {
-    "@adonisjs/core": "^6.17.1",
-    "@vinejs/vine": "^3.0.0"
+    "@adonisjs/core": "^6.17.2",
+    "@vinejs/vine": "^3.0.1"
   },
   "tsup": {
     "entry": [

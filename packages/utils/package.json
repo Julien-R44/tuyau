@@ -22,7 +22,7 @@
     "quick:test": "node --import=./tsnode.esm.js --enable-source-maps bin/test.ts"
   },
   "devDependencies": {
-    "@adonisjs/bodyparser": "^10.0.2"
+    "@adonisjs/bodyparser": "^10.0.3"
   },
   "publishConfig": {
     "access": "public",

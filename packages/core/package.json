@@ -37,15 +37,15 @@
   },
   "dependencies": {
     "@tuyau/utils": "workspace:*",
-    "ts-morph": "^25.0.0"
+    "ts-morph": "^25.0.1"
   },
   "devDependencies": {
     "@adonisjs/assembler": "^7.8.2",
-    "@adonisjs/core": "^6.17.1",
-    "@poppinss/cliui": "^6.4.2",
+    "@adonisjs/core": "^6.17.2",
+    "@poppinss/cliui": "^6.4.3",
     "@poppinss/matchit": "^3.1.2",
     "@tuyau/client": "workspace:*",
-    "@types/node": "^22.13.0"
+    "@types/node": "^22.15.2"
   },
   "publishConfig": {
     "access": "public",

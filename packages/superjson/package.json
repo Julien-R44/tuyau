@@ -37,9 +37,9 @@
   },
   "devDependencies": {
     "@adonisjs/assembler": "^7.8.2",
-    "@adonisjs/core": "^6.17.1",
+    "@adonisjs/core": "^6.17.2",
     "@tuyau/client": "workspace:*",
-    "@types/node": "^22.13.0"
+    "@types/node": "^22.15.2"
   },
   "publishConfig": {
     "access": "public",
