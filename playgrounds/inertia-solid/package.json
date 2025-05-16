@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "@adonisjs/auth": "^9.4.0",
-    "@adonisjs/core": "^6.17.2",
+    "@adonisjs/core": "^6.18.0",
     "@adonisjs/cors": "^2.2.1",
     "@adonisjs/inertia": "^3.1.1",
     "@adonisjs/lucid": "^21.6.1",
@@ -43,12 +43,12 @@
     "@tuyau/client": "workspace:*",
     "@tuyau/core": "workspace:*",
     "@vinejs/vine": "^3.0.1",
-    "better-sqlite3": "^11.9.1",
+    "better-sqlite3": "^11.10.0",
     "edge.js": "^6.2.1",
     "inertia-adapter-solid": "^0.2.0",
     "luxon": "^3.6.1",
     "reflect-metadata": "^0.2.2",
-    "solid-js": "^1.9.5"
+    "solid-js": "^1.9.6"
   },
   "devDependencies": {
     "@adonisjs/assembler": "^7.8.2",

@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "@adonisjs/auth": "^9.4.0",
-    "@adonisjs/core": "^6.17.2",
+    "@adonisjs/core": "^6.18.0",
     "@adonisjs/cors": "^2.2.1",
     "@adonisjs/inertia": "^3.1.1",
     "@adonisjs/lucid": "^21.6.1",
@@ -40,18 +40,18 @@
     "@adonisjs/shield": "^8.2.0",
     "@adonisjs/static": "^1.1.1",
     "@adonisjs/vite": "^4.0.0",
-    "@inertiajs/vue3": "^2.0.8",
+    "@inertiajs/vue3": "^2.0.10",
     "@tuyau/client": "workspace:*",
     "@tuyau/core": "workspace:*",
     "@tuyau/inertia": "workspace:*",
     "@tuyau/utils": "workspace:*",
     "@vinejs/vine": "^3.0.1",
-    "@vue/server-renderer": "^3.5.13",
-    "better-sqlite3": "^11.9.1",
+    "@vue/server-renderer": "^3.5.14",
+    "better-sqlite3": "^11.10.0",
     "edge.js": "^6.2.1",
     "luxon": "^3.6.1",
     "reflect-metadata": "^0.2.2",
-    "vue": "^3.5.13"
+    "vue": "^3.5.14"
   },
   "devDependencies": {
     "@adonisjs/assembler": "^7.8.2",
@@ -59,7 +59,7 @@
     "@adonisjs/tsconfig": "^1.4.0",
     "@japa/plugin-adonisjs": "^4.0.0",
     "@types/luxon": "^3.6.2",
-    "@vitejs/plugin-vue": "^5.2.3",
+    "@vitejs/plugin-vue": "^5.2.4",
     "hot-hook": "^0.4.0",
     "pino-pretty": "^13.0.0"
   },
