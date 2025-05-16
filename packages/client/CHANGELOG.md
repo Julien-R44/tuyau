@@ -1,5 +1,11 @@
 # @tuyau/client
 
+## 0.2.8
+
+### Patch Changes
+
+- c738d34: Improve TuyauHTTPError message to be more informative
+
 ## 0.2.7
 
 ### Patch Changes
