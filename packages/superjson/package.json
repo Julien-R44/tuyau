@@ -39,7 +39,8 @@
     "@adonisjs/assembler": "^7.8.2",
     "@adonisjs/core": "^6.18.0",
     "@tuyau/client": "workspace:*",
-    "@types/node": "^22.15.18"
+    "@types/node": "^22.15.18",
+    "nock": "^14.0.4"
   },
   "publishConfig": {
     "access": "public",
