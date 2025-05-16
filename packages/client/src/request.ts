@@ -92,7 +92,11 @@ export class TuyauRequest {
      */
     const status = response.status
     if (!response.ok) {
-      error = new TuyauHTTPError(response.status, data)
+      error = new TuyauHTTPError(response.status, data, response, {
+        url: removeSlash(this.#options.path),
+        method: this.#options.method,
+      })
+
       data = undefined
     }
 

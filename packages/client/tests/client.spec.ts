@@ -680,4 +680,26 @@ test.group('Client | Runtime', () => {
 
     await tuyau.users.$get()
   })
+
+  test('TuyauHTTPError message should be clean', async ({ assert }) => {
+    const tuyau = createTuyau<{
+      routes: []
+      definition: {
+        auth: {
+          login: {
+            $post: {
+              request: unknown
+              response: { 200: Simplify<Serialize<{ token: string }>> }
+            }
+          }
+        }
+      }
+    }>({ baseUrl: 'http://localhost:3333' })
+
+    nock('http://localhost:3333').post('/auth/login').reply(400, { message: 'Invalid credentials' })
+
+    const result = await tuyau.auth.login.$post()
+    // @ts-ignore
+    assert.deepEqual(result.error.message, 'Request failed with status code 400: POST /auth/login')
+  })
 })
