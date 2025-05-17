@@ -134,3 +134,16 @@ test.group('React Query | queryOptions', () => {
     assert.deepEqual(result.queryKey, [['users', '1', '$get'], { input: {}, type: 'query' }])
   })
 })
+
+test.group('React query | queryKey', () => {
+  test('basic', ({ assert }) => {
+    const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
+    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+
+    const r1 = tuyau.users.$get.queryKey({ name: 'foo' })
+    const r2 = tuyau.users.$get.queryKey()
+
+    assert.deepEqual(r1, [['users', '$get'], { input: { name: 'foo' }, type: 'query' }])
+    assert.deepEqual(r2, [['users', '$get'], { type: 'query' }])
+  })
+})

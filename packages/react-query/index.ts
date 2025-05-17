@@ -6,6 +6,7 @@ import {
   createTuyauRecursiveProxy,
 } from '@tuyau/client'
 import {
+  DataTag,
   DefinedInitialDataOptions,
   QueryClient,
   queryOptions,
@@ -33,6 +34,8 @@ export function createTuyauReactQueryClient<
         path,
       })
     }
+
+    if (fnName === 'queryKey') return getQueryKeyInternal(path, arg1, 'query')
 
     const newProxy = executeIfRouteParamCall({ fnName: fnName!, body: args[0] })
     if (newProxy) return newProxy
@@ -115,9 +118,9 @@ export type TuyauReactQuery<in out Route extends Record<string, any>> = {
   }
     ? // GET, HEAD
       K extends '$get' | '$head'
-      ? DecorateQueryProcedure<Route[K]>
+      ? DecorateQueryFn<Route[K]>
       : // POST, PUT, PATCH, DELETE
-        DecorateMutationProcedure
+        DecorateMutationFn
     : K extends '$url'
       ? (options?: { query?: QueryParameters }) => string
       : CreateParams<Route[K]>
@@ -166,12 +169,12 @@ export interface TuyauReactQueryOptions<EDef extends EndpointDef> {
   ): DefinedInitialDataOptions<UnionFromSuccessStatuses<TQueryFnData>, TData>
 }
 
-export interface DecorateQueryProcedure<EDef extends EndpointDef> {
+export interface DecorateQueryFn<EDef extends EndpointDef> {
   queryOptions: TuyauReactQueryOptions<EDef>
-  queryKey: () => string[]
+  queryKey: (input?: Partial<EDef['request']>) => DataTag<TuyauQueryKey, EDef['response'], any>
 }
 
-export interface DecorateMutationProcedure {
+export interface DecorateMutationFn {
   mutationOptions: any
   mutationKey: () => string[]
 }
