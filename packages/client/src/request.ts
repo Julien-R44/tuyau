@@ -68,6 +68,7 @@ export class TuyauRequest {
         searchParams: buildSearchParams(this.#options.queryOptions?.query || {}),
         [key]: !isGetOrHead ? body : undefined,
         ...this.#options.queryOptions,
+        // retry: 0,
       },
     )
 

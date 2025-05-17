@@ -1,11 +1,12 @@
 import '../css/app.css'
 
-import { hydrateRoot } from 'react-dom/client'
 import { createInertiaApp } from '@inertiajs/react'
 import { TuyauProvider } from '@tuyau/inertia/react'
+import { createRoot, hydrateRoot } from 'react-dom/client'
+import { QueryClientProvider } from '@tanstack/react-query'
 import { resolvePageComponent } from '@adonisjs/inertia/helpers'
 
-import { tuyau } from './tuyau'
+import { queryClient, tuyau } from './tuyau'
 
 const appName = import.meta.env.VITE_APP_NAME || 'AdonisJS'
 
@@ -19,12 +20,13 @@ createInertiaApp({
   },
 
   setup({ el, App, props }) {
-    hydrateRoot(
-      el,
+    createRoot(el).render(
       <>
-        <TuyauProvider client={tuyau}>
-          <App {...props} />
-        </TuyauProvider>
+        <QueryClientProvider client={queryClient}>
+          <TuyauProvider client={tuyau}>
+            <App {...props} />
+          </TuyauProvider>
+        </QueryClientProvider>
       </>
     )
   },
