@@ -64,8 +64,11 @@ function tuyauQueryOptions(options: {
     queryKey,
     queryFn: inputIsSkipToken
       ? skipToken
-      : async (ctx) => {
-          return await options.client.$fetch({ paths: options.path })
+      : async () => {
+          return await options.client.$fetch({
+            paths: options.path,
+            input: options.input,
+          })
         },
   })
 }
@@ -79,22 +82,13 @@ export type EndpointDef = {
   response: Record<number, unknown>
 }
 
-/**
- * @public
- */
 export type QueryType = 'any' | 'infinite' | 'query'
 
-/**
- * @public
- */
 export type TuyauQueryKey = [
   readonly string[],
   { input?: unknown; type?: Exclude<QueryType, 'any'> }?,
 ]
 
-/**
- * @public
- */
 export type TuyauMutationKey = [readonly string[]]
 
 type ReservedOptions = 'queryKey' | 'queryFn' | 'queryHashFn' | 'queryHash'
