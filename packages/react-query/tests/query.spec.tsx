@@ -37,7 +37,9 @@ type ApiDefinition = {
   }
 }
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+  defaultOptions: { queries: { retry: false } },
+})
 const wrapper = ({ children }: PropsWithChildren) => (
   <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
 )
@@ -54,21 +56,22 @@ function renderHookWithWrapper<T>(callback: () => T) {
 }
 
 test.group('React Query', (group) => {
-  test('basic', async ({ expectTypeOf }) => {
+  test('basic', async ({ expectTypeOf, assert }) => {
     const tuyauClient = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
     const tuyau = createTuyauReactQueryClient({ client: tuyauClient, queryClient })
 
     nock('http://localhost:3333')
       .get('/users')
-      // .query({ name: 'foo' })
+      .query({ name: 'foo' })
       .reply(200, [{ id: 1, name: 'foo' }])
 
     const { result } = renderHookWithWrapper(() =>
       useQuery(tuyau.users.$get.queryOptions({ name: 'foo' })),
     )
 
-    await setTimeout(1000)
+    await setTimeout(300)
 
+    assert.deepEqual(result.current.data, [{ id: 1, name: 'foo' }])
     expectTypeOf(result.current.data).toEqualTypeOf<
       Array<{ id: number; name: string }> | undefined
     >()
@@ -81,7 +84,7 @@ test.group('React Query', (group) => {
 
     nock('http://localhost:3333')
       .get('/users')
-      // .query({ name: 'foo' })
+      .query({ name: 'foo' })
       .reply(200, [{ id: 1, name: 'foo' }])
 
     const { result } = renderHookWithWrapper(() =>

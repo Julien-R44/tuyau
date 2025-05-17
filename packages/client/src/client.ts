@@ -84,11 +84,11 @@ export function createTuyau<const Api extends ApiDefinition>(
       const isGetOrHead = ['get', 'head'].includes(method)
 
       return new TuyauRequest({
-        body,
+        body: body.input,
         client,
         method,
         path: paths.slice(0, -1).join('/'),
-        queryOptions: isGetOrHead ? body : queryOptions,
+        queryOptions: isGetOrHead ? { query: body.input } : queryOptions,
       }).unwrap()
     }
 
