@@ -15,3 +15,4 @@ package-lock.json
 todo.md
 .adonisjs
 **/*/public/assets
+tmp

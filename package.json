@@ -41,7 +41,12 @@
   "pnpm": {
     "overrides": {
       "@tuyau/utils": "workspace:*"
-    }
+    },
+    "onlyBuiltDependencies": [
+      "@swc/core",
+      "better-sqlite3",
+      "esbuild"
+    ]
   },
   "prettier": "@julr/tooling-configs/prettier"
 }

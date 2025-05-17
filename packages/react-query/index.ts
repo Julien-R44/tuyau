@@ -8,11 +8,13 @@ import {
 import {
   DataTag,
   DefinedInitialDataOptions,
+  MutationFunction,
   QueryClient,
   queryOptions,
   skipToken,
   SkipToken,
   UndefinedInitialDataOptions,
+  UseMutationOptions,
 } from '@tanstack/react-query'
 
 export function createTuyauReactQueryClient<
@@ -35,8 +37,18 @@ export function createTuyauReactQueryClient<
       })
     }
 
+    if (fnName === 'mutationOptions') {
+      return tuyauMutationOptions({
+        opts: arg1,
+        path,
+        queryClient: options.queryClient,
+        client: options.client as any,
+      })
+    }
+
     if (fnName === 'queryKey') return getQueryKeyInternal(path, arg1, 'query')
     if (fnName === 'pathKey') return getQueryKeyInternal(path)
+    if (fnName === 'mutationKey') return getMutationKeyInternal(path)
 
     const newProxy = executeIfRouteParamCall({ fnName: fnName!, body: args[0] })
     if (newProxy) return newProxy
@@ -61,6 +73,12 @@ function getQueryKeyInternal(path: string[], input?: unknown, type?: QueryType):
   ]
 }
 
+export function getMutationKeyInternal(path: readonly string[]): TuyauMutationKey {
+  const splitPath = path.flatMap((part) => part.toString().split('.'))
+
+  return splitPath.length ? [splitPath] : ([] as unknown as TuyauMutationKey)
+}
+
 function tuyauQueryOptions(options: {
   input: unknown
   opts: any
@@ -78,12 +96,40 @@ function tuyauQueryOptions(options: {
     queryFn: inputIsSkipToken
       ? skipToken
       : async () => {
-          return await options.client.$fetch({
-            paths: options.path,
-            input: options.input,
-          })
+          // @ts-expect-error tkt
+          return await options.client.$fetch({ paths: options.path, input: options.input })
         },
   })
+}
+
+function tuyauMutationOptions(options: {
+  opts: any
+  path: string[]
+  queryClient: QueryClient
+  client: TuyauClient<any, any>
+}) {
+  const { opts, path } = options
+
+  const mutationKey = getMutationKeyInternal(path)
+  // const defaultOpts = queryClient.defaultMutationOptions(
+  //   queryClient.getMutationDefaults(mutationKey),
+  // )
+
+  const mutationFn: MutationFunction = async (input) => {
+    // @ts-expect-error tkt
+    const result = await options.client.$fetch({
+      paths: path,
+      input,
+    })
+
+    return result
+  }
+
+  return {
+    ...opts,
+    mutationKey,
+    mutationFn,
+  }
 }
 
 type UnionFromSuccessStatuses<Res extends Record<number, unknown>> = Res[Extract<
@@ -104,28 +150,18 @@ export type TuyauQueryKey = [
 
 export type TuyauMutationKey = [readonly string[]]
 
-type ReservedOptions = 'queryKey' | 'queryFn' | 'queryHashFn' | 'queryHash'
-
-/**
- * Cookies, headers and params can be present in the request.
- * See https://docs.adonisjs.com/guides/basics/validation#validating-cookies-headers-and-route-params
- *
- * So they must be excluded from the query options. This helper does that.
- */
-type CleanRequest<Request> = Request extends { cookies?: any; headers?: any; params?: any }
-  ? Omit<Request, 'cookies' | 'headers' | 'params'>
-  : Request
+type QueryReservedOptions = 'queryKey' | 'queryFn' | 'queryHashFn' | 'queryHash'
 
 export type TuyauReactQuery<in out Route extends Record<string, any>> = {
   [K in keyof Route as K extends `:${string}` ? never : K]: Route[K] extends {
-    response: infer Res extends Record<number, unknown>
-    request: infer Request
+    response: infer _Res extends Record<number, unknown>
+    request: infer _Request
   }
     ? // GET, HEAD
       K extends '$get' | '$head'
       ? DecorateQueryFn<Route[K]> & DecorateRouterKeyable
       : // POST, PUT, PATCH, DELETE
-        DecorateMutationFn & DecorateRouterKeyable
+        DecorateMutationFn<Route[K]> & DecorateRouterKeyable
     : K extends '$url'
       ? (options?: { query?: QueryParameters }) => string
       : CreateParams<Route[K]> & DecorateRouterKeyable
@@ -152,13 +188,13 @@ export type CreateParams<Route extends Record<string, any>> =
 interface DefinedTuyauQueryOptionsIn<TQueryFnData, TData, TError>
   extends DistributiveOmit<
     DefinedInitialDataOptions<TQueryFnData, TError, TData, TuyauQueryKey>,
-    ReservedOptions
+    QueryReservedOptions
   > {}
 
 interface UndefinedTuyauQueryOptionsIn<TQueryFnData, TData, TError>
   extends DistributiveOmit<
     UndefinedInitialDataOptions<TQueryFnData, TError, TData, TuyauQueryKey>,
-    ReservedOptions
+    QueryReservedOptions
   > {}
 
 export interface TuyauReactQueryOptions<EDef extends EndpointDef> {
@@ -174,14 +210,43 @@ export interface TuyauReactQueryOptions<EDef extends EndpointDef> {
   ): DefinedInitialDataOptions<UnionFromSuccessStatuses<TQueryFnData>, TData>
 }
 
+type MutationReservedOptions = 'mutationKey' | 'mutationFn'
+
+interface TuyauMutationOptionsIn<TInput, TError, TOutput, TContext>
+  extends DistributiveOmit<
+    UseMutationOptions<TOutput, TError, TInput, TContext>,
+    MutationReservedOptions
+  > {}
+
+interface TuyauMutationOptionsOut<TInput, TError, TOutput, TContext>
+  extends UseMutationOptions<TOutput, TError, TInput, TContext> {
+  mutationKey: TuyauMutationKey
+}
+
+export interface TuyauReactMutationOptions<TDef extends EndpointDef> {
+  <TContext = unknown>(
+    opts?: TuyauMutationOptionsIn<
+      // TDef['input'],
+      TDef['request'],
+      any,
+      UnionFromSuccessStatuses<TDef['response']>,
+      TContext
+    >,
+  ): TuyauMutationOptionsOut<
+    TDef['request'],
+    any,
+    UnionFromSuccessStatuses<TDef['response']>,
+    TContext
+  >
+}
 export interface DecorateQueryFn<EDef extends EndpointDef> {
   queryOptions: TuyauReactQueryOptions<EDef>
   queryKey: (input?: Partial<EDef['request']>) => DataTag<TuyauQueryKey, EDef['response'], any>
 }
 
-export interface DecorateMutationFn {
-  mutationOptions: any
-  mutationKey: () => string[]
+export interface DecorateMutationFn<EDef extends EndpointDef> {
+  mutationOptions: TuyauReactMutationOptions<EDef>
+  mutationKey: () => TuyauMutationKey
 }
 
 export interface DecorateRouterKeyable {
