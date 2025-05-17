@@ -33,11 +33,16 @@ export function createTuyauReactQueryClient<
         path,
       })
     }
+
+    const newProxy = executeIfRouteParamCall({ fnName: fnName!, body: args[0] })
+    if (newProxy) return newProxy
+
+    throw new Error(`Method ${fnName} not found on Tuyau client`)
   }) as TuyauReactQuery<D>
 }
 
 function getQueryKeyInternal(path: string[], input?: unknown, type?: QueryType): TuyauQueryKey {
-  const splitPath = path.flatMap((part) => part.split('/'))
+  const splitPath = path.flatMap((part) => part.toString().split('/'))
 
   return [
     splitPath,

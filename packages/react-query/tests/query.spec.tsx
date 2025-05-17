@@ -23,15 +23,21 @@ type ApiDefinition = {
       }
     }
     users: {
-      $get: {
+      '$get': {
         request: { name: string | null }
         response: {
           200: Simplify<Serialize<{ id: number; name: string }[]>>
         }
       }
-      $post: {
+      '$post': {
         request: { name: string }
         response: { 201: Simplify<Serialize<{ id: number; name: string }>> }
+      }
+      ':id': {
+        $get: {
+          request: {}
+          response: { 200: Simplify<Serialize<{ id: number; name: string }>> }
+        }
       }
     }
   }
@@ -55,10 +61,10 @@ function renderHookWithWrapper<T>(callback: () => T) {
   return result
 }
 
-test.group('React Query', (group) => {
+test.group('React Query | useQuery', () => {
   test('basic', async ({ expectTypeOf, assert }) => {
-    const tuyauClient = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
-    const tuyau = createTuyauReactQueryClient({ client: tuyauClient, queryClient })
+    const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
+    const tuyau = createTuyauReactQueryClient({ client, queryClient })
 
     nock('http://localhost:3333')
       .get('/users')
@@ -78,25 +84,53 @@ test.group('React Query', (group) => {
   })
 
   test('with initial data', ({ expectTypeOf }) => {
-    const tuyauClient = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
-    const queryClient = new QueryClient()
-    const tuyau = createTuyauReactQueryClient({ client: tuyauClient, queryClient })
+    const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
+    const tuyau = createTuyauReactQueryClient({ client, queryClient })
 
     nock('http://localhost:3333')
       .get('/users')
       .query({ name: 'foo' })
       .reply(200, [{ id: 1, name: 'foo' }])
 
-    const { result } = renderHookWithWrapper(() =>
-      useQuery(
-        tuyau.users.$get.queryOptions(
-          { name: 'foo' },
-          { initialData: () => [{ id: 1, name: 'foo' }] },
-        ),
-      ),
-    )
+    const { result } = renderHookWithWrapper(() => {
+      const options = tuyau.users.$get.queryOptions(
+        { name: 'foo' },
+        { initialData: () => [{ id: 1, name: 'foo' }] },
+      )
+
+      return useQuery(options)
+    })
 
     const data = result.current.data
     expectTypeOf(data).toEqualTypeOf<Array<{ id: number; name: string }>>()
+  })
+})
+
+test.group('React Query | queryOptions', () => {
+  test('basic', ({ assert }) => {
+    const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
+    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+
+    const result = tuyau.users.$get.queryOptions(
+      { name: 'foo' },
+      { initialData: () => [{ id: 1, name: 'foo' }], staleTime: 1000 },
+    )
+
+    assert.isFunction(result.queryFn)
+    assert.deepEqual(result.staleTime, 1000)
+    assert.deepEqual(result.queryKey, [
+      ['users', '$get'],
+      { input: { name: 'foo' }, type: 'query' },
+    ])
+  })
+
+  test('with route param call', ({ assert }) => {
+    const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
+    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+
+    const result = tuyau.users({ id: 1 }).$get.queryOptions({})
+
+    assert.isFunction(result.queryFn)
+    assert.deepEqual(result.queryKey, [['users', '1', '$get'], { input: {}, type: 'query' }])
   })
 })
