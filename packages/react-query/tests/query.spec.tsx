@@ -1,83 +1,13 @@
 import nock from 'nock'
+import { test } from '@japa/runner'
 import { createTuyau } from '@tuyau/client'
-import React, { PropsWithChildren } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { setTimeout } from 'node:timers/promises'
-import { getActiveTest, test } from '@japa/runner'
-import { renderHook } from '@testing-library/react'
-import { Serialize, Simplify } from '@tuyau/utils/types'
-import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query'
 
 import { createTuyauReactQueryClient } from '../index.js'
+import { ApiDefinition, queryClient, renderHookWithWrapper } from './helpers.jsx'
 
-type ApiDefinition = {
-  routes: []
-  definition: {
-    auth: {
-      login: {
-        $post: {
-          request: { email: string; password: string }
-          response: {
-            200: Simplify<Serialize<{ token: string }>>
-          }
-        }
-      }
-    }
-    users: {
-      '$get': {
-        request: { name: string | null }
-        response: {
-          200: Simplify<Serialize<{ id: number; name: string }[]>>
-        }
-      }
-      '$post': {
-        request: { name: string }
-        response: { 201: Simplify<Serialize<{ id: number; name: string }>> }
-      }
-      ':id': {
-        $get: {
-          request: {}
-          response: { 200: Simplify<Serialize<{ id: number; name: string }>> }
-        }
-        comments: {
-          '$get': {
-            request: {}
-            response: {
-              200: Simplify<Serialize<{ id: number; name: string }[]>>
-            }
-          }
-          ':comment_id': {
-            $get: {
-              request: {}
-              response: {
-                200: Simplify<Serialize<{ id: number; name: string }>>
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
-const queryClient = new QueryClient({
-  defaultOptions: { queries: { retry: false } },
-})
-const wrapper = ({ children }: PropsWithChildren) => (
-  <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-)
-
-function renderHookWithWrapper<T>(callback: () => T) {
-  const result = renderHook(callback, { wrapper })
-
-  const test = getActiveTest()
-  if (!test) throw new Error('No active test found')
-
-  test.cleanup(() => result.unmount())
-
-  return result
-}
-
-test.group('React Query | useQuery', () => {
+test.group('Query | useQuery', () => {
   test('basic', async ({ expectTypeOf, assert }) => {
     const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
     const tuyau = createTuyauReactQueryClient({ client, queryClient })
@@ -122,7 +52,7 @@ test.group('React Query | useQuery', () => {
   })
 })
 
-test.group('React Query | queryOptions', () => {
+test.group('Query | queryOptions', () => {
   test('basic', ({ assert }) => {
     const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
     const tuyau = createTuyauReactQueryClient({ client, queryClient })
@@ -151,7 +81,7 @@ test.group('React Query | queryOptions', () => {
   })
 })
 
-test.group('React query | queryKey', () => {
+test.group('Query | queryKey', () => {
   test('basic', ({ assert }) => {
     const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
     const tuyau = createTuyauReactQueryClient({ client, queryClient })
@@ -166,7 +96,7 @@ test.group('React query | queryKey', () => {
   })
 })
 
-test.group('React Query | pathKey', () => {
+test.group('Query | pathKey', () => {
   test('basic', ({ assert }) => {
     const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
     const tuyau = createTuyauReactQueryClient({ client, queryClient })

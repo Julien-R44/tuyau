@@ -9,6 +9,7 @@
 
 import router from '@adonisjs/core/services/router'
 
+const TodosController = () => import('#controllers/todos_controller')
 const PostsController = () => import('#controllers/posts_controller')
 const UsersController = () => import('#controllers/users_controller')
 const InertiaController = () => import('#controllers/inertia_controller')
@@ -23,6 +24,12 @@ router.get('/backoffice', [InertiaController, 'backoffice']).as('backoffice')
 router.resource('posts', PostsController).as('posts')
 router.resource('posts.comments', CommentsController).as('posts.comments')
 
-router.get('/test', () => {
-  return 'foo'
-})
+router.get('/test', () => 'foo')
+
+router
+  .group(() => {
+    router.get('/todos', [TodosController, 'index'])
+    router.post('/todos', [TodosController, 'store'])
+    router.delete('/todos/:id', [TodosController, 'destroy'])
+  })
+  .prefix('api')
