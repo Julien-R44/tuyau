@@ -36,16 +36,21 @@ export function createTuyauReactQueryClient<
     }
 
     if (fnName === 'queryKey') return getQueryKeyInternal(path, arg1, 'query')
+    if (fnName === 'pathKey') return getQueryKeyInternal(path)
 
     const newProxy = executeIfRouteParamCall({ fnName: fnName!, body: args[0] })
     if (newProxy) return newProxy
 
     throw new Error(`Method ${fnName} not found on Tuyau client`)
-  }) as TuyauReactQuery<D>
+  }) as TuyauReactQuery<D> & DecorateRouterKeyable
 }
 
 function getQueryKeyInternal(path: string[], input?: unknown, type?: QueryType): TuyauQueryKey {
   const splitPath = path.flatMap((part) => part.toString().split('/'))
+
+  if (!input && (!type || type === 'any')) {
+    return splitPath.length ? [splitPath] : ([] as unknown as TuyauQueryKey)
+  }
 
   return [
     splitPath,
@@ -118,12 +123,12 @@ export type TuyauReactQuery<in out Route extends Record<string, any>> = {
   }
     ? // GET, HEAD
       K extends '$get' | '$head'
-      ? DecorateQueryFn<Route[K]>
+      ? DecorateQueryFn<Route[K]> & DecorateRouterKeyable
       : // POST, PUT, PATCH, DELETE
-        DecorateMutationFn
+        DecorateMutationFn & DecorateRouterKeyable
     : K extends '$url'
       ? (options?: { query?: QueryParameters }) => string
-      : CreateParams<Route[K]>
+      : CreateParams<Route[K]> & DecorateRouterKeyable
 }
 
 /**
@@ -180,5 +185,5 @@ export interface DecorateMutationFn {
 }
 
 export interface DecorateRouterKeyable {
-  pathKey: () => string[]
+  pathKey: () => TuyauQueryKey
 }
