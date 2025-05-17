@@ -38,6 +38,22 @@ type ApiDefinition = {
           request: {}
           response: { 200: Simplify<Serialize<{ id: number; name: string }>> }
         }
+        comments: {
+          '$get': {
+            request: {}
+            response: {
+              200: Simplify<Serialize<{ id: number; name: string }[]>>
+            }
+          }
+          ':comment_id': {
+            $get: {
+              request: {}
+              response: {
+                200: Simplify<Serialize<{ id: number; name: string }>>
+              }
+            }
+          }
+        }
       }
     }
   }
@@ -142,8 +158,29 @@ test.group('React query | queryKey', () => {
 
     const r1 = tuyau.users.$get.queryKey({ name: 'foo' })
     const r2 = tuyau.users.$get.queryKey()
+    const r3 = tuyau.users({ id: 1 }).comments.$get.queryKey()
 
     assert.deepEqual(r1, [['users', '$get'], { input: { name: 'foo' }, type: 'query' }])
     assert.deepEqual(r2, [['users', '$get'], { type: 'query' }])
+    assert.deepEqual(r3, [['users', '1', 'comments', '$get'], { type: 'query' }])
+  })
+})
+
+test.group('React Query | pathKey', () => {
+  test('basic', ({ assert }) => {
+    const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
+    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+
+    const r1 = tuyau.users.pathKey()
+    const r2 = tuyau.users.$get.pathKey()
+    const r3 = tuyau.users.pathKey()
+    const r4 = tuyau.users({ id: 1 }).pathKey()
+    const r5 = tuyau.users({ id: 1 }).comments.pathKey()
+
+    assert.deepEqual(r1, [['users']])
+    assert.deepEqual(r2, [['users', '$get']])
+    assert.deepEqual(r3, [['users']])
+    assert.deepEqual(r4, [['users', '1']])
+    assert.deepEqual(r5, [['users', '1', 'comments']])
   })
 })
