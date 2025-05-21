@@ -16,7 +16,7 @@ import type ConfigureCommand from '@adonisjs/core/commands/configure'
 
 export async function configure(command: ConfigureCommand) {
   const codemods = await command.createCodemods()
-  await codemods.registerMiddleware('server', [
+  await codemods.registerMiddleware('router', [
     {
       path: '@tuyau/superjson/superjson_middleware',
       position: 'after',
