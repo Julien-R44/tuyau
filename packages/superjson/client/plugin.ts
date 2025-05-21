@@ -32,7 +32,7 @@ export function superjson(config: SuperjsonPluginConfig = {}): TuyauPlugin {
   return ({ options }) => {
     options.headers = { ...options.headers, 'x-superjson': 'true' }
 
-    if (config.stringifyRequest) options.parseJson = (text) => SuperJSON.parse(text)
     if (config.parseResponse) options.parseJson = (text) => SuperJSON.parse(text)
+    if (config.stringifyRequest) options.stringifyJson = (data) => SuperJSON.stringify(data)
   }
 }
