@@ -9,7 +9,9 @@ import { httpServer } from './helpers.js'
 import { superjson } from '../client/plugin.js'
 import SuperjsonMiddleware from '../middleware/superjson_middleware.js'
 
-test.group('Superjson', () => {
+test.group('Superjson', (group) => {
+  group.each.teardown(() => nock.cleanAll())
+
   test('parse errors', async ({ assert }) => {
     const tuyau = createTuyau<{
       routes: []
@@ -95,5 +97,5 @@ test.group('Superjson', () => {
     await tuyau.users.$post({ date: new Date('1970-01-01'), bigInt: BigInt(1) }).unwrap()
 
     server.close()
-  }).disableTimeout()
+  })
 })
