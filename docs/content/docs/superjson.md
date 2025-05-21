@@ -4,7 +4,7 @@ summary: SuperJSON is a superset of JSON that supports additional types like Dat
 
 # SuperJSON
 
-SuperJSON extends JSON by supporting additional types like `Date`, `RegExp`, `BigInt`, and more. This means you can return a `Date` or a `Set` from your API, and when receiving the data in your frontend, it will be automatically converted to the correct type.
+SuperJSON extends JSON by supporting additional types like `Date`, `RegExp`, `BigInt`, and more. This means you can return a `Date` or a `Set` from your API, and when receiving the data in your frontend, it will be automatically converted to the correct type. Same for request payloads, if sending a `Date` or `Bigint` from your frontend, your backend will receive the correct type
 
 Tuyau provides a specific package to work with [SuperJSON](https://github.com/flightcontrolhq/superjson) called `@tuyau/superjson`. Before proceeding, ensure that Tuyau is properly installed and configured in your project. Then, run the following command **in your backend project**:
 
@@ -58,20 +58,20 @@ For reference, here are the types supported by SuperJSON:
 
 | type        | supported by standard JSON? | supported by Superjson? |
 | ----------- | --------------------------- | ----------------------- |
-| `string`    | ✅                          | ✅                      |
-| `number`    | ✅                          | ✅                      |
-| `boolean`   | ✅                          | ✅                      |
-| `null`      | ✅                          | ✅                      |
-| `Array`     | ✅                          | ✅                      |
-| `Object`    | ✅                          | ✅                      |
-| `undefined` | ❌                          | ✅                      |
-| `bigint`    | ❌                          | ✅                      |
-| `Date`      | ❌                          | ✅                      |
-| `RegExp`    | ❌                          | ✅                      |
-| `Set`       | ❌                          | ✅                      |
-| `Map`       | ❌                          | ✅                      |
-| `Error`     | ❌                          | ✅                      |
-| `URL`       | ❌                          | ✅                      |
+| `string`    | ✅                           | ✅                       |
+| `number`    | ✅                           | ✅                       |
+| `boolean`   | ✅                           | ✅                       |
+| `null`      | ✅                           | ✅                       |
+| `Array`     | ✅                           | ✅                       |
+| `Object`    | ✅                           | ✅                       |
+| `undefined` | ❌                           | ✅                       |
+| `bigint`    | ❌                           | ✅                       |
+| `Date`      | ❌                           | ✅                       |
+| `RegExp`    | ❌                           | ✅                       |
+| `Set`       | ❌                           | ✅                       |
+| `Map`       | ❌                           | ✅                       |
+| `Error`     | ❌                           | ✅                       |
+| `URL`       | ❌                           | ✅                       |
 
 If needed, you can add custom types using [SuperJSON Recipes](https://github.com/flightcontrolhq/superjson/blob/main/README.md#recipes).
 

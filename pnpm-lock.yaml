@@ -284,6 +284,19 @@ importers:
         specifier: ^10.1.0
         version: 10.1.0(@adonisjs/http-server@7.6.1(@adonisjs/application@8.4.1(@adonisjs/config@5.0.2)(@adonisjs/fold@10.1.3))(@adonisjs/encryption@6.0.2)(@adonisjs/events@9.0.2(@adonisjs/application@8.4.1(@adonisjs/config@5.0.2)(@adonisjs/fold@10.1.3))(@adonisjs/fold@10.1.3))(@adonisjs/fold@10.1.3)(@adonisjs/logger@6.0.6))
 
+  playgrounds/elysia:
+    dependencies:
+      '@ap0nia/eden-react-query':
+        specifier: ^1.6.1
+        version: 1.6.1(@tanstack/react-query@5.76.1(react@19.1.0))(elysia@1.2.25(@sinclair/typebox@0.27.8)(openapi-types@12.1.3)(typescript@5.8.3))(react@19.1.0)
+      elysia:
+        specifier: 1.2.25
+        version: 1.2.25(@sinclair/typebox@0.27.8)(openapi-types@12.1.3)(typescript@5.8.3)
+    devDependencies:
+      bun-types:
+        specifier: latest
+        version: 1.2.13
+
   playgrounds/inertia-react:
     dependencies:
       '@adonisjs/auth':
@@ -325,6 +338,9 @@ importers:
       '@tuyau/inertia':
         specifier: workspace:*
         version: link:../../packages/inertia
+      '@tuyau/superjson':
+        specifier: workspace:*
+        version: link:../../packages/superjson
       '@tuyau/utils':
         specifier: workspace:*
         version: link:../../packages/utils
@@ -975,6 +991,18 @@ packages:
 
   '@antfu/utils@8.1.0':
     resolution: {integrity: sha512-XPR7Jfwp0FFl/dFYPX8ZjpmU4/1mIXTjnZ1ba48BLMyKOV62/tiRjdsFcPs2hsYcSud4tzk7w3a3LjX8Fu3huA==}
+
+  '@ap0nia/eden-react-query@1.6.1':
+    resolution: {integrity: sha512-WCFHqQsjASiVBDRTjKUPMApmgQZdl5MuQBPHohcHgO3Nn7nu/FbPo/4wd9kEKsEIQt0XiWFHqwT1Ed+eJCbf6w==}
+    peerDependencies:
+      '@tanstack/react-query': ^5.51.16
+      elysia: ^1.2.15
+      react: ^18.0.0
+
+  '@ap0nia/eden@1.6.1':
+    resolution: {integrity: sha512-jlsUyh4PsYNnMcPuQ3IJq0hhDNnyRNGYx+MSAJlcgKs4En9qrokLorSbTRvVjA1Mdx4VdzEADcPn99Kbph0SOw==}
+    peerDependencies:
+      elysia: ^1.2.15
 
   '@arr/every@1.0.1':
     resolution: {integrity: sha512-UQFQ6SgyJ6LX42W8rHCs8KVc0JS0tzVL9ct4XYedJukskYVWTo49tNiMEK9C2HTyarbNiT/RVIRSY82vH+6sTg==}
@@ -2301,6 +2329,14 @@ packages:
   '@swc/types@0.1.21':
     resolution: {integrity: sha512-2YEtj5HJVbKivud9N4bpPBAyZhj4S2Ipe5LkUG94alTpr7in/GU/EARgPAd3BwU+YOmFVJC2+kjqhGRi3r0ZpQ==}
 
+  '@tanstack/query-core@5.76.0':
+    resolution: {integrity: sha512-FN375hb8ctzfNAlex5gHI6+WDXTNpe0nbxp/d2YJtnP+IBM6OUm7zcaoCW6T63BawGOYZBbKC0iPvr41TteNVg==}
+
+  '@tanstack/react-query@5.76.1':
+    resolution: {integrity: sha512-YxdLZVGN4QkT5YT1HKZQWiIlcgauIXEIsMOTSjvyD5wLYK8YVvKZUPAysMqossFJJfDpJW3pFn7WNZuPOqq+fw==}
+    peerDependencies:
+      react: ^18 || ^19
+
   '@tokenizer/inflate@0.2.7':
     resolution: {integrity: sha512-MADQgmZT1eKjp06jpI2yozxaU9uVs4GzzgSL+uEq7bVcJ9V1ZXQkeGNql1fsSI0gMy1vhvNTNbUqrx+pZfJVmg==}
     engines: {node: '>=18'}
@@ -2808,6 +2844,9 @@ packages:
   builtin-modules@3.3.0:
     resolution: {integrity: sha512-zhaCDicdLuWN5UbN5IMnFqNMhNfo919sH85y2/ea+5Yg9TsTkeZxpL+JLbp6cgYFS4sRLp3YV4S6yDuqVWHYOw==}
     engines: {node: '>=6'}
+
+  bun-types@1.2.13:
+    resolution: {integrity: sha512-rRjA1T6n7wto4gxhAO/ErZEtOXyEZEmnIHQfl0Dt1QQSB4QV0iP6BZ9/YB5fZaHFQ2dwHFrmPaRQ9GGMX01k9Q==}
 
   bundle-require@5.1.0:
     resolution: {integrity: sha512-3WrrOuZiyaaZPWiEt4G3+IffISVC9HYlWueJEBWED4ZH4aIAC2PnkdnuRrR94M+w6yGWn4AglWtJtBI8YqvgoA==}
@@ -3322,6 +3361,18 @@ packages:
 
   electron-to-chromium@1.5.71:
     resolution: {integrity: sha512-dB68l59BI75W1BUGVTAEJy45CEVuEGy9qPVVQ8pnHyHMn36PLPPoE1mjLH+lo9rKulO3HC2OhbACI/8tCqJBcA==}
+
+  elysia@1.2.25:
+    resolution: {integrity: sha512-WsdQpORJvb4uszzeqYT0lg97knw1iBW1NTzJ1Jm57tiHg+DfAotlWXYbjmvQ039ssV0fYELDHinLLoUazZkEHg==}
+    peerDependencies:
+      '@sinclair/typebox': '>= 0.34.0'
+      openapi-types: '>= 12.0.0'
+      typescript: '>= 5.0.0'
+    peerDependenciesMeta:
+      openapi-types:
+        optional: true
+      typescript:
+        optional: true
 
   emittery@1.0.3:
     resolution: {integrity: sha512-tJdCJitoy2lrC2ldJcqN4vkqJ00lT+tOWNT1hBJjO/3FDMJa5TTIiYGCKGkn/WfCyOzUMObeohbVTj00fhiLiA==}
@@ -4496,6 +4547,9 @@ packages:
 
   medium-zoom@1.1.0:
     resolution: {integrity: sha512-ewyDsp7k4InCUp3jRmwHBRFGyjBimKps/AJLjRSox+2q/2H4p/PNpQf+pwONWlJiOudkBXtbdmVbFjqyybfTmQ==}
+
+  memoirist@0.3.0:
+    resolution: {integrity: sha512-wR+4chMgVPq+T6OOsk40u9Wlpw1Pjx66NMNiYxCQQ4EUJ7jDs3D9kTCeKdBOkvAiqXlHLVJlvYL01PvIJ1MPNg==}
 
   memoize@10.0.0:
     resolution: {integrity: sha512-H6cBLgsi6vMWOcCpvVCdFFnl3kerEXbrYh9q+lY6VXvQSmM6CkmV08VOwT+WE2tzIEqRPFfAq3fm4v/UIW6mSA==}
@@ -6703,6 +6757,17 @@ snapshots:
 
   '@antfu/utils@8.1.0': {}
 
+  '@ap0nia/eden-react-query@1.6.1(@tanstack/react-query@5.76.1(react@19.1.0))(elysia@1.2.25(@sinclair/typebox@0.27.8)(openapi-types@12.1.3)(typescript@5.8.3))(react@19.1.0)':
+    dependencies:
+      '@ap0nia/eden': 1.6.1(elysia@1.2.25(@sinclair/typebox@0.27.8)(openapi-types@12.1.3)(typescript@5.8.3))
+      '@tanstack/react-query': 5.76.1(react@19.1.0)
+      elysia: 1.2.25(@sinclair/typebox@0.27.8)(openapi-types@12.1.3)(typescript@5.8.3)
+      react: 19.1.0
+
+  '@ap0nia/eden@1.6.1(elysia@1.2.25(@sinclair/typebox@0.27.8)(openapi-types@12.1.3)(typescript@5.8.3))':
+    dependencies:
+      elysia: 1.2.25(@sinclair/typebox@0.27.8)(openapi-types@12.1.3)(typescript@5.8.3)
+
   '@arr/every@1.0.1': {}
 
   '@babel/code-frame@7.26.2':
@@ -8060,6 +8125,13 @@ snapshots:
     dependencies:
       '@swc/counter': 0.1.3
 
+  '@tanstack/query-core@5.76.0': {}
+
+  '@tanstack/react-query@5.76.1(react@19.1.0)':
+    dependencies:
+      '@tanstack/query-core': 5.76.0
+      react: 19.1.0
+
   '@tokenizer/inflate@0.2.7':
     dependencies:
       debug: 4.4.0
@@ -8678,6 +8750,10 @@ snapshots:
 
   builtin-modules@3.3.0: {}
 
+  bun-types@1.2.13:
+    dependencies:
+      '@types/node': 22.15.18
+
   bundle-require@5.1.0(esbuild@0.24.2):
     dependencies:
       esbuild: 0.24.2
@@ -9168,6 +9244,15 @@ snapshots:
   ee-first@1.1.1: {}
 
   electron-to-chromium@1.5.71: {}
+
+  elysia@1.2.25(@sinclair/typebox@0.27.8)(openapi-types@12.1.3)(typescript@5.8.3):
+    dependencies:
+      '@sinclair/typebox': 0.27.8
+      cookie: 1.0.2
+      memoirist: 0.3.0
+    optionalDependencies:
+      openapi-types: 12.1.3
+      typescript: 5.8.3
 
   emittery@1.0.3: {}
 
@@ -10564,6 +10649,8 @@ snapshots:
   media-typer@1.1.0: {}
 
   medium-zoom@1.1.0: {}
+
+  memoirist@0.3.0: {}
 
   memoize@10.0.0:
     dependencies:
