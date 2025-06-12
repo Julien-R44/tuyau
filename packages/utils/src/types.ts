@@ -114,7 +114,7 @@ export type MakeTuyauResponse<
 export type MakeNonSerializedTuyauResponse<
   T extends (...args: any) => any,
   HasSchema extends boolean = false,
-> = Simplify<ConvertReturnTypeToRecordStatusResponse<Awaited<ReturnType<T>>>> &
+> = ConvertReturnTypeToRecordStatusResponse<Awaited<ReturnType<T>>> &
   (HasSchema extends true
     ? { 422: { errors: { message: string; rule: string; field: string }[] } }
     : {})
