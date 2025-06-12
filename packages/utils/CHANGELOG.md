@@ -1,5 +1,13 @@
 # @tuyau/utils
 
+## 0.0.8
+
+### Patch Changes
+
+- 3c43a07: Remove Simplify'ication when using SuperJson
+
+  Otherwise it will break some typing, for example Luxon's DateTime will be transformed into a weird object instead of a DateTime instance.
+
 ## 0.0.7
 
 ### Patch Changes

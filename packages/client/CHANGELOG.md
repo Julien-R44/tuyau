@@ -1,5 +1,12 @@
 # @tuyau/client
 
+## 0.2.9
+
+### Patch Changes
+
+- Updated dependencies [3c43a07]
+  - @tuyau/utils@0.0.8
+
 ## 0.2.8
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @tuyau/inertia
 
+## 0.0.14
+
+### Patch Changes
+
+- @tuyau/client@0.2.9
+
 ## 0.0.13
 
 ### Patch Changes
