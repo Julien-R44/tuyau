@@ -44,8 +44,7 @@
     "@adonisjs/core": "^6.18.0",
     "@poppinss/cliui": "^6.4.3",
     "@poppinss/matchit": "^3.1.2",
-    "@tuyau/client": "workspace:*",
-    "@types/node": "^22.15.18"
+    "@tuyau/client": "workspace:*"
   },
   "publishConfig": {
     "access": "public",

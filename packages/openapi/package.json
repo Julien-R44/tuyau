@@ -47,7 +47,6 @@
     "@tuyau/core": "workspace:*",
     "@tuyau/utils": "workspace:*",
     "@types/json-to-pretty-yaml": "^1.2.1",
-    "@types/node": "^22.15.18",
     "ts-morph": "^25.0.1"
   },
   "publishConfig": {

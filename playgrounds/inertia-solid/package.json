@@ -48,7 +48,7 @@
     "inertia-adapter-solid": "^0.2.0",
     "luxon": "^3.6.1",
     "reflect-metadata": "^0.2.2",
-    "solid-js": "^1.9.6"
+    "solid-js": "^1.9.7"
   },
   "devDependencies": {
     "@adonisjs/assembler": "^7.8.2",

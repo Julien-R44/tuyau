@@ -46,13 +46,13 @@
     }
   },
   "devDependencies": {
-    "@inertiajs/react": "^2.0.10",
-    "@inertiajs/vue3": "^2.0.10",
+    "@inertiajs/react": "^2.0.12",
+    "@inertiajs/vue3": "^2.0.12",
     "@tuyau/client": "workspace:*",
-    "@types/react": "^19.1.4",
+    "@types/react": "^19.1.8",
     "react": "^19.1.0",
-    "solid-js": "^1.9.6",
-    "vue": "^3.5.14"
+    "solid-js": "^1.9.7",
+    "vue": "^3.5.16"
   },
   "publishConfig": {
     "access": "public",
