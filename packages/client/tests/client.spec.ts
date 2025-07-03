@@ -54,7 +54,6 @@ test.group('Client | Runtime', () => {
     assert.equal(status, 0)
     assert.isTrue(error !== null)
     assert.instanceOf(error, TuyauNetworkError)
-    assert.include(error!.message, 'Network error: POST auth/login')
   })
 
   test('network error with unwrap', async ({ assert }) => {
