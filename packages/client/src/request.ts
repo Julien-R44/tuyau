@@ -1,8 +1,8 @@
 import type { KyInstance } from 'ky'
 import { serialize } from 'object-to-formdata'
 
-import { TuyauHTTPError } from './errors.js'
 import type { TuyauQueryOptions } from './types.js'
+import { TuyauHTTPError, TuyauNetworkError } from './errors.js'
 import { buildSearchParams, isObject, removeSlash } from './utils.js'
 
 const isServer = typeof FileList === 'undefined'
@@ -46,61 +46,75 @@ export class TuyauRequest {
   }
 
   async #makeRequest() {
-    /**
-     * If the body has a file, then we should move to multipart form data.
-     */
-    let key = 'json'
-    let body = this.#options.body
-    if (!(body instanceof FormData) && this.#hasFile(body)) {
-      body = serialize(body, { indices: true })
-      key = 'body'
-    } else if (body instanceof FormData) {
-      key = 'body'
-    }
+    try {
+      /**
+       * If the body has a file, then we should move to multipart form data.
+       */
+      let key = 'json'
+      let body = this.#options.body
+      if (!(body instanceof FormData) && this.#hasFile(body)) {
+        body = serialize(body, { indices: true })
+        key = 'body'
+      } else if (body instanceof FormData) {
+        key = 'body'
+      }
 
-    /**
-     * Make the request
-     */
-    const isGetOrHead = ['get', 'head'].includes(this.#options.method)
-    const response = await this.#options.client[this.#options.method](
-      removeSlash(this.#options.path),
-      {
-        searchParams: buildSearchParams(this.#options.queryOptions?.query || {}),
-        [key]: !isGetOrHead ? body : undefined,
-        ...this.#options.queryOptions,
-      },
-    )
+      /**
+       * Make the request
+       */
+      const isGetOrHead = ['get', 'head'].includes(this.#options.method)
+      const response = await this.#options.client[this.#options.method](
+        removeSlash(this.#options.path),
+        {
+          searchParams: buildSearchParams(this.#options.queryOptions?.query || {}),
+          [key]: !isGetOrHead ? body : undefined,
+          ...this.#options.queryOptions,
+        },
+      )
 
-    let data: any
-    let error: any
+      let data: any
+      let error: any
 
-    /**
-     * Parse the response based on the content type
-     */
-    const responseType = response.headers.get('Content-Type')?.split(';')[0]
-    if (responseType === 'application/json') {
-      data = await response.json()
-    } else if (responseType === 'application/octet-stream') {
-      data = await response.arrayBuffer()
-    } else {
-      data = await response.text()
-    }
+      /**
+       * Parse the response based on the content type
+       */
+      const responseType = response.headers.get('Content-Type')?.split(';')[0]
+      if (responseType === 'application/json') {
+        data = await response.json()
+      } else if (responseType === 'application/octet-stream') {
+        data = await response.arrayBuffer()
+      } else {
+        data = await response.text()
+      }
 
-    /**
-     * If the status code is not in the 200 range, we remove
-     * the data and set the error
-     */
-    const status = response.status
-    if (!response.ok) {
-      error = new TuyauHTTPError(response.status, data, response, {
+      /**
+       * If the status code is not in the 200 range, we remove
+       * the data and set the error
+       */
+      const status = response.status
+      if (!response.ok) {
+        error = new TuyauHTTPError(response.status, data, response, {
+          url: removeSlash(this.#options.path),
+          method: this.#options.method,
+        })
+
+        data = undefined
+      }
+
+      return { data, error, response, status }
+    } catch (originalError) {
+      /**
+       * Handle network errors (server unreachable, offline, etc.)
+       * by creating a TuyauNetworkError
+       */
+      const error = new TuyauNetworkError(originalError as Error, {
         url: removeSlash(this.#options.path),
         method: this.#options.method,
       })
 
-      data = undefined
+      // TODO: MAJOR Remove response and status from the return type
+      return { data: undefined, error, response: new Response(), status: 0 }
     }
-
-    return { data, error, response, status }
   }
 
   /**

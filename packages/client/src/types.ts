@@ -2,6 +2,7 @@ import type { Options as KyOptions } from 'ky'
 import type { IsNever, Prettify } from '@tuyau/utils/types'
 
 import type { RouteHelper } from './route.js'
+import type { TuyauHTTPError, TuyauNetworkError } from './errors.js'
 
 /**
  * Create an union type from all response that are successful
@@ -26,13 +27,12 @@ export type TuyauResponse<Res extends Record<number, unknown>> =
       status: number
       response: Response
       error: Exclude<keyof Res, 200> extends never
-        ? { status: unknown; value: unknown }
-        : {
-            [Status in Exclude<keyof Res, 200>]: {
-              status: Status
-              value: Res[Status]
-            }
-          }[Exclude<keyof Res, 200>]
+        ? TuyauHTTPError | TuyauNetworkError
+        :
+            | {
+                [Status in Exclude<keyof Res, 200>]: { status: Status; value: Res[Status] }
+              }[Exclude<keyof Res, 200>]
+            | TuyauNetworkError
     }
 
 /**

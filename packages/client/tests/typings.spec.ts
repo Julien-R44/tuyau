@@ -7,7 +7,7 @@ import type { MakeTuyauRequest, Serialize, Simplify } from '@tuyau/utils/types'
 
 import { createTuyau } from '../index.js'
 import type { api } from './fixtures/routes.js'
-import type { InferRequestType, InferResponseType } from '../index.js'
+import type { InferRequestType, InferResponseType, TuyauNetworkError } from '../index.js'
 
 test.group('Client | Typings', () => {
   test('post', async ({ expectTypeOf }) => {
@@ -155,6 +155,7 @@ test.group('Client | Typings', () => {
     expectTypeOf<Error>().toMatchTypeOf<
       | { status: 404; value: { messageNotFound: string } }
       | { status: 500; value: { messageServerError: string } }
+      | TuyauNetworkError
       | null
     >()
 
@@ -164,6 +165,7 @@ test.group('Client | Typings', () => {
       error:
         | { status: 404; value: { messageNotFound: string } }
         | { status: 500; value: { messageServerError: string } }
+        | TuyauNetworkError
     }>()
 
     expectTypeOf<Exclude<Response, { data: null }>>().toMatchTypeOf<{
@@ -308,7 +310,6 @@ test.group('Client | Typings', () => {
       }),
     )
 
-    type X = InferInput<typeof request>
     const tuyau = createTuyau<{
       routes: []
       definition: {
@@ -415,5 +416,5 @@ test.group('Client | Typings', () => {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     result.data?.token.abilities
-  }).fails()
+  })
 })

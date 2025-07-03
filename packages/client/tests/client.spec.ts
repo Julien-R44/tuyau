@@ -2,7 +2,7 @@ import nock from 'nock'
 import { test } from '@japa/runner'
 import type { Serialize, Simplify } from '@tuyau/utils/types'
 
-import { TuyauHTTPError, createTuyau } from '../index.js'
+import { TuyauHTTPError, TuyauNetworkError, createTuyau } from '../index.js'
 
 test.group('Client | Runtime', () => {
   test('post something', async ({ assert }) => {
@@ -28,6 +28,64 @@ test.group('Client | Runtime', () => {
     })
 
     assert.equal(result.data!.token, '123')
+  })
+
+  test('network error', async ({ assert }) => {
+    const tuyau = createTuyau<{
+      routes: []
+      definition: {
+        auth: {
+          login: {
+            $post: {
+              request: { email: string; password: string }
+              response: { 200: Simplify<Serialize<{ token: string }>> }
+            }
+          }
+        }
+      }
+    }>({ baseUrl: 'http://localhost:9999' })
+
+    const { data, status, error } = await tuyau.auth.login.$post({
+      email: 'test@test.com',
+      password: 'password',
+    })
+
+    assert.isUndefined(data)
+    assert.equal(status, 0)
+    assert.isTrue(error !== null)
+    assert.instanceOf(error, TuyauNetworkError)
+    assert.include(error!.message, 'Network error: POST auth/login')
+  })
+
+  test('network error with unwrap', async ({ assert }) => {
+    const tuyau = createTuyau<{
+      routes: []
+      definition: {
+        auth: {
+          login: {
+            $post: {
+              request: { email: string; password: string }
+              response: { 200: Simplify<Serialize<{ token: string }>> }
+            }
+          }
+        }
+      }
+    }>({ baseUrl: 'http://localhost:9999' })
+
+    let error: any = null
+    await tuyau.auth.login
+      .$post({
+        email: 'test@test.com',
+        password: 'password',
+      })
+      .unwrap()
+      .catch((err) => {
+        error = err
+      })
+
+    assert.isTrue(error !== null)
+    assert.instanceOf(error, TuyauNetworkError)
+    assert.include(error!.message, 'Network error: POST auth/login')
   })
 
   test('post with query parameters', async ({}) => {
