@@ -298,6 +298,46 @@ test.group('Client | Typings', () => {
     })
   })
 
+  test('optional file typing', async ({}) => {
+    // @ts-expect-error
+    vine.file = () => vine.string()
+
+    const request = vine.compile(
+      vine.object({
+        picture: vine.file({ extnames: ['jpg', 'jpeg', 'png', 'gif'], size: '1mb' }).optional(),
+      }),
+    )
+
+    type X = InferInput<typeof request>
+    const tuyau = createTuyau<{
+      routes: []
+      definition: {
+        user: {
+          $post: {
+            request: MakeTuyauRequest<InferInput<typeof request>>
+            response: { 200: Simplify<Serialize<{ id: string }>> }
+          }
+        }
+      }
+    }>({ baseUrl: 'http://localhost:3333' })
+
+    tuyau.user.$post({
+      picture: new File([], 'filename.jpg'),
+    })
+
+    tuyau.user.$post({
+      picture: new Blob([], { type: 'image/jpeg' }),
+    })
+
+    tuyau.user.$post({
+      picture: {
+        uri: 'http://example.com/filename.jpg',
+        name: 'filename.jpg',
+        type: 'image/jpeg',
+      },
+    })
+  })
+
   test('if no routes passed, $route and co should not be available', async ({}) => {
     const tuyau = createTuyau<{ definition: (typeof api)['definition'] }>({
       baseUrl: 'http://localhost:3333',

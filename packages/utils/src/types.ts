@@ -119,11 +119,13 @@ export type MakeNonSerializedTuyauResponse<
     ? { 422: { errors: { message: string; rule: string; field: string }[] } }
     : {})
 
+type TransformMultipartFile<T> = T extends MultipartFile ? Blob | File | ReactNativeFile : T
+
 /**
  * Shortcut for computing the Tuyau request type
  *
  * Also Remap MultipartFile to Blob | File | ReactNativeFile
  */
 export type MakeTuyauRequest<T extends object> = MakeOptional<{
-  [K in keyof T]: T[K] extends MultipartFile ? Blob | File | ReactNativeFile : T[K]
+  [K in keyof T]: TransformMultipartFile<T[K]>
 }>
