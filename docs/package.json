@@ -15,7 +15,7 @@
     "#src/*": "./src/*.js"
   },
   "dependencies": {
-    "@adonisjs/core": "^6.18.0",
+    "@adonisjs/core": "^6.19.0",
     "@adonisjs/static": "^1.1.1",
     "@radix-ui/colors": "^3.0.0",
     "@ryangjchandler/alpine-tooltip": "^2.0.1",
@@ -34,11 +34,11 @@
     "@docsearch/js": "^3.9.0",
     "alpinejs": "^3.14.9",
     "collect.js": "^4.36.1",
-    "concurrently": "^9.1.2",
+    "concurrently": "^9.2.0",
     "edge-uikit": "^1.0.0-1",
     "medium-zoom": "^1.1.0",
     "reflect-metadata": "^0.2.2",
-    "undici": "^7.10.0",
-    "unpoly": "^3.10.2"
+    "undici": "^7.11.0",
+    "unpoly": "^3.11.0"
   }
 }

@@ -27,7 +27,7 @@
     "object-to-formdata": "^4.5.1"
   },
   "devDependencies": {
-    "@adonisjs/core": "^6.18.0",
+    "@adonisjs/core": "^6.19.0",
     "@vinejs/vine": "^3.0.1"
   },
   "tsup": {
