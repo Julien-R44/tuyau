@@ -7,16 +7,10 @@ import {
   createTuyauRecursiveProxy,
 } from '@tuyau/client'
 
+import { unwrapLazyArg } from './utils.js'
 import { DecorateRouterKeyable } from './types.js'
 import { getQueryKeyInternal, tuyauQueryOptions, DecorateQueryFn } from './query.js'
 import { getMutationKeyInternal, tuyauMutationOptions, DecorateMutationFn } from './mutation.js'
-
-/**
- * Unwrap lazy arguments
- */
-function unwrapLazyArg<T>(arg: T | (() => T)): T {
-  return typeof arg === 'function' ? (arg as () => T)() : arg
-}
 
 /**
  * Main factory function to create a Tuyau React Query client

@@ -8,6 +8,7 @@ import {
   SkipToken,
 } from '@tanstack/react-query'
 
+import { buildRequestPath } from './utils.js'
 import {
   TuyauQueryKey,
   QueryType,
@@ -24,6 +25,7 @@ import {
 
 /**
  * Generate a Tuyau query key from path and input parameters
+ * Following the pattern used by tRPC for consistent query key generation
  */
 export function getQueryKeyInternal(
   path: string[],
@@ -47,6 +49,9 @@ export function getQueryKeyInternal(
 
 /**
  * Create query options for Tuyau with React Query integration
+ *
+ * This function creates a React Query queryOptions object that works with Tuyau's type system.
+ * It handles skipToken for conditional queries and extracts payload/params from input.
  */
 export function tuyauQueryOptions(options: {
   input: unknown
@@ -56,49 +61,45 @@ export function tuyauQueryOptions(options: {
   path: string[]
   client: TuyauClient<any, any>
 }) {
-  const { input, opts, queryKey } = options
+  const { input, opts, queryKey, path, client } = options
   const inputIsSkipToken = input === skipToken
 
   const queryFn = inputIsSkipToken
     ? skipToken
     : async () => {
-        let actualInput = input
-        let finalPath = options.path
-
-        if (
-          typeof input === 'object' &&
-          input !== null &&
-          ('payload' in input || 'params' in input)
-        ) {
-          const { payload, params } = input as {
-            payload?: any
-            params?: Record<string, string | number>
-          }
-          actualInput = payload
-
-          // Build the path with params if provided
-          if (params) {
-            finalPath = options.path.map((segment) => {
-              if (segment.startsWith(':')) {
-                const paramName = segment.slice(1)
-                return params[paramName]?.toString() || segment
-              }
-              return segment
-            })
-          }
-        }
-
-        // @ts-expect-error - tkt, internal API
-        const result = await options.client.$fetch({
-          paths: finalPath,
-          input: actualInput,
-        })
-        return result
+        const { payload, requestPath } = extractInputAndPath(input, path)
+        // @ts-expect-error - Using internal API for client fetch
+        return await client.$fetch({ paths: requestPath, input: payload })
       }
 
   return Object.assign(queryOptions({ ...opts, queryKey, queryFn }), {
-    tuyau: { path: options.path, type: 'query' as const },
+    tuyau: { path, type: 'query' as const },
   })
+}
+
+/**
+ * Extract payload and build request path from input and path segments
+ *
+ * This function handles the transformation of input that can be:
+ * - A simple payload (used as-is)
+ * - An object with { payload, params } where params are used for route parameters
+ */
+function extractInputAndPath(input: unknown, path: string[]) {
+  if (
+    typeof input !== 'object' ||
+    input === null ||
+    (!('payload' in input) && !('params' in input))
+  ) {
+    return { payload: input, requestPath: path }
+  }
+
+  const { payload, params } = input as {
+    payload?: any
+    params?: Record<string, string | number>
+  }
+
+  const requestPath = buildRequestPath(path, params)
+  return { payload, requestPath }
 }
 
 /**

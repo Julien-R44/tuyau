@@ -179,3 +179,8 @@ export interface DecorateRouterKeyable {
     filters?: QueryFilters<TuyauQueryKey>,
   ) => WithRequired<QueryFilters<TuyauQueryKey>, 'queryKey'>
 }
+
+/**
+ * Type for promise that might be synchronous
+ */
+export type MaybePromise<T> = T | Promise<T>

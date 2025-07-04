@@ -1,27 +1,8 @@
 import type { TuyauClient } from '@tuyau/client'
 import { MutationFunction, QueryClient } from '@tanstack/react-query'
 
-import { TuyauMutationKey, EndpointDef, TuyauReactMutationOptions } from './types.js'
-
-/**
- * Type for promise that might be synchronous
- */
-type MaybePromise<T> = T | Promise<T>
-
-/**
- * Generate a Tuyau mutation key from path
- */
-export function getMutationKeyInternal(path: readonly string[]): TuyauMutationKey {
-  const splitPath = path.flatMap((part) => part.toString().split('.'))
-  return splitPath.length ? [splitPath] : ([] as unknown as TuyauMutationKey)
-}
-
-/**
- * Unwrap lazy arguments
- */
-function unwrapLazyArg<T>(arg: T | (() => T)): T {
-  return typeof arg === 'function' ? (arg as () => T)() : arg
-}
+import { buildRequestPath, unwrapLazyArg } from './utils.js'
+import { TuyauMutationKey, EndpointDef, TuyauReactMutationOptions, MaybePromise } from './types.js'
 
 /**
  * Interface for mutation options override
@@ -41,7 +22,16 @@ export interface MutationOptionsOverride {
 }
 
 /**
- * Create Tuyau options result
+ * Generate a Tuyau mutation key from path
+ * Similar to query key but simpler structure for mutations
+ */
+export function getMutationKeyInternal(path: readonly string[]): TuyauMutationKey {
+  const splitPath = path.flatMap((part) => part.toString().split('.'))
+  return splitPath.length ? [splitPath] : ([] as unknown as TuyauMutationKey)
+}
+
+/**
+ * Create Tuyau options result metadata
  */
 function createTuyauOptionsResult(opts: { path: string[] }) {
   return {
@@ -83,24 +73,13 @@ export function tuyauMutationOptions(args: {
     payload: any
     params?: Record<string, string | number>
   }) => {
-    const actualClient = client
-    const actualInput = input.payload
-    const params = input.params
+    const requestPath = buildRequestPath(path, input.params)
 
-    // Build the path with params if provided
-    let finalPath = path
-    if (params) {
-      finalPath = path.map((segment) => {
-        if (segment.startsWith(':')) {
-          const paramName = segment.slice(1)
-          return params[paramName]?.toString() || segment
-        }
-        return segment
-      })
-    }
-
-    // @ts-expect-error - tkt, internal API
-    return await actualClient.$fetch({ paths: finalPath, input: actualInput })
+    // @ts-expect-error - Using internal API for client fetch
+    return await client.$fetch({
+      paths: requestPath,
+      input: input.payload,
+    })
   }
 
   return {
