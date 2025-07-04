@@ -1,0 +1,56 @@
+{
+  "name": "@tuyau/react-query",
+  "type": "module",
+  "version": "0.0.0",
+  "description": "React Query plugin for Tuyau",
+  "author": "Julien Ripouteau <julien@ripouteau.com>",
+  "license": "ISC",
+  "keywords": [],
+  "exports": {
+    ".": "./build/index.js"
+  },
+  "main": "build/index.js",
+  "files": [
+    "build"
+  ],
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "build": "tsup-node",
+    "test": "c8 node --enable-source-maps --loader ts-node/esm bin/test.ts",
+    "quick:test": "node --enable-source-maps --loader ts-node/esm bin/test.ts",
+    "checks": "pnpm lint && pnpm typecheck"
+  },
+  "peerDependencies": {
+    "@tanstack/react-query": "^5.74.7",
+    "@tuyau/client": "^0.2.7"
+  },
+  "dependencies": {
+    "@tuyau/utils": "workspace:*"
+  },
+  "devDependencies": {
+    "@adonisjs/core": "^6.18.0",
+    "@happy-dom/global-registrator": "^17.4.7",
+    "@tanstack/react-query": "^5.76.1",
+    "@testing-library/react": "^16.3.0",
+    "@tuyau/client": "workspace:*",
+    "@types/react": "^19.1.4",
+    "@vinejs/vine": "^3.0.1",
+    "nock": "^14.0.4",
+    "react": "^19.1.0"
+  },
+  "tsup": {
+    "entry": [
+      "./src/index.ts"
+    ],
+    "outDir": "./build",
+    "clean": true,
+    "format": "esm",
+    "dts": true,
+    "target": "esnext"
+  },
+  "publishConfig": {
+    "access": "public",
+    "tag": "latest"
+  }
+}

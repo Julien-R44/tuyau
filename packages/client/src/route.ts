@@ -20,7 +20,7 @@ export class RouteHelper<Routes extends GeneratedRoutes> {
 
   constructor(
     private baseUrl: string,
-    private routes: Routes,
+    private routes: Routes | undefined,
     private client: KyInstance,
   ) {
     this.#parsedRoutes = routes?.map((route) => parse(route.path))
@@ -30,14 +30,14 @@ export class RouteHelper<Routes extends GeneratedRoutes> {
    * Get a route by its name and throw an error if it doesn't exist
    */
   #getRouteByName(name: string) {
-    const route = this.routes.find((route) => route.name === name)
+    const route = this.routes?.find((route) => route.name === name)
     if (!route) throw new Error(`Route ${name} not found`)
 
     return route
   }
 
   #getRouteByPath(path: string, onlyGet = false) {
-    const route = this.routes.find(
+    const route = this.routes?.find(
       (route) => route.path === path && (onlyGet ? route.method.includes('GET') : true),
     )
     if (!route) throw new Error(`Route ${path} not found`)
@@ -215,7 +215,7 @@ export class RouteHelper<Routes extends GeneratedRoutes> {
    *
    */
   $has(name: RouteName<Routes> | (string & {})) {
-    if (!name.includes('*')) return this.routes.some((route) => route.name === name)
-    return this.routes.some((route) => this.#wildcardMatch(name, route))
+    if (!name.includes('*')) return this.routes?.some((route) => route.name === name)
+    return this.routes?.some((route) => this.#wildcardMatch(name, route))
   }
 }
