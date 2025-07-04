@@ -1,5 +1,5 @@
+import { IsNever } from '@tuyau/utils/types'
 import { QueryClient } from '@tanstack/react-query'
-import { IsNever, Prettify } from '@tuyau/utils/types'
 import {
   type TuyauClient,
   type GeneratedRoutes,
@@ -31,11 +31,10 @@ export function createTuyauReactQueryClient<
     const path = paths.slice(0, -1)
     const [arg1, arg2] = args
 
-    // Handle query-related methods
     if (fnName === 'queryOptions') {
       return tuyauQueryOptions({
         input: arg1,
-        opts: arg2,
+        opts: arg2 || {},
         queryKey: getQueryKeyInternal(path, arg1, 'query'),
         queryClient: unwrapLazyArg(options.queryClient),
         client: options.client as any,
@@ -45,28 +44,17 @@ export function createTuyauReactQueryClient<
 
     if (fnName === 'queryKey') return getQueryKeyInternal(path, arg1, 'query')
     if (fnName === 'pathKey') return getQueryKeyInternal(path)
-
-    // Handle query filter support
     if (fnName === 'queryFilter') {
-      return {
-        ...arg2,
-        queryKey: getQueryKeyInternal(path, arg1, 'query'),
-      }
+      return { ...arg2, queryKey: getQueryKeyInternal(path, arg1, 'query') }
     }
-
-    // Handle path filter support
     if (fnName === 'pathFilter') {
-      return {
-        ...arg1,
-        queryKey: getQueryKeyInternal(path),
-      }
+      return { ...arg1, queryKey: getQueryKeyInternal(path) }
     }
 
-    // Handle mutation-related methods
     if (fnName === 'mutationOptions') {
       return tuyauMutationOptions({
-        opts: arg1,
         path,
+        opts: arg1,
         queryClient: unwrapLazyArg(options.queryClient),
         client: options.client as any,
       })
@@ -86,30 +74,43 @@ export function createTuyauReactQueryClient<
  * Main type for the Tuyau React Query client
  * Maps route definitions to appropriate query or mutation decorators
  */
-export type TuyauReactQuery<in out Route extends Record<string, any>> = {
+export type TuyauReactQuery<in out Route extends Record<string, any>, NotProvidedParams = {}> = {
   [K in keyof Route as K extends `:${string}` ? never : K]: Route[K] extends {
     response: infer _Res extends Record<number, unknown>
     request: infer _Request
   }
     ? // GET, HEAD methods become queries
       K extends '$get' | '$head'
-      ? DecorateQueryFn<Route[K]> & DecorateRouterKeyable
+      ? DecorateQueryFn<Route[K], NotProvidedParams> & DecorateRouterKeyable
       : // POST, PUT, PATCH, DELETE methods become mutations
-        DecorateMutationFn<Route[K]> & DecorateRouterKeyable
+        DecorateMutationFn<Route[K], NotProvidedParams> & DecorateRouterKeyable
     : K extends '$url'
       ? (options?: { query?: QueryParameters }) => string
-      : CreateParams<Route[K]> & DecorateRouterKeyable
+      : CreateParams<Route[K], NotProvidedParams> & DecorateRouterKeyable
 }
 
 /**
  * Type for handling route parameters
  */
-export type CreateParams<Route extends Record<string, any>> =
+export type CreateParams<Route extends Record<string, any>, NotProvidedParams = {}> =
   Extract<keyof Route, `:${string}`> extends infer Path extends string
     ? IsNever<Path> extends true
-      ? Prettify<TuyauReactQuery<Route>> & DecorateRouterKeyable
+      ? TuyauReactQuery<Route, NotProvidedParams> & DecorateRouterKeyable
       : ((params: {
           [param in Path extends `:${infer Param}` ? Param : never]: string | number
-        }) => Prettify<TuyauReactQuery<Route[Path]>> & CreateParams<Route[Path]>) &
-          Prettify<TuyauReactQuery<Route>>
+        }) => TuyauReactQuery<Route[Path], NotProvidedParams> &
+          CreateParams<
+            Route[Path],
+            NotProvidedParams & {
+              [param in Path extends `:${infer Param}` ? Param : never]: string | number
+            }
+          >) &
+          TuyauReactQuery<Route, NotProvidedParams> & {
+            [K in keyof Route as K extends `:${string}` ? K : never]: TuyauReactQuery<
+              Route[K],
+              NotProvidedParams & {
+                [param in Path extends `:${infer Param}` ? Param : never]: string | number
+              }
+            >
+          }
     : never

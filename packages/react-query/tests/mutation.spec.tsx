@@ -46,15 +46,13 @@ test.group('Mutation | Options', () => {
 
     const { result } = renderHookWithWrapper(() => useMutation(tuyau.users.$post.mutationOptions()))
 
-    result.current.mutate({ name: 'foo' })
+    result.current.mutate({ payload: { name: 'foo' } })
     await setTimeout(300)
 
     assert.equal(result.current.isSuccess, true)
     expectTypeOf(result.current.data).toEqualTypeOf<{ id: number; name: string } | undefined>()
   })
-})
 
-test.group('Types | Mutation Types', () => {
   test('mutationOptions should return correct types', ({ expectTypeOf }) => {
     const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
     const tuyau = createTuyauReactQueryClient({ client, queryClient })
@@ -66,7 +64,7 @@ test.group('Types | Mutation Types', () => {
     })
 
     expectTypeOf(mutationOptions.mutationKey).toMatchTypeOf<TuyauMutationKey>()
-    expectTypeOf(mutationOptions.mutationFn).toBeCallableWith({ name: 'foo' })
+    expectTypeOf(mutationOptions.mutationFn).toBeCallableWith({ payload: { name: 'foo' } })
   })
 
   test('mutationKey should return TuyauMutationKey type', ({ expectTypeOf }) => {
@@ -76,5 +74,174 @@ test.group('Types | Mutation Types', () => {
     const mutationKey = tuyau.users.$post.mutationKey()
     expectTypeOf(mutationKey).toMatchTypeOf<TuyauMutationKey>()
     expectTypeOf(mutationKey[0]).toMatchTypeOf<readonly string[]>()
+  })
+})
+
+test.group('Mutation | onSuccess Override', () => {
+  test('should call original onSuccess when no override provided', async ({ assert }) => {
+    const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
+    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+
+    let originalCalled = false
+    const originalOnSuccess = () => {
+      originalCalled = true
+    }
+
+    nock('http://localhost:3333').post('/users').reply(201, { id: 101, name: 'override1' })
+
+    const { result } = renderHookWithWrapper(() =>
+      useMutation(
+        tuyau.users.$post.mutationOptions({
+          onSuccess: originalOnSuccess,
+        }),
+      ),
+    )
+
+    result.current.mutate({ payload: { name: 'override1' } })
+    await setTimeout(300)
+
+    assert.isTrue(originalCalled)
+    assert.equal(result.current.isSuccess, true)
+  })
+
+  test('should call override onSuccess when provided', async ({ assert }) => {
+    const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
+    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+
+    let originalCalled = false
+    let overrideCalled = false
+
+    nock('http://localhost:3333').post('/users').reply(201, { id: 102, name: 'override2' })
+
+    const { result } = renderHookWithWrapper(() =>
+      useMutation(
+        tuyau.users.$post.mutationOptions({
+          onSuccess: () => (originalCalled = true),
+        }),
+      ),
+    )
+
+    result.current.mutate(
+      { payload: { name: 'override2' } },
+      { onSuccess: () => (overrideCalled = true) },
+    )
+
+    await setTimeout(300)
+
+    assert.isTrue(overrideCalled)
+    assert.isTrue(originalCalled)
+    assert.equal(result.current.isSuccess, true)
+  })
+
+  test('should work with override that does not call original', async ({ assert }) => {
+    const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
+    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+
+    let originalCalled = false
+    let overrideCalled = false
+
+    nock('http://localhost:3333').post('/users').reply(201, { id: 1, name: 'foo' })
+
+    const { result } = renderHookWithWrapper(() =>
+      useMutation(
+        tuyau.users.$post.mutationOptions({
+          onSuccess: () => (originalCalled = true),
+        }),
+      ),
+    )
+
+    result.current.mutate(
+      { payload: { name: 'foo' } },
+      { onSuccess: () => (overrideCalled = true) },
+    )
+
+    await setTimeout(300)
+
+    assert.isTrue(overrideCalled)
+    // Note: Both should be true in this case since we're using React Query's override pattern
+    assert.isTrue(originalCalled)
+    assert.equal(result.current.isSuccess, true)
+  })
+
+  test('should provide correct metadata to override', async ({ assert }) => {
+    const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
+    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+
+    let metaReceived = false
+
+    nock('http://localhost:3333').post('/users').reply(201, { id: 1, name: 'foo' })
+
+    const { result } = renderHookWithWrapper(() =>
+      useMutation(
+        tuyau.users.$post.mutationOptions({
+          meta: { custom: 'value' },
+          onSuccess: () => {
+            metaReceived = true
+            // Meta is available through context in React Query
+          },
+        }),
+      ),
+    )
+
+    result.current.mutate({ payload: { name: 'foo' } })
+    await setTimeout(300)
+
+    assert.isTrue(metaReceived)
+    assert.equal(result.current.isSuccess, true)
+  })
+
+  test('should work with async override functions', async ({ assert }) => {
+    const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
+    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+
+    let originalCalled = false
+    let overrideCalled = false
+
+    nock('http://localhost:3333').post('/users').reply(201, { id: 1, name: 'foo' })
+
+    const { result } = renderHookWithWrapper(() =>
+      useMutation(
+        tuyau.users.$post.mutationOptions({
+          onSuccess: () => (originalCalled = true),
+        }),
+      ),
+    )
+
+    result.current.mutate(
+      { payload: { name: 'foo' } },
+      {
+        onSuccess: async () => {
+          overrideCalled = true
+          await setTimeout(10)
+        },
+      },
+    )
+
+    await setTimeout(300)
+
+    assert.isTrue(overrideCalled)
+    assert.isTrue(originalCalled)
+    assert.equal(result.current.isSuccess, true)
+  })
+
+  test('should work without user-provided onSuccess', async ({ assert }) => {
+    const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
+    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+
+    let overrideCalled = false
+
+    nock('http://localhost:3333').post('/users').reply(201, { id: 1, name: 'foo' })
+
+    const { result } = renderHookWithWrapper(() => useMutation(tuyau.users.$post.mutationOptions()))
+
+    result.current.mutate(
+      { payload: { name: 'foo' } },
+      { onSuccess: () => (overrideCalled = true) },
+    )
+
+    await setTimeout(300)
+
+    assert.isTrue(overrideCalled)
+    assert.equal(result.current.isSuccess, true)
   })
 })

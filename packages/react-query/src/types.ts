@@ -115,20 +115,59 @@ export interface UnusedSkipTokenTuyauQueryOptionsOut<TQueryFnData, TData, TError
 }
 
 /**
- * Input type for mutation options
+ * Input type for mutation options with params and payload support
  */
-export interface TuyauMutationOptionsIn<TInput, TError, TOutput, TContext>
-  extends DistributiveOmit<
-    UseMutationOptions<TOutput, TError, TInput, TContext>,
+export interface TuyauMutationOptionsIn<
+  TInput,
+  TError,
+  TOutput,
+  TContext,
+  TParams = Record<string, string | number>,
+> extends DistributiveOmit<
+    UseMutationOptions<TOutput, TError, { payload: TInput; params?: TParams }, TContext>,
     MutationReservedOptions
-  > {}
+  > {
+  /**
+   * Route parameters to be passed to the mutation
+   */
+  params?: TParams
+}
 
 /**
  * Output type for mutation options
  */
-export interface TuyauMutationOptionsOut<TInput, TError, TOutput, TContext>
-  extends UseMutationOptions<TOutput, TError, TInput, TContext> {
+export interface TuyauMutationOptionsOut<
+  TInput,
+  TError,
+  TOutput,
+  TContext,
+  TParams = Record<string, string | number>,
+> extends UseMutationOptions<TOutput, TError, { payload: TInput; params?: TParams }, TContext> {
   mutationKey: TuyauMutationKey
+}
+
+/**
+ * Type definition for mutation options with params and payload support
+ */
+export interface TuyauReactMutationOptions<
+  TDef extends EndpointDef,
+  TParams = Record<string, string | number>,
+> {
+  <TContext = unknown>(
+    opts?: TuyauMutationOptionsIn<
+      TDef['request'],
+      any,
+      UnionFromSuccessStatuses<TDef['response']>,
+      TContext,
+      TParams
+    >,
+  ): TuyauMutationOptionsOut<
+    TDef['request'],
+    any,
+    UnionFromSuccessStatuses<TDef['response']>,
+    TContext,
+    TParams
+  >
 }
 
 /**
