@@ -26,7 +26,6 @@ import {
 
 /**
  * Generate a Tuyau query key from path and input parameters
- * Following the pattern used by tRPC for consistent query key generation
  */
 export function getQueryKeyInternal(
   path: string[],
@@ -56,9 +55,6 @@ export function getQueryKeyInternal(
 
 /**
  * Create query options for Tuyau with React Query integration
- *
- * This function creates a React Query queryOptions object that works with Tuyau's type system.
- * It handles skipToken for conditional queries and extracts payload/params from input.
  */
 export function tuyauQueryOptions(options: {
   input: unknown
@@ -86,10 +82,6 @@ export function tuyauQueryOptions(options: {
 
 /**
  * Extract payload and build request path from input and path segments
- *
- * This function handles the transformation of input that can be:
- * - A simple payload (used as-is)
- * - An object with { payload, params } where params are used for route parameters
  */
 function extractInputAndPath(input: unknown, path: string[]) {
   if (

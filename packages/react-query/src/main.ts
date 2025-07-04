@@ -14,8 +14,7 @@ import { tuyauInfiniteQueryOptions, DecorateInfiniteQueryFn } from './infinite_q
 import { getMutationKeyInternal, tuyauMutationOptions, DecorateMutationFn } from './mutation.js'
 
 /**
- * Main factory function to create a Tuyau React Query client
- * Provides type-safe integration between Tuyau routes and React Query
+ * Create the Tuyau React Query client
  */
 export function createTuyauReactQueryClient<
   D extends Record<string, any>,
@@ -51,6 +50,7 @@ export function createTuyauReactQueryClient<
     if (fnName === 'queryKey') return getQueryKeyInternal(path, arg1, 'query')
     if (fnName === 'infiniteQueryKey') return getQueryKeyInternal(path, arg1, 'infinite')
     if (fnName === 'pathKey') return getQueryKeyInternal(path)
+
     if (fnName === 'queryFilter') {
       return { ...arg2, queryKey: getQueryKeyInternal(path, arg1, 'query') }
     }
@@ -102,27 +102,52 @@ export type TuyauReactQuery<in out Route extends Record<string, any>, NotProvide
 }
 
 /**
+ * Extract path parameters from route keys
+ */
+type ExtractPathParams<Route> = Extract<keyof Route, `:${string}`>
+
+/**
+ * Convert path parameter to object type
+ */
+type PathParamToObject<Path extends string> = Path extends `:${infer Param}`
+  ? { [K in Param]: string | number }
+  : never
+
+/**
+ * Create the route parameter function signature
+ */
+type CreateParamFunction<
+  Route extends Record<string, any>,
+  Path extends string,
+  NotProvidedParams,
+> = (
+  params: PathParamToObject<Path>,
+) => TuyauReactQuery<Route[Path], NotProvidedParams> &
+  CreateParams<Route[Path], NotProvidedParams & PathParamToObject<Path>>
+
+/**
+ * Create the parameter property mappings
+ */
+type CreateParamProperties<
+  Route extends Record<string, any>,
+  Path extends string,
+  NotProvidedParams,
+> = {
+  [K in keyof Route as K extends `:${string}` ? K : never]: TuyauReactQuery<
+    Route[K],
+    NotProvidedParams & PathParamToObject<Path>
+  >
+}
+
+/**
  * Type for handling route parameters
  */
 export type CreateParams<Route extends Record<string, any>, NotProvidedParams = {}> =
-  Extract<keyof Route, `:${string}`> extends infer Path extends string
+  ExtractPathParams<Route> extends infer Path extends string
     ? IsNever<Path> extends true
       ? TuyauReactQuery<Route, NotProvidedParams> & DecorateRouterKeyable
-      : ((params: {
-          [param in Path extends `:${infer Param}` ? Param : never]: string | number
-        }) => TuyauReactQuery<Route[Path], NotProvidedParams> &
-          CreateParams<
-            Route[Path],
-            NotProvidedParams & {
-              [param in Path extends `:${infer Param}` ? Param : never]: string | number
-            }
-          >) &
-          TuyauReactQuery<Route, NotProvidedParams> & {
-            [K in keyof Route as K extends `:${string}` ? K : never]: TuyauReactQuery<
-              Route[K],
-              NotProvidedParams & {
-                [param in Path extends `:${infer Param}` ? Param : never]: string | number
-              }
-            >
-          }
+      : CreateParamFunction<Route, Path, NotProvidedParams> &
+          TuyauReactQuery<Route, NotProvidedParams> &
+          CreateParamProperties<Route, Path, NotProvidedParams> &
+          DecorateRouterKeyable
     : never

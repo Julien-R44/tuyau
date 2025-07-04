@@ -63,19 +63,13 @@ export function tuyauMutationOptions(args: {
 
   const mutationKey = getMutationKeyInternal(path)
 
-  // Get default mutation options from QueryClient
   const defaultOpts = queryClient.defaultMutationOptions(
     queryClient.getMutationDefaults(mutationKey),
   )
 
-  // Use override or default to just call original function
   const mutationSuccessOverride: MutationOptionsOverride['onSuccess'] =
     overrides?.onSuccess ?? ((options) => options.originalFn())
 
-  /**
-   * Mutation function that calls the Tuyau client
-   * The input parameter should be of the form { payload: actualPayload, params?: routeParams }
-   */
   const mutationFn: MutationFunction<any, any> = async (input: {
     payload: any
     params?: Record<string, string | number>
@@ -83,10 +77,7 @@ export function tuyauMutationOptions(args: {
     const requestPath = buildRequestPath(path, input.params)
 
     // @ts-expect-error - Using internal API for client fetch
-    return await client.$fetch({
-      paths: requestPath,
-      input: input.payload,
-    })
+    return await client.$fetch({ paths: requestPath, input: input.payload })
   }
 
   return {

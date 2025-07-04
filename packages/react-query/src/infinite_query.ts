@@ -189,12 +189,6 @@ function extractInfiniteInputAndPath(input: unknown, path: string[]) {
   return { payload, requestPath }
 }
 
-/**
- * Create infinite query options for Tuyau with React Query integration
- *
- * This function creates a React Query infiniteQueryOptions object that works with Tuyau's type system.
- * It handles skipToken for conditional queries and manages cursor-based pagination.
- */
 export function tuyauInfiniteQueryOptions(options: {
   input: unknown
   opts: any
