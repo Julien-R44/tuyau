@@ -4,7 +4,7 @@ import { createTuyau } from '@tuyau/client'
 import { setTimeout } from 'node:timers/promises'
 import { useMutation, useQuery } from '@tanstack/react-query'
 
-import { createTuyauReactQueryClient } from '../index.js'
+import { createTuyauReactQueryClient } from '../src/index.js'
 import { ApiDefinition, queryClient, renderHookWithWrapper } from './helpers.jsx'
 
 test.group('Mutation | useQuery', () => {

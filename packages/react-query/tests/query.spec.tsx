@@ -1,10 +1,10 @@
 import nock from 'nock'
 import { test } from '@japa/runner'
 import { createTuyau } from '@tuyau/client'
-import { useQuery } from '@tanstack/react-query'
 import { setTimeout } from 'node:timers/promises'
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query'
 
-import { createTuyauReactQueryClient } from '../index.js'
+import { createTuyauReactQueryClient } from '../src/index.js'
 import { ApiDefinition, queryClient, renderHookWithWrapper } from './helpers.jsx'
 
 test.group('Query | useQuery', () => {
@@ -112,5 +112,28 @@ test.group('Query | pathKey', () => {
     assert.deepEqual(r3, [['users']])
     assert.deepEqual(r4, [['users', '1']])
     assert.deepEqual(r5, [['users', '1', 'comments']])
+  })
+})
+
+test.group('Query | UseSuspenseQuery', () => {
+  test('basic', async ({ expectTypeOf, assert }) => {
+    const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
+    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+
+    nock('http://localhost:3333')
+      .get('/users')
+      .query({ name: 'foo' })
+      .reply(200, [{ id: 1, name: 'foo' }])
+
+    const { result } = renderHookWithWrapper(() =>
+      useSuspenseQuery(tuyau.users.$get.queryOptions({ name: 'foo' })),
+    )
+
+    await setTimeout(300)
+
+    assert.deepEqual(result.current.data, [{ id: 1, name: 'foo' }])
+    expectTypeOf(result.current.data).toEqualTypeOf<
+      Array<{ id: number; name: string }> | undefined
+    >()
   })
 })
