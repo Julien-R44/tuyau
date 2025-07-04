@@ -7,6 +7,9 @@ import {
   UseMutationOptions,
 } from '@tanstack/react-query'
 
+import { DecorateQueryFn } from './query.js'
+import { DecorateMutationFn } from './mutation.js'
+
 /**
  * Extract union type from successful HTTP status codes (200-299)
  */
@@ -134,43 +137,6 @@ export interface TuyauMutationOptionsIn<
 }
 
 /**
- * Output type for mutation options
- */
-export interface TuyauMutationOptionsOut<
-  TInput,
-  TError,
-  TOutput,
-  TContext,
-  TParams = Record<string, string | number>,
-> extends UseMutationOptions<TOutput, TError, { payload: TInput; params?: TParams }, TContext> {
-  mutationKey: TuyauMutationKey
-}
-
-/**
- * Type definition for mutation options with params and payload support
- */
-export interface TuyauReactMutationOptions<
-  TDef extends EndpointDef,
-  TParams = Record<string, string | number>,
-> {
-  <TContext = unknown>(
-    opts?: TuyauMutationOptionsIn<
-      TDef['request'],
-      any,
-      UnionFromSuccessStatuses<TDef['response']>,
-      TContext,
-      TParams
-    >,
-  ): TuyauMutationOptionsOut<
-    TDef['request'],
-    any,
-    UnionFromSuccessStatuses<TDef['response']>,
-    TContext,
-    TParams
-  >
-}
-
-/**
  * Interface for router keyable decorators (pathKey, pathFilter)
  */
 export interface DecorateRouterKeyable {
@@ -184,3 +150,22 @@ export interface DecorateRouterKeyable {
  * Type for promise that might be synchronous
  */
 export type MaybePromise<T> = T | Promise<T>
+
+export interface TypeHelper<EDef extends EndpointDef> {
+  /**
+   * @internal
+   */
+  '~types': { request: EDef['request']; response: EDef['response'] }
+}
+
+/**
+ * Infer request type from an endpoint
+ */
+export type InferRequestType<Endpoint extends DecorateQueryFn<any> | DecorateMutationFn<any>> =
+  Endpoint['~types']['request']
+
+/**
+ * Infer response type from an endpoint
+ */
+export type InferResponseType<Endpoint extends DecorateQueryFn<any> | DecorateMutationFn<any>> =
+  Endpoint['~types']['response']

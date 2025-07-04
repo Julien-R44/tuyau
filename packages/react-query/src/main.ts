@@ -10,6 +10,7 @@ import {
 import { unwrapLazyArg } from './utils.js'
 import { DecorateRouterKeyable } from './types.js'
 import { getQueryKeyInternal, tuyauQueryOptions, DecorateQueryFn } from './query.js'
+import { tuyauInfiniteQueryOptions, DecorateInfiniteQueryFn } from './infinite_query.js'
 import { getMutationKeyInternal, tuyauMutationOptions, DecorateMutationFn } from './mutation.js'
 
 /**
@@ -36,10 +37,25 @@ export function createTuyauReactQueryClient<
       })
     }
 
+    if (fnName === 'infiniteQueryOptions') {
+      return tuyauInfiniteQueryOptions({
+        input: arg1,
+        opts: arg2 || {},
+        queryKey: getQueryKeyInternal(path, arg1, 'infinite'),
+        queryClient: unwrapLazyArg(options.queryClient),
+        client: options.client as any,
+        path,
+      })
+    }
+
     if (fnName === 'queryKey') return getQueryKeyInternal(path, arg1, 'query')
+    if (fnName === 'infiniteQueryKey') return getQueryKeyInternal(path, arg1, 'infinite')
     if (fnName === 'pathKey') return getQueryKeyInternal(path)
     if (fnName === 'queryFilter') {
       return { ...arg2, queryKey: getQueryKeyInternal(path, arg1, 'query') }
+    }
+    if (fnName === 'infiniteQueryFilter') {
+      return { ...arg2, queryKey: getQueryKeyInternal(path, arg1, 'infinite') }
     }
     if (fnName === 'pathFilter') {
       return { ...arg1, queryKey: getQueryKeyInternal(path) }
@@ -75,7 +91,9 @@ export type TuyauReactQuery<in out Route extends Record<string, any>, NotProvide
   }
     ? // GET, HEAD methods become queries
       K extends '$get' | '$head'
-      ? DecorateQueryFn<Route[K], NotProvidedParams> & DecorateRouterKeyable
+      ? DecorateQueryFn<Route[K], NotProvidedParams> &
+          DecorateInfiniteQueryFn<Route[K], NotProvidedParams> &
+          DecorateRouterKeyable
       : // POST, PUT, PATCH, DELETE methods become mutations
         DecorateMutationFn<Route[K], NotProvidedParams> & DecorateRouterKeyable
     : K extends '$url'

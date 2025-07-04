@@ -8,7 +8,7 @@ import {
   SkipToken,
 } from '@tanstack/react-query'
 
-import { buildRequestPath } from './utils.js'
+import { buildRequestPath, isObject } from './utils.js'
 import {
   TuyauQueryKey,
   QueryType,
@@ -21,6 +21,7 @@ import {
   DefinedTuyauQueryOptionsOut,
   UndefinedTuyauQueryOptionsOut,
   UnusedSkipTokenTuyauQueryOptionsOut,
+  TypeHelper,
 } from './types.js'
 
 /**
@@ -32,7 +33,13 @@ export function getQueryKeyInternal(
   input?: unknown,
   type?: QueryType,
 ): TuyauQueryKey {
-  const splitPath = path.flatMap((part) => part.toString().split('/'))
+  // Apply route parameters to the path if they exist in input
+  let processedPath = path
+  if (isObject(input) && 'params' in input && input.params && typeof input.params === 'object') {
+    processedPath = buildRequestPath(path, input.params as Record<string, string | number>)
+  }
+
+  const splitPath = processedPath.flatMap((part) => part.toString().split('/'))
 
   if (!input && (!type || type === 'any')) {
     return splitPath.length ? [splitPath] : ([] as unknown as TuyauQueryKey)
@@ -138,7 +145,7 @@ export interface TuyauReactQueryOptions<
 export interface DecorateQueryFn<
   EDef extends EndpointDef,
   TParams = Record<string, string | number>,
-> {
+> extends TypeHelper<EDef> {
   queryOptions: TuyauReactQueryOptions<EDef, TParams>
   queryKey: (input?: {
     payload?: Partial<EDef['request']>

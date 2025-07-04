@@ -89,6 +89,19 @@ test.group('Query | queryOptions', () => {
       { input: { payload: {} }, type: 'query' },
     ])
   })
+
+  test('with null route param call', ({ assert }) => {
+    const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
+    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+
+    const result = tuyau.users[':id'].$get.queryOptions({ payload: {}, params: { id: 23 } })
+
+    assert.isFunction(result.queryFn)
+    assert.deepEqual(result.queryKey, [
+      ['users', '23', '$get'],
+      { input: { payload: {}, params: { id: 23 } }, type: 'query' },
+    ])
+  })
 })
 
 test.group('Query | queryKey', () => {

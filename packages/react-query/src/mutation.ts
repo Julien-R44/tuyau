@@ -1,8 +1,15 @@
 import type { TuyauClient } from '@tuyau/client'
-import { MutationFunction, QueryClient } from '@tanstack/react-query'
+import { MutationFunction, QueryClient, UseMutationOptions } from '@tanstack/react-query'
 
 import { buildRequestPath, unwrapLazyArg } from './utils.js'
-import { TuyauMutationKey, EndpointDef, TuyauReactMutationOptions, MaybePromise } from './types.js'
+import {
+  TuyauMutationKey,
+  EndpointDef,
+  MaybePromise,
+  TypeHelper,
+  TuyauMutationOptionsIn,
+  UnionFromSuccessStatuses,
+} from './types.js'
 
 /**
  * Interface for mutation options override
@@ -103,12 +110,49 @@ export function tuyauMutationOptions(args: {
 }
 
 /**
- * Interface for mutation function decorators (mutationOptions, mutationKey)
+ * Interface for mutation function decorators
  */
 export interface DecorateMutationFn<
   EDef extends EndpointDef,
   TParams = Record<string, string | number>,
-> {
+> extends TypeHelper<EDef> {
   mutationOptions: TuyauReactMutationOptions<EDef, TParams>
   mutationKey: () => TuyauMutationKey
+}
+
+/**
+ * Output type for mutation options
+ */
+export interface TuyauMutationOptionsOut<
+  TInput,
+  TError,
+  TOutput,
+  TContext,
+  TParams = Record<string, string | number>,
+> extends UseMutationOptions<TOutput, TError, { payload: TInput; params?: TParams }, TContext> {
+  mutationKey: TuyauMutationKey
+}
+
+/**
+ * Type definition for mutation options with params and payload support
+ */
+export interface TuyauReactMutationOptions<
+  TDef extends EndpointDef,
+  TParams = Record<string, string | number>,
+> {
+  <TContext = unknown>(
+    opts?: TuyauMutationOptionsIn<
+      TDef['request'],
+      any,
+      UnionFromSuccessStatuses<TDef['response']>,
+      TContext,
+      TParams
+    >,
+  ): TuyauMutationOptionsOut<
+    TDef['request'],
+    any,
+    UnionFromSuccessStatuses<TDef['response']>,
+    TContext,
+    TParams
+  >
 }
