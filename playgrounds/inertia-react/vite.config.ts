@@ -8,9 +8,18 @@ export default defineConfig({
   plugins: [
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment, @typescript-eslint/prefer-ts-expect-error
     // @ts-ignore
-    inertia({ ssr: { enabled: true, entrypoint: 'inertia/app/ssr.tsx' } }),
+    inertia({
+      ssr: {
+        enabled: true,
+        // entrypoint: 'inertia/app/ssr.tsx'
+        entrypoint: `${getDirname(import.meta.url)}/inertia/app/ssr.tsx`,
+      },
+    }),
     react(),
-    adonisjs({ entrypoints: ['inertia/app/app.tsx'], reload: ['resources/views/**/*.edge'] }),
+    adonisjs({
+      entrypoints: [`${getDirname(import.meta.url)}/inertia/app/app.tsx`],
+      reload: ['resources/views/**/*.edge'],
+    }),
   ],
 
   /**
