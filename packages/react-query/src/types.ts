@@ -108,7 +108,7 @@ export interface UnusedSkipTokenTuyauQueryOptionsOut<TQueryFnData, TData, TError
 }
 
 /**
- * Input type for mutation options with params and payload support
+ * Input type for mutation options
  */
 export interface TuyauMutationOptionsIn<
   TInput,

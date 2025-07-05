@@ -35,6 +35,16 @@ export default class TodosController {
     return TodoPresenter.serialize(todo)
   }
 
+  async update({ params, request }: HttpContext) {
+    const payload = await request.validateUsing(TodosController.validator)
+    const todo = await Todo.findOrFail(params.id)
+
+    todo.merge(payload)
+    await todo.save()
+
+    return TodoPresenter.serialize(todo)
+  }
+
   async destroy({ params }: HttpContext) {
     const todo = await Todo.findOrFail(params.id)
     await todo.delete()

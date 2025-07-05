@@ -21,16 +21,12 @@ export interface MutationOptionsOverride {
      */
     originalFn: () => MaybePromise<void>
     queryClient: QueryClient
-    /**
-     * Meta data passed in from the `useMutation()` hook
-     */
     meta: Record<string, unknown>
   }) => MaybePromise<void>
 }
 
 /**
  * Generate a Tuyau mutation key from path
- * Similar to query key but simpler structure for mutations
  */
 export function getMutationKeyInternal(path: readonly string[]): TuyauMutationKey {
   const splitPath = path.flatMap((part) => part.toString().split('.'))
@@ -49,7 +45,6 @@ function createTuyauOptionsResult(opts: { path: string[] }) {
 
 /**
  * Create mutation options for Tuyau with React Query integration
- * Supports params and payload for flexible mutation handling
  */
 export function tuyauMutationOptions(args: {
   opts: any
@@ -125,7 +120,7 @@ export interface TuyauMutationOptionsOut<
 }
 
 /**
- * Type definition for mutation options with params and payload support
+ * Type definition for mutation options
  */
 export interface TuyauReactMutationOptions<
   TDef extends EndpointDef,

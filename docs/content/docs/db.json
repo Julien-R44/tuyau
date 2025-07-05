@@ -21,13 +21,13 @@
     "permalink": "inertia",
     "title": "Inertia",
     "contentPath": "./inertia.md",
-    "category": "Guides"
+    "category": "Integrations"
   },
   {
     "permalink": "superjson",
     "title": "SuperJSON",
     "contentPath": "./superjson.md",
-    "category": "Guides"
+    "category": "Integrations"
   },
   {
     "permalink": "openapi",
@@ -36,9 +36,21 @@
     "category": "Guides"
   },
   {
+    "permalink": "tanstack-query",
+    "title": "TanStack Query",
+    "contentPath": "./tanstack-query.md",
+    "category": "Integrations"
+  },
+  {
+    "permalink": "tanstack-query/react",
+    "title": "React",
+    "contentPath": "./tanstack-query/react.md",
+    "category": "TanStack Query"
+  },
+  {
     "permalink": "next-js",
     "title": "Next.js",
     "contentPath": "/next-js.md",
-    "category": "Frameworks"
+    "category": "Integrations"
   }
 ]

@@ -3,33 +3,66 @@ import React, { useState } from 'react'
 import { Link } from '@tuyau/inertia/react'
 import { useMutation, useQuery } from '@tanstack/react-query'
 
-import { queryClient, tuyauQuery as tuyau } from '~/app/tuyau'
+import { queryClient, useTuyau } from '~/app/tuyau'
 
-const api = tuyau.api
 export default function Home(props: { version: number }) {
-  const { data } = useQuery(api.todos.$get.queryOptions())
+  const tuyau = useTuyau().api
+
+  const { data } = useQuery(tuyau.todos.$get.queryOptions())
   const { mutate: createTodo } = useMutation(
-    api.todos.$post.mutationOptions({
-      onSuccess: () => queryClient.invalidateQueries({ queryKey: api.todos.$get.queryKey() }),
+    tuyau.todos.$post.mutationOptions({
+      onSuccess: () => queryClient.invalidateQueries({ queryKey: tuyau.todos.$get.queryKey() }),
+    })
+  )
+
+  const { mutate: updateTodo } = useMutation(
+    tuyau.todos[':id'].$put.mutationOptions({
+      onSuccess: () => queryClient.invalidateQueries({ queryKey: tuyau.todos.$get.queryKey() }),
     })
   )
 
   const { mutate: deleteTodo } = useMutation(
-    api.todos[':id'].$delete.mutationOptions({
-      onSuccess: () => queryClient.invalidateQueries({ queryKey: tuyau.pathKey() }),
+    tuyau.todos[':id'].$delete.mutationOptions({
+      onSuccess: () => queryClient.invalidateQueries({ queryKey: tuyau.todos.$get.queryKey() }),
     })
   )
 
   const [form, setForm] = useState({ title: '', description: '' })
+  const [editingTodo, setEditingTodo] = useState<number | null>(null)
+  const [editForm, setEditForm] = useState({ title: '', description: '' })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value })
+  }
+
+  const handleEditChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setEditForm({ ...editForm, [e.target.name]: e.target.value })
   }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     createTodo({ payload: { title: form.title, description: form.description } })
     setForm({ title: '', description: '' })
+  }
+
+  const handleEditSubmit = (e: React.FormEvent, todoId: number) => {
+    e.preventDefault()
+    updateTodo({
+      params: { id: todoId },
+      payload: { title: editForm.title, description: editForm.description },
+    })
+    setEditingTodo(null)
+    setEditForm({ title: '', description: '' })
+  }
+
+  const startEditing = (todo: any) => {
+    setEditingTodo(todo.id)
+    setEditForm({ title: todo.title, description: todo.description })
+  }
+
+  const cancelEditing = () => {
+    setEditingTodo(null)
+    setEditForm({ title: '', description: '' })
   }
 
   return (
@@ -81,22 +114,66 @@ export default function Home(props: { version: number }) {
               key={todo.id}
               className="todo flex items-center justify-between bg-white rounded-md px-4 py-2 mb-2 shadow-sm"
             >
-              <div>
-                <div className="font-medium">{todo.title}</div>
-                <div className="text-xs text-gray-500">{todo.description}</div>
-              </div>
-              <button
-                onClick={() => deleteTodo({ params: { id: todo.id }, payload: {} })}
-                className="btn btn-danger ml-4"
-              >
-                Delete
-              </button>
+              {editingTodo === todo.id ? (
+                <form onSubmit={(e) => handleEditSubmit(e, todo.id)} className="flex-1 flex gap-2">
+                  <input
+                    type="text"
+                    name="title"
+                    value={editForm.title}
+                    onChange={handleEditChange}
+                    className="flex-1 px-2 py-1 border rounded"
+                    required
+                  />
+                  <input
+                    type="text"
+                    name="description"
+                    value={editForm.description}
+                    onChange={handleEditChange}
+                    className="flex-1 px-2 py-1 border rounded"
+                    required
+                  />
+                  <button
+                    type="submit"
+                    className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+                  >
+                    Save
+                  </button>
+                  <button
+                    type="button"
+                    onClick={cancelEditing}
+                    className="bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-600"
+                  >
+                    Cancel
+                  </button>
+                </form>
+              ) : (
+                <>
+                  <div className="flex-1">
+                    <div className="font-medium">{todo.title}</div>
+                    <div className="text-xs text-gray-500">{todo.description}</div>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => startEditing(todo)}
+                      className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => deleteTodo({ params: { id: todo.id }, payload: {} })}
+                      className="btn btn-danger"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
           ))}
 
           <form onSubmit={handleSubmit} className="mt-6 mb-2 space-y-3">
             <div>
-              <label className="font-medium block grid mb-1">
+              <label className="font-medium grid mb-1">
                 Title
                 <input
                   type="text"
@@ -109,7 +186,7 @@ export default function Home(props: { version: number }) {
               </label>
             </div>
             <div>
-              <label className="font-medium block grid mb-1">
+              <label className="font-medium grid mb-1">
                 Description
                 <textarea
                   name="description"

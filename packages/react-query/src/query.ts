@@ -144,7 +144,7 @@ export interface TuyauReactQueryOptions<
 }
 
 /**
- * Interface for query function decorators (queryOptions, queryKey, queryFilter)
+ * Interface for query function decorators
  */
 export interface DecorateQueryFn<
   EDef extends EndpointDef,
