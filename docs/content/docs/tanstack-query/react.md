@@ -419,39 +419,24 @@ function UserManager() {
     })
   )
 
-  const handleCreate = (userData: any) => {
-    createUserMutation.mutate({ payload: userData })
-  }
-
-  const handleUpdate = (id: number, userData: any) => {
-    updateUserMutation.mutate({ 
-      params: { id }, 
-      payload: userData 
-    })
-  }
-
-  const handleDelete = (id: number) => {
-    deleteUserMutation.mutate({ params: { id } })
-  }
-
-  if (usersQuery.isPending) return <div>Loading...</div>
-  if (usersQuery.isError) return <div>Error loading users</div>
-
   return (
     <div>
       {usersQuery.data?.map(user => (
         <div key={user.id}>
           <span>{user.name}</span>
-          <button onClick={() => handleUpdate(user.id, { name: 'Updated' })}>
+          <button onClick={() => updateUserMutation.mutate({
+            params: { id: user.id },
+            payload: { name: 'Updated' }
+          })}>
             Update
           </button>
-          <button onClick={() => handleDelete(user.id)}>
+          <button onClick={() => deleteUserMutation.mutate({ params: { id: user.id } })}>
             Delete
           </button>
         </div>
       ))}
       
-      <button onClick={() => handleCreate({ name: 'New User' })}>
+      <button onClick={() => createUserMutation.mutate({ payload: { name: 'New User' } })}>
         Create User
       </button>
     </div>
