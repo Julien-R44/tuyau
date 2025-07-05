@@ -36,7 +36,8 @@
     "ts-node": "^10.9.2",
     "tsup": "^8.5.0",
     "typescript": "^5.8.3",
-    "vite": "^7.0.1"
+    "vite": "^7.0.1",
+    "wrangler": "^4.23.0"
   },
   "pnpm": {
     "overrides": {
