@@ -32,13 +32,24 @@ export function getQueryKeyInternal(
   input?: unknown,
   type?: QueryType,
 ): TuyauQueryKey {
-  // Apply route parameters to the path if they exist in input
-  let processedPath = path
-  if (isObject(input) && 'params' in input && input.params && typeof input.params === 'object') {
-    processedPath = buildRequestPath(path, input.params as Record<string, string | number>)
+  let params: unknown
+  let payload: unknown
+
+  if (isObject(input)) {
+    if ('params' in input && input.params && typeof input.params === 'object') {
+      params = input.params
+    }
+
+    if ('payload' in input) {
+      payload = input.payload
+    } else if (!('params' in input)) {
+      payload = input
+    }
+  } else {
+    payload = input
   }
 
-  const splitPath = processedPath.flatMap((part) => part.toString().split('/'))
+  const splitPath = path.flatMap((part) => part.toString().split('/'))
 
   if (!input && (!type || type === 'any')) {
     return splitPath.length ? [splitPath] : ([] as unknown as TuyauQueryKey)
@@ -47,7 +58,8 @@ export function getQueryKeyInternal(
   return [
     splitPath,
     {
-      ...(typeof input !== 'undefined' && input !== skipToken && { input }),
+      ...(typeof payload !== 'undefined' && payload !== skipToken && { payload }),
+      ...(typeof params !== 'undefined' && { params }),
       ...(type && type !== 'any' && { type }),
     },
   ]

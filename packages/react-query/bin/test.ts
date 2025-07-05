@@ -21,7 +21,7 @@ import { HappyDom } from '../tests/happy_dom_env.js'
 */
 processCLIArgs(process.argv.slice(2))
 configure({
-  files: ['tests/**/*.spec.ts(x)'],
+  files: ['tests/**/*.spec.ts', 'tests/**/*.spec.tsx'],
   plugins: [assert(), expectTypeOf(), fileSystem({ autoClean: true }), snapshot()],
   setup: [
     () => {

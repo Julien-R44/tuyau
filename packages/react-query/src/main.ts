@@ -20,16 +20,17 @@ export function createTuyauReactQueryClient<
   D extends Record<string, any>,
   R extends GeneratedRoutes,
 >(options: { client: TuyauClient<D, R>; queryClient: QueryClient | (() => QueryClient) }) {
-  return createTuyauRecursiveProxy(({ args, executeIfRouteParamCall, paths }) => {
+  return createTuyauRecursiveProxy(({ args, executeIfRouteParamCall, paths, patternPaths }) => {
     const fnName = paths.at(-1)
     const path = paths.slice(0, -1)
+    const patternPath = patternPaths ? patternPaths.slice(0, -1) : path
     const [arg1, arg2] = args
 
     if (fnName === 'queryOptions') {
       return tuyauQueryOptions({
         input: arg1,
         opts: arg2 || {},
-        queryKey: getQueryKeyInternal(path, arg1, 'query'),
+        queryKey: getQueryKeyInternal(patternPath, arg1, 'query'),
         queryClient: unwrapLazyArg(options.queryClient),
         client: options.client as any,
         path,
@@ -40,25 +41,25 @@ export function createTuyauReactQueryClient<
       return tuyauInfiniteQueryOptions({
         input: arg1,
         opts: arg2 || {},
-        queryKey: getQueryKeyInternal(path, arg1, 'infinite'),
+        queryKey: getQueryKeyInternal(patternPath, arg1, 'infinite'),
         queryClient: unwrapLazyArg(options.queryClient),
         client: options.client as any,
         path,
       })
     }
 
-    if (fnName === 'queryKey') return getQueryKeyInternal(path, arg1, 'query')
-    if (fnName === 'infiniteQueryKey') return getQueryKeyInternal(path, arg1, 'infinite')
-    if (fnName === 'pathKey') return getQueryKeyInternal(path)
+    if (fnName === 'queryKey') return getQueryKeyInternal(patternPath, arg1, 'query')
+    if (fnName === 'infiniteQueryKey') return getQueryKeyInternal(patternPath, arg1, 'infinite')
+    if (fnName === 'pathKey') return getQueryKeyInternal(patternPath)
 
     if (fnName === 'queryFilter') {
-      return { ...arg2, queryKey: getQueryKeyInternal(path, arg1, 'query') }
+      return { ...arg2, queryKey: getQueryKeyInternal(patternPath, arg1, 'query') }
     }
     if (fnName === 'infiniteQueryFilter') {
-      return { ...arg2, queryKey: getQueryKeyInternal(path, arg1, 'infinite') }
+      return { ...arg2, queryKey: getQueryKeyInternal(patternPath, arg1, 'infinite') }
     }
     if (fnName === 'pathFilter') {
-      return { ...arg1, queryKey: getQueryKeyInternal(path) }
+      return { ...arg1, queryKey: getQueryKeyInternal(patternPath) }
     }
 
     if (fnName === 'mutationOptions') {

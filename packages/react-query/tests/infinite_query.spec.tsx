@@ -22,7 +22,7 @@ test.group('Infinite Query | infiniteQueryOptions', () => {
     assert.isFunction(result.queryFn)
     assert.deepEqual(result.queryKey, [
       ['users', '$get'],
-      { input: { payload: { name: 'foo' } }, type: 'infinite' },
+      { payload: { name: 'foo' }, type: 'infinite' },
     ])
     assert.equal(result.initialPageParam, null)
     assert.property(result, 'tuyau')
@@ -42,10 +42,7 @@ test.group('Infinite Query | infiniteQueryOptions', () => {
     )
 
     assert.isFunction(result.queryFn)
-    assert.deepEqual(result.queryKey, [
-      ['users', '1', '$get'],
-      { input: { payload: {} }, type: 'infinite' },
-    ])
+    assert.deepEqual(result.queryKey, [['users', ':id', '$get'], { payload: {}, type: 'infinite' }])
   })
 
   test('with null route param call', ({ assert }) => {
@@ -62,8 +59,8 @@ test.group('Infinite Query | infiniteQueryOptions', () => {
 
     assert.isFunction(result.queryFn)
     assert.deepEqual(result.queryKey, [
-      ['users', '23', '$get'],
-      { input: { payload: {}, params: { id: 23 } }, type: 'infinite' },
+      ['users', ':id', '$get'],
+      { payload: {}, params: { id: 23 }, type: 'infinite' },
     ])
   })
 })
@@ -78,15 +75,12 @@ test.group('Infinite Query | infiniteQueryKey', () => {
     const r3 = tuyau.users({ id: 1 }).comments.$get.infiniteQueryKey()
     const r4 = tuyau.users[':id'].comments.$get.infiniteQueryKey({ params: { id: 42 } })
 
-    assert.deepEqual(r1, [
-      ['users', '$get'],
-      { input: { payload: { name: 'foo' } }, type: 'infinite' },
-    ])
+    assert.deepEqual(r1, [['users', '$get'], { payload: { name: 'foo' }, type: 'infinite' }])
     assert.deepEqual(r2, [['users', '$get'], { type: 'infinite' }])
-    assert.deepEqual(r3, [['users', '1', 'comments', '$get'], { type: 'infinite' }])
+    assert.deepEqual(r3, [['users', ':id', 'comments', '$get'], { type: 'infinite' }])
     assert.deepEqual(r4, [
-      ['users', '42', 'comments', '$get'],
-      { input: { params: { id: 42 } }, type: 'infinite' },
+      ['users', ':id', 'comments', '$get'],
+      { params: { id: 42 }, type: 'infinite' },
     ])
   })
 })
@@ -106,7 +100,7 @@ test.group('Infinite Query | infiniteQueryFilter', () => {
     assert.equal(filter.stale, true)
     assert.deepEqual(filter.queryKey, [
       ['users', '$get'],
-      { input: { payload: { name: 'foo' } }, type: 'infinite' },
+      { payload: { name: 'foo' }, type: 'infinite' },
     ])
   })
 })
@@ -364,8 +358,8 @@ test.group('Infinite Query | Complex Scenarios', () => {
 
     assert.isFunction(result.queryFn)
     assert.deepEqual(result.queryKey, [
-      ['users', '1', 'comments', '$get'],
-      { input: { payload: {} }, type: 'infinite' },
+      ['users', ':id', 'comments', '$get'],
+      { payload: {}, type: 'infinite' },
     ])
   })
 
@@ -386,8 +380,8 @@ test.group('Infinite Query | Complex Scenarios', () => {
 
     assert.isFunction(result.queryFn)
     assert.deepEqual(result.queryKey, [
-      ['users', '1', 'comments', '2', '$get'],
-      { input: { payload: {}, params: { sort: 'asc' } }, type: 'infinite' },
+      ['users', ':id', 'comments', ':comment_id', '$get'],
+      { payload: {}, params: { sort: 'asc' }, type: 'infinite' },
     ])
   })
 
@@ -404,7 +398,7 @@ test.group('Infinite Query | Complex Scenarios', () => {
     )
 
     assert.isFunction(result.queryFn)
-    assert.deepEqual(result.queryKey, [['users', '$get'], { input: {}, type: 'infinite' }])
+    assert.deepEqual(result.queryKey, [['users', '$get'], { payload: {}, type: 'infinite' }])
   })
 })
 
@@ -487,7 +481,7 @@ test.group('Infinite Query | Query Key Consistency', () => {
     assert.deepEqual(options1.queryKey, options2.queryKey)
     assert.deepEqual(options1.queryKey, [
       ['users', '$get'],
-      { input: { payload: { name: 'foo' } }, type: 'infinite' },
+      { payload: { name: 'foo' }, type: 'infinite' },
     ])
   })
 })
@@ -508,7 +502,7 @@ test.group('Infinite Query | Cursor Handling', () => {
     assert.isFunction(options.queryFn)
     assert.deepEqual(options.queryKey, [
       ['users', '$get'],
-      { input: { payload: { name: 'foo' } }, type: 'infinite' },
+      { payload: { name: 'foo' }, type: 'infinite' },
     ])
   })
 
@@ -529,7 +523,7 @@ test.group('Infinite Query | Cursor Handling', () => {
     // Direction should be stripped from query key like cursor
     assert.deepEqual(options.queryKey, [
       ['users', '$get'],
-      { input: { payload: { name: 'foo' } }, type: 'infinite' },
+      { payload: { name: 'foo' }, type: 'infinite' },
     ])
   })
 
@@ -550,7 +544,7 @@ test.group('Infinite Query | Cursor Handling', () => {
     // Both cursor and direction should be stripped from query key
     assert.deepEqual(options.queryKey, [
       ['users', '$get'],
-      { input: { payload: { name: 'foo' } }, type: 'infinite' },
+      { payload: { name: 'foo' }, type: 'infinite' },
     ])
   })
 })
@@ -575,7 +569,7 @@ test.group('Infinite Query | Query Filter Integration', () => {
     assert.isFunction(filter.predicate)
     assert.deepEqual(filter.queryKey, [
       ['users', '$get'],
-      { input: { payload: { name: 'foo' } }, type: 'infinite' },
+      { payload: { name: 'foo' }, type: 'infinite' },
     ])
   })
 

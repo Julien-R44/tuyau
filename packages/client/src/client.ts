@@ -31,23 +31,31 @@ export function createTuyauRecursiveProxy(
     executeIfRouteParamCall: (options: { fnName: string; body: any }) => any
     args: any[]
     paths: string[]
+    patternPaths?: string[]
   }) => any,
   paths: string[] = [],
+  patternPaths: string[] = [],
 ): any {
   function executeIfRouteParamCall(options: { fnName: string; body: any }) {
     const isMethodCall = prefixedMethods.includes(options.fnName)
     if (!isMethodCall && typeof options.body === 'object') {
-      return createTuyauRecursiveProxy(cb, [...paths, Object.values(options.body)[0] as string])
+      const paramValue = Object.values(options.body)[0] as string
+      const paramKey = Object.keys(options.body)[0] as string
+      return createTuyauRecursiveProxy(
+        cb,
+        [...paths, paramValue],
+        [...patternPaths, `:${paramKey}`],
+      )
     }
   }
 
   return new Proxy(cb, {
     get(_, param: string) {
-      return createTuyauRecursiveProxy(cb, [...paths, param])
+      return createTuyauRecursiveProxy(cb, [...paths, param], [...patternPaths, param])
     },
 
     apply(_, __, args) {
-      return cb({ args, paths, executeIfRouteParamCall })
+      return cb({ args, paths, patternPaths, executeIfRouteParamCall })
     },
   })
 }

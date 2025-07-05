@@ -36,23 +36,13 @@ export type QueryType = 'any' | 'infinite' | 'query'
  */
 export type TuyauQueryKey = [
   readonly string[],
-  { input?: unknown; type?: Exclude<QueryType, 'any'> }?,
+  { payload?: unknown; params?: unknown; type?: 'infinite' | 'query' }?,
 ]
 
 /**
  * Tuyau-specific mutation key structure
  */
 export type TuyauMutationKey = [readonly string[]]
-
-/**
- * Reserved query options that should not be overridden
- */
-export type QueryReservedOptions = 'queryKey' | 'queryFn' | 'queryHashFn' | 'queryHash'
-
-/**
- * Reserved mutation options that should not be overridden
- */
-export type MutationReservedOptions = 'mutationKey' | 'mutationFn'
 
 /**
  * Omits the key without removing a potential union
@@ -72,7 +62,7 @@ export type WithRequired<T, K extends keyof T> = T & Required<Pick<T, K>>
 export interface DefinedTuyauQueryOptionsIn<TQueryFnData, TData, TError>
   extends DistributiveOmit<
     DefinedInitialDataOptions<TQueryFnData, TError, TData, TuyauQueryKey>,
-    QueryReservedOptions
+    'queryKey' | 'queryFn' | 'queryHashFn' | 'queryHash'
   > {}
 
 /**
@@ -81,7 +71,7 @@ export interface DefinedTuyauQueryOptionsIn<TQueryFnData, TData, TError>
 export interface UndefinedTuyauQueryOptionsIn<TQueryFnData, TData, TError>
   extends DistributiveOmit<
     UndefinedInitialDataOptions<TQueryFnData, TError, TData, TuyauQueryKey>,
-    QueryReservedOptions
+    'queryKey' | 'queryFn' | 'queryHashFn' | 'queryHash'
   > {}
 
 /**
@@ -90,7 +80,7 @@ export interface UndefinedTuyauQueryOptionsIn<TQueryFnData, TData, TError>
 export interface UnusedSkipTokenTuyauQueryOptionsIn<TQueryFnData, TData, TError>
   extends DistributiveOmit<
     UnusedSkipTokenOptions<TQueryFnData, TError, TData, TuyauQueryKey>,
-    QueryReservedOptions
+    'queryKey' | 'queryFn' | 'queryHashFn' | 'queryHash'
   > {}
 
 /**
@@ -128,7 +118,7 @@ export interface TuyauMutationOptionsIn<
   TParams = Record<string, string | number>,
 > extends DistributiveOmit<
     UseMutationOptions<TOutput, TError, { payload: TInput; params?: TParams }, TContext>,
-    MutationReservedOptions
+    'mutationKey' | 'mutationFn'
   > {
   /**
    * Route parameters to be passed to the mutation

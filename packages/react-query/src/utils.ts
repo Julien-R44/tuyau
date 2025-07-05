@@ -21,13 +21,29 @@ export function buildRequestPath(
 ): string[] {
   if (!params) return path.map(String)
 
-  const result = path.map((segment) => {
-    const segmentStr = String(segment)
-    if (!segmentStr.startsWith(':')) return segmentStr
+  const result: string[] = []
 
-    const paramName = segmentStr.slice(1)
-    return params[paramName]?.toString() || segmentStr
-  })
+  for (const segment of path) {
+    const segmentStr = String(segment)
+
+    // Handle compound segments like 'orgs/:orgId/users/:userId'
+    if (segmentStr.includes('/')) {
+      const parts = segmentStr.split('/')
+      for (const part of parts) {
+        if (part.startsWith(':')) {
+          const paramName = part.slice(1)
+          result.push(params[paramName]?.toString() || part)
+        } else {
+          result.push(part)
+        }
+      }
+    } else if (segmentStr.startsWith(':')) {
+      const paramName = segmentStr.slice(1)
+      result.push(params[paramName]?.toString() || segmentStr)
+    } else {
+      result.push(segmentStr)
+    }
+  }
 
   return result
 }
