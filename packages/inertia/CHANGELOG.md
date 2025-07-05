@@ -1,5 +1,12 @@
 # @tuyau/inertia
 
+## 0.0.15
+
+### Patch Changes
+
+- Updated dependencies [dc5a751]
+  - @tuyau/client@0.2.10
+
 ## 0.0.14
 
 ### Patch Changes

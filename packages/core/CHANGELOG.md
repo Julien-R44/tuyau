@@ -1,5 +1,12 @@
 # @tuyau/core
 
+## 0.4.2
+
+### Patch Changes
+
+- Updated dependencies [4023fa8]
+  - @tuyau/utils@0.0.9
+
 ## 0.4.1
 
 ### Patch Changes
@@ -106,7 +113,6 @@
 - e26f6b2: Lots of changes here. Tuyau now has a system that's a bit like [Ziggy](https://github.com/tighten/ziggy). Basically, we can use the names of our routes defined in AdonisJS, but in the frontend. Let's start by listing the breaking changes:
 
   ## Breaking Changes & Migration
-
   - You will first need to download the latest versions of `@tuyau/utils` `@tuyau/core` and `@tuyau/client` for everything to work correctly.
   - The codegen file has changed location. It is now located in `.adonisjs/api.ts`. You will therefore need to change the import path of your client to access this new file.
   - To initialise the client, you will now need to do the following:

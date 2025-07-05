@@ -1,5 +1,11 @@
 # @tuyau/utils
 
+## 0.0.9
+
+### Patch Changes
+
+- 4023fa8: Fix MultipartFile typing when optional. See https://github.com/Julien-R44/tuyau/issues/63
+
 ## 0.0.8
 
 ### Patch Changes

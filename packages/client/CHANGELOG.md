@@ -1,5 +1,16 @@
 # @tuyau/client
 
+## 0.2.10
+
+### Patch Changes
+
+- dc5a751: Before this commit, a network error during a Tuyau call without `unwrap()` would throw an error instead of returning it. This update ensures that such calls now return a `TuyauNetworkError` (not the standard `TuyauHttpError`).
+
+  More details: https://github.com/Julien-R44/tuyau/issues/65
+
+- Updated dependencies [4023fa8]
+  - @tuyau/utils@0.0.9
+
 ## 0.2.9
 
 ### Patch Changes
@@ -132,7 +143,6 @@
 - e26f6b2: Lots of changes here. Tuyau now has a system that's a bit like [Ziggy](https://github.com/tighten/ziggy). Basically, we can use the names of our routes defined in AdonisJS, but in the frontend. Let's start by listing the breaking changes:
 
   ## Breaking Changes & Migration
-
   - You will first need to download the latest versions of `@tuyau/utils` `@tuyau/core` and `@tuyau/client` for everything to work correctly.
   - The codegen file has changed location. It is now located in `.adonisjs/api.ts`. You will therefore need to change the import path of your client to access this new file.
   - To initialise the client, you will now need to do the following:

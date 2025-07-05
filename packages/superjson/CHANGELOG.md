@@ -1,5 +1,12 @@
 # @tuyau/superjson
 
+## 0.1.2
+
+### Patch Changes
+
+- Updated dependencies [4023fa8]
+  - @tuyau/utils@0.0.9
+
 ## 0.1.1
 
 ### Patch Changes
