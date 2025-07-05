@@ -1,7 +1,7 @@
 {
   "name": "@tuyau/react-query",
   "type": "module",
-  "version": "0.0.0",
+  "version": "0.0.1-next.0",
   "description": "React Query plugin for Tuyau",
   "author": "Julien Ripouteau <julien@ripouteau.com>",
   "license": "ISC",
@@ -23,7 +23,7 @@
   },
   "peerDependencies": {
     "@tanstack/react-query": "^5.74.7",
-    "@tuyau/client": "^0.2.7"
+    "@tuyau/client": "^0.2.11-next.0"
   },
   "dependencies": {
     "@tuyau/utils": "workspace:*"

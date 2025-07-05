@@ -1,5 +1,11 @@
 # @tuyau/client
 
+## 0.2.11-next.0
+
+### Patch Changes
+
+- 62edf66: Added React Query integration. See docs for more information.
+
 ## 0.2.10
 
 ### Patch Changes

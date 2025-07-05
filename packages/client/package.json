@@ -1,7 +1,7 @@
 {
   "name": "@tuyau/client",
   "type": "module",
-  "version": "0.2.10",
+  "version": "0.2.11-next.0",
   "description": "e2e client for AdonisJS",
   "author": "Julien Ripouteau <julien@ripouteau.com>",
   "license": "ISC",

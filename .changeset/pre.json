@@ -1,0 +1,16 @@
+{
+  "mode": "pre",
+  "tag": "next",
+  "initialVersions": {
+    "@tuyau/client": "0.2.10",
+    "@tuyau/core": "0.4.2",
+    "@tuyau/inertia": "0.0.15",
+    "@tuyau/openapi": "1.0.2",
+    "@tuyau/react-query": "0.0.0",
+    "@tuyau/superjson": "0.1.2",
+    "@tuyau/utils": "0.0.9"
+  },
+  "changesets": [
+    "shiny-carrots-post"
+  ]
+}
