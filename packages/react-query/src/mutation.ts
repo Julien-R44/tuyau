@@ -115,7 +115,14 @@ export interface TuyauMutationOptionsOut<
   TOutput,
   TContext,
   TParams = Record<string, string | number>,
-> extends UseMutationOptions<TOutput, TError, { payload: TInput; params?: TParams }, TContext> {
+> extends UseMutationOptions<
+    TOutput,
+    TError,
+    TInput extends undefined | {} | Record<string, never>
+      ? { payload?: TInput; params?: TParams }
+      : { payload: TInput; params?: TParams },
+    TContext
+  > {
   mutationKey: TuyauMutationKey
 }
 
