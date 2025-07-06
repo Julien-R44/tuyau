@@ -135,9 +135,7 @@ test.group('Query Key Generation', () => {
 
     assert.deepEqual(result, [['users', '$get'], { payload: { name: 'john' } }])
   })
-})
 
-test.group('Query Key Type Safety', () => {
   test('should match TuyauQueryKey type structure', ({ assert }) => {
     const result = getQueryKeyInternal(['users', '$get'], { name: 'john' }, 'query')
 

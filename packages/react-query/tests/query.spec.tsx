@@ -126,12 +126,14 @@ test.group('Query | pathKey', () => {
     const r3 = tuyau.users.pathKey()
     const r4 = tuyau.users({ id: 1 }).pathKey()
     const r5 = tuyau.users({ id: 1 }).comments.pathKey()
+    const r6 = tuyau.users[':id'].pathKey()
 
     assert.deepEqual(r1, [['users']])
     assert.deepEqual(r2, [['users', '$get']])
     assert.deepEqual(r3, [['users']])
     assert.deepEqual(r4, [['users', ':id']])
     assert.deepEqual(r5, [['users', ':id', 'comments']])
+    assert.deepEqual(r6, [['users', ':id']])
   })
 })
 

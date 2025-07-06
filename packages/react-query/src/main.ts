@@ -137,7 +137,8 @@ type CreateParamProperties<
   [K in keyof Route as K extends `:${string}` ? K : never]: TuyauReactQuery<
     Route[K],
     NotProvidedParams & PathParamToObject<Path>
-  >
+  > &
+    DecorateRouterKeyable
 }
 
 /**
