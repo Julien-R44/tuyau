@@ -11,6 +11,7 @@
     "@tuyau/utils": "0.0.9"
   },
   "changesets": [
+    "nasty-mice-change",
     "shiny-carrots-post"
   ]
 }

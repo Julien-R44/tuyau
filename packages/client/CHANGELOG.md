@@ -1,5 +1,11 @@
 # @tuyau/client
 
+## 0.2.11-next.1
+
+### Patch Changes
+
+- Fix wrong publish
+
 ## 0.2.11-next.0
 
 ### Patch Changes
