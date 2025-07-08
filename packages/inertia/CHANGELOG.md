@@ -1,5 +1,14 @@
 # @tuyau/inertia
 
+## 0.0.16-next.2
+
+### Patch Changes
+
+- dd5cc13: - Added `abortOnUnmount` option to `createTuyauReactQueryClient` to control request cancellation when a component unmounts.
+  - Updated implementation of `infiniteQueryOptions` to include a `pagePageParamKey` option
+- Updated dependencies [dd5cc13]
+  - @tuyau/client@0.2.11-next.2
+
 ## 0.0.16-next.1
 
 ### Patch Changes
