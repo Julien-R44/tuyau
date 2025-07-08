@@ -36,47 +36,70 @@ type TuyauInfiniteData<TData> = {
 /**
  * Infinite query options with undefined initial data
  */
-interface UndefinedTuyauInfiniteQueryOptionsIn<TQueryFnData, TData, TError>
-  extends DistributiveOmit<
+interface UndefinedTuyauInfiniteQueryOptionsIn<
+  TQueryFnData,
+  TData,
+  TError,
+  TRequest,
+  TPageParamKey extends keyof TRequest,
+> extends DistributiveOmit<
     UndefinedInitialDataInfiniteOptions<
       TQueryFnData,
       TError,
       TuyauInfiniteData<TData>,
       TuyauQueryKey,
-      unknown
+      ExtractPageParamType<TRequest, TPageParamKey> | null
     >,
     InfiniteQueryReservedOptions
-  > {}
+  > {
+  pageParamKey: TPageParamKey
+}
 
 /**
  * Infinite query options with defined initial data
  */
-interface DefinedTuyauInfiniteQueryOptionsIn<TQueryFnData, TData, TError>
-  extends DistributiveOmit<
+interface DefinedTuyauInfiniteQueryOptionsIn<
+  TQueryFnData,
+  TData,
+  TError,
+  TRequest,
+  TPageParamKey extends keyof TRequest,
+> extends DistributiveOmit<
     DefinedInitialDataInfiniteOptions<
       TQueryFnData,
       TError,
       TuyauInfiniteData<TData>,
       TuyauQueryKey,
-      unknown
+      ExtractPageParamType<TRequest, TPageParamKey> | null
     >,
     InfiniteQueryReservedOptions
-  > {}
+  > {
+  pageParamKey: TPageParamKey
+}
+
+type ExtractPageParamType<TRequest, TPageParamKey extends keyof TRequest> = TRequest[TPageParamKey]
 
 /**
  * Infinite query options with unused skip token
  */
-interface UnusedSkipTokenTuyauInfiniteQueryOptionsIn<TQueryFnData, TData, TError>
-  extends DistributiveOmit<
+interface UnusedSkipTokenTuyauInfiniteQueryOptionsIn<
+  TQueryFnData,
+  TData,
+  TError,
+  TRequest,
+  TPageParamKey extends keyof TRequest,
+> extends DistributiveOmit<
     UnusedSkipTokenInfiniteOptions<
       TQueryFnData,
       TError,
       TuyauInfiniteData<TData>,
       TuyauQueryKey,
-      unknown
+      ExtractPageParamType<TRequest, TPageParamKey>
     >,
     InfiniteQueryReservedOptions
-  > {}
+  > {
+  pageParamKey: TPageParamKey
+}
 
 /**
  * Output type for infinite query options with undefined initial data
@@ -131,22 +154,32 @@ export interface TuyauReactInfiniteQueryOptions<
   TParams = Record<string, string | number>,
 > {
   // With initial data - when opts has initialData defined
-  <TData = UnionFromSuccessStatuses<EDef['response']>>(
-    input: { payload?: EDef['request']; params?: TParams } | SkipToken,
+  <
+    TData = UnionFromSuccessStatuses<EDef['response']>,
+    TPageParamKey extends keyof EDef['request'] = string,
+  >(
+    input: { payload?: Omit<EDef['request'], TPageParamKey>; params?: TParams } | SkipToken,
     opts: DefinedTuyauInfiniteQueryOptionsIn<
       UnionFromSuccessStatuses<EDef['response']>,
       TData,
-      any
+      any,
+      EDef['request'],
+      TPageParamKey
     >,
   ): DefinedTuyauInfiniteQueryOptionsOut<UnionFromSuccessStatuses<EDef['response']>, TData, any>
 
   // Without skipToken - when input is not SkipToken and no initialData
-  <TData = UnionFromSuccessStatuses<EDef['response']>>(
-    input: { payload?: EDef['request']; params?: TParams },
+  <
+    TData = UnionFromSuccessStatuses<EDef['response']>,
+    TPageParamKey extends keyof EDef['request'] = string,
+  >(
+    input: { payload?: Omit<EDef['request'], TPageParamKey>; params?: TParams },
     opts: UnusedSkipTokenTuyauInfiniteQueryOptionsIn<
       UnionFromSuccessStatuses<EDef['response']>,
       TData,
-      any
+      any,
+      EDef['request'],
+      TPageParamKey
     >,
   ): UnusedSkipTokenTuyauInfiniteQueryOptionsOut<
     UnionFromSuccessStatuses<EDef['response']>,
@@ -155,12 +188,17 @@ export interface TuyauReactInfiniteQueryOptions<
   >
 
   // Without initial data - when opts has no initialData or input can be SkipToken
-  <TData = UnionFromSuccessStatuses<EDef['response']>>(
-    input?: { payload?: EDef['request']; params?: TParams } | SkipToken,
+  <
+    TData = UnionFromSuccessStatuses<EDef['response']>,
+    TPageParamKey extends keyof EDef['request'] = string,
+  >(
+    input?: { payload?: Omit<EDef['request'], TPageParamKey>; params?: TParams } | SkipToken,
     opts?: UndefinedTuyauInfiniteQueryOptionsIn<
       UnionFromSuccessStatuses<EDef['response']>,
       TData,
-      any
+      any,
+      EDef['request'],
+      TPageParamKey
     >,
   ): UndefinedTuyauInfiniteQueryOptionsOut<UnionFromSuccessStatuses<EDef['response']>, TData, any>
 }
@@ -168,7 +206,12 @@ export interface TuyauReactInfiniteQueryOptions<
 /**
  * Extract payload and build request path from input and path segments for infinite queries
  */
-function extractInfiniteInputAndPath(input: unknown, path: string[]) {
+function extractInfiniteInputAndPath(
+  input: unknown,
+  path: string[],
+  pageParamKey: string,
+  pageParam: unknown,
+) {
   // If input is not an object with payload/params, use it directly
   if (
     typeof input !== 'object' ||
@@ -176,7 +219,8 @@ function extractInfiniteInputAndPath(input: unknown, path: string[]) {
     (!('payload' in input) && !('params' in input))
   ) {
     const payload = typeof input === 'object' && input !== null ? input : {}
-    return { payload, requestPath: path }
+    const enhancedPayload = { ...payload, [pageParamKey]: pageParam }
+    return { payload: enhancedPayload, requestPath: path }
   }
 
   const { payload, params } = input as {
@@ -186,7 +230,9 @@ function extractInfiniteInputAndPath(input: unknown, path: string[]) {
 
   const requestPath = buildRequestPath(path, params)
 
-  return { payload, requestPath }
+  const enhancedPayload = { ...payload, [pageParamKey]: pageParam }
+
+  return { payload: enhancedPayload, requestPath }
 }
 
 export function tuyauInfiniteQueryOptions(options: {
@@ -200,10 +246,19 @@ export function tuyauInfiniteQueryOptions(options: {
   const { input, opts, queryKey, path, client } = options
   const inputIsSkipToken = input === skipToken
 
+  if (!opts?.pageParamKey) {
+    throw new Error('pageParamKey is required for infinite queries')
+  }
+
   const queryFn = inputIsSkipToken
     ? skipToken
-    : async () => {
-        const { payload, requestPath } = extractInfiniteInputAndPath(input, path)
+    : async ({ pageParam }: { pageParam: unknown }) => {
+        const { payload, requestPath } = extractInfiniteInputAndPath(
+          input,
+          path,
+          opts.pageParamKey,
+          pageParam,
+        )
         // @ts-expect-error - Using internal API for client fetch
         return await client.$fetch({ paths: requestPath, input: payload })
       }

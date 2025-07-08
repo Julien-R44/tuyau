@@ -26,6 +26,17 @@ export type ApiDefinition = {
         }
       }
     }
+    articles: {
+      $get: {
+        request: { page: number; limit: number }
+        response: {
+          200: Simplify<
+            Serialize<{ data: { id: number; title: string }[]; nextCursor: number | null }>
+          >
+        }
+      }
+    }
+
     users: {
       '$get': {
         request: { name: string | null }
@@ -44,7 +55,7 @@ export type ApiDefinition = {
         }
         comments: {
           '$get': {
-            request: {}
+            request: { page: number | null; limit: number }
             response: {
               200: Simplify<Serialize<{ id: number; name: string }[]>>
             }
