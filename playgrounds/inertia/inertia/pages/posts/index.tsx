@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Head } from '@inertiajs/react'
 import { useInfiniteQuery } from '@tanstack/react-query'
 
-import { tuyauQuery } from '~/app/tuyau'
+import { queryClient, tuyauQuery } from '~/app/tuyau'
 
 export default function PostsIndex() {
   const [category, setCategory] = useState('all')
@@ -10,10 +10,9 @@ export default function PostsIndex() {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, error } =
     useInfiniteQuery(
       tuyauQuery.api.posts.$get.infiniteQueryOptions(
+        { payload: { category: category as any, limit: 10 } },
         {
-          payload: { category, limit: 10 },
-        },
-        {
+          pageParamKey: 'cursor',
           getNextPageParam: (lastPage) => lastPage.nextCursor,
           initialPageParam: 0,
         }
@@ -60,6 +59,18 @@ export default function PostsIndex() {
           <p className="text-gray-600 mb-6">
             Showing {allPosts.length} of {totalPosts} posts.
           </p>
+          <button
+            onClick={() =>
+              queryClient.invalidateQueries({
+                queryKey: tuyauQuery.api.posts.$get.infiniteQueryKey({
+                  payload: { category: category as any },
+                }),
+              })
+            }
+            className="inline-flex items-center px-4 py-2 border border-transparent text-sm"
+          >
+            Invalidate Posts
+          </button>
 
           {/* Category Filter */}
           <div className="mb-6">
@@ -91,7 +102,7 @@ export default function PostsIndex() {
               <p className="text-gray-600 mb-4">{post.content}</p>
               <div className="flex items-center justify-between text-sm text-gray-500">
                 <span>By {post.author}</span>
-                <span>{new Date(post.createdAt).toLocaleDateString()}</span>
+                <span>{post.createdAt.toLocaleString()}</span>
               </div>
             </article>
           ))}
