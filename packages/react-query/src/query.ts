@@ -102,11 +102,7 @@ export function tuyauQueryOptions(options: {
         }
 
         // @ts-expect-error - Using internal API for client fetch
-        return await client.$fetch({
-          paths: requestPath,
-          input: payload,
-          queryOptions: actualOpts,
-        })
+        return await client.$fetch({ paths: requestPath, input: payload, queryOptions: actualOpts })
       }
 
   return Object.assign(queryOptions({ ...opts, queryKey, queryFn }), {
