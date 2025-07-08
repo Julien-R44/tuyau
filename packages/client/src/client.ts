@@ -96,7 +96,7 @@ export function createTuyau<const Api extends ApiDefinition>(
         client,
         method,
         path: paths.slice(0, -1).join('/'),
-        queryOptions: isGetOrHead ? { query: body.input } : queryOptions,
+        queryOptions: isGetOrHead ? { query: body.input, ...body.queryOptions } : body.queryOptions,
       }).unwrap()
     }
 

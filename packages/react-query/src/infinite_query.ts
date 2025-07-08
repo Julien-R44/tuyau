@@ -9,6 +9,7 @@ import {
   DefinedInitialDataInfiniteOptions,
   UndefinedInitialDataInfiniteOptions,
   UnusedSkipTokenInfiniteOptions,
+  QueryFunctionContext,
 } from '@tanstack/react-query'
 
 import { buildRequestPath } from './utils.js'
@@ -18,6 +19,8 @@ import {
   UnionFromSuccessStatuses,
   WithRequired,
   DistributiveOmit,
+  TuyauQueryBaseOptions,
+  TuyauReactRequestOptions,
 } from './types.js'
 
 /**
@@ -43,15 +46,16 @@ interface UndefinedTuyauInfiniteQueryOptionsIn<
   TRequest,
   TPageParamKey extends keyof TRequest,
 > extends DistributiveOmit<
-    UndefinedInitialDataInfiniteOptions<
-      TQueryFnData,
-      TError,
-      TuyauInfiniteData<TData>,
-      TuyauQueryKey,
-      ExtractPageParamType<TRequest, TPageParamKey> | null
+      UndefinedInitialDataInfiniteOptions<
+        TQueryFnData,
+        TError,
+        TuyauInfiniteData<TData>,
+        TuyauQueryKey,
+        ExtractPageParamType<TRequest, TPageParamKey> | null
+      >,
+      InfiniteQueryReservedOptions
     >,
-    InfiniteQueryReservedOptions
-  > {
+    TuyauQueryBaseOptions {
   pageParamKey: TPageParamKey
 }
 
@@ -65,15 +69,16 @@ interface DefinedTuyauInfiniteQueryOptionsIn<
   TRequest,
   TPageParamKey extends keyof TRequest,
 > extends DistributiveOmit<
-    DefinedInitialDataInfiniteOptions<
-      TQueryFnData,
-      TError,
-      TuyauInfiniteData<TData>,
-      TuyauQueryKey,
-      ExtractPageParamType<TRequest, TPageParamKey> | null
+      DefinedInitialDataInfiniteOptions<
+        TQueryFnData,
+        TError,
+        TuyauInfiniteData<TData>,
+        TuyauQueryKey,
+        ExtractPageParamType<TRequest, TPageParamKey> | null
+      >,
+      InfiniteQueryReservedOptions
     >,
-    InfiniteQueryReservedOptions
-  > {
+    TuyauQueryBaseOptions {
   pageParamKey: TPageParamKey
 }
 
@@ -89,15 +94,16 @@ interface UnusedSkipTokenTuyauInfiniteQueryOptionsIn<
   TRequest,
   TPageParamKey extends keyof TRequest,
 > extends DistributiveOmit<
-    UnusedSkipTokenInfiniteOptions<
-      TQueryFnData,
-      TError,
-      TuyauInfiniteData<TData>,
-      TuyauQueryKey,
-      ExtractPageParamType<TRequest, TPageParamKey>
+      UnusedSkipTokenInfiniteOptions<
+        TQueryFnData,
+        TError,
+        TuyauInfiniteData<TData>,
+        TuyauQueryKey,
+        ExtractPageParamType<TRequest, TPageParamKey>
+      >,
+      InfiniteQueryReservedOptions
     >,
-    InfiniteQueryReservedOptions
-  > {
+    TuyauQueryBaseOptions {
   pageParamKey: TPageParamKey
 }
 
@@ -242,8 +248,9 @@ export function tuyauInfiniteQueryOptions(options: {
   queryClient: QueryClient
   path: string[]
   client: TuyauClient<any, any>
+  globalOptions?: TuyauReactRequestOptions
 }) {
-  const { input, opts, queryKey, path, client } = options
+  const { input, opts, queryKey, path, client, globalOptions } = options
   const inputIsSkipToken = input === skipToken
 
   if (!opts?.pageParamKey) {
@@ -252,15 +259,34 @@ export function tuyauInfiniteQueryOptions(options: {
 
   const queryFn = inputIsSkipToken
     ? skipToken
-    : async ({ pageParam }: { pageParam: unknown }) => {
+    : async (queryFnContext: QueryFunctionContext) => {
         const { payload, requestPath } = extractInfiniteInputAndPath(
           input,
           path,
           opts.pageParamKey,
-          pageParam,
+          queryFnContext.pageParam,
         )
+
+        // Merge global options with local options, local options take precedence
+        const effectiveAbortOnUnmount =
+          opts?.tuyau?.abortOnUnmount ?? globalOptions?.abortOnUnmount ?? false
+
+        // Merge Tuyau options with abort signal if abortOnUnmount is enabled
+        const actualOpts = {
+          ...opts,
+          tuyau: {
+            ...globalOptions,
+            ...opts?.tuyau,
+            ...(effectiveAbortOnUnmount ? { signal: queryFnContext.signal } : { signal: null }),
+          },
+        }
+
         // @ts-expect-error - Using internal API for client fetch
-        return await client.$fetch({ paths: requestPath, input: payload })
+        return await client.$fetch({
+          paths: requestPath,
+          input: payload,
+          queryOptions: actualOpts,
+        })
       }
 
   return Object.assign(

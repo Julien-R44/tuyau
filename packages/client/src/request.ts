@@ -63,13 +63,21 @@ export class TuyauRequest {
        * Make the request
        */
       const isGetOrHead = ['get', 'head'].includes(this.#options.method)
+      const requestOptions = {
+        searchParams: buildSearchParams(this.#options.queryOptions?.query || {}),
+        [key]: !isGetOrHead ? body : undefined,
+        ...this.#options.queryOptions,
+      }
+
+      // @ts-expect-error Extract tuyau-specific options
+      if (this.#options.queryOptions?.tuyau?.signal) {
+        // @ts-expect-error Extract tuyau-specific options
+        requestOptions.signal = this.#options.queryOptions.tuyau.signal
+      }
+
       const response = await this.#options.client[this.#options.method](
         removeSlash(this.#options.path),
-        {
-          searchParams: buildSearchParams(this.#options.queryOptions?.query || {}),
-          [key]: !isGetOrHead ? body : undefined,
-          ...this.#options.queryOptions,
-        },
+        requestOptions,
       )
 
       let data: any

@@ -6,6 +6,7 @@ import {
   queryOptions,
   skipToken,
   SkipToken,
+  QueryFunctionContext,
 } from '@tanstack/react-query'
 
 import { buildRequestPath, isObject } from './utils.js'
@@ -22,6 +23,7 @@ import {
   UndefinedTuyauQueryOptionsOut,
   UnusedSkipTokenTuyauQueryOptionsOut,
   TypeHelper,
+  TuyauReactRequestOptions,
 } from './types.js'
 
 /**
@@ -75,16 +77,36 @@ export function tuyauQueryOptions(options: {
   queryClient: QueryClient
   path: string[]
   client: TuyauClient<any, any>
+  globalOptions?: TuyauReactRequestOptions
 }) {
-  const { input, opts, queryKey, path, client } = options
+  const { input, opts, queryKey, path, client, globalOptions } = options
   const inputIsSkipToken = input === skipToken
 
   const queryFn = inputIsSkipToken
     ? skipToken
-    : async () => {
+    : async (queryFnContext: QueryFunctionContext) => {
         const { payload, requestPath } = extractInputAndPath(input, path)
+
+        // Merge global options with local options, local options take precedence
+        const effectiveAbortOnUnmount =
+          opts?.tuyau?.abortOnUnmount ?? globalOptions?.abortOnUnmount ?? false
+
+        // Merge Tuyau options with abort signal if abortOnUnmount is enabled
+        const actualOpts = {
+          ...opts,
+          tuyau: {
+            ...globalOptions,
+            ...opts?.tuyau,
+            ...(effectiveAbortOnUnmount ? { signal: queryFnContext.signal } : { signal: null }),
+          },
+        }
+
         // @ts-expect-error - Using internal API for client fetch
-        return await client.$fetch({ paths: requestPath, input: payload })
+        return await client.$fetch({
+          paths: requestPath,
+          input: payload,
+          queryOptions: actualOpts,
+        })
       }
 
   return Object.assign(queryOptions({ ...opts, queryKey, queryFn }), {

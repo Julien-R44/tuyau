@@ -8,10 +8,25 @@ import {
 } from '@tuyau/client'
 
 import { unwrapLazyArg } from './utils.js'
-import { DecorateRouterKeyable } from './types.js'
+import { DecorateRouterKeyable, TuyauReactRequestOptions } from './types.js'
 import { getQueryKeyInternal, tuyauQueryOptions, DecorateQueryFn } from './query.js'
 import { tuyauInfiniteQueryOptions, DecorateInfiniteQueryFn } from './infinite_query.js'
 import { getMutationKeyInternal, tuyauMutationOptions, DecorateMutationFn } from './mutation.js'
+
+/**
+ * Options for configuring the Tuyau React Query client
+ */
+export interface TuyauReactQueryClientOptions<
+  D extends Record<string, any>,
+  R extends GeneratedRoutes,
+> {
+  client: TuyauClient<D, R>
+  queryClient: QueryClient | (() => QueryClient)
+  /**
+   * Global Tuyau-specific request options
+   */
+  globalOptions?: TuyauReactRequestOptions
+}
 
 /**
  * Create the Tuyau React Query client
@@ -19,7 +34,7 @@ import { getMutationKeyInternal, tuyauMutationOptions, DecorateMutationFn } from
 export function createTuyauReactQueryClient<
   D extends Record<string, any>,
   R extends GeneratedRoutes,
->(options: { client: TuyauClient<D, R>; queryClient: QueryClient | (() => QueryClient) }) {
+>(options: TuyauReactQueryClientOptions<D, R>) {
   return createTuyauRecursiveProxy(({ args, executeIfRouteParamCall, paths, patternPaths }) => {
     const fnName = paths.at(-1)
     const path = paths.slice(0, -1)
@@ -34,6 +49,7 @@ export function createTuyauReactQueryClient<
         queryClient: unwrapLazyArg(options.queryClient),
         client: options.client as any,
         path,
+        globalOptions: options.globalOptions,
       })
     }
 
@@ -45,6 +61,7 @@ export function createTuyauReactQueryClient<
         queryClient: unwrapLazyArg(options.queryClient),
         client: options.client as any,
         path,
+        globalOptions: options.globalOptions,
       })
     }
 

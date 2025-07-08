@@ -67,7 +67,7 @@ test.group('Mutation | Options', () => {
     expectTypeOf(mutationOptions.mutationFn).toBeCallableWith({ payload: { name: 'foo' } })
   })
 
-  test('mutation without payload shouldnt require payload', async ({ assert }) => {
+  test('mutation without payload shouldnt require payload', async () => {
     const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
     const tuyau = createTuyauReactQueryClient({ client, queryClient })
 
