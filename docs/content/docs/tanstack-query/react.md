@@ -211,9 +211,12 @@ const infiniteQueryOptions = tuyau.users.$get.infiniteQueryOptions(
   {
     // Any TanStack React Query options
     getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
+    pageParamKey: 'page', // The payload key for the page/cursor parameter
   },
 )
 ```
+
+The `pageParamKey` specifies which parameter key will be used to send the pagination value in the request. For example, if `pageParamKey` is set to `'page'`, the first request will include `?page=1` as a query parameter. This parameter is automatically included in subsequent requests with the appropriate page values.
 
 ### `queryKey` - getting the query key
 
@@ -443,3 +446,50 @@ function UserManager() {
   )
 }
 ```
+
+## Request Cancellation
+
+Tuyau provides an `abortOnUnmount` option that automatically cancels ongoing requests when a component unmounts.
+
+### Global Configuration
+
+You can configure `abortOnUnmount` globally when creating the Tuyau client:
+
+```tsx
+const tuyau = createTuyauReactQueryClient({ 
+  client, 
+  queryClient,
+  globalOptions: {
+    abortOnUnmount: true // All queries will be aborted on unmount by default
+  }
+})
+```
+
+### Per-Request Override
+
+You can override the global setting for individual queries:
+
+```tsx
+// Override global setting for this specific query
+const queryOptions = tuyau.users.$get.queryOptions(
+  { /** input */ },
+  {
+    tuyau: {
+      abortOnUnmount: false // This query won't be aborted on unmount
+    }
+  }
+)
+
+// Works with infinite queries too
+const infiniteQueryOptions = tuyau.users.$get.infiniteQueryOptions(
+  { /** input */ },
+  {
+    pageParamKey: 'page',
+    tuyau: {
+      abortOnUnmount: true // This query will be aborted on unmount
+    }
+  }
+)
+```
+
+When `abortOnUnmount` is enabled, TanStack Query will automatically cancel the request if the component unmounts before the request completes. See [Query Cancellation](https://tanstack.com/query/v5/docs/framework/react/guides/query-cancellation) on TanStack's documentation for more details.
