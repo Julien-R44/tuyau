@@ -25,6 +25,15 @@ export type ApiDefinition = {
           }
         }
       }
+
+      doSomethingElse: {
+        $post: {
+          request: unknown
+          response: {
+            200: Simplify<Serialize<{ success: boolean }>>
+          }
+        }
+      }
     }
     articles: {
       $get: {

@@ -88,6 +88,19 @@ test.group('Mutation | Options', () => {
     expectTypeOf(mutationKey).toMatchTypeOf<TuyauMutationKey>()
     expectTypeOf(mutationKey[0]).toMatchTypeOf<readonly string[]>()
   })
+
+  test('payload not required when request is unknown', async ({}) => {
+    const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
+    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+
+    nock('http://localhost:3333').post('/auth/doSomethingElse').reply(200, { success: true })
+
+    const { result } = renderHookWithWrapper(() =>
+      useMutation(tuyau.auth.doSomethingElse.$post.mutationOptions()),
+    )
+
+    result.current.mutate({})
+  })
 })
 
 test.group('Mutation | onSuccess Override', () => {

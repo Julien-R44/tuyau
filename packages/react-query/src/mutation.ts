@@ -111,7 +111,7 @@ export interface TuyauMutationOptionsOut<
 > extends UseMutationOptions<
     TOutput,
     TError,
-    TInput extends undefined | {} | Record<string, never>
+    TInput extends undefined | {} | Record<string, never> | unknown
       ? { payload?: TInput; params?: TParams }
       : { payload: TInput; params?: TParams },
     TContext
