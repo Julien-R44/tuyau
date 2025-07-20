@@ -164,7 +164,7 @@ export type InferRequestType<Endpoint extends DecorateQueryFn<any> | DecorateMut
  * Infer response type from an endpoint
  */
 export type InferResponseType<Endpoint extends DecorateQueryFn<any> | DecorateMutationFn<any>> =
-  Endpoint['~types']['response']
+  Endpoint['~types']['response']['200']
 
 /**
  * Tuyau-specific request options for React Query integration

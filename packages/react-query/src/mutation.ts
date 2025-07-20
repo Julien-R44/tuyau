@@ -1,5 +1,10 @@
 import type { TuyauClient } from '@tuyau/client'
-import { MutationFunction, QueryClient, UseMutationOptions } from '@tanstack/react-query'
+import {
+  MutationFunction,
+  QueryClient,
+  mutationOptions,
+  UseMutationOptions,
+} from '@tanstack/react-query'
 
 import { buildRequestPath, unwrapLazyArg } from './utils.js'
 import {
@@ -34,16 +39,6 @@ export function getMutationKeyInternal(path: readonly string[]): TuyauMutationKe
 }
 
 /**
- * Create Tuyau options result metadata
- */
-function createTuyauOptionsResult(opts: { path: string[] }) {
-  return {
-    path: opts.path,
-    type: 'mutation' as const,
-  }
-}
-
-/**
  * Create mutation options for Tuyau with React Query integration
  */
 export function tuyauMutationOptions(args: {
@@ -75,24 +70,22 @@ export function tuyauMutationOptions(args: {
     return await client.$fetch({ paths: requestPath, input: input.payload })
   }
 
-  return {
-    ...opts,
-    mutationKey,
-    mutationFn,
-    onSuccess(data: any, variables: any, context: any) {
-      const originalFn = () => {
-        if (opts?.onSuccess) return opts.onSuccess(data, variables, context)
-        if (defaultOpts?.onSuccess) return defaultOpts.onSuccess(data, variables, context)
-      }
+  const onSuccess = (data: any, variables: any, context: any) => {
+    const originalFn = () => {
+      if (opts?.onSuccess) return opts.onSuccess(data, variables, context)
+      if (defaultOpts?.onSuccess) return defaultOpts.onSuccess(data, variables, context)
+    }
 
-      return mutationSuccessOverride({
-        originalFn,
-        queryClient,
-        meta: opts?.meta ?? defaultOpts?.meta ?? {},
-      })
-    },
-    tuyau: createTuyauOptionsResult({ path }),
+    return mutationSuccessOverride({
+      originalFn,
+      queryClient,
+      meta: opts?.meta ?? defaultOpts?.meta ?? {},
+    })
   }
+
+  return Object.assign(mutationOptions({ ...opts, mutationKey, mutationFn, onSuccess }), {
+    tuyau: { path, type: 'mutation' as const },
+  })
 }
 
 /**
