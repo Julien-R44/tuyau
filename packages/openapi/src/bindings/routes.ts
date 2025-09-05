@@ -19,10 +19,12 @@ export function registerRouteMacros(metaStore: MetaStore) {
     'openapi',
     function (this: RouteResource, options: RouteResourceOpenApiOptions<any>) {
       this.routes.forEach((route) => {
+        const name = route.getName()?.split(".").pop();
+        
         metaStore.set(route, {
           ...(options.global || {}),
           // @ts-expect-error tkt
-          ...(options.actions?.[route.name] || {}),
+          ...(options.actions?.[name] || {}),
         })
       })
 
