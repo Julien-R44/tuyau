@@ -4,6 +4,16 @@ import type { IsNever, Prettify } from '@tuyau/utils/types'
 import type { RouteHelper } from './route.js'
 
 /**
+ * Shape of the default error response body, including the custom 'code'
+ * returned by Adonis response.badRequest or application exceptions.
+ */
+export type TuyauRequestErrorValue = {
+  message: string
+  code: string
+  [key: string]: unknown
+}
+
+/**
  * Create an union type from all response that are successful
  */
 type UnionFromSuccessStatuses<Res extends Record<number, unknown>> = Res[Extract<
@@ -26,7 +36,7 @@ export type TuyauResponse<Res extends Record<number, unknown>> =
       status: number
       response: Response
       error: Exclude<keyof Res, 200> extends never
-        ? { status: unknown; value: unknown }
+        ? { status: number; value: TuyauRequestErrorValue } // FIX: Changed fallback to a strongly-typed error structure
         : {
             [Status in Exclude<keyof Res, 200>]: {
               status: Status
