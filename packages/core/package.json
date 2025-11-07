@@ -2,29 +2,33 @@
   "name": "@tuyau/core",
   "type": "module",
   "version": "0.4.2",
-  "description": "",
-  "author": "",
+  "description": "e2e client for AdonisJS",
+  "author": "Julien Ripouteau <julien@ripouteau.com>",
   "license": "MIT",
-  "keywords": [],
+  "keywords": [
+    "adonisjs",
+    "e2e",
+    "client"
+  ],
   "exports": {
-    ".": "./build/index.js",
-    "./types": "./build/src/types.js",
+    "./client": "./build/src/client/index.js",
+    "./types": "./build/src/client/types/index.js",
     "./commands": "./build/commands/main.js",
     "./tuyau_provider": "./build/providers/tuyau_provider.js",
-    "./build_hook": "./build/src/hooks/build_hook.js"
+    "./hooks": "./build/src/backend/generate_registry.js"
   },
   "files": [
     "build"
   ],
   "engines": {
-    "node": ">=20.6.0"
+    "node": ">=24.0.0"
   },
   "scripts": {
     "clean": "del-cli build",
     "copy:templates": "copyfiles --up 1 \"stubs/**/*.stub\" build",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
-    "quick:test": "node --import=./tsnode.esm.js --enable-source-maps bin/test.ts",
+    "quick:test": "node --import=@poppinss/ts-exec --enable-source-maps bin/test.ts --force-exit",
     "test": "c8 npm run quick:test",
     "index:commands": "adonis-kit index build/commands",
     "prebuild": "npm run clean",
@@ -33,18 +37,25 @@
     "prepublishOnly": "npm run build"
   },
   "peerDependencies": {
-    "@adonisjs/core": "^6.2.0"
+    "@adonisjs/assembler": "8.0.0-next.19",
+    "@adonisjs/core": "7.0.0-next.8"
   },
   "dependencies": {
-    "@tuyau/utils": "workspace:*",
-    "ts-morph": "^26.0.0"
+    "ky": "^1.13.0",
+    "object-to-formdata": "^4.5.1"
   },
   "devDependencies": {
-    "@adonisjs/assembler": "^7.8.2",
-    "@adonisjs/core": "^6.19.0",
-    "@poppinss/cliui": "^6.4.3",
+    "@adonisjs/assembler": "8.0.0-next.19",
+    "@adonisjs/core": "7.0.0-next.8",
+    "@adonisjs/http-server": "8.0.0-next.12",
+    "@arktype/attest": "^0.53.0",
+    "@faker-js/faker": "^10.1.0",
+    "@poppinss/cliui": "^6.5.0",
     "@poppinss/matchit": "^3.1.2",
-    "@tuyau/client": "workspace:*"
+    "@poppinss/ts-exec": "^1.4.1",
+    "@types/node": "^24.10.0",
+    "@typescript/analyze-trace": "^0.10.1",
+    "@vinejs/vine": "^4.1.0"
   },
   "publishConfig": {
     "access": "public",
@@ -61,11 +72,10 @@
   },
   "tsup": {
     "entry": [
-      "./index.ts",
-      "./src/types.ts",
-      "./src/hooks/build_hook.ts",
-      "./commands/generate.ts",
-      "./providers/tuyau_provider.ts"
+      "./providers/tuyau_provider.ts",
+      "./src/backend/generate_registry.ts",
+      "./src/client/index.ts",
+      "./src/client/types/index.ts"
     ],
     "outDir": "./build",
     "clean": false,

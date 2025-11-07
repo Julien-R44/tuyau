@@ -17,13 +17,12 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "build": "tsup-node",
-    "test": "c8 node --enable-source-maps --loader ts-node/esm bin/test.ts",
-    "quick:test": "node --enable-source-maps --loader ts-node/esm bin/test.ts",
+    "quick:test": "node --import=@poppinss/ts-exec --enable-source-maps bin/test.ts --force-exit",
     "checks": "pnpm lint && pnpm typecheck"
   },
   "peerDependencies": {
     "@tanstack/react-query": "^5.74.7",
-    "@tuyau/client": "^0.2.11-next.0"
+    "@tuyau/core": "^0.2.11-next.0"
   },
   "dependencies": {
     "@tuyau/utils": "workspace:*"
@@ -33,7 +32,7 @@
     "@happy-dom/global-registrator": "^17.6.3",
     "@tanstack/react-query": "^5.83.0",
     "@testing-library/react": "^16.3.0",
-    "@tuyau/client": "workspace:*",
+    "@tuyau/core": "workspace:*",
     "@types/react": "^19.1.8",
     "@vinejs/vine": "^3.0.1",
     "nock": "^14.0.6",

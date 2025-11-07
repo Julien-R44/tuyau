@@ -1,9 +1,9 @@
 {
   "extends": "@adonisjs/tsconfig/tsconfig.package.json",
   "compilerOptions": {
+    "lib": ["DOM", "ESNext"],
     "rootDir": "./",
-    "declaration": true,
+    "moduleResolution": "nodenext",
     "outDir": "./build"
-  },
-  "exclude": ["node_modules", "build", "coverage"]
+  }
 }

@@ -21,7 +21,7 @@
   "scripts": {
     "clean": "del-cli build",
     "typecheck": "tsc --noEmit",
-    "quick:test": "node --import=./tsnode.esm.js --enable-source-maps bin/test.ts",
+    "quick:test": "node --import=@poppinss/ts-exec --enable-source-maps bin/test.ts --force-exit",
     "test": "c8 npm run quick:test",
     "prebuild": "npm run clean",
     "build": "pnpm clean && tsup-node",
@@ -38,7 +38,7 @@
   "devDependencies": {
     "@adonisjs/assembler": "^7.8.2",
     "@adonisjs/core": "^6.19.0",
-    "@tuyau/client": "workspace:*",
+    "@tuyau/core": "workspace:*",
     "nock": "^14.0.5"
   },
   "publishConfig": {

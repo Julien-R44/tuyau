@@ -16,3 +16,4 @@ todo.md
 .adonisjs
 **/*/public/assets
 tmp
+.attest
