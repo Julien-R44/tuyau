@@ -35,7 +35,7 @@
   },
   "dependencies": {
     "@adonisjs/auth": "^10.0.0-next.2",
-    "@adonisjs/core": "^7.0.0-next.9",
+    "@adonisjs/core": "^7.0.0-next.10",
     "@adonisjs/cors": "^3.0.0-next.0",
     "@adonisjs/inertia": "^4.0.0-next.9",
     "@adonisjs/lucid": "^22.0.0-next.1",

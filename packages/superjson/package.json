@@ -29,14 +29,14 @@
     "prepublishOnly": "npm run build"
   },
   "peerDependencies": {
-    "@adonisjs/core": "^6.2.0"
+    "@adonisjs/core": "^7.0.0-next.10"
   },
   "dependencies": {
     "superjson": "^2.2.5"
   },
   "devDependencies": {
     "@adonisjs/assembler": "^7.8.2",
-    "@adonisjs/core": "^6.19.1",
+    "@adonisjs/core": "^7.0.0-next.10",
     "@tuyau/core": "workspace:*",
     "nock": "^14.0.10"
   },

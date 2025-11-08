@@ -37,7 +37,7 @@
   },
   "peerDependencies": {
     "@adonisjs/assembler": "8.0.0-next.19",
-    "@adonisjs/core": "7.0.0-next.8"
+    "@adonisjs/core": "^7.0.0-next.10"
   },
   "dependencies": {
     "ky": "^1.14.0",
@@ -45,7 +45,7 @@
   },
   "devDependencies": {
     "@adonisjs/assembler": "8.0.0-next.19",
-    "@adonisjs/core": "7.0.0-next.8",
+    "@adonisjs/core": "^7.0.0-next.10",
     "@adonisjs/http-server": "8.0.0-next.12",
     "@arktype/attest": "^0.53.0",
     "@faker-js/faker": "^10.1.0",
