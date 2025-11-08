@@ -1,7 +1,7 @@
 import { dirname } from 'node:path'
 import string from '@adonisjs/core/helpers/string'
 import { writeFile, mkdir } from 'node:fs/promises'
-import { ScannedRoute, type RouterHooks } from '@adonisjs/assembler/types'
+import type { ScannedRoute, RouterHooks } from '@adonisjs/assembler/types'
 
 interface GenerateRegistryConfig {
   /**
@@ -135,7 +135,9 @@ declare module '@tuyau/core/types' {
 `
 }
 
-export function generateRegistry(options?: GenerateRegistryConfig) {
+export function generateRegistry(options?: GenerateRegistryConfig): {
+  run(devServer: any, routesScanner: any): Promise<void>
+} {
   const config = {
     output: './.adonisjs/client/registry.ts',
     ...options,
