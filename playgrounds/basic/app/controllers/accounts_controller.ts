@@ -1,8 +1,9 @@
-import User from '#models/user'
-import UserTransformer from '#transformers/user_transformer'
-import { signupValidator } from '#validators/user'
-import type { HttpContext } from '@adonisjs/core/http'
 import vine from '@vinejs/vine'
+import type { HttpContext } from '@adonisjs/core/http'
+
+import User from '#models/user'
+import { signupValidator } from '#validators/user'
+import UserTransformer from '#transformers/user_transformer'
 
 export default class AccountsController {
   static validator = vine.compile(
@@ -25,6 +26,7 @@ export default class AccountsController {
       profilePicture: vine.file(),
     })
   )
+
   async uploadProfilePicture({ request }: HttpContext) {
     const payload = await request.validateUsing(AccountsController.uploadProfilePictureValidator)
   }

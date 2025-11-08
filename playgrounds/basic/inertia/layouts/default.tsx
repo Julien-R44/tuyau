@@ -1,7 +1,8 @@
 import { toast, Toaster } from 'sonner'
 import { ReactElement, useEffect } from 'react'
-import { Data } from '~/generated/data'
 import { Form, Link, usePage } from '@inertiajs/react'
+
+import { Data } from '~/generated/data'
 
 export default function Layout({ children }: { children: ReactElement<Data.SharedProps> }) {
   useEffect(() => {

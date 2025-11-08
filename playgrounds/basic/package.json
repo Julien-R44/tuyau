@@ -1,8 +1,8 @@
 {
   "name": "adonisjs-inertia-starter-kit",
+  "type": "module",
   "version": "0.0.0",
   "private": true,
-  "type": "module",
   "license": "UNLICENSED",
   "scripts": {
     "start": "node bin/server.js",
@@ -33,6 +33,27 @@
     "#start/*": "./start/*.js",
     "#config/*": "./config/*.js"
   },
+  "dependencies": {
+    "@adonisjs/auth": "^10.0.0-next.2",
+    "@adonisjs/core": "^7.0.0-next.9",
+    "@adonisjs/cors": "^3.0.0-next.0",
+    "@adonisjs/inertia": "^4.0.0-next.9",
+    "@adonisjs/lucid": "^22.0.0-next.1",
+    "@adonisjs/session": "^8.0.0-next.0",
+    "@adonisjs/shield": "^9.0.0-next.1",
+    "@adonisjs/static": "^2.0.0-next.1",
+    "@adonisjs/vite": "^5.1.0-next.0",
+    "@inertiajs/react": "^2.2.15",
+    "@tuyau/core": "workspace:*",
+    "@vinejs/vine": "^4.1.0",
+    "better-sqlite3": "^12.4.1",
+    "edge.js": "^6.3.0",
+    "luxon": "^3.7.2",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "reflect-metadata": "^0.2.2",
+    "sonner": "^2.0.7"
+  },
   "devDependencies": {
     "@adonisjs/assembler": "^8.0.0-next.19",
     "@adonisjs/eslint-config": "^3.0.0-next.4",
@@ -54,27 +75,6 @@
     "typescript": "~5.9.3",
     "vite": "^7.1.12",
     "youch": "^3.3.4"
-  },
-  "dependencies": {
-    "@adonisjs/auth": "^10.0.0-next.2",
-    "@adonisjs/core": "^7.0.0-next.9",
-    "@adonisjs/cors": "^3.0.0-next.0",
-    "@adonisjs/inertia": "^4.0.0-next.9",
-    "@adonisjs/lucid": "^22.0.0-next.1",
-    "@adonisjs/session": "^8.0.0-next.0",
-    "@adonisjs/shield": "^9.0.0-next.1",
-    "@adonisjs/static": "^2.0.0-next.1",
-    "@adonisjs/vite": "^5.1.0-next.0",
-    "@tuyau/core": "workspace:*",
-    "@inertiajs/react": "^2.2.15",
-    "@vinejs/vine": "^4.1.0",
-    "better-sqlite3": "^12.4.1",
-    "edge.js": "^6.3.0",
-    "luxon": "^3.7.2",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
-    "reflect-metadata": "^0.2.2",
-    "sonner": "^2.0.7"
   },
   "hotHook": {
     "boundaries": [
