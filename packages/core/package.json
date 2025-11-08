@@ -1,7 +1,7 @@
 {
   "name": "@tuyau/core",
   "type": "module",
-  "version": "0.4.2",
+  "version": "1.0.0-beta.0",
   "description": "e2e client for AdonisJS",
   "author": "Julien Ripouteau <julien@ripouteau.com>",
   "license": "MIT",
@@ -56,7 +56,7 @@
   },
   "publishConfig": {
     "access": "public",
-    "tag": "latest"
+    "tag": "beta"
   },
   "c8": {
     "reporter": [
