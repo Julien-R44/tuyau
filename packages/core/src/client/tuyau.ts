@@ -2,8 +2,8 @@ import ky, { HTTPError, KyInstance } from 'ky'
 import { serialize } from 'object-to-formdata'
 import { createUrlBuilder, UrlFor } from '@adonisjs/http-server/client/url_builder'
 
-import { parseResponse, TuyauHTTPError, TuyauNetworkError } from './errors.js'
-import { buildSearchParams, isObject, isReactNative, isServer, removeSlash } from './utils.js'
+import { parseResponse, TuyauHTTPError, TuyauNetworkError } from './errors.ts'
+import { buildSearchParams, isObject, isReactNative, isServer, removeSlash } from './utils.ts'
 import type {
   AdonisEndpoint,
   BuildNamed,
@@ -14,7 +14,7 @@ import type {
   RequestArgs,
   StrKeys,
   TuyauConfiguration,
-} from './types/types.js'
+} from './types/types.ts'
 
 /**
  * Main client class for making HTTP requests to AdonisJS endpoints

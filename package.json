@@ -17,7 +17,7 @@
     "release": "pnpm run build && changeset publish"
   },
   "devDependencies": {
-    "@adonisjs/tsconfig": "^1.4.1",
+    "@adonisjs/tsconfig": "^2.0.0-next.3",
     "@changesets/cli": "^2.29.7",
     "@japa/assert": "^4.1.1",
     "@japa/expect-type": "^2.0.3",

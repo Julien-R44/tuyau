@@ -11,10 +11,10 @@
     "client"
   ],
   "exports": {
-    "./client": "./build/src/client/index.js",
-    "./types": "./build/src/client/types/index.js",
+    "./client": "./build/client/index.js",
+    "./types": "./build/client/types/index.js",
     "./commands": "./build/commands/main.js",
-    "./hooks": "./build/src/backend/generate_registry.js"
+    "./hooks": "./build/backend/generate_registry.js"
   },
   "files": [
     "build"

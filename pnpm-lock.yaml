@@ -9,8 +9,8 @@ importers:
   .:
     devDependencies:
       '@adonisjs/tsconfig':
-        specifier: ^1.4.1
-        version: 1.4.1
+        specifier: ^2.0.0-next.3
+        version: 2.0.0-next.3
       '@changesets/cli':
         specifier: ^2.29.7
         version: 2.29.7(@types/node@24.10.0)
@@ -792,9 +792,6 @@ packages:
     peerDependenciesMeta:
       '@adonisjs/assembler':
         optional: true
-
-  '@adonisjs/tsconfig@1.4.1':
-    resolution: {integrity: sha512-b7bHdnTaDRGfec4XVtpwsSEukZ549MgqOShScCd1b4xkMK8z1q/jb0Xs4iUL86oIDhty2y7k5vvA6aoQKPAvXQ==}
 
   '@adonisjs/tsconfig@2.0.0-next.3':
     resolution: {integrity: sha512-9fDE12iuzNQnYl55pP58IPRr4a8QGEFqMdTz5NtbZMIvOtsBXX/BqpPqKnUXY2liymaU/HvfL0VuzAJi22FuXQ==}
@@ -7323,8 +7320,6 @@ snapshots:
       '@adonisjs/assembler': 8.0.0-next.19(typescript@5.9.3)
     transitivePeerDependencies:
       - supports-color
-
-  '@adonisjs/tsconfig@1.4.1': {}
 
   '@adonisjs/tsconfig@2.0.0-next.3': {}
 

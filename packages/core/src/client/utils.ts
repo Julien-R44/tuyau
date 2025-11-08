@@ -1,4 +1,4 @@
-import type { QueryParameters } from './types/types.js'
+import type { QueryParameters } from './types/types.ts'
 
 /**
  * Build query string from the given object.

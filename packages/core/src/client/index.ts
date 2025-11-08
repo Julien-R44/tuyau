@@ -1,2 +1,2 @@
-export { createTuyau, Tuyau } from './tuyau.js'
-export * from './errors.js'
+export { createTuyau, Tuyau } from './tuyau.ts'
+export * from './errors.ts'
