@@ -3,7 +3,8 @@
   "compilerOptions": {
     "rootDir": "./",
     "declaration": true,
-    "outDir": "./build"
+    "outDir": "./build",
+    "rewriteRelativeImportExtensions": true
   },
   "exclude": ["node_modules", "build", "coverage"]
 }

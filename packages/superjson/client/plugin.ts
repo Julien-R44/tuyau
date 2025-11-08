@@ -1,5 +1,5 @@
 import SuperJSON from 'superjson'
-import { TuyauPlugin } from '@tuyau/client'
+import { TuyauPlugin } from '@tuyau/core/types'
 
 export * from 'superjson'
 

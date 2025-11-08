@@ -2,8 +2,8 @@ import nock from 'nock'
 import { test } from '@japa/runner'
 
 import { createTuyau } from '../src/client/tuyau.js'
-import { TuyauHTTPError, TuyauNetworkError } from '../index.js'
 import { defaultRegistry as registry } from './fixtures/index.js'
+import { TuyauHTTPError, TuyauNetworkError } from '../src/client/errors.js'
 
 test.group('Client | Chained', () => {
   test('post something', async ({ assert }) => {
