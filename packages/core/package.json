@@ -14,7 +14,6 @@
     "./client": "./build/src/client/index.js",
     "./types": "./build/src/client/types/index.js",
     "./commands": "./build/commands/main.js",
-    "./tuyau_provider": "./build/providers/tuyau_provider.js",
     "./hooks": "./build/src/backend/generate_registry.js"
   },
   "files": [
@@ -72,7 +71,6 @@
   },
   "tsup": {
     "entry": [
-      "./providers/tuyau_provider.ts",
       "./src/backend/generate_registry.ts",
       "./src/client/index.ts",
       "./src/client/types/index.ts"

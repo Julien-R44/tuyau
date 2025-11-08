@@ -19,7 +19,6 @@ export interface AdonisEndpoint {
     query: Record<string, any>
     body: unknown
     response: unknown
-    errors?: unknown
   }
 }
 
@@ -79,13 +78,6 @@ export type RequestArgs<E extends AdonisEndpoint> = (HasKeys<E['types']['params'
  * Extracts response type from an endpoint
  */
 export type ResponseOf<E extends AdonisEndpoint> = E['types']['response']
-
-/**
- * Extracts error types from an endpoint
- */
-export type ErrorsOf<E extends AdonisEndpoint> = E['types']['errors'] extends undefined
-  ? never
-  : E['types']['errors']
 
 /**
  * Splits a dot-separated string into an array of strings
@@ -230,12 +222,6 @@ export namespace PathWithRegistry {
     P extends PatternsByMethod<Reg, M>,
   > = FilterByMethodPathForRegistry<Reg, M, P>['types']['params']
 
-  export type Errors<
-    Reg extends Record<string, AdonisEndpoint>,
-    M extends Method,
-    P extends PatternsByMethod<Reg, M>,
-  > = ErrorsOf<FilterByMethodPathForRegistry<Reg, M, P>>
-
   export type Body<
     Reg extends Record<string, AdonisEndpoint>,
     M extends Method,
@@ -269,10 +255,6 @@ export namespace RouteWithRegistry {
     Name extends keyof Reg,
   > = EndpointByNameForRegistry<Reg, Name>['types']['params']
 
-  export type Errors<Reg extends Record<string, AdonisEndpoint>, Name extends keyof Reg> = ErrorsOf<
-    EndpointByNameForRegistry<Reg, Name>
-  >
-
   export type Body<
     Reg extends Record<string, AdonisEndpoint>,
     Name extends keyof Reg,
@@ -301,10 +283,6 @@ export namespace Path {
     M extends Method,
     P extends PatternsByMethod<UserAdonisRegistry, M>,
   > = FilterByMethodPathForRegistry<UserAdonisRegistry, M, P>['types']['params']
-  export type Errors<
-    M extends Method,
-    P extends PatternsByMethod<UserAdonisRegistry, M>,
-  > = ErrorsOf<FilterByMethodPathForRegistry<UserAdonisRegistry, M, P>>
   export type Body<
     M extends Method,
     P extends PatternsByMethod<UserAdonisRegistry, M>,
@@ -324,7 +302,6 @@ export namespace Route {
   export type Response<Name extends keyof UserAdonisRegistry> = ResponseOf<UserEndpointByName<Name>>
   export type Params<Name extends keyof UserAdonisRegistry> =
     UserEndpointByName<Name>['types']['params']
-  export type Errors<Name extends keyof UserAdonisRegistry> = ErrorsOf<UserEndpointByName<Name>>
   export type Body<Name extends keyof UserAdonisRegistry> =
     UserEndpointByName<Name>['types']['body']
   export type Query<Name extends keyof UserAdonisRegistry> =
