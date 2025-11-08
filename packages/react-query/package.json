@@ -24,19 +24,15 @@
     "@tanstack/react-query": "^5.74.7",
     "@tuyau/core": "^0.2.11-next.0"
   },
-  "dependencies": {
-    "@tuyau/utils": "workspace:*"
-  },
   "devDependencies": {
-    "@adonisjs/core": "^6.19.0",
-    "@happy-dom/global-registrator": "^17.6.3",
-    "@tanstack/react-query": "^5.83.0",
+    "@adonisjs/core": "^6.19.1",
+    "@happy-dom/global-registrator": "^20.0.10",
+    "@tanstack/react-query": "^5.90.7",
     "@testing-library/react": "^16.3.0",
     "@tuyau/core": "workspace:*",
-    "@types/react": "^19.1.8",
-    "@vinejs/vine": "^3.0.1",
-    "nock": "^14.0.6",
-    "react": "^19.1.0"
+    "@types/react": "^19.2.2",
+    "@vinejs/vine": "^4.1.0",
+    "react": "^19.2.0"
   },
   "tsup": {
     "entry": [

@@ -32,14 +32,13 @@
     "@adonisjs/core": "^6.2.0"
   },
   "dependencies": {
-    "@tuyau/utils": "workspace:*",
-    "superjson": "^2.2.2"
+    "superjson": "^2.2.5"
   },
   "devDependencies": {
     "@adonisjs/assembler": "^7.8.2",
-    "@adonisjs/core": "^6.19.0",
+    "@adonisjs/core": "^6.19.1",
     "@tuyau/core": "workspace:*",
-    "nock": "^14.0.5"
+    "nock": "^14.0.10"
   },
   "publishConfig": {
     "access": "public",

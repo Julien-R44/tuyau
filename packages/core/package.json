@@ -40,7 +40,7 @@
     "@adonisjs/core": "7.0.0-next.8"
   },
   "dependencies": {
-    "ky": "^1.13.0",
+    "ky": "^1.14.0",
     "object-to-formdata": "^4.5.1"
   },
   "devDependencies": {
@@ -49,8 +49,6 @@
     "@adonisjs/http-server": "8.0.0-next.12",
     "@arktype/attest": "^0.53.0",
     "@faker-js/faker": "^10.1.0",
-    "@poppinss/cliui": "^6.5.0",
-    "@poppinss/matchit": "^3.1.2",
     "@poppinss/ts-exec": "^1.4.1",
     "@types/node": "^24.10.0",
     "@typescript/analyze-trace": "^0.10.1",

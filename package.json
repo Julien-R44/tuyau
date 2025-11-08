@@ -2,7 +2,7 @@
   "name": "@tuyau/monorepo",
   "type": "module",
   "version": "0.0.0",
-  "packageManager": "pnpm@10.12.4",
+  "packageManager": "pnpm@10.20.0",
   "description": "",
   "author": "Julien Ripouteau <julien@ripouteau.com>",
   "license": "ISC",
@@ -17,35 +17,29 @@
     "release": "pnpm run build && changeset publish"
   },
   "devDependencies": {
-    "@adonisjs/http-server": "8.0.0-next.10",
     "@adonisjs/tsconfig": "^1.4.1",
-    "@changesets/cli": "^2.29.5",
-    "@japa/assert": "^4.0.1",
+    "@changesets/cli": "^2.29.7",
+    "@japa/assert": "^4.1.1",
     "@japa/expect-type": "^2.0.3",
     "@japa/file-system": "^2.3.2",
-    "@japa/runner": "^4.2.0",
-    "@japa/snapshot": "^2.0.8",
+    "@japa/runner": "^4.4.0",
+    "@japa/snapshot": "^2.0.9",
     "@julr/tooling-configs": "^4.0.0",
     "@poppinss/ts-exec": "^1.4.1",
-    "@swc/core": "^1.12.9",
-    "@types/node": "^24.0.10",
+    "@types/node": "^24.10.0",
     "c8": "^10.1.3",
     "copyfiles": "^2.4.1",
-    "del-cli": "^6.0.0",
-    "eslint": "^9.30.1",
-    "nock": "^14.0.5",
+    "del-cli": "^7.0.0",
+    "eslint": "^9.39.1",
+    "nock": "^14.0.10",
     "prettier": "^3.6.2",
     "tsup": "^8.5.0",
-    "typescript": "^5.8.3",
-    "vite": "^7.0.1",
-    "wrangler": "^4.23.0"
+    "typescript": "^5.9.3",
+    "vite": "^7.2.2",
+    "wrangler": "^4.46.0"
   },
   "pnpm": {
-    "overrides": {
-      "@tuyau/utils": "workspace:*"
-    },
     "onlyBuiltDependencies": [
-      "@swc/core",
       "better-sqlite3",
       "esbuild"
     ]
