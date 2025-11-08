@@ -413,6 +413,7 @@ test.group('Client | Typings', () => {
       '/posts/:postId/comments/:commentId/likes/:likeId/toggle'
     >
 
+    expectTypeOf<Params2>().toEqualTypeOf<never>()
     expectTypeOf<Response>().toEqualTypeOf<{ id: string }>()
     expectTypeOf<Params>().toEqualTypeOf<{ id: string }>()
     expectTypeOf<Query>().toEqualTypeOf<{ foo: string }>()

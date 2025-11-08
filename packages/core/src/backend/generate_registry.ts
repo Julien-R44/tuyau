@@ -1,4 +1,5 @@
 import { dirname } from 'node:path'
+import string from '@adonisjs/core/helpers/string'
 import { writeFile, mkdir } from 'node:fs/promises'
 import { ScannedRoute, type RouterHooks } from '@adonisjs/assembler/types'
 
@@ -93,8 +94,12 @@ function generateRegistryEntry(route: ScannedRoute): string {
   const requestType = route.request?.type || '{}'
   const responseType = route.response?.type || 'unknown'
   const { paramsType, paramsTuple } = generateRouteParams(route)
+  const routeName = route.name
+    .split('.')
+    .map((segment) => string.camelCase(segment))
+    .join('.')
 
-  return `  '${route.name}': {
+  return `  '${routeName}': {
     methods: ${JSON.stringify(route.methods)},
     pattern: '${route.pattern}',
     tokens: ${JSON.stringify(route.tokens)},
