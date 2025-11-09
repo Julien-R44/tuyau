@@ -25,7 +25,7 @@ export interface AdonisEndpoint {
 /**
  * Registry mapping endpoint names to their definitions
  */
-export type AdonisRegistry = Record<string, AdonisEndpoint>
+export interface AdonisRegistry extends Record<string, AdonisEndpoint> {}
 
 export type ValueOf<T> = T[keyof T]
 
@@ -150,25 +150,23 @@ export type EndpointByMethodPattern<
 /**
  * Plugin function type for extending Tuyau functionality
  */
-export type TuyauPlugin = (params: { options: TuyauConfiguration<any> }) => void
+export interface TuyauPlugin {
+  (params: { options: TuyauConfiguration<any> }): void
+}
 
 export type MaybeArray<T> = T | T[]
 
 /**
  * Type for URL query parameters
  */
-export type QueryParameters = Record<
-  string,
-  MaybeArray<string | number | boolean | null | undefined>
->
+export interface QueryParameters
+  extends Record<string, MaybeArray<string | number | boolean | null | undefined>> {}
 
 /**
  * Configuration options for creating a Tuyau client
  */
-export type TuyauConfiguration<T extends Record<string, AdonisEndpoint>> = Omit<
-  KyOptions,
-  'prefixUrl' | 'body' | 'json' | 'method' | 'searchParams'
-> & {
+export interface TuyauConfiguration<T extends Record<string, AdonisEndpoint>>
+  extends Omit<KyOptions, 'prefixUrl' | 'body' | 'json' | 'method' | 'searchParams'> {
   registry: T
   baseUrl: string
   plugins?: TuyauPlugin[]
