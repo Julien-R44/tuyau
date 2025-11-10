@@ -526,4 +526,29 @@ test.group('Client | Typings', () => {
 
     expectTypeOf<PostToggleBody>().toEqualTypeOf<{ baz?: string }>()
   })
+
+  test('camel case route names', () => {
+    const tuyau = createTuyau({
+      baseUrl: 'http://localhost:3333',
+      registry: {
+        'new_account.create': {
+          methods: ['GET', 'HEAD'],
+          pattern: '/signup',
+          tokens: [{ old: '/signup', type: 0, val: 'signup', end: '' }],
+          types: {} as {
+            body: { email: string; password: string; file?: any }
+            paramsTuple: [string, string]
+            params: { 'user-id'?: string; 'user-token'?: string }
+            query: { foo?: string }
+            response: { token: string }
+          },
+        },
+      },
+    })
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    tuyau.api.newAccount.create
+
+    tuyau.urlFor.get('new_account.create', { 'user-id': '123', 'user-token': 'foo' })
+  })
 })

@@ -85,6 +85,29 @@ export type ResponseOf<E extends AdonisEndpoint> = E['types']['response']
 export type Split<S extends string> = S extends `${infer H}.${infer T}` ? [H, ...Split<T>] : [S]
 
 /**
+ * Converts a string to camelCase
+ */
+export type CamelCase<S extends string> = S extends `${infer H}${infer T}`
+  ? `${Lowercase<H>}${CamelCaseRest<T>}`
+  : S
+
+type CamelCaseRest<S extends string> = S extends `_${infer H}${infer T}`
+  ? `${Uppercase<H>}${CamelCaseRest<T>}`
+  : S extends `${infer H}${infer T}`
+    ? `${H}${CamelCaseRest<T>}`
+    : S
+
+/**
+ * Applies camelCase to each segment in a split array
+ */
+export type CamelCaseSplit<T extends string[]> = T extends [
+  infer H extends string,
+  ...infer Rest extends string[],
+]
+  ? [CamelCase<H>, ...CamelCaseSplit<Rest>]
+  : []
+
+/**
  * Converts a union type to an intersection type
  */
 export type UnionToIntersection<U> = (U extends any ? (x: U) => void : never) extends (
@@ -98,7 +121,7 @@ export type UnionToIntersection<U> = (U extends any ? (x: U) => void : never) ex
  */
 export type BuildNamed<Reg extends Record<string, AdonisEndpoint>> = UnionToIntersection<
   {
-    [K in keyof Reg & string]: SetAtPath<Split<K>, EndpointFn<Reg[K]>>
+    [K in keyof Reg & string]: SetAtPath<CamelCaseSplit<Split<K>>, EndpointFn<Reg[K]>>
   }[keyof Reg & string]
 >
 

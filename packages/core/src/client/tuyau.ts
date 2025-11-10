@@ -3,7 +3,14 @@ import { serialize } from 'object-to-formdata'
 import { createUrlBuilder, UrlFor } from '@adonisjs/http-server/client/url_builder'
 
 import { parseResponse, TuyauHTTPError, TuyauNetworkError } from './errors.ts'
-import { buildSearchParams, isObject, isReactNative, isServer, removeSlash } from './utils.ts'
+import {
+  buildSearchParams,
+  isObject,
+  isReactNative,
+  isServer,
+  removeSlash,
+  segmentsToRouteName,
+} from './utils.ts'
 import type {
   AdonisEndpoint,
   BuildNamed,
@@ -288,11 +295,11 @@ export class Tuyau<R extends Record<string, AdonisEndpoint>> {
    * Creates a proxy-based fluent API for accessing endpoints by name
    */
   private makeNamed(segments: string[]): any {
-    const dot = segments.join('.')
+    const routeName = segmentsToRouteName(segments)
 
-    const def = this.config.registry[dot]
+    const def = this.config.registry[routeName]
     if (def) {
-      const fn = (args: any) => this.#doFetch(dot, def.methods[0], args)
+      const fn = (args: any) => this.#doFetch(routeName, def.methods[0], args)
       return new Proxy(fn, {
         get: (_t, prop) => this.makeNamed([...segments, String(prop)]),
         apply: (_t, _this, argArray) => fn(...(argArray as [any])),
