@@ -59,8 +59,8 @@ export type HasRequiredKeys<T> =
  */
 export type RequestArgs<E extends AdonisEndpoint> = (HasKeys<E['types']['params']> extends true
   ? HasRequiredKeys<E['types']['params']> extends true
-    ? { params: CamelCaseKeys<E['types']['params']> }
-    : { params?: CamelCaseKeys<E['types']['params']> }
+    ? { params: E['types']['params'] }
+    : { params?: E['types']['params'] }
   : {}) &
   (E['types']['query'] extends object
     ? HasRequiredKeys<E['types']['query']> extends true
@@ -96,13 +96,6 @@ type CamelCaseRest<S extends string> = S extends `_${infer H}${infer T}`
   : S extends `${infer H}${infer T}`
     ? `${H}${CamelCaseRest<T>}`
     : S
-
-/**
- * Converts object keys from snake_case to camelCase
- */
-export type CamelCaseKeys<T extends Record<string, any>> = {
-  [K in keyof T as CamelCase<string & K>]: T[K]
-}
 
 /**
  * Applies camelCase to each segment in a split array
@@ -248,7 +241,7 @@ export namespace PathWithRegistry {
     Reg extends Record<string, AdonisEndpoint>,
     M extends Method,
     P extends PatternsByMethod<Reg, M>,
-  > = CamelCaseKeys<FilterByMethodPathForRegistry<Reg, M, P>['types']['params']>
+  > = FilterByMethodPathForRegistry<Reg, M, P>['types']['params']
 
   export type Body<
     Reg extends Record<string, AdonisEndpoint>,
@@ -281,7 +274,7 @@ export namespace RouteWithRegistry {
   export type Params<
     Reg extends Record<string, AdonisEndpoint>,
     Name extends keyof Reg,
-  > = CamelCaseKeys<EndpointByNameForRegistry<Reg, Name>['types']['params']>
+  > = EndpointByNameForRegistry<Reg, Name>['types']['params']
 
   export type Body<
     Reg extends Record<string, AdonisEndpoint>,
@@ -310,7 +303,7 @@ export namespace Path {
   export type Params<
     M extends Method,
     P extends PatternsByMethod<UserAdonisRegistry, M>,
-  > = CamelCaseKeys<FilterByMethodPathForRegistry<UserAdonisRegistry, M, P>['types']['params']>
+  > = FilterByMethodPathForRegistry<UserAdonisRegistry, M, P>['types']['params']
   export type Body<
     M extends Method,
     P extends PatternsByMethod<UserAdonisRegistry, M>,
@@ -328,9 +321,8 @@ export namespace Path {
 export namespace Route {
   export type Request<Name extends keyof UserAdonisRegistry> = RequestArgs<UserEndpointByName<Name>>
   export type Response<Name extends keyof UserAdonisRegistry> = ResponseOf<UserEndpointByName<Name>>
-  export type Params<Name extends keyof UserAdonisRegistry> = CamelCaseKeys<
+  export type Params<Name extends keyof UserAdonisRegistry> =
     UserEndpointByName<Name>['types']['params']
-  >
   export type Body<Name extends keyof UserAdonisRegistry> =
     UserEndpointByName<Name>['types']['body']
   export type Query<Name extends keyof UserAdonisRegistry> =

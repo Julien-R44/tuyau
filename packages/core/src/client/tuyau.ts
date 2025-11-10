@@ -5,7 +5,6 @@ import { createUrlBuilder, UrlFor } from '@adonisjs/http-server/client/url_build
 import { parseResponse, TuyauHTTPError, TuyauNetworkError } from './errors.ts'
 import {
   buildSearchParams,
-  snakeCaseKeys,
   isObject,
   isReactNative,
   isServer,
@@ -123,11 +122,8 @@ export class Tuyau<R extends Record<string, AdonisEndpoint>> {
     const usedMethod =
       lowercaseMethod === 'head' || lowercaseMethod === 'options' ? 'get' : lowercaseMethod
 
-    const snakeCasedParams = snakeCaseKeys(args?.params || {})
-
     // @ts-expect-error ignore
-    // TODO: Maybe we should fix urlFor to accept camelCased params?
-    return this.urlFor[usedMethod](name, { ...snakeCasedParams, ...args?.params }).url
+    return this.urlFor[usedMethod](name, args?.params || {}).url
   }
 
   /**

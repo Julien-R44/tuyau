@@ -62,26 +62,3 @@ export function segmentsToRouteName(segments: string[]): string {
     .map((segment) => segment.replace(/[A-Z]/g, (g) => `-${g.toLowerCase()}`))
     .join('.')
 }
-
-/**
- * Simple snake case implementation
- */
-export function snakeCase(str: string): string {
-  return str.replace(/[A-Z]/g, (g) => `_${g.toLowerCase()}`)
-}
-
-/**
- * Converts all keys of an object to snake recursively
- */
-export function snakeCaseKeys<T>(obj: T): any {
-  if (Array.isArray(obj)) {
-    return obj.map((item) => snakeCaseKeys(item))
-  } else if (isObject(obj)) {
-    const newObj: Record<string, any> = {}
-    for (const [key, value] of Object.entries(obj as any)) {
-      newObj[snakeCase(key)] = snakeCaseKeys(value)
-    }
-    return newObj
-  }
-  return obj
-}

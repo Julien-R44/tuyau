@@ -4,9 +4,7 @@ import { createTuyau } from '../src/client/tuyau.js'
 import { defaultRegistry as registry } from './fixtures/index.js'
 import type { PathWithRegistry, RouteWithRegistry } from '../src/client/types/types.js'
 
-test.group('Client | Typings', (group) => {
-  group.tap((t) => t.skip(true, 'Only for typings validation'))
-
+test.group('Client | Typings', () => {
   test('named', async ({ expectTypeOf }) => {
     const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry })
 
@@ -212,7 +210,7 @@ test.group('Client | Typings', (group) => {
     tuyau.get('inexistent/path')
 
     // @ts-expect-error missing required params
-    tuyau.get('/posts/:post_id/comments/:comment_id/likes/:likeId')
+    tuyau.get('/posts/:postId/comments/:commentId/likes/:likeId')
 
     // @ts-expect-error cant POST to a GET-only route
     tuyau.post('/users/:id', {
@@ -284,7 +282,7 @@ test.group('Client | Typings', (group) => {
     })
 
     // GET with required params and query
-    tuyau.get('/posts/:post_id/comments/:comment_id/likes/:like_id', {
+    tuyau.get('/posts/:postId/comments/:commentId/likes/:likeId', {
       params: { postId: '1', commentId: '2', likeId: '3' },
       query: { foo: 'bar' },
     })
@@ -296,7 +294,7 @@ test.group('Client | Typings', (group) => {
     })
 
     // @ts-expect-error missing required params for parameterized route
-    tuyau.get('/posts/:post_id/comments/:comment_id/likes/:like_id', {
+    tuyau.get('/posts/:postId/comments/:commentId/likes/:likeId', {
       query: { foo: 'bar' },
     })
   })
@@ -320,7 +318,7 @@ test.group('Client | Typings', (group) => {
     })
 
     // POST with params and body
-    tuyau.post('/posts/:postId/comments/:comment_id/likes/:like_id/toggle', {
+    tuyau.post('/posts/:postId/comments/:commentId/likes/:likeId/toggle', {
       params: { postId: '1', commentId: '2', likeId: '3' },
       query: { foo: 'bar' },
       body: { baz: 'optional' },
@@ -380,7 +378,7 @@ test.group('Client | Typings', (group) => {
     type PostAuthResponse = Awaited<typeof res2>
     expectTypeOf<PostAuthResponse>().toEqualTypeOf<{ token: string }>()
 
-    const res3 = await tuyau.get('/posts/:post_id/comments/:comment_id/likes/:like_id', {
+    const res3 = await tuyau.get('/posts/:postId/comments/:commentId/likes/:likeId', {
       params: { postId: '1', commentId: '2', likeId: '3' },
       query: { foo: 'bar' },
     })
@@ -412,7 +410,7 @@ test.group('Client | Typings', (group) => {
       typeof registry,
       'DELETE',
       // @ts-expect-error path is not a GET method
-      '/posts/:post_id/comments/:comment_id/likes/:likeId/toggle'
+      '/posts/:postId/comments/:commentId/likes/:likeId/toggle'
     >
 
     expectTypeOf<Params2>().toEqualTypeOf<never>()
@@ -451,13 +449,13 @@ test.group('Client | Typings', (group) => {
     type GetPostDetailResponse = PathWithRegistry.Response<
       typeof registry,
       'GET',
-      '/posts/:post_id/comments/:comment_id/likes/:like_id'
+      '/posts/:postId/comments/:commentId/likes/:likeId'
     >
 
     type GetPostDetailParams = PathWithRegistry.Params<
       typeof registry,
       'GET',
-      '/posts/:post_id/comments/:comment_id/likes/:like_id'
+      '/posts/:postId/comments/:commentId/likes/:likeId'
     >
 
     expectTypeOf<GetPostDetailResponse>().toEqualTypeOf<{ id: string }>()
@@ -552,46 +550,5 @@ test.group('Client | Typings', (group) => {
     tuyau.api.newAccount.create
 
     tuyau.urlFor.get('new_account.create', { 'user-id': '123', 'user-token': 'foo' })
-  })
-
-  test('camel case route params', () => {
-    const tuyau = createTuyau({
-      baseUrl: 'http://localhost:3333',
-      registry: {
-        'users.show': {
-          methods: ['GET', 'HEAD'],
-          pattern: '/users/:comment_id/comments/:post_id',
-          tokens: [
-            { old: '/users/:comment_id/comments/:post_id', type: 0, val: 'users', end: '' },
-            { old: '/users/:comment_id/comments/:post_id', type: 1, val: 'comment_id', end: '' },
-            { old: '/users/:comment_id/comments/:post_id', type: 0, val: 'comments', end: '' },
-            { old: '/users/:comment_id/comments/:post_id', type: 1, val: 'post_id', end: '' },
-          ],
-          types: {} as {
-            body: {}
-            paramsTuple: [string, string]
-            params: { comment_id: string; post_id: string }
-            query: {}
-            response: { id: string }
-          },
-        },
-      },
-    })
-
-    // Should work with camelCase
-    tuyau.api.users.show({
-      params: {
-        commentId: '1',
-        postId: '2',
-      },
-    })
-
-    // Should not work with snake_case anymore
-    // tuyau.api.users.show({
-    //   params: {
-    //     comment_id: '1',
-    //     post_id: '2',
-    //   },
-    // })
   })
 })

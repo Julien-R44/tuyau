@@ -64,83 +64,63 @@ export const defaultRegistry = {
   },
   'posts.comments.likes.detail': {
     methods: ['GET'],
-    pattern: '/posts/:post_id/comments/:comment_id/likes/:like_id',
+    pattern: '/posts/:postId/comments/:commentId/likes/:likeId',
     tokens: [
+      { old: '/posts/:postId/comments/:commentId/likes/:likeId', type: 0, val: 'posts', end: '' },
+      { old: '/posts/:postId/comments/:commentId/likes/:likeId', type: 1, val: 'postId', end: '' },
       {
-        old: '/posts/:post_id/comments/:comment_id/likes/:like_id',
-        type: 0,
-        val: 'posts',
-        end: '',
-      },
-      {
-        old: '/posts/:post_id/comments/:comment_id/likes/:like_id',
-        type: 1,
-        val: 'post_id',
-        end: '',
-      },
-      {
-        old: '/posts/:post_id/comments/:comment_id/likes/:like_id',
+        old: '/posts/:postId/comments/:commentId/likes/:likeId',
         type: 0,
         val: 'comments',
         end: '',
       },
       {
-        old: '/posts/:post_id/comments/:comment_id/likes/:like_id',
+        old: '/posts/:postId/comments/:commentId/likes/:likeId',
         type: 1,
-        val: 'comment_id',
+        val: 'commentId',
         end: '',
       },
-      {
-        old: '/posts/:post_id/comments/:comment_id/likes/:like_id',
-        type: 0,
-        val: 'likes',
-        end: '',
-      },
-      {
-        old: '/posts/:post_id/comments/:comment_id/likes/:like_id',
-        type: 1,
-        val: 'like_id',
-        end: '',
-      },
+      { old: '/posts/:postId/comments/:commentId/likes/:likeId', type: 0, val: 'likes', end: '' },
+      { old: '/posts/:postId/comments/:commentId/likes/:likeId', type: 1, val: 'likeId', end: '' },
     ],
     types: placeholder as {
       paramsTuple: [string, string, string]
       body: {}
-      params: { post_id: string; comment_id: string; like_id: string }
+      params: { postId: string; commentId: string; likeId: string }
       query: { foo: string }
       response: { id: string }
     },
   },
   'posts.comments.likes.toggle': {
     methods: ['POST'],
-    pattern: '/posts/:postId/comments/:comment_id/likes/:like_id/toggle',
+    pattern: '/posts/:postId/comments/:commentId/likes/:likeId/toggle',
     tokens: [
       {
-        old: '/posts/:postId/comments/:comment_id/likes/:like_id/toggle',
+        old: '/posts/:postId/comments/:commentId/likes/:likeId/toggle',
         type: 0,
         val: 'posts',
         end: '',
       },
       {
-        old: '/posts/:postId/comments/:comment_id/likes/:like_id/toggle',
+        old: '/posts/:postId/comments/:commentId/likes/:likeId/toggle',
         type: 1,
         val: 'postId',
         end: '',
       },
       {
-        old: '/posts/:postId/comments/:comment_id/likes/:like_id/toggle',
+        old: '/posts/:postId/comments/:commentId/likes/:likeId/toggle',
         type: 0,
         val: 'comments',
         end: '',
       },
       {
-        old: '/posts/:postId/comments/:comment_id/likes/:like_id/toggle',
+        old: '/posts/:postId/comments/:commentId/likes/:likeId/toggle',
         type: 1,
-        val: 'comment_id',
+        val: 'commentId',
         end: '',
       },
       {
-        old: '/posts/:postId/comments/:comment_id/likes/:like_id/toggle',
+        old: '/posts/:postId/comments/:commentId/likes/:likeId/toggle',
         type: 0,
         val: 'likes',
         end: '',
@@ -149,7 +129,7 @@ export const defaultRegistry = {
     types: placeholder as {
       paramsTuple: [string, string, string]
       body: { baz?: string }
-      params: { postId: string; comment_id: string; like_id: string }
+      params: { postId: string; commentId: string; likeId: string }
       query: { foo: string }
       response: { id: string }
     },
