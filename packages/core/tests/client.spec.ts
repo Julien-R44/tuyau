@@ -391,7 +391,7 @@ test.group('Client | url', () => {
 
     nock('http://localhost:3333').get('/users/1').query({ foo: 'bar' }).reply(200, { id: '1' })
 
-    await tuyau.get('/posts/:postId/comments/:commentId/likes/:likeId', {
+    await tuyau.get('/posts/:post_id/comments/:comment_id/likes/:like_id', {
       params: { commentId: '2', likeId: '3', postId: '1' },
       query: { foo: 'bar' },
     })

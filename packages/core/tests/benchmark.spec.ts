@@ -19,7 +19,8 @@ test.group('benchmark', () => {
       })
       .catch(() => {})
 
-    attest.instantiations([2709, 'instantiations'])
+    // 2709 before camel case things
+    attest.instantiations([4518, 'instantiations'])
   })
 
   test('Big registry', async () => {
@@ -34,7 +35,8 @@ test.group('benchmark', () => {
       })
       .catch(() => {})
 
-    attest.instantiations([17_674, 'instantiations'])
+    // 17674 before camel case things
+    attest.instantiations([31_835, 'instantiations'])
   })
 
   test('Huge registry', async () => {
@@ -46,6 +48,7 @@ test.group('benchmark', () => {
       .catch(() => {})
     tuyau.request('admin.generate', { query: { limit: 10 } }).catch(() => {})
 
-    attest.instantiations([50_645, 'instantiations'])
+    // 50645 before camel case things
+    attest.instantiations([70_915, 'instantiations'])
   })
 })
