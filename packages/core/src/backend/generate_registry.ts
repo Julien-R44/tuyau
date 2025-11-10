@@ -1,5 +1,4 @@
 import { dirname } from 'node:path'
-import string from '@adonisjs/core/helpers/string'
 import { writeFile, mkdir } from 'node:fs/promises'
 import type { ScannedRoute, RouterHooks } from '@adonisjs/assembler/types'
 
@@ -9,6 +8,14 @@ interface GenerateRegistryConfig {
    * @default ./.adonisjs/client/registry.ts
    */
   output?: string
+
+  /**
+   * Whether to split runtime values and TypeScript types into separate files
+   * When true, generates registry.ts (runtime) and registry.schema.d.ts (types)
+   * When false, generates a single file with both runtime and types
+   * @default true
+   */
+  splitTypesFromRuntime?: boolean
 
   /**
    * Routes filtering configuration
@@ -88,6 +95,42 @@ function generateRouteParams(route: ScannedRoute) {
 }
 
 /**
+ * Generate a single registry entry for a route (runtime values only)
+ */
+function generateRuntimeRegistryEntry(route: ScannedRoute): string {
+  const routeName = route.name
+
+  return `  '${routeName}': {
+    methods: ${JSON.stringify(route.methods)},
+    pattern: '${route.pattern}',
+    tokens: ${JSON.stringify(route.tokens)},
+    types: placeholder as Registry['${routeName}']['types'],
+  }`
+}
+
+/**
+ * Generate a single registry entry for a route (types only)
+ */
+function generateTypesRegistryEntry(route: ScannedRoute): string {
+  const requestType = route.request?.type || '{}'
+  const responseType = route.response?.type || 'unknown'
+  const { paramsType, paramsTuple } = generateRouteParams(route)
+  const routeName = route.name
+
+  return `  '${routeName}': {
+    methods: ${JSON.stringify(route.methods)}
+    pattern: '${route.pattern}'
+    types: {
+      body: ${requestType}
+      paramsTuple: [${paramsTuple}]
+      params: ${paramsType ? `{ ${paramsType} }` : '{}'}
+      query: {}
+      response: ${responseType}
+    }
+  }`
+}
+
+/**
  * Generate a single registry entry for a route
  */
 function generateRegistryEntry(route: ScannedRoute): string {
@@ -95,9 +138,6 @@ function generateRegistryEntry(route: ScannedRoute): string {
   const responseType = route.response?.type || 'unknown'
   const { paramsType, paramsTuple } = generateRouteParams(route)
   const routeName = route.name
-    .split('.')
-    .map((segment) => string.camelCase(segment))
-    .join('.')
 
   return `  '${routeName}': {
     methods: ${JSON.stringify(route.methods)},
@@ -114,7 +154,46 @@ function generateRegistryEntry(route: ScannedRoute): string {
 }
 
 /**
- * Generate the complete registry file content
+ * Generate the runtime-only registry file content
+ */
+function generateRuntimeContent(routes: ScannedRoute[]): string {
+  const registryEntries = routes.map(generateRuntimeRegistryEntry).join(',\n')
+
+  return `/* eslint-disable prettier/prettier */
+import { type AdonisEndpoint } from '@tuyau/core/types'
+import type { Registry } from './registry.schema'
+const placeholder: any = {}
+
+export const registry = {
+${registryEntries}
+} as const satisfies Record<string, AdonisEndpoint>
+`
+}
+
+/**
+ * Generate the types-only registry file content
+ */
+function generateTypesContent(routes: ScannedRoute[]): string {
+  const registryEntries = routes.map(generateTypesRegistryEntry).join('\n')
+
+  return `/* eslint-disable prettier/prettier */
+/// <reference path="../../adonisrc.ts" />
+
+import type { AdonisEndpoint } from '@tuyau/core/types'
+import type { Infer } from '@vinejs/vine/types'
+
+export interface Registry {
+${registryEntries}
+}
+
+declare module '@tuyau/core/types' {
+  export interface UserRegistry extends Registry {}
+}
+`
+}
+
+/**
+ * Generate the complete registry file content (legacy)
  */
 function generateRegistryContent(routes: ScannedRoute[]): string {
   const registryEntries = routes.map(generateRegistryEntry).join(',\n')
@@ -140,6 +219,7 @@ export function generateRegistry(options?: GenerateRegistryConfig): {
 } {
   const config = {
     output: './.adonisjs/client/registry.ts',
+    splitTypesFromRuntime: true,
     ...options,
   }
 
@@ -149,11 +229,28 @@ export function generateRegistry(options?: GenerateRegistryConfig): {
       const scannedRoutes = routesScanner.getScannedRoutes()
 
       const filteredRoutes = filterRoutes(scannedRoutes, config.routes)
-      const registryContent = generateRegistryContent(filteredRoutes)
 
-      await writeOutputFile(config.output, registryContent)
+      if (config.splitTypesFromRuntime) {
+        // Generate separate runtime and types files
+        const runtimeContent = generateRuntimeContent(filteredRoutes)
+        const typesContent = generateTypesContent(filteredRoutes)
 
-      devServer.ui.logger.info(`created ${config.output}`, { startTime })
+        // Generate paths for both files
+        const basePath = config.output.replace(/\.(ts|js)$/, '')
+        const runtimePath = `${basePath}.ts`
+        const typesPath = `${basePath}.schema.d.ts`
+
+        // Write both files
+        await writeOutputFile(runtimePath, runtimeContent)
+        await writeOutputFile(typesPath, typesContent)
+
+        devServer.ui.logger.info(`created ${runtimePath}`, { startTime })
+        devServer.ui.logger.info(`created ${typesPath}`, { startTime })
+      } else {
+        const registryContent = generateRegistryContent(filteredRoutes)
+        await writeOutputFile(config.output, registryContent)
+        devServer.ui.logger.info(`created ${config.output}`, { startTime })
+      }
     },
   } satisfies RouterHooks['routesScanned'][number]
 }
