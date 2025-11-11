@@ -13,7 +13,7 @@ export default class AccountsController {
   )
 
   async list({ request, serialize }: HttpContext) {
-    const payload = await request.validateUsing(AccountsController.validator)
+    await request.validateUsing(AccountsController.validator)
     const users = await User.all()
 
     return {
@@ -28,7 +28,7 @@ export default class AccountsController {
   )
 
   async uploadProfilePicture({ request }: HttpContext) {
-    const payload = await request.validateUsing(AccountsController.uploadProfilePictureValidator)
+    await request.validateUsing(AccountsController.uploadProfilePictureValidator)
   }
 
   async create({ inertia }: HttpContext) {
