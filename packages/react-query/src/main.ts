@@ -63,10 +63,7 @@ export function createTuyauReactQueryClient<D extends Record<string, AdonisEndpo
 
       infiniteQueryKey: (request: RawRequestArgs<any>) =>
         buildKey({ segments, request, type: 'infinite' }),
-      infiniteQueryFilter: (
-        request?: RawRequestArgs<any>,
-        filters?: QueryFilters<TuyauQueryKey>,
-      ) => ({
+      infiniteQueryFilter: (request?: RawRequestArgs<any>, filters?: QueryFilters<any>) => ({
         queryKey: buildKey({ segments, request, type: 'infinite' }),
         ...filters,
       }),

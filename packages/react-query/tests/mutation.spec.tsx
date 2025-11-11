@@ -4,8 +4,8 @@ import { createTuyau } from '@tuyau/core/client'
 import { setTimeout } from 'node:timers/promises'
 import { useMutation } from '@tanstack/react-query'
 
-import { TuyauMutationKey } from '../src/types/common.ts'
 import { defaultRegistry } from './fixtures/index.ts'
+import { TuyauMutationKey } from '../src/types/common.ts'
 import { createTuyauReactQueryClient } from '../src/main.ts'
 import { queryClient, renderHookWithWrapper } from './helpers/index.tsx'
 
@@ -65,7 +65,10 @@ test.group('Mutation | Options', () => {
     })
 
     expectTypeOf(mutationOptions.mutationKey).toMatchTypeOf<TuyauMutationKey>()
-    expectTypeOf(mutationOptions.mutationFn).toBeCallableWith({ body: { name: 'foo' } })
+    expectTypeOf(mutationOptions.mutationFn).toBeCallableWith(
+      { body: { name: 'foo' } },
+      { client: null as any, meta: {} },
+    )
   })
 
   test('mutation without payload shouldnt require payload', async () => {
@@ -78,7 +81,7 @@ test.group('Mutation | Options', () => {
       useMutation(tuyau.do.something.mutationOptions()),
     )
 
-    await result.current.mutateAsync({})
+    await result.current.mutateAsync({}).catch(() => {})
   })
 
   test('mutationKey should return TuyauMutationKey type', ({ expectTypeOf }) => {

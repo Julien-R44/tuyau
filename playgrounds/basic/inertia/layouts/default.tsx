@@ -36,9 +36,9 @@ export default function Layout({ children }: { children: ReactElement<Data.Share
           <div>
             <nav>
               {children.props.user ? (
-                <Form method="POST" action="/logout">
-                  <button type="submit"> Logout </button>
-                </Form>
+                <Link href="logout" method="post">
+                  Logout
+                </Link>
               ) : (
                 <>
                   <Link href="/signup">Signup</Link>

@@ -2,8 +2,8 @@ import { test } from '@japa/runner'
 import { createTuyau } from '@tuyau/core/client'
 import { useQueryClient } from '@tanstack/react-query'
 
-import { TuyauQueryKey } from '../src/types/common.ts'
 import { defaultRegistry } from './fixtures/index.ts'
+import { TuyauQueryKey } from '../src/types/common.ts'
 import { createTuyauReactQueryClient } from '../src/main.ts'
 import { queryClient, renderHookWithWrapper } from './helpers/index.tsx'
 

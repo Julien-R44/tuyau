@@ -44,9 +44,7 @@ export function tuyauInfiniteQueryOptions(options: TuyauInfiniteQueryOptionsOpti
           requestArgs = request
         }
       } else {
-        requestArgs = {
-          query: pageParam !== undefined ? { [pageParamKey]: pageParam } : {},
-        }
+        requestArgs = { query: pageParam !== undefined ? { [pageParamKey]: pageParam } : {} }
       }
 
       return await client.request(routeName, {

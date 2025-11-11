@@ -32,9 +32,6 @@ test.group('Infinite Query', () => {
       },
     )
 
-    assert.deepEqual(options.tuyau.path, ['articles', 'index'])
-    assert.equal(options.tuyau.type, 'infinite')
-
     const { result } = renderHookWithWrapper(() => useInfiniteQuery(options))
     await waitFor(() => {
       assert.isTrue(result.current.isSuccess)

@@ -34,10 +34,6 @@ export interface TuyauInfiniteQueryOptionsIn<TQueryFnData, TError, TData>
 export interface TuyauInfiniteQueryOptionsOut<TQueryFnData, TError, TData>
   extends Omit<InfiniteQueryObserverOptions<TQueryFnData, TError, TData>, 'queryKey'> {
   queryKey: DataTag<TuyauQueryKey, TData>
-  tuyau: {
-    path: string[]
-    type: 'infinite'
-  }
 }
 
 /**
@@ -59,15 +55,15 @@ export interface TuyauReactInfiniteQueryOptions<EDef extends AdonisEndpoint> {
  * Decorate query endpoints with infinite query capabilities
  */
 export interface DecorateInfiniteQueryFn<EDef extends AdonisEndpoint> extends TypeHelper<EDef> {
-  /** Creates type-safe infinite query options for use with useInfiniteQuery */
   infiniteQueryOptions: TuyauReactInfiniteQueryOptions<EDef>
-  /** Generates a query key for infinite queries */
   infiniteQueryKey: (
     args?: RawRequestArgs<EDef>,
-  ) => DataTag<TuyauQueryKey, EDef['types']['response']>
-  /** Creates query filters for targeting infinite queries */
+  ) => DataTag<TuyauQueryKey, InfiniteData<EDef['types']['response']>>
   infiniteQueryFilter: (
     args?: RawRequestArgs<EDef>,
-    filters?: QueryFilters<DataTag<TuyauQueryKey, EDef['types']['response']>>,
-  ) => WithRequired<QueryFilters<DataTag<TuyauQueryKey, EDef['types']['response']>>, 'queryKey'>
+    filters?: QueryFilters<DataTag<TuyauQueryKey, InfiniteData<EDef['types']['response']>>>,
+  ) => WithRequired<
+    QueryFilters<DataTag<TuyauQueryKey, InfiniteData<EDef['types']['response']>>>,
+    'queryKey'
+  >
 }
