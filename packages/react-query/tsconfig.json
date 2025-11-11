@@ -4,6 +4,9 @@
     "jsx": "preserve",
     "lib": ["DOM", "ESNext"],
     "rootDir": "./",
+    "moduleResolution": "nodenext",
+    "allowImportingTsExtensions": true,
+    "rewriteRelativeImportExtensions": true,
     "outDir": "./build"
   }
 }

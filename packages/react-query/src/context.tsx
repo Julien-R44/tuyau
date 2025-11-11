@@ -1,43 +1,44 @@
 import * as React from 'react'
+import type { Tuyau } from '@tuyau/core/client'
+import { AdonisEndpoint } from '@tuyau/core/types'
 import type { QueryClient } from '@tanstack/react-query'
-import type { TuyauClient, GeneratedRoutes, ApiDefinition } from '@tuyau/client'
 
-import { createTuyauReactQueryClient, type TuyauReactQuery } from './main.js'
+import { createTuyauReactQueryClient, type TuyauReactQuery } from './index.ts'
 
-type InferTuyauClient<API extends ApiDefinition> = TuyauClient<
-  API['definition'],
-  API['routes'] extends GeneratedRoutes ? API['routes'] : any
->
+type InferTuyauClient<TRegistry extends Record<string, AdonisEndpoint>> = Tuyau<TRegistry>
 
-type InferTuyauReactQuery<API extends ApiDefinition> = TuyauReactQuery<API['definition']>
+type InferTuyauReactQuery<TRegistry extends Record<string, AdonisEndpoint>> =
+  TuyauReactQuery<TRegistry>
 
-export interface CreateTuyauContextOptions<API extends ApiDefinition> {
-  client: InferTuyauClient<API>
+export interface CreateTuyauContextOptions<TRegistry extends Record<string, AdonisEndpoint>> {
+  client: InferTuyauClient<TRegistry>
   queryClient: QueryClient
 }
 
-export interface CreateTuyauContextResult<API extends ApiDefinition> {
+export interface CreateTuyauContextResult<TRegistry extends Record<string, AdonisEndpoint>> {
   TuyauProvider: React.FC<{
     children: React.ReactNode
     queryClient: QueryClient
-    client: InferTuyauClient<API>
+    client: InferTuyauClient<TRegistry>
   }>
-  useTuyau: () => InferTuyauReactQuery<API>
-  useTuyauClient: () => InferTuyauClient<API>
+  useTuyau: () => InferTuyauReactQuery<TRegistry>
+  useTuyauClient: () => InferTuyauClient<TRegistry>
 }
 
 /**
  * Create a set of type-safe provider-consumers for Tuyau with React Query
  */
-export function createTuyauContext<API extends ApiDefinition>(): CreateTuyauContextResult<API> {
-  const TuyauClientContext = React.createContext<InferTuyauClient<API> | null>(null)
-  const TuyauContext = React.createContext<InferTuyauReactQuery<API> | null>(null)
+export function createTuyauContext<
+  TRegistry extends Record<string, AdonisEndpoint>,
+>(): CreateTuyauContextResult<TRegistry> {
+  const TuyauClientContext = React.createContext<InferTuyauClient<TRegistry> | null>(null)
+  const TuyauContext = React.createContext<InferTuyauReactQuery<TRegistry> | null>(null)
 
   function TuyauProvider(
     props: Readonly<{
       children: React.ReactNode
       queryClient: QueryClient
-      client: InferTuyauClient<API>
+      client: InferTuyauClient<TRegistry>
     }>,
   ) {
     const value = React.useMemo(
@@ -51,7 +52,7 @@ export function createTuyauContext<API extends ApiDefinition>(): CreateTuyauCont
 
     return (
       <TuyauClientContext.Provider value={props.client}>
-        <TuyauContext.Provider value={value}>{props.children}</TuyauContext.Provider>
+        <TuyauContext.Provider value={value as any}>{props.children}</TuyauContext.Provider>
       </TuyauClientContext.Provider>
     )
   }

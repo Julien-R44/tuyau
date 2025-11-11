@@ -1,15 +1,16 @@
 import nock from 'nock'
 import { test } from '@japa/runner'
-import { createTuyau } from '@tuyau/client'
+import { createTuyau } from '@tuyau/core/client'
 import { waitFor, act } from '@testing-library/react'
 import { useInfiniteQuery } from '@tanstack/react-query'
 
-import { createTuyauReactQueryClient } from '../src/index.js'
-import { ApiDefinition, queryClient, renderHookWithWrapper } from './helpers.js'
+import { defaultRegistry } from './fixtures/index.ts'
+import { createTuyauReactQueryClient } from '../src/index.ts'
+import { queryClient, renderHookWithWrapper } from './helpers/index.tsx'
 
 test.group('Infinite Query', () => {
   test('basic', async ({ assert, expectTypeOf }) => {
-    const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
     const tuyau = createTuyauReactQueryClient({ client, queryClient })
 
     nock('http://localhost:3333')
@@ -22,8 +23,8 @@ test.group('Infinite Query', () => {
       .query({ page: 2, limit: 10 })
       .reply(200, { data: [{ id: 2, title: 'Article 2' }], nextCursor: null })
 
-    const options = tuyau.articles.$get.infiniteQueryOptions(
-      { payload: { limit: 10 } },
+    const options = tuyau.articles.index.infiniteQueryOptions(
+      { query: { page: 1, limit: 10 } },
       {
         pageParamKey: 'page',
         initialPageParam: 1,
@@ -31,7 +32,7 @@ test.group('Infinite Query', () => {
       },
     )
 
-    assert.deepEqual(options.tuyau.path, ['articles', '$get'])
+    assert.deepEqual(options.tuyau.path, ['articles', 'index'])
     assert.equal(options.tuyau.type, 'infinite')
 
     const { result } = renderHookWithWrapper(() => useInfiniteQuery(options))
@@ -45,8 +46,8 @@ test.group('Infinite Query', () => {
     })
 
     const queryData = queryClient.getQueryData(
-      tuyau.articles.$get.infiniteQueryKey({ payload: { limit: 10 } }),
-    )!
+      tuyau.articles.index.infiniteQueryKey({ query: { page: 1, limit: 10 } }),
+    )
     expectTypeOf<typeof result.current.data>(queryData)
     assert.deepEqual(result.current.data, queryData)
 
@@ -63,7 +64,7 @@ test.group('Infinite Query', () => {
   })
 
   test('query keys', async ({ assert }) => {
-    const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
     const tuyau = createTuyauReactQueryClient({ client, queryClient })
 
     nock('http://localhost:3333')
@@ -71,8 +72,8 @@ test.group('Infinite Query', () => {
       .query({ page: 1, limit: 10 })
       .reply(200, { data: [{ id: 1, title: 'Article 1' }], nextCursor: 2 })
 
-    const options = tuyau.articles.$get.infiniteQueryOptions(
-      { payload: { limit: 10 } },
+    const options = tuyau.articles.index.infiniteQueryOptions(
+      { query: { page: 1, limit: 10 } },
       {
         pageParamKey: 'page',
         initialPageParam: 1,
@@ -81,18 +82,18 @@ test.group('Infinite Query', () => {
     )
 
     assert.deepEqual(options.queryKey, [
-      ['articles', '$get'],
-      { payload: { limit: 10 }, type: 'infinite' },
+      ['articles', 'index'],
+      { request: { query: { page: 1, limit: 10 } }, type: 'infinite' },
     ])
 
     assert.deepEqual(
       options.queryKey,
-      tuyau.articles.$get.infiniteQueryKey({ payload: { limit: 10 } }),
+      tuyau.articles.index.infiniteQueryKey({ query: { page: 1, limit: 10 } }),
     )
   })
 
   test('typings', async ({ expectTypeOf }) => {
-    const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
     const tuyau = createTuyauReactQueryClient({ client, queryClient })
 
     nock('http://localhost:3333')
@@ -100,8 +101,8 @@ test.group('Infinite Query', () => {
       .query({ page: 1, limit: 10 })
       .reply(200, { data: [{ id: 1, title: 'Article 1' }], nextCursor: 2 })
 
-    tuyau.articles.$get.infiniteQueryOptions(
-      { payload: { limit: 10 } },
+    tuyau.articles.index.infiniteQueryOptions(
+      { query: { page: 1, limit: 10 } },
       {
         pageParamKey: 'page',
         initialPageParam: 1,

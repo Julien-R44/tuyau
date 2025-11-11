@@ -18,7 +18,6 @@ router
   .group(() => {
     router.get('signup', [controllers.Accounts, 'create'])
     router.post('signup', [controllers.Accounts, 'store'])
-    router.get('users', [controllers.Accounts, 'list'])
     router.post('users/profile-picture', [controllers.Accounts, 'uploadProfilePicture'])
 
     router.get('login', [controllers.Session, 'create'])
@@ -33,3 +32,7 @@ router
     router.post('logout', [controllers.Session, 'destroy'])
   })
   .use(middleware.auth())
+
+router.get('/users', [controllers.Users, 'list'])
+router.post('/users', [controllers.Users, 'store'])
+router.delete('/users/:id', [controllers.Users, 'delete'])

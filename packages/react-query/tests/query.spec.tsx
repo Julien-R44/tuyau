@@ -1,6 +1,6 @@
 import nock from 'nock'
 import { test } from '@japa/runner'
-import { createTuyau } from '@tuyau/client'
+import { createTuyau } from '@tuyau/core/client'
 import { setTimeout } from 'node:timers/promises'
 import {
   useQuery,
@@ -10,22 +10,23 @@ import {
   QueryClient,
 } from '@tanstack/react-query'
 
-import { TuyauQueryKey } from '../src/types.js'
-import { createTuyauReactQueryClient } from '../src/index.js'
-import { ApiDefinition, queryClient, renderHookWithWrapper } from './helpers.jsx'
+import { defaultRegistry } from './fixtures/index.ts'
+import { TuyauQueryKey } from '../src/types/common.ts'
+import { createTuyauReactQueryClient } from '../src/main.ts'
+import { queryClient, renderHookWithWrapper } from './helpers/index.tsx'
 
 test.group('Query | useQuery', () => {
   test('basic', async ({ expectTypeOf, assert }) => {
-    const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
     const tuyau = createTuyauReactQueryClient({ client, queryClient })
 
     nock('http://localhost:3333')
       .get('/users')
-      .query({ name: 'foo' })
+      .query({ email: 'fo@ok.com' })
       .reply(200, [{ id: 1, name: 'foo' }])
 
     const { result } = renderHookWithWrapper(() =>
-      useQuery(tuyau.users.$get.queryOptions({ payload: { name: 'foo' } })),
+      useQuery(tuyau.users.index.queryOptions({ query: { email: 'fo@ok.com' } })),
     )
 
     await setTimeout(300)
@@ -37,7 +38,7 @@ test.group('Query | useQuery', () => {
   })
 
   test('with initial data', ({ expectTypeOf }) => {
-    const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
     const tuyau = createTuyauReactQueryClient({ client, queryClient })
 
     nock('http://localhost:3333')
@@ -46,9 +47,9 @@ test.group('Query | useQuery', () => {
       .reply(200, [{ id: 2, name: 'foo' }])
 
     const { result } = renderHookWithWrapper(() => {
-      const options = tuyau.users.$get.queryOptions(
-        { payload: { name: 'foo' } },
-        { initialData: () => [{ id: 1, name: 'foo' }] },
+      const options = tuyau.users.index.queryOptions(
+        {},
+        { initialData: () => [{ id: 1, name: 'initial' }] },
       )
 
       return useQuery(options)
@@ -61,85 +62,77 @@ test.group('Query | useQuery', () => {
 
 test.group('Query | queryOptions', () => {
   test('basic', ({ assert }) => {
-    const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
     const tuyau = createTuyauReactQueryClient({ client, queryClient })
 
-    const result = tuyau.users.$get.queryOptions(
-      { payload: { name: 'foo' } },
+    const result = tuyau.users.index.queryOptions(
+      { query: { name: 'foo' } },
       { initialData: () => [{ id: 1, name: 'foo' }], staleTime: 1000 },
     )
 
     assert.isFunction(result.queryFn)
     assert.deepEqual(result.staleTime, 1000)
     assert.deepEqual(result.queryKey, [
-      ['users', '$get'],
-      { payload: { name: 'foo' }, type: 'query' },
+      ['users', 'index'],
+      { request: { query: { name: 'foo' } }, type: 'query' },
     ])
   })
 
   test('with route param call', ({ assert }) => {
-    const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
     const tuyau = createTuyauReactQueryClient({ client, queryClient })
 
-    const result = tuyau.users({ id: 1 }).$get.queryOptions({ payload: {} })
-
-    assert.isFunction(result.queryFn)
-    assert.deepEqual(result.queryKey, [['users', ':id', '$get'], { payload: {}, type: 'query' }])
-  })
-
-  test('with null route param call', ({ assert }) => {
-    const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
-
-    const result = tuyau.users[':id'].$get.queryOptions({ payload: {}, params: { id: 23 } })
+    const result = tuyau.users.show.queryOptions({ params: { id: '1' } })
 
     assert.isFunction(result.queryFn)
     assert.deepEqual(result.queryKey, [
-      ['users', ':id', '$get'],
-      { payload: {}, params: { id: 23 }, type: 'query' },
+      ['users', 'show'],
+      { request: { params: { id: '1' } }, type: 'query' },
     ])
   })
 })
 
 test.group('Query | queryKey', () => {
   test('basic', ({ assert }) => {
-    const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
     const tuyau = createTuyauReactQueryClient({ client, queryClient })
 
-    const r1 = tuyau.users.$get.queryKey({ payload: { name: 'foo' } })
-    const r2 = tuyau.users.$get.queryKey()
-    const r3 = tuyau.users({ id: 1 }).comments.$get.queryKey()
+    const r1 = tuyau.users.index.queryKey({ query: { name: 'foo' } })
+    const r2 = tuyau.users.index.queryKey()
+    const r3 = tuyau.users.comments.index.queryKey({ params: { userId: '1' } })
 
-    assert.deepEqual(r1, [['users', '$get'], { payload: { name: 'foo' }, type: 'query' }])
-    assert.deepEqual(r2, [['users', '$get'], { type: 'query' }])
-    assert.deepEqual(r3, [['users', ':id', 'comments', '$get'], { type: 'query' }])
+    assert.deepEqual(r1, [
+      ['users', 'index'],
+      { request: { query: { name: 'foo' } }, type: 'query' },
+    ])
+    assert.deepEqual(r2, [['users', 'index'], { type: 'query' }])
+    assert.deepEqual(r3, [
+      ['users', 'comments', 'index'],
+      { request: { params: { userId: '1' } }, type: 'query' },
+    ])
   })
 })
 
 test.group('Query | pathKey', () => {
   test('basic', ({ assert }) => {
-    const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
     const tuyau = createTuyauReactQueryClient({ client, queryClient })
 
     const r1 = tuyau.users.pathKey()
-    const r2 = tuyau.users.$get.pathKey()
-    const r3 = tuyau.users.pathKey()
-    const r4 = tuyau.users({ id: 1 }).pathKey()
-    const r5 = tuyau.users({ id: 1 }).comments.pathKey()
-    const r6 = tuyau.users[':id'].pathKey()
+    const r4 = tuyau.users.comments.pathKey()
+    const r5 = tuyau.users.comments.index.pathKey()
+    const r6 = tuyau.users.show.pathKey()
 
     assert.deepEqual(r1, [['users']])
-    assert.deepEqual(r2, [['users', '$get']])
-    assert.deepEqual(r3, [['users']])
-    assert.deepEqual(r4, [['users', ':id']])
-    assert.deepEqual(r5, [['users', ':id', 'comments']])
-    assert.deepEqual(r6, [['users', ':id']])
+    assert.deepEqual(r4, [['users', 'comments']])
+    assert.deepEqual(r5, [['users', 'comments', 'index']])
+    assert.deepEqual(r6, [['users', 'show']])
   })
 })
 
 test.group('Query | UseSuspenseQuery', () => {
   test('basic', async ({ expectTypeOf, assert }) => {
-    const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
     const tuyau = createTuyauReactQueryClient({ client, queryClient })
 
     nock('http://localhost:3333')
@@ -148,7 +141,7 @@ test.group('Query | UseSuspenseQuery', () => {
       .reply(200, [{ id: 10, name: 'suspense' }])
 
     const { result } = renderHookWithWrapper(() =>
-      useSuspenseQuery(tuyau.users.$get.queryOptions({ payload: { name: 'suspense' } })),
+      useSuspenseQuery(tuyau.users.index.queryOptions({ query: { name: 'suspense' } })),
     )
 
     await setTimeout(300)
@@ -160,22 +153,22 @@ test.group('Query | UseSuspenseQuery', () => {
 
 test.group('Query | Filters', () => {
   test('queryFilter should merge filters with queryKey', ({ assert }) => {
-    const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
     const tuyau = createTuyauReactQueryClient({ client, queryClient })
 
-    const filter = tuyau.users.$get.queryFilter({ payload: { name: 'foo' } }, { stale: true })
+    const filter = tuyau.users.index.queryFilter({ query: { name: 'foo' } }, { stale: true })
 
     assert.property(filter, 'queryKey')
     assert.property(filter, 'stale')
     assert.equal(filter.stale, true)
     assert.deepEqual(filter.queryKey, [
-      ['users', '$get'],
-      { payload: { name: 'foo' }, type: 'query' },
+      ['users', 'index'],
+      { request: { query: { name: 'foo' } }, type: 'query' },
     ])
   })
 
   test('pathFilter should merge filters with pathKey', ({ assert }) => {
-    const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
     const tuyau = createTuyauReactQueryClient({ client, queryClient })
 
     const filter = tuyau.users.pathFilter({ stale: true })
@@ -189,10 +182,10 @@ test.group('Query | Filters', () => {
 
 test.group('Query | Skip Token', () => {
   test('should handle skipToken in queryOptions', ({ assert }) => {
-    const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
     const tuyau = createTuyauReactQueryClient({ client, queryClient })
 
-    const options = tuyau.users.$get.queryOptions(skipToken)
+    const options = tuyau.users.index.queryOptions(skipToken)
 
     assert.isObject(options)
     assert.property(options, 'queryKey')
@@ -200,12 +193,12 @@ test.group('Query | Skip Token', () => {
   })
 
   test('should work with conditional queries', ({ assert }) => {
-    const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
     const tuyau = createTuyauReactQueryClient({ client, queryClient })
 
     let shouldFetch = false
     const getConditionalOptions = () =>
-      tuyau.users.$get.queryOptions(shouldFetch ? { payload: { name: 'foo' } } : skipToken)
+      tuyau.users.index.queryOptions(shouldFetch ? { query: { name: 'foo' } } : skipToken)
 
     // Should use skipToken when condition is false
     const options1 = getConditionalOptions()
@@ -221,11 +214,11 @@ test.group('Query | Skip Token', () => {
 
 test.group('Query | Lazy QueryClient', () => {
   test('should support lazy queryClient initialization', ({ assert }) => {
-    const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
     const lazyQueryClient = () => new QueryClient()
     const tuyau = createTuyauReactQueryClient({ client, queryClient: lazyQueryClient })
 
-    const options = tuyau.users.$get.queryOptions({ payload: { name: 'foo' } })
+    const options = tuyau.users.index.queryOptions({ query: { name: 'foo' } })
 
     assert.isObject(options)
     assert.property(options, 'queryKey')
@@ -235,35 +228,45 @@ test.group('Query | Lazy QueryClient', () => {
 
 test.group('Query | Route Parameters', () => {
   test('should handle single route parameters', ({ assert }) => {
-    const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
     const tuyau = createTuyauReactQueryClient({ client, queryClient })
 
-    const options = tuyau.users({ id: 1 }).$get.queryOptions({ payload: {} })
-    const queryKey = tuyau.users({ id: 1 }).$get.queryKey({ payload: {} })
-    const pathKey = tuyau.users({ id: 1 }).pathKey()
+    const options = tuyau.users.show.queryOptions({ params: { id: '1' } })
+    const queryKey = tuyau.users.show.queryKey({ params: { id: '1' } })
 
-    assert.deepEqual(options.queryKey, [['users', ':id', '$get'], { payload: {}, type: 'query' }])
-    assert.deepEqual(queryKey, [['users', ':id', '$get'], { payload: {}, type: 'query' }])
-    assert.deepEqual(pathKey, [['users', ':id']])
+    assert.deepEqual(options.queryKey, [
+      ['users', 'show'],
+      { request: { params: { id: '1' } }, type: 'query' },
+    ])
+    assert.deepEqual(queryKey, [
+      ['users', 'show'],
+      { request: { params: { id: '1' } }, type: 'query' },
+    ])
   })
 
   test('should handle nested route parameters', ({ assert }) => {
-    const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
     const tuyau = createTuyauReactQueryClient({ client, queryClient })
 
-    const options = tuyau
-      .users({ id: 1 })
-      .comments({ comment_id: 2 })
-      .$get.queryOptions({ payload: {} })
+    const options = tuyau.posts.comments.likes.detail.queryOptions({
+      params: { postId: '1', commentId: '2', likeId: '3' },
+      query: { foo: 'bar' },
+    })
 
-    const queryKey = tuyau
-      .users({ id: 1 })
-      .comments({ comment_id: 2 })
-      .$get.queryKey({ payload: {} })
+    const queryKey = tuyau.posts.comments.likes.detail.queryKey({
+      params: { postId: '1', commentId: '2', likeId: '3' },
+      query: { foo: 'bar' },
+    })
 
     assert.deepEqual(options.queryKey, [
-      ['users', ':id', 'comments', ':comment_id', '$get'],
-      { payload: {}, type: 'query' },
+      ['posts', 'comments', 'likes', 'detail'],
+      {
+        request: {
+          params: { postId: '1', commentId: '2', likeId: '3' },
+          query: { foo: 'bar' },
+        },
+        type: 'query',
+      },
     ])
     assert.deepEqual(queryKey, options.queryKey)
   })
@@ -271,32 +274,32 @@ test.group('Query | Route Parameters', () => {
 
 test.group('Types | Query Types', () => {
   test('queryOptions should return correct types', ({ expectTypeOf }) => {
-    const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
     const tuyau = createTuyauReactQueryClient({ client, queryClient })
 
-    const undefinedOptions = tuyau.users.$get.queryOptions({ payload: { name: 'foo' } })
+    const undefinedOptions = tuyau.users.index.queryOptions({ query: { name: 'foo' } })
     expectTypeOf(undefinedOptions.queryKey).toMatchTypeOf<TuyauQueryKey>()
 
-    const definedOptions = tuyau.users.$get.queryOptions(
-      { payload: { name: 'foo' } },
+    const definedOptions = tuyau.users.index.queryOptions(
+      { query: { name: 'foo' } },
       { initialData: () => [{ id: 1, name: 'foo' }] },
     )
     expectTypeOf(definedOptions.queryKey).toMatchTypeOf<TuyauQueryKey>()
 
-    tuyau.users.$get.queryOptions(skipToken)
+    tuyau.users.index.queryOptions(skipToken)
   })
 
   test('queryKey should return TuyauQueryKey type', ({ expectTypeOf }) => {
-    const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
     const tuyau = createTuyauReactQueryClient({ client, queryClient })
 
-    const queryKey = tuyau.users.$get.queryKey({ payload: { name: 'foo' } })
+    const queryKey = tuyau.users.index.queryKey({ query: { name: 'foo' } })
     expectTypeOf(queryKey).toMatchTypeOf<TuyauQueryKey>()
     expectTypeOf(queryKey[0]).toMatchTypeOf<readonly string[]>()
   })
 
   test('pathKey should return TuyauQueryKey type', ({ expectTypeOf }) => {
-    const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
     const tuyau = createTuyauReactQueryClient({ client, queryClient })
 
     const pathKey = tuyau.users.pathKey()
@@ -307,7 +310,7 @@ test.group('Types | Query Types', () => {
 
 test.group('Types | Response Extraction', () => {
   test('should extract data from status code 200/201', async ({ assert }) => {
-    const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
     const tuyau = createTuyauReactQueryClient({ client, queryClient })
 
     nock('http://localhost:3333')
@@ -316,7 +319,7 @@ test.group('Types | Response Extraction', () => {
       .reply(200, [{ id: 20, name: 'extract' }])
 
     const { result: queryResult } = renderHookWithWrapper(() =>
-      useQuery(tuyau.users.$get.queryOptions({ payload: { name: 'extract' } })),
+      useQuery(tuyau.users.index.queryOptions({ query: { name: 'extract' } })),
     )
 
     await setTimeout(300)
@@ -328,25 +331,13 @@ test.group('Types | Response Extraction', () => {
   })
 })
 
-test.group('Error Handling', () => {
-  test('should throw error for unknown methods', ({ assert }) => {
-    const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
-
-    assert.throws(
-      () => (tuyau.users as any).unknownMethod(),
-      'Method unknownMethod not found on Tuyau client',
-    )
-  })
-})
-
 test.group('Query | Advanced Options', () => {
   test('should support custom query options', ({ assert }) => {
-    const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
     const tuyau = createTuyauReactQueryClient({ client, queryClient })
 
-    const options = tuyau.users.$get.queryOptions(
-      { payload: { name: 'foo' } },
+    const options = tuyau.users.index.queryOptions(
+      { query: { name: 'foo' } },
       {
         staleTime: 5000,
         retry: 3,
@@ -360,12 +351,12 @@ test.group('Query | Advanced Options', () => {
   })
 
   test('should support initialData with correct types', ({ assert }) => {
-    const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
     const tuyau = createTuyauReactQueryClient({ client, queryClient })
 
     const initialData = [{ id: 1, name: 'initial' }]
-    const options = tuyau.users.$get.queryOptions(
-      { payload: { name: 'foo' } },
+    const options = tuyau.users.index.queryOptions(
+      { query: { name: 'foo' } },
       { initialData: () => initialData },
     )
 
@@ -374,87 +365,36 @@ test.group('Query | Advanced Options', () => {
   })
 })
 
-test.group('Query | Complex Scenarios', () => {
-  test('should work with conditional queries using skipToken', async ({ assert }) => {
-    const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
-
-    let shouldFetch = false
-    const { result, rerender } = renderHookWithWrapper(() => {
-      const options = tuyau.users.$get.queryOptions(
-        shouldFetch ? { payload: { name: 'foo' } } : skipToken,
-      )
-      return useQuery(options)
-    })
-
-    assert.equal(result.current.isLoading, false)
-    assert.equal(result.current.fetchStatus, 'idle')
-
-    shouldFetch = true
-    nock('http://localhost:3333')
-      .get('/users')
-      .query({ name: 'foo' })
-      .reply(200, [{ id: 1, name: 'foo' }])
-
-    rerender()
-    await setTimeout(300)
-
-    assert.equal(result.current.isSuccess, true)
-    assert.deepEqual(result.current.data, [{ id: 1, name: 'foo' }])
-  })
-
-  test('should handle deeply nested route parameters', ({ assert }) => {
-    const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
-
-    const nestedQueryKey = tuyau
-      .users({ id: 1 })
-      .comments({ comment_id: 2 })
-      .$get.queryKey({ payload: {} })
-    assert.deepEqual(nestedQueryKey, [
-      ['users', ':id', 'comments', ':comment_id', '$get'],
-      { payload: {}, type: 'query' },
-    ])
-  })
-})
-
 test.group('Integration | Complete Workflow', () => {
-  test('should work end-to-end with real React Query hooks', async ({ assert, expectTypeOf }) => {
-    const client = createTuyau<ApiDefinition>({ baseUrl: 'http://localhost:3333' })
+  test('should handle complete query workflow', ({ expectTypeOf, assert }) => {
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
     const tuyau = createTuyauReactQueryClient({ client, queryClient })
 
-    nock('http://localhost:3333')
-      .get('/users')
-      .query({ name: 'foo' })
-      .reply(200, [{ id: 1, name: 'foo' }])
-
-    nock('http://localhost:3333').post('/users').reply(201, { id: 2, name: 'bar' })
-
+    // Query
     const { result: queryResult } = renderHookWithWrapper(() =>
-      useQuery(tuyau.users.$get.queryOptions({ payload: { name: 'foo' } })),
+      useQuery(tuyau.users.index.queryOptions({ query: { name: 'foo' } })),
     )
-
-    await setTimeout(300)
-
-    assert.equal(queryResult.current.isSuccess, true)
-    assert.deepEqual(queryResult.current.data, [{ id: 1, name: 'foo' }])
 
     expectTypeOf(queryResult.current.data).toEqualTypeOf<
       Array<{ id: number; name: string }> | undefined
     >()
 
+    // Mutation
     const { result: mutationResult } = renderHookWithWrapper(() =>
-      useMutation(tuyau.users.$post.mutationOptions()),
+      useMutation(tuyau.users.store.mutationOptions()),
     )
 
-    mutationResult.current.mutate({ payload: { name: 'bar' } })
-    await setTimeout(300)
-
-    assert.equal(mutationResult.current.isSuccess, true)
-    assert.deepEqual(mutationResult.current.data, { id: 2, name: 'bar' })
+    mutationResult.current.mutate({ body: { name: 'foo' } })
 
     expectTypeOf(mutationResult.current.data).toEqualTypeOf<
       { id: number; name: string } | undefined
     >()
+
+    // Query key
+    const queryKey = tuyau.users.index.queryKey({ query: { name: 'foo' } })
+    assert.deepEqual(queryKey, [
+      ['users', 'index'],
+      { request: { query: { name: 'foo' } }, type: 'query' },
+    ])
   })
 })

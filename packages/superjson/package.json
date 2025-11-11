@@ -35,7 +35,7 @@
     "superjson": "^2.2.5"
   },
   "devDependencies": {
-    "@adonisjs/assembler": "^7.8.2",
+    "@adonisjs/assembler": "^8.0.0-next.19",
     "@adonisjs/core": "^7.0.0-next.10",
     "@tuyau/core": "workspace:*",
     "nock": "^14.0.10"

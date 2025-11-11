@@ -1,172 +1,99 @@
-import { IsNever } from '@tuyau/utils/types'
-import { QueryClient } from '@tanstack/react-query'
-import {
-  type TuyauClient,
-  type GeneratedRoutes,
-  type QueryParameters,
-  createTuyauRecursiveProxy,
-} from '@tuyau/client'
+import { Tuyau } from '@tuyau/core/client'
+import { QueryClient, QueryFilters } from '@tanstack/react-query'
+import { AdonisEndpoint, RawRequestArgs } from '@tuyau/core/types'
 
-import { unwrapLazyArg } from './utils.js'
-import { DecorateRouterKeyable, TuyauReactRequestOptions } from './types.js'
-import { getQueryKeyInternal, tuyauQueryOptions, DecorateQueryFn } from './query.js'
-import { tuyauInfiniteQueryOptions, DecorateInfiniteQueryFn } from './infinite_query.js'
-import { getMutationKeyInternal, tuyauMutationOptions, DecorateMutationFn } from './mutation.js'
+import { buildKey } from './utils.ts'
+import { tuyauQueryOptions } from './query.ts'
+import { tuyauInfiniteQueryOptions } from './infinite_query.ts'
+import { getMutationKeyInternal, tuyauMutationOptions } from './mutation.ts'
+import type {
+  DecorateRouterKeyable,
+  TuyauQueryKey,
+  TuyauReactQuery,
+  TuyauReactRequestOptions,
+} from './types/common.ts'
 
-/**
- * Options for configuring the Tuyau React Query client
- */
-export interface TuyauReactQueryClientOptions<
-  D extends Record<string, any>,
-  R extends GeneratedRoutes,
-> {
-  client: TuyauClient<D, R>
+function segmentsToRouteName(segments: string[]): string {
+  return segments.join('.')
+}
+
+export function createTuyauReactQueryClient<D extends Record<string, AdonisEndpoint>>(options: {
+  client: Tuyau<D>
   queryClient: QueryClient | (() => QueryClient)
-  /**
-   * Global Tuyau-specific request options
-   */
   globalOptions?: TuyauReactRequestOptions
-}
+}): TuyauReactQuery<D> & DecorateRouterKeyable {
+  const { client, globalOptions } = options
 
-/**
- * Create the Tuyau React Query client
- */
-export function createTuyauReactQueryClient<
-  D extends Record<string, any>,
-  R extends GeneratedRoutes,
->(options: TuyauReactQueryClientOptions<D, R>) {
-  return createTuyauRecursiveProxy(({ args, executeIfRouteParamCall, paths, patternPaths }) => {
-    const fnName = paths.at(-1)
-    const path = paths.slice(0, -1)
-    const patternPath = patternPaths ? patternPaths.slice(0, -1) : path
-    const [arg1, arg2] = args
+  function makeReactQueryNamed(segments: string[]): any {
+    const routeName = segmentsToRouteName(segments)
+    const decoratedEndpoint = {
+      /**
+       * Queries
+       */
+      queryOptions: (request: RawRequestArgs<any>, opts?: any) => {
+        return tuyauQueryOptions({
+          opts,
+          client,
+          request,
+          routeName,
+          globalOptions,
+          queryKey: buildKey({ segments, request, type: 'query' }),
+        })
+      },
 
-    if (fnName === 'queryOptions') {
-      return tuyauQueryOptions({
-        input: arg1,
-        opts: arg2 || {},
-        queryKey: getQueryKeyInternal(patternPath, arg1, 'query'),
-        queryClient: unwrapLazyArg(options.queryClient),
-        client: options.client as any,
-        path,
-        globalOptions: options.globalOptions,
-      })
+      queryKey: (request: RawRequestArgs<any>) => buildKey({ segments, request, type: 'query' }),
+      queryFilter: (request?: RawRequestArgs<any>, filters?: QueryFilters<TuyauQueryKey>) => ({
+        queryKey: buildKey({ segments, request, type: 'query' }),
+        ...filters,
+      }),
+
+      /**
+       * Infinite Queries
+       */
+      infiniteQueryOptions: (request: RawRequestArgs<any>, opts?: any) => {
+        return tuyauInfiniteQueryOptions({
+          opts,
+          client,
+          request,
+          routeName,
+          globalOptions,
+          queryKey: buildKey({ segments, request, type: 'infinite' }),
+        })
+      },
+
+      infiniteQueryKey: (request: RawRequestArgs<any>) =>
+        buildKey({ segments, request, type: 'infinite' }),
+      infiniteQueryFilter: (
+        request?: RawRequestArgs<any>,
+        filters?: QueryFilters<TuyauQueryKey>,
+      ) => ({
+        queryKey: buildKey({ segments, request, type: 'infinite' }),
+        ...filters,
+      }),
+
+      /**
+       * Mutations
+       */
+      mutationOptions: (opts?: any) => tuyauMutationOptions({ opts, client, routeName }),
+      mutationKey: () => getMutationKeyInternal({ segments }),
+
+      /**
+       * Paths
+       */
+      pathKey: () => buildKey({ segments, type: 'any' }),
+      pathFilter: (filters?: QueryFilters<TuyauQueryKey>) => ({
+        queryKey: buildKey({ segments, type: 'any' }),
+        ...filters,
+      }),
     }
 
-    if (fnName === 'infiniteQueryOptions') {
-      return tuyauInfiniteQueryOptions({
-        input: arg1,
-        opts: arg2 || {},
-        queryKey: getQueryKeyInternal(patternPath, arg1, 'infinite'),
-        queryClient: unwrapLazyArg(options.queryClient),
-        client: options.client as any,
-        path,
-        globalOptions: options.globalOptions,
-      })
-    }
-
-    if (fnName === 'queryKey') return getQueryKeyInternal(patternPath, arg1, 'query')
-    if (fnName === 'infiniteQueryKey') return getQueryKeyInternal(patternPath, arg1, 'infinite')
-    if (fnName === 'pathKey') return getQueryKeyInternal(patternPath)
-
-    if (fnName === 'queryFilter') {
-      return { ...arg2, queryKey: getQueryKeyInternal(patternPath, arg1, 'query') }
-    }
-    if (fnName === 'infiniteQueryFilter') {
-      return { ...arg2, queryKey: getQueryKeyInternal(patternPath, arg1, 'infinite') }
-    }
-    if (fnName === 'pathFilter') {
-      return { ...arg1, queryKey: getQueryKeyInternal(patternPath) }
-    }
-
-    if (fnName === 'mutationOptions') {
-      return tuyauMutationOptions({
-        path,
-        opts: arg1,
-        queryClient: unwrapLazyArg(options.queryClient),
-        client: options.client as any,
-      })
-    }
-
-    if (fnName === 'mutationKey') return getMutationKeyInternal(path)
-
-    // Handle route parameter calls
-    const newProxy = executeIfRouteParamCall({ fnName: fnName!, body: args[0] })
-    if (newProxy) return newProxy
-
-    throw new Error(`Method ${fnName} not found on Tuyau client`)
-  }) as TuyauReactQuery<D> & DecorateRouterKeyable
-}
-
-/**
- * Main type for the Tuyau React Query client
- * Maps route definitions to appropriate query or mutation decorators
- */
-export type TuyauReactQuery<in out Route extends Record<string, any>, NotProvidedParams = {}> = {
-  [K in keyof Route as K extends `:${string}` ? never : K]: Route[K] extends {
-    response: infer _Res extends Record<number, unknown>
-    request: infer _Request
+    return new Proxy(decoratedEndpoint, {
+      get: (target, prop) => {
+        if (prop in target) return target[prop as keyof typeof target]
+        return makeReactQueryNamed([...segments, String(prop)])
+      },
+    })
   }
-    ? // GET, HEAD methods become queries
-      K extends '$get' | '$head'
-      ? DecorateQueryFn<Route[K], NotProvidedParams> &
-          DecorateInfiniteQueryFn<Route[K], NotProvidedParams> &
-          DecorateRouterKeyable
-      : // POST, PUT, PATCH, DELETE methods become mutations
-        DecorateMutationFn<Route[K], NotProvidedParams> & DecorateRouterKeyable
-    : K extends '$url'
-      ? (options?: { query?: QueryParameters }) => string
-      : CreateParams<Route[K], NotProvidedParams> & DecorateRouterKeyable
+
+  return makeReactQueryNamed([]) as TuyauReactQuery<D> & DecorateRouterKeyable
 }
-
-/**
- * Extract path parameters from route keys
- */
-type ExtractPathParams<Route> = Extract<keyof Route, `:${string}`>
-
-/**
- * Convert path parameter to object type
- */
-type PathParamToObject<Path extends string> = Path extends `:${infer Param}`
-  ? { [K in Param]: string | number }
-  : never
-
-/**
- * Create the route parameter function signature
- */
-type CreateParamFunction<
-  Route extends Record<string, any>,
-  Path extends string,
-  NotProvidedParams,
-> = (
-  params: PathParamToObject<Path>,
-) => TuyauReactQuery<Route[Path], NotProvidedParams> &
-  CreateParams<Route[Path], NotProvidedParams & PathParamToObject<Path>>
-
-/**
- * Create the parameter property mappings
- */
-type CreateParamProperties<
-  Route extends Record<string, any>,
-  Path extends string,
-  NotProvidedParams,
-> = {
-  [K in keyof Route as K extends `:${string}` ? K : never]: TuyauReactQuery<
-    Route[K],
-    NotProvidedParams & PathParamToObject<Path>
-  > &
-    DecorateRouterKeyable
-}
-
-/**
- * Type for handling route parameters
- */
-export type CreateParams<Route extends Record<string, any>, NotProvidedParams = {}> =
-  ExtractPathParams<Route> extends infer Path extends string
-    ? IsNever<Path> extends true
-      ? TuyauReactQuery<Route, NotProvidedParams> & DecorateRouterKeyable
-      : CreateParamFunction<Route, Path, NotProvidedParams> &
-          TuyauReactQuery<Route, NotProvidedParams> &
-          CreateParamProperties<Route, Path, NotProvidedParams> &
-          DecorateRouterKeyable
-    : never

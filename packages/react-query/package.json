@@ -17,6 +17,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "build": "tsup-node",
+    "test": "pnpm quick:test",
     "quick:test": "node --import=@poppinss/ts-exec --enable-source-maps bin/test.ts --force-exit",
     "checks": "pnpm lint && pnpm typecheck"
   },

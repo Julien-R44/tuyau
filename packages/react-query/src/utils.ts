@@ -1,9 +1,7 @@
-/**
- * Unwrap lazy arguments
- */
-export function unwrapLazyArg<T>(arg: T | (() => T)): T {
-  return typeof arg === 'function' ? (arg as () => T)() : arg
-}
+import { skipToken } from '@tanstack/react-query'
+
+import { Fn } from './types/utils.ts'
+import { QueryType, TuyauQueryKey } from './types/common.ts'
 
 /**
  * Check if value is an object
@@ -13,37 +11,40 @@ export function isObject(value: unknown): value is Record<string, unknown> {
 }
 
 /**
- * Build request path with route parameters
+ * Just call the function.
  */
-export function buildRequestPath(
-  path: (string | number)[],
-  params?: Record<string, string | number>,
-): string[] {
-  if (!params) return path.map(String)
+export function invoke(fn: undefined): undefined
+export function invoke<T>(fn: Fn<T>): T
+export function invoke<T>(fn?: Fn<T>): T {
+  return fn?.() as T
+}
 
-  const result: string[] = []
+export function buildKey(opts: {
+  segments: string[]
+  request?: unknown
+  type: QueryType
+}): TuyauQueryKey {
+  const { segments, request, type } = opts
+  const splitPath = segments.flatMap((part) => part.split('.'))
 
-  for (const segment of path) {
-    const segmentStr = String(segment)
-
-    // Handle compound segments like 'orgs/:orgId/users/:userId'
-    if (segmentStr.includes('/')) {
-      const parts = segmentStr.split('/')
-      for (const part of parts) {
-        if (part.startsWith(':')) {
-          const paramName = part.slice(1)
-          result.push(params[paramName]?.toString() || part)
-        } else {
-          result.push(part)
-        }
-      }
-    } else if (segmentStr.startsWith(':')) {
-      const paramName = segmentStr.slice(1)
-      result.push(params[paramName]?.toString() || segmentStr)
-    } else {
-      result.push(segmentStr)
-    }
+  if (!request && type === 'any') {
+    return splitPath.length ? [splitPath] : ([] as unknown as TuyauQueryKey)
   }
 
-  return result
+  if (
+    type === 'infinite' &&
+    isObject(request) &&
+    ('direction' in request || 'cursor' in request) // todo fix should be in request.body or query
+  ) {
+    const { cursor: _, direction: __, ...inputWithoutCursorAndDirection } = request
+    return [splitPath, { request: inputWithoutCursorAndDirection, type: 'infinite' }]
+  }
+
+  return [
+    splitPath,
+    {
+      ...(typeof request !== 'undefined' && request !== skipToken && { request: request as any }),
+      ...(type && type !== 'any' && { type }),
+    },
+  ]
 }

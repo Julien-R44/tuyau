@@ -55,9 +55,9 @@ export type HasRequiredKeys<T> =
     : false
 
 /**
- * Constructs the request arguments type for an endpoint
+ * Request args without ky options
  */
-export type RequestArgs<E extends AdonisEndpoint> = (HasKeys<E['types']['params']> extends true
+export type RawRequestArgs<E extends AdonisEndpoint> = (HasKeys<E['types']['params']> extends true
   ? HasRequiredKeys<E['types']['params']> extends true
     ? { params: E['types']['params'] }
     : { params?: E['types']['params'] }
@@ -71,7 +71,11 @@ export type RequestArgs<E extends AdonisEndpoint> = (HasKeys<E['types']['params'
     ? {}
     : HasRequiredKeys<E['types']['body']> extends true
       ? { body: E['types']['body'] }
-      : { body?: E['types']['body'] }) &
+      : { body?: E['types']['body'] })
+/**
+ * Constructs the request arguments type for an endpoint
+ */
+export type RequestArgs<E extends AdonisEndpoint> = RawRequestArgs<E> &
   Omit<KyOptions, 'body' | 'params' | 'searchParams' | 'method' | 'json' | 'prefixUrl'>
 
 /**

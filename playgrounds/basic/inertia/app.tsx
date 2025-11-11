@@ -5,10 +5,10 @@ import { createRoot } from 'react-dom/client'
 import { createInertiaApp } from '@inertiajs/react'
 import { resolvePageComponent } from '@adonisjs/inertia/helpers'
 
-import { client } from './tuyau'
+import { client, queryClient } from './tuyau'
 import Layout from '~/layouts/default'
 import { Data } from '~/generated/data'
-import { TuyauProvider } from './tuyau/index'
+import { QueryClientProvider } from '@tanstack/react-query'
 
 const appName = import.meta.env.VITE_APP_NAME || 'AdonisJS'
 
@@ -23,9 +23,9 @@ createInertiaApp({
   },
   setup({ el, App, props }) {
     createRoot(el).render(
-      <TuyauProvider client={client}>
+      <QueryClientProvider client={queryClient}>
         <App {...props} />
-      </TuyauProvider>
+      </QueryClientProvider>
     )
   },
   progress: {

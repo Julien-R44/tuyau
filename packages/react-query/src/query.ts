@@ -1,183 +1,35 @@
-import type { TuyauClient } from '@tuyau/client'
-import {
-  DataTag,
-  QueryFilters,
-  QueryClient,
-  queryOptions,
-  skipToken,
-  SkipToken,
-  QueryFunctionContext,
-} from '@tanstack/react-query'
+import { Tuyau } from '@tuyau/core/client'
+import { RawRequestArgs } from '@tuyau/core/types'
+import { QueryFunctionContext, queryOptions, skipToken, SkipToken } from '@tanstack/react-query'
 
-import { buildRequestPath, isObject } from './utils.js'
-import {
-  TuyauQueryKey,
-  QueryType,
-  EndpointDef,
-  UnionFromSuccessStatuses,
-  WithRequired,
-  DefinedTuyauQueryOptionsIn,
-  UndefinedTuyauQueryOptionsIn,
-  UnusedSkipTokenTuyauQueryOptionsIn,
-  DefinedTuyauQueryOptionsOut,
-  UndefinedTuyauQueryOptionsOut,
-  UnusedSkipTokenTuyauQueryOptionsOut,
-  TypeHelper,
-  TuyauReactRequestOptions,
-} from './types.js'
+import { invoke } from './utils.ts'
+import { TuyauQueryBaseOptions, TuyauQueryKey, TuyauReactRequestOptions } from './types/common.ts'
 
-/**
- * Generate a Tuyau query key from path and input parameters
- */
-export function getQueryKeyInternal(
-  path: string[],
-  input?: unknown,
-  type?: QueryType,
-): TuyauQueryKey {
-  let params: unknown
-  let payload: unknown
-
-  if (isObject(input)) {
-    if ('params' in input && input.params && typeof input.params === 'object') {
-      params = input.params
-    }
-
-    if ('payload' in input) {
-      payload = input.payload
-    } else if (!('params' in input)) {
-      payload = input
-    }
-  } else {
-    payload = input
-  }
-
-  const splitPath = path.flatMap((part) => part.toString().split('/'))
-
-  if (!input && (!type || type === 'any')) {
-    return splitPath.length ? [splitPath] : ([] as unknown as TuyauQueryKey)
-  }
-
-  return [
-    splitPath,
-    {
-      ...(typeof payload !== 'undefined' && payload !== skipToken && { payload }),
-      ...(typeof params !== 'undefined' && { params }),
-      ...(type && type !== 'any' && { type }),
-    },
-  ]
-}
-
-/**
- * Create query options for Tuyau with React Query integration
- */
-export function tuyauQueryOptions(options: {
-  input: unknown
-  opts: any
+export interface TuyauQueryOptionsOptions {
+  request: RawRequestArgs<any> | SkipToken
+  opts?: TuyauQueryBaseOptions
   queryKey: TuyauQueryKey
-  queryClient: QueryClient
-  path: string[]
-  client: TuyauClient<any, any>
+  routeName: string
+  client: Tuyau<any>
   globalOptions?: TuyauReactRequestOptions
-}) {
-  const { input, opts, queryKey, path, client, globalOptions } = options
-  const inputIsSkipToken = input === skipToken
+}
 
-  const queryFn = inputIsSkipToken
-    ? skipToken
-    : async (queryFnContext: QueryFunctionContext) => {
-        const { payload, requestPath } = extractInputAndPath(input, path)
+export function tuyauQueryOptions(options: TuyauQueryOptionsOptions) {
+  const { request, routeName, opts, queryKey, client, globalOptions } = options
 
-        // Merge global options with local options, local options take precedence
-        const effectiveAbortOnUnmount =
-          opts?.tuyau?.abortOnUnmount ?? globalOptions?.abortOnUnmount ?? false
+  const queryFn = invoke(() => {
+    if (request === skipToken) return skipToken
 
-        // Merge Tuyau options with abort signal if abortOnUnmount is enabled
-        const actualOpts = {
-          ...opts,
-          tuyau: {
-            ...globalOptions,
-            ...opts?.tuyau,
-            ...(effectiveAbortOnUnmount ? { signal: queryFnContext.signal } : { signal: null }),
-          },
-        }
+    return async (queryFnContext: QueryFunctionContext) => {
+      const effectiveAbortOnUnmount =
+        opts?.tuyau?.abortOnUnmount ?? globalOptions?.abortOnUnmount ?? false
 
-        // @ts-expect-error - Using internal API for client fetch
-        return await client.$fetch({ paths: requestPath, input: payload, queryOptions: actualOpts })
-      }
-
-  return Object.assign(queryOptions({ ...opts, queryKey, queryFn }), {
-    tuyau: { path, type: 'query' as const },
+      return await client.request(routeName, {
+        ...request,
+        ...(effectiveAbortOnUnmount ? { signal: queryFnContext.signal } : {}),
+      })
+    }
   })
-}
 
-/**
- * Extract payload and build request path from input and path segments
- */
-function extractInputAndPath(input: unknown, path: string[]) {
-  if (
-    typeof input !== 'object' ||
-    input === null ||
-    (!('payload' in input) && !('params' in input))
-  ) {
-    return { payload: input, requestPath: path }
-  }
-
-  const { payload, params } = input as {
-    payload?: any
-    params?: Record<string, string | number>
-  }
-
-  const requestPath = buildRequestPath(path, params)
-  return { payload, requestPath }
-}
-
-/**
- * Type definition for query options with overloads for different scenarios
- */
-export interface TuyauReactQueryOptions<
-  EDef extends EndpointDef,
-  TParams = Record<string, string | number>,
-> {
-  // With initial data - when opts has initialData defined
-  <TData = UnionFromSuccessStatuses<EDef['response']>>(
-    input: { payload?: EDef['request']; params?: TParams } | SkipToken,
-    opts: DefinedTuyauQueryOptionsIn<UnionFromSuccessStatuses<EDef['response']>, TData, any>,
-  ): DefinedTuyauQueryOptionsOut<UnionFromSuccessStatuses<EDef['response']>, TData, any>
-
-  // Without skipToken - when input is not SkipToken and no initialData
-  <TData = UnionFromSuccessStatuses<EDef['response']>>(
-    input: { payload?: EDef['request']; params?: TParams },
-    opts?: UnusedSkipTokenTuyauQueryOptionsIn<
-      UnionFromSuccessStatuses<EDef['response']>,
-      TData,
-      any
-    >,
-  ): UnusedSkipTokenTuyauQueryOptionsOut<UnionFromSuccessStatuses<EDef['response']>, TData, any>
-
-  // Without initial data - when opts has no initialData or input can be SkipToken
-  <TData = UnionFromSuccessStatuses<EDef['response']>>(
-    input?: { payload?: EDef['request']; params?: TParams } | SkipToken,
-    opts?: UndefinedTuyauQueryOptionsIn<UnionFromSuccessStatuses<EDef['response']>, TData, any>,
-  ): UndefinedTuyauQueryOptionsOut<UnionFromSuccessStatuses<EDef['response']>, TData, any>
-}
-
-/**
- * Interface for query function decorators
- */
-export interface DecorateQueryFn<
-  EDef extends EndpointDef,
-  TParams = Record<string, string | number>,
-> extends TypeHelper<EDef> {
-  queryOptions: TuyauReactQueryOptions<EDef, TParams>
-  queryKey: (input?: {
-    payload?: Partial<EDef['request']>
-    params?: TParams
-  }) => DataTag<TuyauQueryKey, UnionFromSuccessStatuses<EDef['response']>, any>
-  queryFilter: (
-    input?: { payload?: Partial<EDef['request']>; params?: TParams },
-    filters?: QueryFilters<DataTag<TuyauQueryKey, UnionFromSuccessStatuses<EDef['response']>, any>>,
-  ) => WithRequired<
-    QueryFilters<DataTag<TuyauQueryKey, UnionFromSuccessStatuses<EDef['response']>, any>>,
-    'queryKey'
-  >
+  return queryOptions({ ...opts, queryKey, queryFn })
 }

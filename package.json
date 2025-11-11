@@ -18,6 +18,7 @@
   },
   "devDependencies": {
     "@adonisjs/tsconfig": "^2.0.0-next.3",
+    "@arktype/attest": "^0.53.0",
     "@changesets/cli": "^2.29.7",
     "@japa/assert": "^4.1.1",
     "@japa/expect-type": "^2.0.3",
