@@ -23,7 +23,7 @@
   },
   "peerDependencies": {
     "@tanstack/react-query": "^5.74.7",
-    "@tuyau/core": "^0.2.11-next.0"
+    "@tuyau/core": "1.0.0-beta.2"
   },
   "devDependencies": {
     "@adonisjs/core": "^7.0.0-next.10",
@@ -47,6 +47,6 @@
   },
   "publishConfig": {
     "access": "public",
-    "tag": "latest"
+    "tag": "beta"
   }
 }
