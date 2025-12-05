@@ -1,4 +1,4 @@
-import { HTTPError, KyRequest, KyResponse } from 'ky'
+import { HTTPError, type KyRequest, type KyResponse } from 'ky'
 
 export async function parseResponse(response?: KyResponse) {
   if (!response) return
@@ -42,15 +42,14 @@ export class TuyauHTTPError extends Error {
  * Network error that occurs when the server is unreachable or the client is offline
  */
 export class TuyauNetworkError extends Error {
-  constructor(
-    public cause: Error,
-    request?: { url: string; method: string },
-  ) {
+  cause: Error
+  constructor(cause: Error, request?: { url: string; method: string }) {
     const message = request
       ? `Network error: ${request.method.toUpperCase()} ${request.url}`
       : 'Network error occurred'
 
     super(message, { cause })
+    this.cause = cause
     this.name = 'TuyauNetworkError'
   }
 }

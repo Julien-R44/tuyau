@@ -95,6 +95,17 @@ function generateRouteParams(route: ScannedRoute) {
 }
 
 /**
+ * Normalize import paths in type strings by converting relative paths to subpath imports.
+ * For example: `import('app/validators/user.ts')` becomes `import('#app/validators/user')`
+ *
+ * Pretty hackish, probably something to improve inside @adonisjs/assembler itself but lets
+ * keep it here for now.
+ */
+function normalizeImportPaths(typeString: string): string {
+  return typeString.replace(/import\('app\//g, "import('#app/").replace(/\.ts'\)/g, "')")
+}
+
+/**
  * Generate a single registry entry for a route (runtime values only)
  */
 function generateRuntimeRegistryEntry(route: ScannedRoute): string {
@@ -112,7 +123,7 @@ function generateRuntimeRegistryEntry(route: ScannedRoute): string {
  * Generate a single registry entry for a route (types only)
  */
 function generateTypesRegistryEntry(route: ScannedRoute): string {
-  const requestType = route.request?.type || '{}'
+  const requestType = normalizeImportPaths(route.request?.type || '{}')
   const responseType = route.response?.type || 'unknown'
   const { paramsType, paramsTuple } = generateRouteParams(route)
   const routeName = route.name
@@ -134,7 +145,7 @@ function generateTypesRegistryEntry(route: ScannedRoute): string {
  * Generate a single registry entry for a route
  */
 function generateRegistryEntry(route: ScannedRoute): string {
-  const requestType = route.request?.type || '{}'
+  const requestType = normalizeImportPaths(route.request?.type || '{}')
   const responseType = route.response?.type || 'unknown'
   const { paramsType, paramsTuple } = generateRouteParams(route)
   const routeName = route.name
@@ -161,7 +172,7 @@ function generateRuntimeContent(routes: ScannedRoute[]): string {
 
   return `/* eslint-disable prettier/prettier */
 import { type AdonisEndpoint } from '@tuyau/core/types'
-import type { Registry } from './registry.schema'
+import type { Registry } from './registry.schema.d.ts'
 const placeholder: any = {}
 
 export const registry = {

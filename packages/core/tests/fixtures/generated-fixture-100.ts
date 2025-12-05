@@ -1,4 +1,4 @@
-import { AdonisEndpoint } from '../../src/client/types/types.ts'
+import type { AdonisEndpoint } from '../../src/client/types/types.ts'
 
 const placeholder: any = {}
 

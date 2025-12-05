@@ -1,5 +1,5 @@
-import { Options as KyOptions } from 'ky'
-import { ClientRouteMatchItTokens } from '@adonisjs/http-server/client/url_builder'
+import type { Options as KyOptions } from 'ky'
+import type { ClientRouteMatchItTokens } from '@adonisjs/http-server/client/url_builder'
 
 /**
  * Supported HTTP methods for API endpoints

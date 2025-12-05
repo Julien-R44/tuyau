@@ -1,6 +1,6 @@
-import ky, { HTTPError, KyInstance } from 'ky'
 import { serialize } from 'object-to-formdata'
-import { createUrlBuilder, UrlFor } from '@adonisjs/http-server/client/url_builder'
+import ky, { HTTPError, type KyInstance } from 'ky'
+import { createUrlBuilder, type UrlFor } from '@adonisjs/http-server/client/url_builder'
 
 import { parseResponse, TuyauHTTPError, TuyauNetworkError } from './errors.ts'
 import {
@@ -32,18 +32,19 @@ export class Tuyau<R extends Record<string, AdonisEndpoint>> {
   readonly urlFor: UrlFor<RegistryGroupedByMethod<R>>
   readonly #entries: [StrKeys<R>, R[StrKeys<R>]][]
   readonly #client: KyInstance
+  readonly #config: TuyauConfiguration<R>
 
   /**
    * Merges the default Ky configuration with user-provided config
    */
   #mergeKyConfiguration() {
     return {
-      prefixUrl: this.config.baseUrl,
-      ...this.config,
+      prefixUrl: this.#config.baseUrl,
+      ...this.#config,
       hooks: {
-        ...this.config.hooks,
+        ...this.#config.hooks,
         beforeRequest: [
-          ...(this.config.hooks?.beforeRequest || []),
+          ...(this.#config.hooks?.beforeRequest || []),
           this.#appendCsrfToken.bind(this),
         ],
       },
@@ -54,7 +55,7 @@ export class Tuyau<R extends Record<string, AdonisEndpoint>> {
    * Applies registered plugins to the client configuration
    */
   #applyPlugins() {
-    this.config.plugins?.forEach((plugin) => plugin({ options: this.config }))
+    this.#config.plugins?.forEach((plugin) => plugin({ options: this.#config }))
   }
 
   /**
@@ -68,9 +69,10 @@ export class Tuyau<R extends Record<string, AdonisEndpoint>> {
   /**
    * Initializes the Tuyau client with provided configuration
    */
-  constructor(private config: TuyauConfiguration<R>) {
-    this.api = this.makeNamed([])
-    this.#entries = Object.entries(this.config.registry) as [StrKeys<R>, R[StrKeys<R>]][]
+  constructor(config: TuyauConfiguration<R>) {
+    this.#config = config
+    this.api = this.#makeNamed([])
+    this.#entries = Object.entries(this.#config.registry) as [StrKeys<R>, R[StrKeys<R>]][]
     this.urlFor = this.#createUrlBuilder()
 
     this.#applyPlugins()
@@ -276,7 +278,7 @@ export class Tuyau<R extends Record<string, AdonisEndpoint>> {
     name: Name,
     args: RequestArgs<R[Name]>,
   ): Promise<R[Name]['types']['response']> {
-    const def = this.config.registry[name]
+    const def = this.#config.registry[name]
     return this.#doFetch(name, def.methods[0], args)
   }
 
@@ -284,7 +286,7 @@ export class Tuyau<R extends Record<string, AdonisEndpoint>> {
    * Gets route information by name including URL and HTTP method
    */
   getRoute<Name extends StrKeys<R>>(name: Name, args: RequestArgs<R[Name]>) {
-    const def = this.config.registry[name]
+    const def = this.#config.registry[name]
     if (!def) throw new Error(`Route ${String(name)} not found`)
 
     const url = this.#buildUrl(name, def.methods[0], args)
@@ -294,18 +296,18 @@ export class Tuyau<R extends Record<string, AdonisEndpoint>> {
   /**
    * Creates a proxy-based fluent API for accessing endpoints by name
    */
-  private makeNamed(segments: string[]): any {
+  #makeNamed(segments: string[]): any {
     const routeName = segmentsToRouteName(segments)
 
-    const def = this.config.registry[routeName]
+    const def = this.#config.registry[routeName]
     if (def) {
       const fn = (args: any) => this.#doFetch(routeName, def.methods[0], args)
       return new Proxy(fn, {
-        get: (_t, prop) => this.makeNamed([...segments, String(prop)]),
+        get: (_t, prop) => this.#makeNamed([...segments, String(prop)]),
         apply: (_t, _this, argArray) => fn(...(argArray as [any])),
       })
     }
-    return new Proxy({}, { get: (_t, prop) => this.makeNamed([...segments, String(prop)]) })
+    return new Proxy({}, { get: (_t, prop) => this.#makeNamed([...segments, String(prop)]) })
   }
 }
 
