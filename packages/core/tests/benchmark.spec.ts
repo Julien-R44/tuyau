@@ -1,8 +1,8 @@
 import { test } from '@japa/runner'
 import { attest } from '@arktype/attest'
 
-import { createTuyau } from '../src/client/tuyau.js'
-import { defaultRegistry } from './fixtures/index.js'
+import { createTuyau } from '../src/client/tuyau.ts'
+import { defaultRegistry } from './fixtures/index.ts'
 import { generatedRegistry as registry100 } from './fixtures/generated-fixture-100.ts'
 import { generatedRegistry as registry300 } from './fixtures/generated-fixture-300.ts'
 

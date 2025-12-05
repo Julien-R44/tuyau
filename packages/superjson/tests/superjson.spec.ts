@@ -5,9 +5,9 @@ import { AdonisEndpoint } from '@tuyau/core/types'
 import { BodyParserMiddlewareFactory } from '@adonisjs/core/factories/bodyparser'
 import { HttpContextFactory, RequestFactory } from '@adonisjs/core/factories/http'
 
-import { httpServer } from './helpers.js'
-import { superjson } from '../client/plugin.js'
-import SuperjsonMiddleware from '../middleware/superjson_middleware.js'
+import { httpServer } from './helpers.ts'
+import { superjson } from '../client/plugin.ts'
+import SuperjsonMiddleware from '../middleware/superjson_middleware.ts'
 
 const placeholder: any = {}
 const testRegistry = {

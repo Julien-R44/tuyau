@@ -1,8 +1,8 @@
 import { test } from '@japa/runner'
 
-import { createTuyau } from '../src/client/tuyau.js'
-import { defaultRegistry as registry } from './fixtures/index.js'
-import type { PathWithRegistry, RouteWithRegistry } from '../src/client/types/types.js'
+import { createTuyau } from '../src/client/tuyau.ts'
+import { defaultRegistry as registry } from './fixtures/index.ts'
+import type { PathWithRegistry, RouteWithRegistry } from '../src/client/types/types.ts'
 
 test.group('Client | Typings', () => {
   test('named', async ({ expectTypeOf }) => {

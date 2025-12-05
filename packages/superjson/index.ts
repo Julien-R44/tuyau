@@ -1,1 +1,1 @@
-export { configure } from './configure.js'
+export { configure } from './configure.ts'

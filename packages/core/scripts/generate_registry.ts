@@ -406,7 +406,7 @@ function generateFixture(numberOfRoutes: number) {
     routes.push(generateRoute(existingNames))
   }
 
-  return `import { AdonisEndpoint } from '../src/types.js'
+  return `import { AdonisEndpoint } from '../src/types.ts'
 
 const placeholder: any = {}
 

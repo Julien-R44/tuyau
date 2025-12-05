@@ -93,7 +93,7 @@ test.group('Mutation | Options', () => {
     expectTypeOf(mutationKey[0]).toMatchTypeOf<readonly string[]>()
   })
 
-  test('payload not required when request is unknown', async ({}) => {
+  test('payload not required when request is unknown', async () => {
     const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
     const tuyau = createTuyauReactQueryClient({ client, queryClient })
 
