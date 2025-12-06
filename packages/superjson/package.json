@@ -1,7 +1,7 @@
 {
   "name": "@tuyau/superjson",
   "type": "module",
-  "version": "0.1.2",
+  "version": "1.0.0-beta.0",
   "description": "Superjson transformer for Tuyau",
   "author": "Julien Ripouteau <julien@ripouteau.com>",
   "license": "MIT",
@@ -16,7 +16,7 @@
     "build"
   ],
   "engines": {
-    "node": ">=20.6.0"
+    "node": ">=24.0.0"
   },
   "scripts": {
     "clean": "del-cli build",
@@ -42,7 +42,7 @@
   },
   "publishConfig": {
     "access": "public",
-    "tag": "latest"
+    "tag": "beta"
   },
   "c8": {
     "reporter": [
