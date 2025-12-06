@@ -32,11 +32,11 @@
     "@adonisjs/core": "^7.0.0-next.10"
   },
   "dependencies": {
-    "superjson": "^2.2.5"
+    "superjson": "^2.2.6"
   },
   "devDependencies": {
     "@adonisjs/assembler": "^8.0.0-next.19",
-    "@adonisjs/core": "^7.0.0-next.10",
+    "@adonisjs/core": "^7.0.0-next.13",
     "@tuyau/core": "workspace:*",
     "nock": "^14.0.10"
   },
