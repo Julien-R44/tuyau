@@ -65,45 +65,41 @@ export type Endpoints = ValueOf<AdonisRegistry>
 export type EndpointByName<Name extends keyof AdonisRegistry & string> = AdonisRegistry[Name]
 
 /**
- * Checks if a type has any keys
+ * Pre-computed base Ky options to avoid recomputing Omit on every request
  */
-export type HasKeys<T> = keyof T extends never ? false : true
+type BaseRequestOptions = Omit<
+  KyOptions,
+  'body' | 'params' | 'searchParams' | 'method' | 'json' | 'prefixUrl'
+>
 
 /**
  * Checks if a type has required keys (non-optional properties)
  */
-export type HasRequiredKeys<T> =
-  T extends Record<string, any>
-    ? keyof T extends never
-      ? false
-      : {} extends Pick<T, keyof T>
-        ? false
-        : true
-    : false
+type HasRequiredKeys<T> = keyof T extends never ? false : {} extends T ? false : true
 
 /**
  * Request args without ky options
  */
-export type RawRequestArgs<E extends AdonisEndpoint> = (HasKeys<E['types']['params']> extends true
-  ? HasRequiredKeys<E['types']['params']> extends true
+export type RawRequestArgs<E extends AdonisEndpoint> = (keyof E['types']['params'] extends never
+  ? {}
+  : HasRequiredKeys<E['types']['params']> extends true
     ? { params: E['types']['params'] }
-    : { params?: E['types']['params'] }
-  : {}) &
-  (E['types']['query'] extends object
-    ? HasRequiredKeys<E['types']['query']> extends true
+    : { params?: E['types']['params'] }) &
+  (keyof E['types']['query'] extends never
+    ? {}
+    : HasRequiredKeys<E['types']['query']> extends true
       ? { query: E['types']['query'] }
-      : { query?: E['types']['query'] }
-    : {}) &
-  (E['types']['body'] extends never | undefined
+      : { query?: E['types']['query'] }) &
+  (keyof E['types']['body'] extends never
     ? {}
     : HasRequiredKeys<E['types']['body']> extends true
       ? { body: E['types']['body'] }
       : { body?: E['types']['body'] })
+
 /**
  * Constructs the request arguments type for an endpoint
  */
-export type RequestArgs<E extends AdonisEndpoint> = RawRequestArgs<E> &
-  Omit<KyOptions, 'body' | 'params' | 'searchParams' | 'method' | 'json' | 'prefixUrl'>
+export type RequestArgs<E extends AdonisEndpoint> = RawRequestArgs<E> & BaseRequestOptions
 
 /**
  * Extracts response type from an endpoint
