@@ -114,6 +114,12 @@ importers:
       '@adonisjs/core':
         specifier: ^7.0.0-next.10
         version: 7.0.0-next.10(@adonisjs/assembler@8.0.0-next.19(typescript@5.9.3))(@vinejs/vine@4.1.0)(edge.js@6.3.0)(pino-pretty@13.1.2)(youch@4.1.0-beta.12)
+      '@ark/attest':
+        specifier: ^0.56.0
+        version: 0.56.0(typescript@5.9.3)
+      '@faker-js/faker':
+        specifier: ^10.1.0
+        version: 10.1.0
       '@happy-dom/global-registrator':
         specifier: ^20.0.10
         version: 20.0.10

@@ -1,19 +1,9 @@
-import { AdonisEndpoint } from '@tuyau/core/types'
+import type { AdonisEndpoint } from '@tuyau/core/types'
+import type { ApiDefinition } from './api_definition.ts'
 
 const placeholder: any = {}
+
 const routes = {
-  'articles.index': {
-    methods: ['GET'],
-    pattern: '/articles',
-    tokens: [{ old: '/articles', type: 0, val: 'articles', end: '' }],
-    types: placeholder as {
-      body: {}
-      paramsTuple: []
-      params: {}
-      query: { page?: number; limit?: number }
-      response: { data: Array<{ id: number; title: string }>; nextCursor: number | null }
-    },
-  },
   'auth.login': {
     methods: ['POST'],
     pattern: '/auth/login',
@@ -46,8 +36,8 @@ const routes = {
       body: {}
       params: {}
       paramsTuple: []
-      query: { name?: string; email?: string }
-      response: Array<{ id: number; name: string }>
+      query: { ids?: (string | number | undefined | null)[]; email?: string }
+      response: { token: string }
     },
   },
   'users.bar': {
@@ -68,10 +58,10 @@ const routes = {
     tokens: [{ old: '/users', type: 0, val: 'users', end: '' }],
     types: placeholder as {
       paramsTuple: [string, string, string]
-      body: { name: string }
+      body: { file: any }
       params: {}
       query: {}
-      response: { id: number; name: string }
+      response: { token: string }
     },
   },
   'posts.comments.likes.detail': {
@@ -146,22 +136,6 @@ const routes = {
       response: { id: string }
     },
   },
-  'users.comments.index': {
-    methods: ['GET'],
-    pattern: '/users/:userId/comments',
-    tokens: [
-      { old: '/users/:userId/comments', type: 0, val: 'users', end: '' },
-      { old: '/users/:userId/comments', type: 1, val: 'userId', end: '' },
-      { old: '/users/:userId/comments', type: 0, val: 'comments', end: '' },
-    ],
-    types: placeholder as {
-      paramsTuple: [string]
-      body: {}
-      params: { userId: string }
-      query: { page?: number; perPage?: number }
-      response: Array<{ id: number; body: string }>
-    },
-  },
   'users.show': {
     methods: ['GET'],
     pattern: '/users/:id',
@@ -173,59 +147,11 @@ const routes = {
       paramsTuple: [string]
       body: {}
       params: { id: string }
-      query: { foo?: string }
+      query: { foo: string }
       response: { id: string }
     },
   },
-  'do.something': {
-    methods: ['POST'],
-    pattern: '/do-something',
-    tokens: [{ old: '/do-something', type: 0, val: 'do-something', end: '' }],
-    types: placeholder as {
-      paramsTuple: []
-      body: {}
-      params: {}
-      query: {}
-      response: { success: boolean }
-    },
-  },
 } as const satisfies Record<string, AdonisEndpoint>
-
-type Routes = typeof routes
-
-/**
- * Pre-computed API definition tree for tests
- */
-export interface ApiDefinition {
-  articles: {
-    index: Routes['articles.index']
-  }
-  auth: {
-    login: Routes['auth.login'] & {
-      show: Routes['auth.login.show']
-    }
-  }
-  users: {
-    index: Routes['users.index']
-    bar: Routes['users.bar']
-    store: Routes['users.store']
-    show: Routes['users.show']
-    comments: {
-      index: Routes['users.comments.index']
-    }
-  }
-  posts: {
-    comments: {
-      likes: {
-        detail: Routes['posts.comments.likes.detail']
-        toggle: Routes['posts.comments.likes.toggle']
-      }
-    }
-  }
-  do: {
-    something: Routes['do.something']
-  }
-}
 
 export const defaultRegistry = {
   routes,

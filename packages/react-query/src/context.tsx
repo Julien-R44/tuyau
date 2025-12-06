@@ -1,34 +1,38 @@
 import * as React from 'react'
 import type { Tuyau } from '@tuyau/core/client'
-import { AdonisEndpoint } from '@tuyau/core/types'
 import type { QueryClient } from '@tanstack/react-query'
+import { AdonisEndpoint, InferRoutes, TuyauRegistry } from '@tuyau/core/types'
 
 import { createTuyauReactQueryClient, type TuyauReactQuery } from './index.ts'
 
-export interface CreateTuyauContextResult<TRegistry extends Record<string, AdonisEndpoint>> {
+export interface CreateTuyauContextResult<
+  TRegistry extends TuyauRegistry,
+  TRoutes extends Record<string, AdonisEndpoint> = InferRoutes<TRegistry>,
+> {
   TuyauProvider: React.FC<{
     children: React.ReactNode
     queryClient: QueryClient
-    client: Tuyau<TRegistry>
+    client: Tuyau<TRegistry, TRoutes>
   }>
-  useTuyau: () => TuyauReactQuery<TRegistry>
-  useTuyauClient: () => Tuyau<TRegistry>
+  useTuyau: () => TuyauReactQuery<TRoutes>
+  useTuyauClient: () => Tuyau<TRegistry, TRoutes>
 }
 
 /**
  * Create a set of type-safe provider-consumers for Tuyau with React Query
  */
 export function createTuyauContext<
-  TRegistry extends Record<string, AdonisEndpoint>,
->(): CreateTuyauContextResult<TRegistry> {
-  const TuyauClientContext = React.createContext<Tuyau<TRegistry> | null>(null)
-  const TuyauContext = React.createContext<TuyauReactQuery<TRegistry> | null>(null)
+  TRegistry extends TuyauRegistry,
+  TRoutes extends Record<string, AdonisEndpoint> = InferRoutes<TRegistry>,
+>(): CreateTuyauContextResult<TRegistry, TRoutes> {
+  const TuyauClientContext = React.createContext<Tuyau<TRegistry, TRoutes> | null>(null)
+  const TuyauContext = React.createContext<TuyauReactQuery<TRoutes> | null>(null)
 
   function TuyauProvider(
     props: Readonly<{
       children: React.ReactNode
       queryClient: QueryClient
-      client: Tuyau<TRegistry>
+      client: Tuyau<TRegistry, TRoutes>
     }>,
   ) {
     const value = React.useMemo(() => {

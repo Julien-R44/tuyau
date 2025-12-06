@@ -1,6 +1,6 @@
 import { Tuyau } from '@tuyau/core/client'
 import { QueryClient, QueryFilters } from '@tanstack/react-query'
-import { AdonisEndpoint, RawRequestArgs } from '@tuyau/core/types'
+import { AdonisEndpoint, InferRoutes, RawRequestArgs, TuyauRegistry } from '@tuyau/core/types'
 
 import { buildKey } from './utils.ts'
 import { tuyauQueryOptions } from './query.ts'
@@ -17,11 +17,14 @@ function segmentsToRouteName(segments: string[]): string {
   return segments.join('.')
 }
 
-export function createTuyauReactQueryClient<D extends Record<string, AdonisEndpoint>>(options: {
-  client: Tuyau<D>
+export function createTuyauReactQueryClient<
+  Reg extends TuyauRegistry,
+  Routes extends Record<string, AdonisEndpoint> = InferRoutes<Reg>,
+>(options: {
+  client: Tuyau<Reg, Routes>
   queryClient: QueryClient | (() => QueryClient)
   globalOptions?: TuyauReactRequestOptions
-}): TuyauReactQuery<D> & DecorateRouterKeyable {
+}): TuyauReactQuery<Routes> & DecorateRouterKeyable {
   const { client, globalOptions } = options
 
   function makeReactQueryNamed(segments: string[]): any {
@@ -92,5 +95,5 @@ export function createTuyauReactQueryClient<D extends Record<string, AdonisEndpo
     })
   }
 
-  return makeReactQueryNamed([]) as TuyauReactQuery<D> & DecorateRouterKeyable
+  return makeReactQueryNamed([]) as TuyauReactQuery<Routes> & DecorateRouterKeyable
 }
