@@ -1,41 +1,13 @@
 import nock from 'nock'
 import { test } from '@japa/runner'
 import { createTuyau } from '@tuyau/core/client'
-import { AdonisEndpoint } from '@tuyau/core/types'
 import { BodyParserMiddlewareFactory } from '@adonisjs/core/factories/bodyparser'
 import { HttpContextFactory, RequestFactory } from '@adonisjs/core/factories/http'
 
 import { httpServer } from './helpers.ts'
 import { superjson } from '../client/plugin.ts'
+import { defaultRegistry } from './fixtures/index.ts'
 import SuperjsonMiddleware from '../middleware/superjson_middleware.ts'
-
-const placeholder: any = {}
-const testRegistry = {
-  'users.index': {
-    methods: ['GET'],
-    pattern: '/users',
-    tokens: [{ old: '/users', type: 0, val: 'users', end: '' }],
-    types: placeholder as {
-      body: {}
-      params: {}
-      paramsTuple: []
-      query: {}
-      response: { token: string }
-    },
-  },
-  'users.store': {
-    methods: ['POST'],
-    pattern: '/users',
-    tokens: [{ old: '/users', type: 0, val: 'users', end: '' }],
-    types: placeholder as {
-      paramsTuple: []
-      body: { date: Date; bigInt?: bigint }
-      params: {}
-      query: {}
-      response: { token: string }
-    },
-  },
-} as const satisfies Record<string, AdonisEndpoint>
 
 test.group('Superjson', (group) => {
   group.each.teardown(() => nock.cleanAll())
@@ -43,7 +15,7 @@ test.group('Superjson', (group) => {
   test('parse errors', async ({ assert }) => {
     const tuyau = createTuyau({
       baseUrl: 'http://localhost:3333',
-      registry: testRegistry,
+      registry: defaultRegistry,
       plugins: [superjson()],
       retry: { limit: 0 },
     })
@@ -56,21 +28,21 @@ test.group('Superjson', (group) => {
         meta: { values: { date: ['Date'] } },
       })
 
-    const result = await tuyau.api.users.index({}).catch((err) => err)
+    const result = await tuyau.api.users.index({}).catch((err: any) => err)
     assert.instanceOf(result.response.date, Date)
   })
 
   test('also serialise using superjson while posting data', async () => {
     const tuyau = createTuyau({
       baseUrl: 'http://localhost:3333',
-      registry: testRegistry,
+      registry: defaultRegistry,
       plugins: [superjson()],
     })
 
     nock('http://localhost:3333')
       .post(
         '/users',
-        '{"json":{"date":"1970-01-01T00:00:00.000Z"},"meta":{"values":{"date":["Date"]}}}',
+        '{"json":{"date":"1970-01-01T00:00:00.000Z"},"meta":{"values":{"date":["Date"]},"v":1}}',
       )
       .reply(200, { token: 'foo' })
 
@@ -100,7 +72,7 @@ test.group('Superjson', (group) => {
 
     const tuyau = createTuyau({
       baseUrl: 'http://localhost:3333',
-      registry: testRegistry,
+      registry: defaultRegistry,
       plugins: [superjson()],
       retry: { limit: 0 },
     })
