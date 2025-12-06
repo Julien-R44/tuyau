@@ -3,7 +3,6 @@ import { snapshot } from '@japa/snapshot'
 import { fileSystem } from '@japa/file-system'
 import { expectTypeOf } from '@japa/expect-type'
 import { processCLIArgs, configure, run } from '@japa/runner'
-import { setup as setupAttest, teardown as teardownAttest } from '@arktype/attest'
 
 import { HappyDom } from '../tests/helpers/happy_dom_env.ts'
 
@@ -30,10 +29,6 @@ configure({
       return () => {
         HappyDom.destroy()
       }
-    },
-    () => {
-      setupAttest()
-      return () => teardownAttest()
     },
   ],
 })

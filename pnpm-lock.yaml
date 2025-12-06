@@ -11,9 +11,9 @@ importers:
       '@adonisjs/tsconfig':
         specifier: ^2.0.0-next.3
         version: 2.0.0-next.3
-      '@arktype/attest':
-        specifier: ^0.53.0
-        version: 0.53.0(typescript@5.9.3)
+      '@ark/attest':
+        specifier: ^0.56.0
+        version: 0.56.0(typescript@5.9.3)
       '@changesets/cli':
         specifier: ^2.29.7
         version: 2.29.7(@types/node@24.10.0)
@@ -90,9 +90,6 @@ importers:
       '@adonisjs/http-server':
         specifier: 8.0.0-next.12
         version: 8.0.0-next.12(@adonisjs/application@9.0.0-next.10(@adonisjs/assembler@8.0.0-next.19(typescript@5.9.3))(@adonisjs/config@6.0.0-next.1)(@adonisjs/fold@11.0.0-next.3))(@adonisjs/encryption@7.0.0-next.1)(@adonisjs/events@10.1.0-next.2(@adonisjs/application@9.0.0-next.10(@adonisjs/assembler@8.0.0-next.19(typescript@5.9.3))(@adonisjs/config@6.0.0-next.1)(@adonisjs/fold@11.0.0-next.3))(@adonisjs/fold@11.0.0-next.3))(@adonisjs/fold@11.0.0-next.3)(@adonisjs/logger@7.1.0-next.2(pino-pretty@13.1.2))(youch@4.1.0-beta.12)
-      '@ark/attest':
-        specifier: ^0.56.0
-        version: 0.56.0(typescript@5.9.3)
       '@faker-js/faker':
         specifier: ^10.1.0
         version: 10.1.0
@@ -114,9 +111,6 @@ importers:
       '@adonisjs/core':
         specifier: ^7.0.0-next.10
         version: 7.0.0-next.10(@adonisjs/assembler@8.0.0-next.19(typescript@5.9.3))(@vinejs/vine@4.1.0)(edge.js@6.3.0)(pino-pretty@13.1.2)(youch@4.1.0-beta.12)
-      '@ark/attest':
-        specifier: ^0.56.0
-        version: 0.56.0(typescript@5.9.3)
       '@faker-js/faker':
         specifier: ^10.1.0
         version: 10.1.0
@@ -623,29 +617,14 @@ packages:
     peerDependencies:
       typescript: '*'
 
-  '@ark/fs@0.53.0':
-    resolution: {integrity: sha512-XL0EbBAZgyy+j9aPhftYaBsbKAW5PTNSKCN6oLRRdrHuHPSAZgR6765/z0YZGhPxHEUNmq0vBoSk8yOLk91dNQ==}
-
   '@ark/fs@0.56.0':
     resolution: {integrity: sha512-zY/wDDhcvmt6/upQwZM766PAnvIzdEMcgydUGd9pqY9FMGNo9I9uE4RYAfms9AeUUtbZJu2h2Ua0tvFsO5XF4Q==}
-
-  '@ark/schema@0.53.0':
-    resolution: {integrity: sha512-1PB7RThUiTlmIu8jbSurPrhHpVixPd4C+xNBUF/HrjIENCeDcAMg36n5mpMzED7OQGDVIzpfXXiMnaTiutjHJw==}
 
   '@ark/schema@0.56.0':
     resolution: {integrity: sha512-ECg3hox/6Z/nLajxXqNhgPtNdHWC9zNsDyskwO28WinoFEnWow4IsERNz9AnXRhTZJnYIlAJ4uGn3nlLk65vZA==}
 
-  '@ark/util@0.53.0':
-    resolution: {integrity: sha512-TGn4gLlA6dJcQiqrtCtd88JhGb2XBHo6qIejsDre+nxpGuUVW4G3YZGVrwjNBTO0EyR+ykzIo4joHJzOj+/cpA==}
-
   '@ark/util@0.56.0':
     resolution: {integrity: sha512-BghfRC8b9pNs3vBoDJhcta0/c1J1rsoS1+HgVUreMFPdhz/CRAKReAu57YEllNaSy98rWAdY1gE+gFup7OXpgA==}
-
-  '@arktype/attest@0.53.0':
-    resolution: {integrity: sha512-m2etXj1eqseATWuOTceGOEE7vRsX5nDhrnhYsqZ3UZHgZ8Cdvum56Ue/u/bBcFNe3p8IXfOp1q1LCK1cCHl3JQ==}
-    hasBin: true
-    peerDependencies:
-      typescript: '*'
 
   '@arr/every@1.0.1':
     resolution: {integrity: sha512-UQFQ6SgyJ6LX42W8rHCs8KVc0JS0tzVL9ct4XYedJukskYVWTo49tNiMEK9C2HTyarbNiT/RVIRSY82vH+6sTg==}
@@ -2902,14 +2881,8 @@ packages:
   aria-query@5.3.0:
     resolution: {integrity: sha512-b0P0sZPKtyu8HkeRAfCq0IfURZK+SuwMjY1UXGBU27wpAiTwQAIlq56IbIO+ytk/JjS1fMR14ee5WBBfKi5J6A==}
 
-  arkregex@0.0.2:
-    resolution: {integrity: sha512-ttjDUICBVoXD/m8bf7eOjx8XMR6yIT2FmmW9vsN0FCcFOygEZvvIX8zK98tTdXkzi0LkRi5CmadB44jFEIyDNA==}
-
   arkregex@0.0.4:
     resolution: {integrity: sha512-biS/FkvSwQq59TZ453piUp8bxMui11pgOMV9WHAnli1F8o0ayNCZzUwQadL/bGIUic5TkS/QlPcyMuI8ZIwedQ==}
-
-  arktype@2.1.25:
-    resolution: {integrity: sha512-fdj10sNlUPeDRg1QUqMbzJ4Q7gutTOWOpLUNdcC4vxeVrN0G+cbDOvLbuxQOFj/NDAode1G7kwFv4yKwQvupJg==}
 
   arktype@2.1.28:
     resolution: {integrity: sha512-LVZqXl2zWRpNFnbITrtFmqeqNkPPo+KemuzbGSY6jvJwCb4v8NsDzrWOLHnQgWl26TkJeWWcUNUeBpq2Mst1/Q==}
@@ -6226,34 +6199,13 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@ark/fs@0.53.0': {}
-
   '@ark/fs@0.56.0': {}
-
-  '@ark/schema@0.53.0':
-    dependencies:
-      '@ark/util': 0.53.0
 
   '@ark/schema@0.56.0':
     dependencies:
       '@ark/util': 0.56.0
 
-  '@ark/util@0.53.0': {}
-
   '@ark/util@0.56.0': {}
-
-  '@arktype/attest@0.53.0(typescript@5.9.3)':
-    dependencies:
-      '@ark/fs': 0.53.0
-      '@ark/util': 0.53.0
-      '@prettier/sync': 0.6.1(prettier@3.6.2)
-      '@typescript/analyze-trace': 0.10.1
-      '@typescript/vfs': 1.6.1(typescript@5.9.3)
-      arktype: 2.1.25
-      prettier: 3.6.2
-      typescript: 5.9.3
-    transitivePeerDependencies:
-      - supports-color
 
   '@arr/every@1.0.1': {}
 
@@ -8314,19 +8266,9 @@ snapshots:
     dependencies:
       dequal: 2.0.3
 
-  arkregex@0.0.2:
-    dependencies:
-      '@ark/util': 0.53.0
-
   arkregex@0.0.4:
     dependencies:
       '@ark/util': 0.56.0
-
-  arktype@2.1.25:
-    dependencies:
-      '@ark/schema': 0.53.0
-      '@ark/util': 0.53.0
-      arkregex: 0.0.2
 
   arktype@2.1.28:
     dependencies:

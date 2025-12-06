@@ -47,7 +47,6 @@
     "@adonisjs/assembler": "8.0.0-next.19",
     "@adonisjs/core": "^7.0.0-next.10",
     "@adonisjs/http-server": "8.0.0-next.12",
-    "@ark/attest": "^0.56.0",
     "@faker-js/faker": "^10.1.0",
     "@poppinss/ts-exec": "^1.4.1",
     "@types/node": "^24.10.0",
