@@ -19,8 +19,12 @@ import type {
   TuyauReactRequestOptions,
 } from './types/common.ts'
 
+function toSnakeCase(str: string): string {
+  return str.replace(/([a-z])([A-Z])/g, '$1_$2').toLowerCase()
+}
+
 function segmentsToRouteName(segments: string[]): string {
-  return segments.join('.')
+  return segments.map(toSnakeCase).join('.')
 }
 
 export function createTuyauReactQueryClient<

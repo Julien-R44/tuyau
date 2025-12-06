@@ -272,6 +272,59 @@ test.group('Query | Route Parameters', () => {
   })
 })
 
+test.group('Query | CamelCase to snake_case conversion', () => {
+  test('should convert camelCase route segments to snake_case for route lookup', async ({
+    assert,
+  }) => {
+    let capturedRouteName: string | undefined
+
+    const client = createTuyau({
+      baseUrl: 'http://localhost:3333',
+      registry: defaultRegistry,
+    }) as any
+
+    const originalRequest = client.request.bind(client)
+    client.request = async (routeName: string, opts?: any) => {
+      capturedRouteName = routeName
+      return originalRequest(routeName as any, opts)
+    }
+
+    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+
+    // Access using camelCase (byCategory) but route is registered as snake_case (by_category)
+    // @ts-ignore tkt
+    const options = tuyau.products.byCategory.queryOptions({ params: { category: 'electronics' } })
+
+    // Execute the query function to trigger the request
+    try {
+      await options.queryFn!({
+        queryKey: options.queryKey,
+        meta: undefined,
+        signal: new AbortController().signal,
+        client: queryClient,
+      } as any)
+    } catch {
+      // Ignore network errors, we just want to capture the route name
+    }
+
+    // The route name should be converted to snake_case
+    assert.equal(capturedRouteName, 'products.by_category')
+  })
+
+  test('should preserve query key with camelCase segments for cache consistency', ({ assert }) => {
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
+    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+
+    const queryKey = tuyau.products.byCategory.queryKey({ params: { category: 'electronics' } })
+
+    // Query key should use camelCase segments (as accessed by the user)
+    assert.deepEqual(queryKey, [
+      ['products', 'byCategory'],
+      { request: { params: { category: 'electronics' } }, type: 'query' },
+    ])
+  })
+})
+
 test.group('Types | Query Types', () => {
   test('queryOptions should return correct types', ({ expectTypeOf }) => {
     const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
