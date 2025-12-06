@@ -233,6 +233,105 @@ export default function Home() {
               </div>
             </div>
           </Link>
+
+          {/* Users Card */}
+          <Link
+            href="/users-page"
+            className="group relative overflow-hidden rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm p-8 transition-all duration-300 hover:bg-white/10 hover:border-blue-500/50 hover:shadow-xl hover:shadow-blue-500/10 md:col-span-2"
+          >
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/20 to-transparent rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-500"></div>
+
+            <div className="relative">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center shadow-lg shadow-blue-500/30">
+                  <span className="text-2xl">👥</span>
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-white">Users & Transformers</h2>
+                  <p className="text-sm text-slate-400">Data transformation demo</p>
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-x-8 gap-y-3 mt-6">
+                <div className="flex items-center gap-3 text-slate-300">
+                  <div className="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center">
+                    <svg
+                      className="w-3.5 h-3.5 text-blue-400"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </div>
+                  <span className="text-sm">UserTransformer class</span>
+                </div>
+                <div className="flex items-center gap-3 text-slate-300">
+                  <div className="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center">
+                    <svg
+                      className="w-3.5 h-3.5 text-blue-400"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </div>
+                  <span className="text-sm">serialize() helper</span>
+                </div>
+                <div className="flex items-center gap-3 text-slate-300">
+                  <div className="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center">
+                    <svg
+                      className="w-3.5 h-3.5 text-blue-400"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </div>
+                  <span className="text-sm">CRUD operations</span>
+                </div>
+                <div className="flex items-center gap-3 text-slate-300">
+                  <div className="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center">
+                    <svg
+                      className="w-3.5 h-3.5 text-blue-400"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </div>
+                  <span className="text-sm">Field selection (pick)</span>
+                </div>
+              </div>
+
+              <div className="mt-6 flex items-center gap-2 text-blue-400 group-hover:gap-3 transition-all">
+                <span className="font-medium">Explore</span>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17 8l4 4m0 0l-4 4m4-4H3"
+                  />
+                </svg>
+              </div>
+            </div>
+          </Link>
         </div>
 
         {/* Footer */}

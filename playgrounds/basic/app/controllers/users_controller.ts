@@ -1,26 +1,88 @@
+import vine from '@vinejs/vine'
 import { type HttpContext } from '@adonisjs/core/http'
 
-const users: Array<{ id: number; name: string; email: string }> = []
+import User from '#models/user'
+import UserTransformer from '#transformers/user_transformer'
+
 export default class UsersController {
-  store(_ctx: HttpContext) {
-    users.push({
-      id: users.length + 1,
-      name: Math.random().toString(36).substring(7),
-      email: Math.random().toString(36).substring(7) + '@example.com',
+  static createValidator = vine.compile(
+    vine.object({
+      fullName: vine.string().minLength(2).maxLength(100),
+      email: vine.string().email(),
+      password: vine.string().minLength(6),
     })
-    return { success: true }
+  )
+
+  static updateValidator = vine.compile(
+    vine.object({
+      fullName: vine.string().minLength(2).maxLength(100).optional(),
+      email: vine.string().email().optional(),
+    })
+  )
+
+  /**
+   * List all users with transformer
+   */
+  async list({ serialize }: HttpContext) {
+    const users = await User.all()
+    return { users: await serialize(UserTransformer.transform(users)) }
   }
 
-  delete({ params }: HttpContext) {
-    const userIndex = users.findIndex((user) => user.id === Number(params.id))
-    if (userIndex !== -1) {
-      users.splice(userIndex, 1)
-      return { success: true }
+  /**
+   * Get a single user by ID with transformer
+   */
+  async show({ params, serialize }: HttpContext) {
+    const user = await User.find(params.id)
+    if (!user) {
+      return { error: 'User not found' }
     }
-    return { success: false, message: 'User not found' }
+
+    return { user: await serialize(UserTransformer.transform(user)) }
   }
 
-  list() {
-    return { users }
+  /**
+   * Create a new user
+   */
+  async store({ request, serialize }: HttpContext) {
+    const payload = await request.validateUsing(UsersController.createValidator)
+    const user = await User.create(payload)
+
+    return {
+      success: true,
+      user: await serialize(UserTransformer.transform(user)),
+    }
+  }
+
+  /**
+   * Update an existing user
+   */
+  async update({ params, request, serialize }: HttpContext) {
+    const payload = await request.validateUsing(UsersController.updateValidator)
+    const user = await User.find(params.id)
+
+    if (!user) {
+      return { success: false, error: 'User not found' }
+    }
+
+    user.merge(payload)
+    await user.save()
+
+    return {
+      success: true,
+      user: await serialize(UserTransformer.transform(user)),
+    }
+  }
+
+  /**
+   * Delete a user
+   */
+  async delete({ params }: HttpContext) {
+    const user = await User.find(params.id)
+    if (!user) {
+      return { success: false, error: 'User not found' }
+    }
+
+    await user.delete()
+    return { success: true }
   }
 }

@@ -15,6 +15,7 @@ import { controllers } from '#generated/controllers'
 router.on('/').renderInertia('home', {}).as('home')
 router.on('/posts-page').renderInertia('posts', {}).as('posts.page')
 router.on('/products-page').renderInertia('products', {}).as('products.page')
+router.on('/users-page').renderInertia('users', {}).as('users.page')
 
 router
   .group(() => {
@@ -24,8 +25,6 @@ router
 
     router.get('login', [controllers.Session, 'create'])
     router.post('login', [controllers.Session, 'store'])
-
-    router.get('/users/:id', [controllers.Session, 'create']).as('users.show')
   })
   .use(middleware.guest())
 
@@ -37,7 +36,9 @@ router
 
 // Users API
 router.get('/users', [controllers.Users, 'list'])
+router.get('/users/:id', [controllers.Users, 'show'])
 router.post('/users', [controllers.Users, 'store'])
+router.put('/users/:id', [controllers.Users, 'update'])
 router.delete('/users/:id', [controllers.Users, 'delete'])
 
 // Posts API (for infinite query testing)
