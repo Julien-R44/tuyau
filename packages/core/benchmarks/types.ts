@@ -27,7 +27,7 @@ bench('Big registry 100 routes', async () => {
   tuyau.api.document.archive({ body: { token: 'test' } }).catch(() => {})
 
   return {}
-}).types([6188, 'instantiations'])
+}).types([3467, 'instantiations'])
 
 bench('Huge registry 300 routes', async () => {
   const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry: registry300 })
@@ -36,4 +36,4 @@ bench('Huge registry 300 routes', async () => {
   tuyau.api.chat.unfollow({}).catch(() => {})
 
   return {}
-}).types([16_816, 'instantiations'])
+}).types([9507, 'instantiations'])

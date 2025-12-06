@@ -35,9 +35,21 @@ export interface UserApiDefinition {}
 
 export type ValueOf<T> = T[keyof T]
 
-type IsEmptyObj<T> = keyof T extends never ? true : false
+/**
+ * Split a string by a delimiter
+ */
+export type Split<S extends string, D extends string = '.'> = S extends `${infer T}${D}${infer U}`
+  ? [T, ...Split<U, D>]
+  : [S]
 
-type IsEmptyTuple<T> = T extends [] ? true : false
+/**
+ * Convert a union type to an intersection type
+ */
+export type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
+  k: infer I,
+) => void
+  ? I
+  : never
 
 /**
  * Structure of a Tuyau registry containing routes and optional tree
@@ -52,8 +64,9 @@ export interface TuyauRegistry<
 
 /**
  * Extracts the $tree type from a registry
+ * Uses direct access instead of conditional type for performance
  */
-export type InferTree<R extends TuyauRegistry> = R extends { $tree: infer T } ? T : {}
+export type InferTree<R extends TuyauRegistry> = R['$tree']
 
 /**
  * Extracts the routes from a registry
@@ -73,28 +86,20 @@ type BaseRequestOptions = Omit<
 >
 
 /**
- * Checks if a type has required keys (non-optional properties)
+ * Helper types for optional/required fields - using literal types instead of mapped types
  */
-type HasRequiredKeys<T> = keyof T extends never ? false : {} extends T ? false : true
+type ParamsArg<T> = keyof T extends never ? {} : {} extends T ? { params?: T } : { params: T }
+
+type QueryArg<T> = keyof T extends never ? {} : {} extends T ? { query?: T } : { query: T }
+
+type BodyArg<T> = keyof T extends never ? {} : {} extends T ? { body?: T } : { body: T }
 
 /**
  * Request args without ky options
  */
-export type RawRequestArgs<E extends AdonisEndpoint> = (keyof E['types']['params'] extends never
-  ? {}
-  : HasRequiredKeys<E['types']['params']> extends true
-    ? { params: E['types']['params'] }
-    : { params?: E['types']['params'] }) &
-  (keyof E['types']['query'] extends never
-    ? {}
-    : HasRequiredKeys<E['types']['query']> extends true
-      ? { query: E['types']['query'] }
-      : { query?: E['types']['query'] }) &
-  (keyof E['types']['body'] extends never
-    ? {}
-    : HasRequiredKeys<E['types']['body']> extends true
-      ? { body: E['types']['body'] }
-      : { body?: E['types']['body'] })
+export type RawRequestArgs<E extends AdonisEndpoint> = ParamsArg<E['types']['params']> &
+  QueryArg<E['types']['query']> &
+  BodyArg<E['types']['body']>
 
 /**
  * Constructs the request arguments type for an endpoint
@@ -116,9 +121,17 @@ export type EndpointFn<E extends AdonisEndpoint> = (
 /**
  * Transforms a pre-computed ApiDefinition tree into callable endpoint functions
  * This recursively converts each endpoint in the tree to a callable function
+ * Fully inlined for maximum performance
  */
 export type TransformApiDefinition<T> = {
-  [K in keyof T]: T[K] extends AdonisEndpoint ? EndpointFn<T[K]> : TransformApiDefinition<T[K]>
+  [K in keyof T]: T[K] extends AdonisEndpoint
+    ? (
+        args: ParamsArg<T[K]['types']['params']> &
+          QueryArg<T[K]['types']['query']> &
+          BodyArg<T[K]['types']['body']> &
+          BaseRequestOptions,
+      ) => Promise<T[K]['types']['response']>
+    : TransformApiDefinition<T[K]>
 }
 
 /**
@@ -191,7 +204,11 @@ type FilterByMethodPathForRegistry<
   M extends Method,
   P extends ValueOf<Reg>['pattern'] & string,
 > = {
-  [K in keyof Reg]: [Reg[K]['pattern'], M] extends [P, Reg[K]['methods'][number]] ? Reg[K] : never
+  [K in keyof Reg]: Reg[K]['pattern'] extends P
+    ? M extends Reg[K]['methods'][number]
+      ? Reg[K]
+      : never
+    : never
 }[keyof Reg]
 
 type EndpointByNameForRegistry<
@@ -309,8 +326,8 @@ export namespace Route {
 }
 
 type ParamsShape<E> = E extends { types: { paramsTuple: infer PT; params: infer P } }
-  ? (IsEmptyTuple<PT> extends true ? { paramsTuple?: PT } : { paramsTuple: PT }) &
-      (IsEmptyObj<P> extends true ? {} : { params: P })
+  ? (PT extends [] ? { paramsTuple?: PT } : { paramsTuple: PT }) &
+      (keyof P extends never ? {} : { params: P })
   : never
 
 export type RegistryGroupedByMethod<

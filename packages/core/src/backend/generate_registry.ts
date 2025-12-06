@@ -231,20 +231,25 @@ function generateRuntimeContent(routes: ScannedRoute[]): string {
   const treeInterface = generateTreeInterface(tree)
 
   return `/* eslint-disable prettier/prettier */
+import type { AdonisEndpoint } from '@tuyau/core/types'
 import type { Registry } from './registry.schema.d.ts'
 const placeholder: any = {}
 
-interface ApiDefinition {
+export interface ApiDefinition {
 ${treeInterface}
 }
 
 const routes = {
 ${registryEntries},
-}
+} as const satisfies Record<string, AdonisEndpoint>
 
 export const registry = {
   routes,
   $tree: {} as ApiDefinition,
+}
+
+declare module '@tuyau/core/types' {
+  export interface UserApiDefinition extends ApiDefinition {}
 }
 `
 }
