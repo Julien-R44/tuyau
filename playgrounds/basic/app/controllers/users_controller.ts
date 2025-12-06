@@ -18,9 +18,8 @@ export default class UsersController {
     if (userIndex !== -1) {
       users.splice(userIndex, 1)
       return { success: true }
-    } else {
-      return { success: false, message: 'User not found' }
     }
+    return { success: false, message: 'User not found' }
   }
 
   list() {

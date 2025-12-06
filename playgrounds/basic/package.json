@@ -44,6 +44,7 @@
     "@adonisjs/static": "^2.0.0-next.1",
     "@adonisjs/vite": "^5.1.0-next.1",
     "@inertiajs/react": "^2.2.15",
+    "@tailwindcss/vite": "^4.1.17",
     "@tanstack/react-query": "^5.90.7",
     "@tuyau/core": "workspace:*",
     "@tuyau/react-query": "workspace:*",
@@ -54,7 +55,8 @@
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "reflect-metadata": "^0.2.2",
-    "sonner": "^2.0.7"
+    "sonner": "^2.0.7",
+    "tailwindcss": "^4.1.17"
   },
   "devDependencies": {
     "@adonisjs/assembler": "^8.0.0-next.19",

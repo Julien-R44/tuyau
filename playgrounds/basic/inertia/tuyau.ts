@@ -1,7 +1,7 @@
 import { registry } from '~generated/registry'
 import { createTuyau } from '@tuyau/core/client'
-import { createTuyauReactQueryClient } from '@tuyau/react-query'
 import { QueryClient } from '@tanstack/react-query'
+import { createTuyauReactQueryClient } from '@tuyau/react-query'
 
 export const client = createTuyau({
   baseUrl: 'http://localhost:3333',

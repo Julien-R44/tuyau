@@ -13,6 +13,8 @@ import { middleware } from '#start/kernel'
 import { controllers } from '#generated/controllers'
 
 router.on('/').renderInertia('home', {}).as('home')
+router.on('/posts-page').renderInertia('posts', {}).as('posts.page')
+router.on('/products-page').renderInertia('products', {}).as('products.page')
 
 router
   .group(() => {
@@ -33,6 +35,30 @@ router
   })
   .use(middleware.auth())
 
+// Users API
 router.get('/users', [controllers.Users, 'list'])
 router.post('/users', [controllers.Users, 'store'])
 router.delete('/users/:id', [controllers.Users, 'delete'])
+
+// Posts API (for infinite query testing)
+router
+  .group(() => {
+    router.get('/', [controllers.Posts, 'list'])
+    router.get('/:id', [controllers.Posts, 'show'])
+    router.post('/', [controllers.Posts, 'store'])
+    router.put('/:id', [controllers.Posts, 'update'])
+    router.delete('/:id', [controllers.Posts, 'delete'])
+  })
+  .prefix('/posts')
+
+// Products API (for query params testing)
+router
+  .group(() => {
+    router.get('/search', [controllers.Products, 'search'])
+    router.get('/categories', [controllers.Products, 'categories'])
+    router.get('/category/:category', [controllers.Products, 'byCategory'])
+    router.get('/:id', [controllers.Products, 'show'])
+    router.post('/', [controllers.Products, 'store'])
+    router.delete('/:id', [controllers.Products, 'delete'])
+  })
+  .prefix('/products')
