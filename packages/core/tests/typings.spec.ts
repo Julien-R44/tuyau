@@ -2,7 +2,12 @@ import { test } from '@japa/runner'
 
 import { createTuyau } from '../src/client/tuyau.ts'
 import { defaultRegistry as registry } from './fixtures/index.ts'
-import type { PathWithRegistry, RouteWithRegistry } from '../src/client/types/types.ts'
+import type {
+  ExtractBody,
+  ExtractQuery,
+  PathWithRegistry,
+  RouteWithRegistry,
+} from '../src/client/types/types.ts'
 
 const routes = registry.routes
 
@@ -127,6 +132,31 @@ test.group('Client | Typings', (group) => {
     tuyau.request('users.index', {
       // @ts-expect-error providing params to route that doesn't need them
       params: { id: '1' },
+    })
+  })
+
+  test('request - ExtractQuery/ExtractBody endpoints', () => {
+    const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry })
+
+    // products.search uses ExtractQuery - query params should be extracted from validator
+    tuyau.request('products.search', {
+      query: { q: 'laptop', category: 'electronics', minPrice: 100 },
+    })
+
+    // Query is optional since all fields are optional
+    tuyau.request('products.search', {})
+
+    // products.store uses ExtractBody - body should be the full validator (no query property)
+    tuyau.request('products.store', {
+      body: { name: 'Laptop', price: 999, category: 'electronics' },
+    })
+
+    // @ts-expect-error products.store requires body
+    tuyau.request('products.store', {})
+
+    tuyau.request('products.store', {
+      // @ts-expect-error missing required name field
+      body: { price: 999, category: 'electronics' },
     })
   })
 
@@ -566,5 +596,83 @@ test.group('Client | Typings', (group) => {
     tuyau.api.newAccount.create
 
     tuyau.urlFor.get('new_account.create', { 'user-id': '123', 'user-token': 'foo' })
+  })
+})
+
+test.group('ExtractQuery and ExtractBody', (group) => {
+  group.tap((t) => t.skip(true, 'skip typings tests'))
+
+  test('ExtractQuery extracts query from validator with query property', ({ expectTypeOf }) => {
+    type ValidatorWithQuery = {
+      query: { page: number; limit?: number; search?: string }
+    }
+
+    type Result = ExtractQuery<ValidatorWithQuery>
+    expectTypeOf<Result>().toEqualTypeOf<{ page: number; limit?: number; search?: string }>()
+  })
+
+  test('ExtractQuery returns empty object for validator without query', ({ expectTypeOf }) => {
+    type ValidatorWithoutQuery = {
+      name: string
+      email: string
+    }
+
+    type Result = ExtractQuery<ValidatorWithoutQuery>
+    expectTypeOf<Result>().toEqualTypeOf<{}>()
+  })
+
+  test('ExtractBody removes query and params from validator', ({ expectTypeOf }) => {
+    type ValidatorWithQueryAndBody = {
+      query: { page: number }
+      name: string
+      email: string
+    }
+
+    type Result = ExtractBody<ValidatorWithQueryAndBody>
+    expectTypeOf<Result>().toEqualTypeOf<{ name: string; email: string }>()
+  })
+
+  test('ExtractBody keeps all properties when no query/params', ({ expectTypeOf }) => {
+    type ValidatorBodyOnly = {
+      name: string
+      email: string
+      age: number
+    }
+
+    type Result = ExtractBody<ValidatorBodyOnly>
+    expectTypeOf<Result>().toEqualTypeOf<{ name: string; email: string; age: number }>()
+  })
+
+  test('ExtractBody removes params property', ({ expectTypeOf }) => {
+    type ValidatorWithParams = {
+      params: { id: string }
+      name: string
+    }
+
+    type Result = ExtractBody<ValidatorWithParams>
+    expectTypeOf<Result>().toEqualTypeOf<{ name: string }>()
+  })
+
+  test('ExtractBody removes both query and params', ({ expectTypeOf }) => {
+    type ValidatorWithBoth = {
+      query: { page: number }
+      params: { id: string }
+      name: string
+      description?: string
+    }
+
+    type Result = ExtractBody<ValidatorWithBoth>
+    expectTypeOf<Result>().toEqualTypeOf<{ name: string; description?: string }>()
+  })
+
+  test('works with empty validator', ({ expectTypeOf }) => {
+    type EmptyValidator = {}
+
+    type QueryResult = ExtractQuery<EmptyValidator>
+
+    type BodyResult = ExtractBody<EmptyValidator>
+
+    expectTypeOf<QueryResult>().toEqualTypeOf<{}>()
+    expectTypeOf<BodyResult>().toEqualTypeOf<{}>()
   })
 })

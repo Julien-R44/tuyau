@@ -1,4 +1,4 @@
-import type { AdonisEndpoint, RawRequestArgs } from '@tuyau/core/types'
+import type { SchemaEndpoint, RawRequestArgs } from '@tuyau/core/types'
 import type { DataTag, QueryFilters, SkipToken, WithRequired } from '@tanstack/react-query'
 
 import type {
@@ -11,12 +11,12 @@ import type {
   UnusedSkipTokenTuyauQueryOptionsOut,
 } from './common.ts'
 
-type Response<E extends AdonisEndpoint> = E['types']['response']
+type Response<E extends SchemaEndpoint> = E['types']['response']
 
 /**
  * Decorate query endpoints with Tanstack queries abilities
  */
-export interface DecorateQueryFn<EDef extends AdonisEndpoint> {
+export interface DecorateQueryFn<EDef extends SchemaEndpoint> {
   queryOptions: TuyauReactQueryOptions<EDef>
   queryKey: (args?: RawRequestArgs<EDef>) => DataTag<TuyauQueryKey, Response<EDef>>
   queryFilter: (
@@ -28,7 +28,7 @@ export interface DecorateQueryFn<EDef extends AdonisEndpoint> {
 /**
  * Type definition for query options with overloads for different scenarios
  */
-export interface TuyauReactQueryOptions<EDef extends AdonisEndpoint> {
+export interface TuyauReactQueryOptions<EDef extends SchemaEndpoint> {
   // With initial data - when opts has initialData defined
   <TData = Response<EDef>>(
     input: RawRequestArgs<EDef> | SkipToken,

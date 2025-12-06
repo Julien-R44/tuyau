@@ -189,6 +189,30 @@ const routes = {
       response: { success: boolean }
     },
   },
+  'products.search': {
+    methods: ['GET'],
+    pattern: '/products/search',
+    tokens: [{ old: '/products/search', type: 0, val: 'products/search', end: '' }],
+    types: placeholder as {
+      paramsTuple: []
+      body: {}
+      params: {}
+      query: { q?: string; category?: string; minPrice?: number; maxPrice?: number }
+      response: Array<{ id: number; name: string; price: number }>
+    },
+  },
+  'products.create': {
+    methods: ['POST'],
+    pattern: '/products',
+    tokens: [{ old: '/products', type: 0, val: 'products', end: '' }],
+    types: placeholder as {
+      paramsTuple: []
+      body: { name: string; price: number; description?: string }
+      params: {}
+      query: {}
+      response: { id: number; name: string; price: number }
+    },
+  },
 } as const satisfies Record<string, AdonisEndpoint>
 
 type Routes = typeof routes
@@ -224,6 +248,10 @@ export interface ApiDefinition {
   }
   do: {
     something: Routes['do.something']
+  }
+  products: {
+    search: Routes['products.search']
+    create: Routes['products.create']
   }
 }
 

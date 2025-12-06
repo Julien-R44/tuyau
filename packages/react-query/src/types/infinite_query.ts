@@ -1,4 +1,4 @@
-import type { AdonisEndpoint, RawRequestArgs } from '@tuyau/core/types'
+import type { SchemaEndpoint, RawRequestArgs } from '@tuyau/core/types'
 import type {
   DataTag,
   InfiniteData,
@@ -11,7 +11,7 @@ import type {
 import type { DistributiveOmit } from './utils.ts'
 import type { TuyauQueryBaseOptions, TuyauQueryKey } from './common.ts'
 
-type Response<E extends AdonisEndpoint> = E['types']['response']
+type Response<E extends SchemaEndpoint> = E['types']['response']
 
 /**
  * Infinite query options input type
@@ -41,7 +41,7 @@ export interface TuyauInfiniteQueryOptionsOut<TQueryFnData, TError, TData>
 /**
  * Type definition for infinite query options
  */
-export interface TuyauReactInfiniteQueryOptions<EDef extends AdonisEndpoint> {
+export interface TuyauReactInfiniteQueryOptions<EDef extends SchemaEndpoint> {
   <TData = InfiniteData<Response<EDef>>>(
     input: RawRequestArgs<EDef> | SkipToken,
     opts: TuyauInfiniteQueryOptionsIn<Response<EDef>, unknown, TData>,
@@ -56,7 +56,7 @@ export interface TuyauReactInfiniteQueryOptions<EDef extends AdonisEndpoint> {
 /**
  * Decorate query endpoints with infinite query capabilities
  */
-export interface DecorateInfiniteQueryFn<EDef extends AdonisEndpoint> {
+export interface DecorateInfiniteQueryFn<EDef extends SchemaEndpoint> {
   infiniteQueryOptions: TuyauReactInfiniteQueryOptions<EDef>
   infiniteQueryKey: (
     args?: RawRequestArgs<EDef>,

@@ -10,10 +10,10 @@ export default function Posts() {
   const [newPostTitle, setNewPostTitle] = useState('')
   const [newPostContent, setNewPostContent] = useState('')
 
-  // Test: Infinite Query with body params
+  // Test: Infinite Query with query params
   const postsQuery = useInfiniteQuery(
     query.posts.list.infiniteQueryOptions(
-      { body: { search: search || undefined, authorId: authorFilter, limit: 5 } },
+      { query: { search: search || undefined, authorId: authorFilter, limit: 5 } },
       {
         initialPageParam: 1,
         getNextPageParam: (lastPage) => lastPage.meta.nextPage,
@@ -229,7 +229,7 @@ export default function Posts() {
 
             {postsQuery.isError && (
               <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/30">
-                <p className="text-red-400">Error: {postsQuery.error.message}</p>
+                <p className="text-red-400">Error: {(postsQuery.error as any).message}</p>
               </div>
             )}
 

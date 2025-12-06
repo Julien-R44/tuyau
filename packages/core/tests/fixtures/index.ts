@@ -1,4 +1,4 @@
-import type { AdonisEndpoint } from '../../src/client/types/types.ts'
+import type { AdonisEndpoint, ExtractBody, ExtractQuery } from '../../src/client/types/types.ts'
 import type { ApiDefinition } from './api_definition.ts'
 
 export type { ApiDefinition } from './api_definition.ts'
@@ -151,6 +151,30 @@ const routes = {
       params: { id: string }
       query: { foo: string }
       response: { id: string }
+    },
+  },
+  'products.search': {
+    methods: ['GET'],
+    pattern: '/products/search',
+    tokens: [{ old: '/products/search', type: 0, val: 'products/search', end: '' }],
+    types: placeholder as {
+      paramsTuple: []
+      body: ExtractBody<{ query: { q?: string; category?: string; minPrice?: number } }>
+      params: {}
+      query: ExtractQuery<{ query: { q?: string; category?: string; minPrice?: number } }>
+      response: { products: Array<{ id: number; name: string }> }
+    },
+  },
+  'products.store': {
+    methods: ['POST'],
+    pattern: '/products',
+    tokens: [{ old: '/products', type: 0, val: 'products', end: '' }],
+    types: placeholder as {
+      paramsTuple: []
+      body: ExtractBody<{ name: string; price: number; category: string }>
+      params: {}
+      query: ExtractQuery<{ name: string; price: number; category: string }>
+      response: { id: number; name: string }
     },
   },
 } as const satisfies Record<string, AdonisEndpoint>

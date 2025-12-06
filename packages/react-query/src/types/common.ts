@@ -1,4 +1,4 @@
-import type { AdonisEndpoint, RawRequestArgs } from '@tuyau/core/types'
+import type { SchemaEndpoint, RawRequestArgs } from '@tuyau/core/types'
 import type {
   DataTag,
   DefinedInitialDataOptions,
@@ -109,9 +109,14 @@ export interface DecorateRouterKeyable {
 }
 
 /**
+ * Keys that identify an endpoint-like structure
+ */
+type EndpointKeys = 'methods' | 'pattern' | 'types'
+
+/**
  * Determines if endpoint is a query (GET/HEAD) or mutation
  */
-type IsQueryMethod<E extends AdonisEndpoint> = E['methods'] extends readonly (infer M)[]
+type IsQueryMethod<E extends SchemaEndpoint> = E['methods'][number] extends infer M
   ? M extends 'GET' | 'HEAD'
     ? true
     : false
@@ -121,7 +126,7 @@ type IsQueryMethod<E extends AdonisEndpoint> = E['methods'] extends readonly (in
  * Endpoint node with query or mutation decorators
  * Optimized: uses direct conditional instead of nested extends
  */
-export type EndpointNode<E extends AdonisEndpoint> = (IsQueryMethod<E> extends true
+export type EndpointNode<E extends SchemaEndpoint> = (IsQueryMethod<E> extends true
   ? DecorateQueryFn<E> & DecorateInfiniteQueryFn<E>
   : DecorateMutationFn<E>) &
   DecorateRouterKeyable
@@ -132,9 +137,9 @@ export type EndpointNode<E extends AdonisEndpoint> = (IsQueryMethod<E> extends t
  * Handles the case where a node is both an endpoint AND has children
  */
 export type TransformToReactQuery<T> = {
-  [K in keyof T]: T[K] extends AdonisEndpoint
-    ? EndpointNode<T[K]> & TransformToReactQuery<Omit<T[K], keyof AdonisEndpoint>>
+  [K in keyof T]: T[K] extends SchemaEndpoint
+    ? EndpointNode<T[K]> & TransformToReactQuery<Omit<T[K], EndpointKeys>>
     : TransformToReactQuery<T[K]>
 } & DecorateRouterKeyable
 
-export type TuyauReactQuery<R extends Record<string, AdonisEndpoint>> = TransformToReactQuery<R>
+export type TuyauReactQuery<R extends Record<string, SchemaEndpoint>> = TransformToReactQuery<R>

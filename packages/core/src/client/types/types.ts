@@ -7,20 +7,47 @@ import type { ClientRouteMatchItTokens } from '@adonisjs/http-server/client/url_
 export type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'HEAD' | 'OPTIONS'
 
 /**
- * Definition of an AdonisJS endpoint with types and metadata
+ * Base endpoint types structure
  */
-export interface AdonisEndpoint {
+export interface EndpointTypes {
+  paramsTuple: [...any[]]
+  params: Record<string, string | number | boolean>
+  query: Record<string, any>
+  body: unknown
+  response: unknown
+}
+
+/**
+ * Schema endpoint, used in generated registry.schema.d.ts
+ * Does not include tokens (only present in runtime routes)
+ */
+export interface SchemaEndpoint {
   methods: Method[]
   pattern: string
-  tokens: ClientRouteMatchItTokens[]
-  types: {
-    paramsTuple: [...any[]]
-    params: Record<string, string | number | boolean>
-    query: Record<string, any>
-    body: unknown
-    response: unknown
-  }
+  types: EndpointTypes
 }
+
+/**
+ * Definition of an AdonisJS endpoint with types and metadata
+ * Includes tokens for runtime route building
+ */
+export interface AdonisEndpoint extends SchemaEndpoint {
+  tokens: ClientRouteMatchItTokens[]
+}
+
+/**
+ * Extract query params from a validator type if it has a 'query' property.
+ * Used in generated registry to separate query params from body.
+ */
+export type ExtractQuery<T> = T extends { query: infer Q } ? Q : {}
+
+/**
+ * Extract body from a validator type, excluding 'query' and 'params' properties.
+ * Used in generated registry to separate body from query/params.
+ */
+export type ExtractBody<T> = T extends { query: any } | { params: any }
+  ? Omit<T, 'query' | 'params'>
+  : T
 
 /**
  * Registry mapping endpoint names to their definitions
@@ -97,24 +124,24 @@ type BodyArg<T> = keyof T extends never ? {} : {} extends T ? { body?: T } : { b
 /**
  * Request args without ky options
  */
-export type RawRequestArgs<E extends AdonisEndpoint> = ParamsArg<E['types']['params']> &
+export type RawRequestArgs<E extends SchemaEndpoint> = ParamsArg<E['types']['params']> &
   QueryArg<E['types']['query']> &
   BodyArg<E['types']['body']>
 
 /**
  * Constructs the request arguments type for an endpoint
  */
-export type RequestArgs<E extends AdonisEndpoint> = RawRequestArgs<E> & BaseRequestOptions
+export type RequestArgs<E extends SchemaEndpoint> = RawRequestArgs<E> & BaseRequestOptions
 
 /**
  * Extracts response type from an endpoint
  */
-export type ResponseOf<E extends AdonisEndpoint> = E['types']['response']
+export type ResponseOf<E extends SchemaEndpoint> = E['types']['response']
 
 /**
  * Function type for calling an endpoint
  */
-export type EndpointFn<E extends AdonisEndpoint> = (
+export type EndpointFn<E extends SchemaEndpoint> = (
   args: RequestArgs<E>,
 ) => Promise<E['types']['response']>
 

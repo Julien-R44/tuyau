@@ -3,12 +3,12 @@ import './css/app.css'
 import { ReactElement } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createInertiaApp } from '@inertiajs/react'
+import { QueryClientProvider } from '@tanstack/react-query'
 import { resolvePageComponent } from '@adonisjs/inertia/helpers'
 
-import { client, queryClient } from './tuyau'
+import { queryClient } from './tuyau'
 import Layout from '~/layouts/default'
 import { Data } from '~/generated/data'
-import { QueryClientProvider } from '@tanstack/react-query'
 
 const appName = import.meta.env.VITE_APP_NAME || 'AdonisJS'
 

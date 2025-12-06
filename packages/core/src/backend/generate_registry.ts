@@ -178,22 +178,40 @@ function generateRuntimeRegistryEntry(route: ScannedRoute): string {
 }
 
 /**
+ * Wrap ReturnType with Awaited to unwrap Promise types from async methods
+ * Pretty hackish, should probably also be fixed in adonisjs/assembler. Lets do that later
+ */
+function wrapResponseType(responseType: string): string {
+  if (responseType === 'unknown' || responseType === '{}') return responseType
+  // Wrap ReturnType<...> with Awaited<...> to handle async methods
+  if (responseType.startsWith('ReturnType<')) {
+    return `Awaited<${responseType}>`
+  }
+  return responseType
+}
+
+/**
  * Generate a single registry entry for a route (types only)
  */
 function generateTypesRegistryEntry(route: ScannedRoute): string {
   const requestType = normalizeImportPaths(route.request?.type || '{}')
-  const responseType = route.response?.type || 'unknown'
+  const responseType = wrapResponseType(route.response?.type || 'unknown')
   const { paramsType, paramsTuple } = generateRouteParams(route)
   const routeName = route.name
+
+  // Use type helpers to extract body and query from the validator
+  const hasValidator = requestType !== '{}'
+  const bodyType = hasValidator ? `ExtractBody<${requestType}>` : '{}'
+  const queryType = hasValidator ? `ExtractQuery<${requestType}>` : '{}'
 
   return `  '${routeName}': {
     methods: ${JSON.stringify(route.methods)}
     pattern: '${route.pattern}'
     types: {
-      body: ${requestType}
+      body: ${bodyType}
       paramsTuple: [${paramsTuple}]
       params: ${paramsType ? `{ ${paramsType} }` : '{}'}
-      query: {}
+      query: ${queryType}
       response: ${responseType}
     }
   }`
@@ -204,19 +222,24 @@ function generateTypesRegistryEntry(route: ScannedRoute): string {
  */
 function generateRegistryEntry(route: ScannedRoute): string {
   const requestType = normalizeImportPaths(route.request?.type || '{}')
-  const responseType = route.response?.type || 'unknown'
+  const responseType = wrapResponseType(route.response?.type || 'unknown')
   const { paramsType, paramsTuple } = generateRouteParams(route)
   const routeName = route.name
+
+  // Use type helpers to extract body and query from the validator
+  const hasValidator = requestType !== '{}'
+  const bodyType = hasValidator ? `ExtractBody<${requestType}>` : '{}'
+  const queryType = hasValidator ? `ExtractQuery<${requestType}>` : '{}'
 
   return `  '${routeName}': {
     methods: ${JSON.stringify(route.methods)},
     pattern: '${route.pattern}',
     tokens: ${JSON.stringify(route.tokens)},
     types: placeholder as {
-      body: ${requestType}
+      body: ${bodyType}
       paramsTuple: [${paramsTuple}]
       params: ${paramsType ? `{ ${paramsType} }` : '{}'}
-      query: {}
+      query: ${queryType}
       response: ${responseType}
     },
   }`
@@ -263,7 +286,7 @@ function generateTypesContent(routes: ScannedRoute[]): string {
   return `/* eslint-disable prettier/prettier */
 /// <reference path="../../adonisrc.ts" />
 
-import type { AdonisEndpoint } from '@tuyau/core/types'
+import type { ExtractBody, ExtractQuery } from '@tuyau/core/types'
 import type { Infer } from '@vinejs/vine/types'
 
 export interface Registry {
@@ -285,7 +308,7 @@ function generateRegistryContent(routes: ScannedRoute[]): string {
   const treeInterface = generateTreeInterface(tree)
 
   return `/* eslint-disable prettier/prettier */
-import type { AdonisEndpoint } from '@tuyau/core/types'
+import type { AdonisEndpoint, ExtractBody, ExtractQuery } from '@tuyau/core/types'
 import type { Infer } from '@vinejs/vine/types'
 
 const placeholder: any = {}
@@ -325,7 +348,6 @@ export function generateRegistry(options?: GenerateRegistryConfig): {
       const scannedRoutes = routesScanner.getScannedRoutes()
 
       const filteredRoutes = filterRoutes(scannedRoutes, config.routes)
-
       if (config.splitTypesFromRuntime) {
         // Generate separate runtime and types files
         const runtimeContent = generateRuntimeContent(filteredRoutes)

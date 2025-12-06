@@ -1,6 +1,6 @@
 import { Tuyau } from '@tuyau/core/client'
 import { mutationOptions } from '@tanstack/react-query'
-import type { AdonisEndpoint, RawRequestArgs } from '@tuyau/core/types'
+import type { SchemaEndpoint, RawRequestArgs } from '@tuyau/core/types'
 import type { MutationFunction, UseMutationOptions } from '@tanstack/react-query'
 
 import type { DistributiveOmit } from './types/utils.ts'
@@ -8,7 +8,7 @@ import type { TuyauQueryBaseOptions, TuyauMutationKey } from './types/common.ts'
 
 type ReservedOptions = 'mutationKey' | 'mutationFn'
 
-type Response<E extends AdonisEndpoint> = E['types']['response']
+type Response<E extends SchemaEndpoint> = E['types']['response']
 
 export interface TuyauMutationOptionsIn<TInput, TError, TOutput, TContext>
   extends DistributiveOmit<UseMutationOptions<TOutput, TError, TInput, TContext>, ReservedOptions>,
@@ -19,7 +19,7 @@ export interface TuyauMutationOptionsOut<TInput, TError, TOutput, TContext>
   mutationKey: TuyauMutationKey
 }
 
-export interface TuyauReactMutationOptions<TDef extends AdonisEndpoint> {
+export interface TuyauReactMutationOptions<TDef extends SchemaEndpoint> {
   <TContext = unknown>(
     opts?: TuyauMutationOptionsIn<RawRequestArgs<TDef>, any, Response<TDef>, TContext>,
   ): TuyauMutationOptionsOut<RawRequestArgs<TDef>, any, Response<TDef>, TContext>
@@ -30,7 +30,7 @@ export function getMutationKeyInternal(options: { segments: string[] }): TuyauMu
   return key
 }
 
-export interface DecorateMutationFn<EDef extends AdonisEndpoint> {
+export interface DecorateMutationFn<EDef extends SchemaEndpoint> {
   mutationOptions: TuyauReactMutationOptions<EDef>
   mutationKey: () => TuyauMutationKey
 }

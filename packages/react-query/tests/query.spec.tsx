@@ -398,3 +398,81 @@ test.group('Integration | Complete Workflow', () => {
     ])
   })
 })
+
+test.group('Query | ExtractQuery/ExtractBody endpoints', () => {
+  test('should handle GET endpoints with query params', async ({ expectTypeOf, assert }) => {
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
+    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+
+    nock('http://localhost:3333')
+      .get('/products/search')
+      .query({ q: 'laptop', minPrice: 100 })
+      .reply(200, [{ id: 1, name: 'Laptop', price: 999 }])
+
+    const { result } = renderHookWithWrapper(() =>
+      useQuery(
+        tuyau.products.search.queryOptions({
+          query: { q: 'laptop', minPrice: 100 },
+        }),
+      ),
+    )
+
+    await setTimeout(300)
+
+    assert.deepEqual(result.current.data, [{ id: 1, name: 'Laptop', price: 999 }])
+    expectTypeOf(result.current.data).toEqualTypeOf<
+      Array<{ id: number; name: string; price: number }> | undefined
+    >()
+  })
+
+  test('should handle POST endpoints with body params', ({ expectTypeOf }) => {
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
+    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+
+    nock('http://localhost:3333')
+      .post('/products', { name: 'New Product', price: 50 })
+      .reply(201, { id: 1, name: 'New Product', price: 50 })
+
+    const { result } = renderHookWithWrapper(() =>
+      useMutation(tuyau.products.create.mutationOptions()),
+    )
+
+    result.current.mutate({ body: { name: 'New Product', price: 50 } })
+
+    expectTypeOf(result.current.data).toEqualTypeOf<
+      { id: number; name: string; price: number } | undefined
+    >()
+  })
+
+  test('queryKey should include query params for GET endpoints', ({ assert }) => {
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
+    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+
+    const queryKey = tuyau.products.search.queryKey({
+      query: { q: 'laptop', category: 'electronics' },
+    })
+
+    assert.deepEqual(queryKey, [
+      ['products', 'search'],
+      {
+        request: { query: { q: 'laptop', category: 'electronics' } },
+        type: 'query',
+      },
+    ])
+  })
+
+  test('queryOptions should correctly type query params', ({ expectTypeOf, assert }) => {
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
+    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+
+    const options = tuyau.products.search.queryOptions({
+      query: { q: 'test', minPrice: 10, maxPrice: 100 },
+    })
+
+    expectTypeOf(options.queryKey).toMatchTypeOf<TuyauQueryKey>()
+    assert.deepEqual(options.queryKey, [
+      ['products', 'search'],
+      { request: { query: { q: 'test', minPrice: 10, maxPrice: 100 } }, type: 'query' },
+    ])
+  })
+})

@@ -26,4 +26,8 @@ export interface ApiDefinition {
       }
     }
   }
+  products: {
+    search: Routes['products.search']
+    store: Routes['products.store']
+  }
 }

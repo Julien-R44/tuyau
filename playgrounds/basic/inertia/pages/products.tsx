@@ -15,7 +15,7 @@ export default function Products() {
   // Test: Query with body params
   const productsSearch = useQuery(
     query.products.search.queryOptions({
-      body: {
+      query: {
         q: searchQuery || undefined,
         category: category || undefined,
         minPrice,
