@@ -9,7 +9,9 @@ import type {
 } from '@tanstack/react-query'
 
 import type { DistributiveOmit } from './utils.ts'
-import type { TuyauQueryBaseOptions, TuyauQueryKey, TypeHelper } from './common.ts'
+import type { TuyauQueryBaseOptions, TuyauQueryKey } from './common.ts'
+
+type Response<E extends AdonisEndpoint> = E['types']['response']
 
 /**
  * Infinite query options input type
@@ -40,30 +42,27 @@ export interface TuyauInfiniteQueryOptionsOut<TQueryFnData, TError, TData>
  * Type definition for infinite query options
  */
 export interface TuyauReactInfiniteQueryOptions<EDef extends AdonisEndpoint> {
-  <TData = InfiniteData<EDef['types']['response']>>(
+  <TData = InfiniteData<Response<EDef>>>(
     input: RawRequestArgs<EDef> | SkipToken,
-    opts: TuyauInfiniteQueryOptionsIn<EDef['types']['response'], unknown, TData>,
-  ): TuyauInfiniteQueryOptionsOut<EDef['types']['response'], unknown, TData>
+    opts: TuyauInfiniteQueryOptionsIn<Response<EDef>, unknown, TData>,
+  ): TuyauInfiniteQueryOptionsOut<Response<EDef>, unknown, TData>
 
-  <TData = InfiniteData<EDef['types']['response']>>(
+  <TData = InfiniteData<Response<EDef>>>(
     input?: RawRequestArgs<EDef> | SkipToken,
-    opts?: TuyauInfiniteQueryOptionsIn<EDef['types']['response'], unknown, TData>,
-  ): TuyauInfiniteQueryOptionsOut<EDef['types']['response'], unknown, TData>
+    opts?: TuyauInfiniteQueryOptionsIn<Response<EDef>, unknown, TData>,
+  ): TuyauInfiniteQueryOptionsOut<Response<EDef>, unknown, TData>
 }
 
 /**
  * Decorate query endpoints with infinite query capabilities
  */
-export interface DecorateInfiniteQueryFn<EDef extends AdonisEndpoint> extends TypeHelper<EDef> {
+export interface DecorateInfiniteQueryFn<EDef extends AdonisEndpoint> {
   infiniteQueryOptions: TuyauReactInfiniteQueryOptions<EDef>
   infiniteQueryKey: (
     args?: RawRequestArgs<EDef>,
-  ) => DataTag<TuyauQueryKey, InfiniteData<EDef['types']['response']>>
+  ) => DataTag<TuyauQueryKey, InfiniteData<Response<EDef>>>
   infiniteQueryFilter: (
     args?: RawRequestArgs<EDef>,
-    filters?: QueryFilters<DataTag<TuyauQueryKey, InfiniteData<EDef['types']['response']>>>,
-  ) => WithRequired<
-    QueryFilters<DataTag<TuyauQueryKey, InfiniteData<EDef['types']['response']>>>,
-    'queryKey'
-  >
+    filters?: QueryFilters<DataTag<TuyauQueryKey, InfiniteData<Response<EDef>>>>,
+  ) => WithRequired<QueryFilters<DataTag<TuyauQueryKey, InfiniteData<Response<EDef>>>>, 'queryKey'>
 }

@@ -1,11 +1,14 @@
 import { Tuyau } from '@tuyau/core/client'
-import { AdonisEndpoint, RawRequestArgs } from '@tuyau/core/types'
-import { MutationFunction, UseMutationOptions, mutationOptions } from '@tanstack/react-query'
+import { mutationOptions } from '@tanstack/react-query'
+import type { AdonisEndpoint, RawRequestArgs } from '@tuyau/core/types'
+import type { MutationFunction, UseMutationOptions } from '@tanstack/react-query'
 
-import { DistributiveOmit } from './types/utils.ts'
-import { TuyauQueryBaseOptions, TypeHelper, TuyauMutationKey } from './types/common.ts'
+import type { DistributiveOmit } from './types/utils.ts'
+import type { TuyauQueryBaseOptions, TuyauMutationKey } from './types/common.ts'
 
 type ReservedOptions = 'mutationKey' | 'mutationFn'
+
+type Response<E extends AdonisEndpoint> = E['types']['response']
 
 export interface TuyauMutationOptionsIn<TInput, TError, TOutput, TContext>
   extends DistributiveOmit<UseMutationOptions<TOutput, TError, TInput, TContext>, ReservedOptions>,
@@ -18,8 +21,8 @@ export interface TuyauMutationOptionsOut<TInput, TError, TOutput, TContext>
 
 export interface TuyauReactMutationOptions<TDef extends AdonisEndpoint> {
   <TContext = unknown>(
-    opts?: TuyauMutationOptionsIn<RawRequestArgs<TDef>, any, TDef['types']['response'], TContext>,
-  ): TuyauMutationOptionsOut<RawRequestArgs<TDef>, any, TDef['types']['response'], TContext>
+    opts?: TuyauMutationOptionsIn<RawRequestArgs<TDef>, any, Response<TDef>, TContext>,
+  ): TuyauMutationOptionsOut<RawRequestArgs<TDef>, any, Response<TDef>, TContext>
 }
 
 export function getMutationKeyInternal(options: { segments: string[] }): TuyauMutationKey {
@@ -27,7 +30,7 @@ export function getMutationKeyInternal(options: { segments: string[] }): TuyauMu
   return key
 }
 
-export interface DecorateMutationFn<EDef extends AdonisEndpoint> extends TypeHelper<EDef> {
+export interface DecorateMutationFn<EDef extends AdonisEndpoint> {
   mutationOptions: TuyauReactMutationOptions<EDef>
   mutationKey: () => TuyauMutationKey
 }

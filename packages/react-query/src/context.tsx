@@ -1,7 +1,7 @@
 import * as React from 'react'
 import type { Tuyau } from '@tuyau/core/client'
 import type { QueryClient } from '@tanstack/react-query'
-import { AdonisEndpoint, InferRoutes, TuyauRegistry } from '@tuyau/core/types'
+import type { AdonisEndpoint, InferRoutes, TuyauRegistry } from '@tuyau/core/types'
 
 import { createTuyauReactQueryClient, type TuyauReactQuery } from './index.ts'
 

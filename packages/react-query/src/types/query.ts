@@ -5,23 +5,24 @@ import type {
   DefinedTuyauQueryOptionsIn,
   DefinedTuyauQueryOptionsOut,
   TuyauQueryKey,
-  TypeHelper,
   UndefinedTuyauQueryOptionsIn,
   UndefinedTuyauQueryOptionsOut,
   UnusedSkipTokenTuyauQueryOptionsIn,
   UnusedSkipTokenTuyauQueryOptionsOut,
 } from './common.ts'
 
+type Response<E extends AdonisEndpoint> = E['types']['response']
+
 /**
  * Decorate query endpoints with Tanstack queries abilities
  */
-export interface DecorateQueryFn<EDef extends AdonisEndpoint> extends TypeHelper<EDef> {
+export interface DecorateQueryFn<EDef extends AdonisEndpoint> {
   queryOptions: TuyauReactQueryOptions<EDef>
-  queryKey: (args?: RawRequestArgs<EDef>) => DataTag<TuyauQueryKey, EDef['types']['response']>
+  queryKey: (args?: RawRequestArgs<EDef>) => DataTag<TuyauQueryKey, Response<EDef>>
   queryFilter: (
     args?: RawRequestArgs<EDef>,
-    filters?: QueryFilters<DataTag<TuyauQueryKey, EDef['types']['response']>>,
-  ) => WithRequired<QueryFilters<DataTag<TuyauQueryKey, EDef['types']['response']>>, 'queryKey'>
+    filters?: QueryFilters<DataTag<TuyauQueryKey, Response<EDef>>>,
+  ) => WithRequired<QueryFilters<DataTag<TuyauQueryKey, Response<EDef>>>, 'queryKey'>
 }
 
 /**
@@ -29,20 +30,20 @@ export interface DecorateQueryFn<EDef extends AdonisEndpoint> extends TypeHelper
  */
 export interface TuyauReactQueryOptions<EDef extends AdonisEndpoint> {
   // With initial data - when opts has initialData defined
-  <TData = EDef['types']['response']>(
+  <TData = Response<EDef>>(
     input: RawRequestArgs<EDef> | SkipToken,
-    opts: DefinedTuyauQueryOptionsIn<EDef['types']['response'], TData, unknown>,
-  ): DefinedTuyauQueryOptionsOut<EDef['types']['response'], TData, unknown>
+    opts: DefinedTuyauQueryOptionsIn<Response<EDef>, TData, unknown>,
+  ): DefinedTuyauQueryOptionsOut<Response<EDef>, TData, unknown>
 
   // Without skipToken - when input is not SkipToken and no initialData
-  <TData = EDef['types']['response']>(
+  <TData = Response<EDef>>(
     input: RawRequestArgs<EDef>,
-    opts?: UnusedSkipTokenTuyauQueryOptionsIn<EDef['types']['response'], TData, unknown>,
-  ): UnusedSkipTokenTuyauQueryOptionsOut<EDef['types']['response'], TData, unknown>
+    opts?: UnusedSkipTokenTuyauQueryOptionsIn<Response<EDef>, TData, unknown>,
+  ): UnusedSkipTokenTuyauQueryOptionsOut<Response<EDef>, TData, unknown>
 
   // Without initial data - when opts has no initialData or input can be SkipToken
-  <TData = EDef['types']['response']>(
+  <TData = Response<EDef>>(
     input?: RawRequestArgs<EDef> | SkipToken,
-    opts?: UndefinedTuyauQueryOptionsIn<EDef['types']['response'], TData, unknown>,
-  ): UndefinedTuyauQueryOptionsOut<EDef['types']['response'], TData, unknown>
+    opts?: UndefinedTuyauQueryOptionsIn<Response<EDef>, TData, unknown>,
+  ): UndefinedTuyauQueryOptionsOut<Response<EDef>, TData, unknown>
 }

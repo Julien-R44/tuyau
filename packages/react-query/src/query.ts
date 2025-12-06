@@ -1,9 +1,14 @@
 import { Tuyau } from '@tuyau/core/client'
-import { RawRequestArgs } from '@tuyau/core/types'
-import { QueryFunctionContext, queryOptions, skipToken, SkipToken } from '@tanstack/react-query'
+import type { RawRequestArgs } from '@tuyau/core/types'
+import { queryOptions, skipToken } from '@tanstack/react-query'
+import type { QueryFunctionContext, SkipToken } from '@tanstack/react-query'
 
 import { invoke } from './utils.ts'
-import { TuyauQueryBaseOptions, TuyauQueryKey, TuyauReactRequestOptions } from './types/common.ts'
+import type {
+  TuyauQueryBaseOptions,
+  TuyauQueryKey,
+  TuyauReactRequestOptions,
+} from './types/common.ts'
 
 export interface TuyauQueryOptionsOptions {
   request: RawRequestArgs<any> | SkipToken

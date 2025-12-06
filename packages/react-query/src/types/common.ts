@@ -1,12 +1,5 @@
-import {
-  AdonisEndpoint,
-  Method,
-  RawRequestArgs,
-  Split,
-  StrKeys,
-  UnionToIntersection,
-} from '@tuyau/core/types'
-import {
+import type { AdonisEndpoint, RawRequestArgs } from '@tuyau/core/types'
+import type {
   DataTag,
   DefinedInitialDataOptions,
   QueryFilters,
@@ -14,10 +7,10 @@ import {
   UnusedSkipTokenOptions,
 } from '@tanstack/react-query'
 
-import { DecorateQueryFn } from './query.ts'
-import { DecorateMutationFn } from '../mutation.ts'
-import { DistributiveOmit, WithRequired } from './utils.ts'
-import { DecorateInfiniteQueryFn } from './infinite_query.ts'
+import type { DecorateQueryFn } from './query.ts'
+import type { DecorateMutationFn } from '../mutation.ts'
+import type { DistributiveOmit, WithRequired } from './utils.ts'
+import type { DecorateInfiniteQueryFn } from './infinite_query.ts'
 
 /**
  * Query type identifier
@@ -115,33 +108,33 @@ export interface DecorateRouterKeyable {
   ) => WithRequired<QueryFilters<TuyauQueryKey>, 'queryKey'>
 }
 
-export type EndpointNode<E extends AdonisEndpoint> = E extends {
-  methods: readonly (infer M extends Method)[]
-}
+/**
+ * Determines if endpoint is a query (GET/HEAD) or mutation
+ */
+type IsQueryMethod<E extends AdonisEndpoint> = E['methods'] extends readonly (infer M)[]
   ? M extends 'GET' | 'HEAD'
-    ? DecorateQueryFn<E> & DecorateInfiniteQueryFn<E> & DecorateRouterKeyable
-    : DecorateMutationFn<E> & DecorateRouterKeyable
-  : DecorateRouterKeyable
+    ? true
+    : false
+  : false
 
-export interface TypeHelper<EDef extends AdonisEndpoint> {
-  /**
-   * @internal
-   */
-  '~types': { request: EDef['types']['body']; response: EDef['types']['response'] }
-}
-
-type SetAtPathWithKeyable<Path extends string[], V> = Path extends [
-  infer H extends string,
-  ...infer T extends string[],
-]
-  ? { [K in H]: T['length'] extends 0 ? V : SetAtPathWithKeyable<T, V> & DecorateRouterKeyable }
-  : {}
-
-type BuildNamespaces<R extends Record<string, AdonisEndpoint>> = UnionToIntersection<
-  {
-    [K in StrKeys<R>]: SetAtPathWithKeyable<Split<K>, EndpointNode<R[K]>>
-  }[StrKeys<R>]
-> &
+/**
+ * Endpoint node with query or mutation decorators
+ * Optimized: uses direct conditional instead of nested extends
+ */
+export type EndpointNode<E extends AdonisEndpoint> = (IsQueryMethod<E> extends true
+  ? DecorateQueryFn<E> & DecorateInfiniteQueryFn<E>
+  : DecorateMutationFn<E>) &
   DecorateRouterKeyable
 
-export type TuyauReactQuery<R extends Record<string, AdonisEndpoint>> = BuildNamespaces<R>
+/**
+ * Transform a pre-computed tree structure into react-query decorated endpoints
+ * Uses the $tree from the registry to avoid recomputing the structure
+ * Handles the case where a node is both an endpoint AND has children
+ */
+export type TransformToReactQuery<T> = {
+  [K in keyof T]: T[K] extends AdonisEndpoint
+    ? EndpointNode<T[K]> & TransformToReactQuery<Omit<T[K], keyof AdonisEndpoint>>
+    : TransformToReactQuery<T[K]>
+} & DecorateRouterKeyable
+
+export type TuyauReactQuery<R extends Record<string, AdonisEndpoint>> = TransformToReactQuery<R>

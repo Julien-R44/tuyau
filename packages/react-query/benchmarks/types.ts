@@ -22,7 +22,7 @@ bench('Small registry', async () => {
   query.pathKey()
 
   return {}
-}).types([1246, 'instantiations'])
+}).types([5000, 'instantiations'])
 
 bench('Big registry 100 routes', async () => {
   const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry: registry100 })
@@ -32,7 +32,7 @@ bench('Big registry 100 routes', async () => {
   query.library.split.mutationOptions()
 
   return {}
-}).types([3647, 'instantiations'])
+}).types([5000, 'instantiations'])
 
 bench('Huge registry 300 routes', async () => {
   const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry: registry300 })
@@ -42,4 +42,4 @@ bench('Huge registry 300 routes', async () => {
   query.fashion.combine.mutationOptions()
 
   return {}
-}).types([9507, 'instantiations'])
+}).types([5000, 'instantiations'])

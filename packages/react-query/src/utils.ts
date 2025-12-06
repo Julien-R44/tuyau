@@ -1,7 +1,7 @@
 import { skipToken } from '@tanstack/react-query'
 
-import { Fn } from './types/utils.ts'
-import { QueryType, TuyauQueryKey } from './types/common.ts'
+import type { Fn } from './types/utils.ts'
+import type { QueryType, TuyauQueryKey } from './types/common.ts'
 
 /**
  * Check if value is an object
