@@ -9,13 +9,9 @@ Pronounced as "twee-yo" (IPA: /tɥijo/). French word for "pipe" or "tube"
 
 Set of tools to create typesafe APIs using AdonisJS. The monorepo includes the following packages:
 
-- `@tuyau/core` : Core package that you must install in your AdonisJS project.
-- `@tuyau/utils` : Set of utilities and helpers for the other packages.
-- `@tuyau/client` : E2E typesafe client to consume your AdonisJS APIs.
-- `@tuyau/inertia` : Set of components and helpers for AdonisJS + Inertia projects.
-- `@tuyau/openapi` : **Experimental** package to generate a "not-so-bad" OpenAPI definition from your AdonisJS project based on the Tuyau codegen.
-- `@tuyau/superjson` : Make [SuperJSON](https://github.com/flightcontrolhq/superjson) works seamlessly with Tuyau and AdonisJS.
-- `@tuyau/react-query` : Tanstack Query integration for Tuyau
+- `@tuyau/core` : Core package that includes the backend integration and the E2E typesafe client to consume your AdonisJS APIs.
+- `@tuyau/react-query` : Tanstack Query integration for Tuyau.
+- `@tuyau/superjson` : Make [SuperJSON](https://github.com/flightcontrolhq/superjson) work seamlessly with Tuyau and AdonisJS.
 
 See documentation at [tuyau.julr.dev](https://tuyau.julr.dev).
 

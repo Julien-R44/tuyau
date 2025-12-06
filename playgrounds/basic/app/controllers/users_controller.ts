@@ -1,10 +1,8 @@
-// import type { HttpContext } from '@adonisjs/core/http'
-
 import { type HttpContext } from '@adonisjs/core/http'
 
 const users: Array<{ id: number; name: string; email: string }> = []
 export default class UsersController {
-  store({}: HttpContext) {
+  store(_ctx: HttpContext) {
     users.push({
       id: users.length + 1,
       name: Math.random().toString(36).substring(7),
