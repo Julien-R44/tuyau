@@ -40,31 +40,18 @@ export interface AdonisEndpoint extends SchemaEndpoint {
  * Used in generated registry to separate query params from body for POST/PUT/PATCH/DELETE.
  * For GET/HEAD, the validator type is used directly as query.
  */
-export type ExtractQuery<T> = T extends { query: infer Q } ? (Q extends undefined ? {} : Q) : {}
+export type ExtractQuery<T> = T extends { query?: infer Q } ? Q : {}
 
 /**
  * Extract body from a validator type, excluding 'query' and 'params' properties.
  * Used in generated registry to separate body from query/params for POST/PUT/PATCH/DELETE.
- * Returns {} if the validator only contains query/params, otherwise returns the body fields.
  */
-export type ExtractBody<T> = T extends { query: any } | { params: any }
-  ? Omit<T, 'query' | 'params'> extends infer B
-    ? keyof B extends never
-      ? {}
-      : B
-    : {}
-  : T
+export type ExtractBody<T> = Omit<T, 'query' | 'params'>
 
 /**
  * Registry mapping endpoint names to their definitions
  */
 export interface AdonisRegistry extends Record<string, AdonisEndpoint> {}
-
-/**
- * Should be augmented by the user to provide their API definition tree
- * This is the pre-computed tree structure generated at build time
- */
-export interface UserApiDefinition {}
 
 export type ValueOf<T> = T[keyof T]
 
@@ -222,13 +209,15 @@ export interface TuyauConfiguration<T extends TuyauRegistry>
 
 /**
  * Should be augmented by the user to provide their endpoint registry
+ * Structure: { routes: Record<string, AdonisEndpoint>, $tree: ApiDefinition }
  */
 export interface UserRegistry {}
 
-type UserAdonisRegistry =
-  UserRegistry extends Record<string, AdonisEndpoint>
-    ? UserRegistry
+type UserAdonisRegistry = UserRegistry extends { routes: infer R }
+  ? R extends Record<string, AdonisEndpoint>
+    ? R
     : Record<string, AdonisEndpoint>
+  : Record<string, AdonisEndpoint>
 
 type UserEndpointByName<Name extends keyof UserAdonisRegistry> = UserAdonisRegistry[Name]
 

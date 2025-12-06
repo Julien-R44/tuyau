@@ -638,11 +638,28 @@ test.group('ExtractQuery and ExtractBody types', (group) => {
   })
 
   test('ExtractQuery handles optional query property', ({ expectTypeOf }) => {
-    // When query is optional in the validator, it extracts to {} since
-    // the conditional `T extends { query: infer Q }` won't match for optional props
     type ValidatorWithOptionalQuery = { query?: { q?: string } }
 
     type Result = ExtractQuery<ValidatorWithOptionalQuery>
-    expectTypeOf<Result>().toEqualTypeOf<{}>()
+    expectTypeOf<Result>().toEqualTypeOf<{ q?: string }>()
+  })
+
+  test('ExtractQuery handles optional query with multiple fields', ({ expectTypeOf }) => {
+    type SignupValidator = {
+      query?: { referralCode?: string }
+      fullName: string | null
+      email: string
+      password: string
+    }
+
+    type QueryResult = ExtractQuery<SignupValidator>
+    expectTypeOf<QueryResult>().toEqualTypeOf<{ referralCode?: string }>()
+
+    type BodyResult = ExtractBody<SignupValidator>
+    expectTypeOf<BodyResult>().toEqualTypeOf<{
+      fullName: string | null
+      email: string
+      password: string
+    }>()
   })
 })

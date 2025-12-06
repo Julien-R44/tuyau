@@ -10,14 +10,6 @@ interface GenerateRegistryConfig {
   output?: string
 
   /**
-   * Whether to split runtime values and TypeScript types into separate files
-   * When true, generates registry.ts (runtime) and registry.schema.d.ts (types)
-   * When false, generates a single file with both runtime and types
-   * @default true
-   */
-  splitTypesFromRuntime?: boolean
-
-  /**
    * Routes filtering configuration
    */
   routes?: {
@@ -133,7 +125,7 @@ function buildTreeStructure(routes: ScannedRoute[]): Map<string, any> {
 }
 
 /**
- * Generate TypeScript interface from tree structure
+ * Generate TypeScript interface from tree structure using typeof routes
  */
 function generateTreeInterface(tree: Map<string, any>, indent: number = 2): string {
   const spaces = ' '.repeat(indent)
@@ -145,7 +137,7 @@ function generateTreeInterface(tree: Map<string, any>, indent: number = 2): stri
       lines.push(generateTreeInterface(value, indent + 2))
       lines.push(`${spaces}}`)
     } else {
-      lines.push(`${spaces}${key}: Registry['${value.routeName}']`)
+      lines.push(`${spaces}${key}: typeof routes['${value.routeName}']`)
     }
   }
 
@@ -245,53 +237,23 @@ function generateTypesRegistryEntry(route: ScannedRoute): string {
 }
 
 /**
- * Generate a single registry entry for a route
- */
-function generateRegistryEntry(route: ScannedRoute): string {
-  const requestType = normalizeImportPaths(route.request?.type || '{}')
-  const responseType = wrapResponseType(route.response?.type || 'unknown')
-  const { paramsType, paramsTuple } = generateRouteParams(route)
-  const routeName = route.name
-
-  const { bodyType, queryType } = determineBodyAndQueryTypes({
-    methods: route.methods,
-    requestType,
-  })
-
-  return `  '${routeName}': {
-    methods: ${JSON.stringify(route.methods)},
-    pattern: '${route.pattern}',
-    tokens: ${JSON.stringify(route.tokens)},
-    types: placeholder as {
-      body: ${bodyType}
-      paramsTuple: [${paramsTuple}]
-      params: ${paramsType ? `{ ${paramsType} }` : '{}'}
-      query: ${queryType}
-      response: ${responseType}
-    },
-  }`
-}
-
-/**
  * Generate the runtime-only registry file content
  */
 function generateRuntimeContent(routes: ScannedRoute[]): string {
   const registryEntries = routes.map(generateRuntimeRegistryEntry).join(',\n')
-  const tree = buildTreeStructure(routes)
-  const treeInterface = generateTreeInterface(tree)
 
   return `/* eslint-disable prettier/prettier */
 import type { AdonisEndpoint } from '@tuyau/core/types'
 import type { Registry } from './registry.schema.d.ts'
-const placeholder: any = {}
+import type { ApiDefinition } from './registry.schema.tree.d.ts'
 
-export interface ApiDefinition {
-${treeInterface}
-}
+const placeholder: any = {}
 
 const routes = {
 ${registryEntries},
 } as const satisfies Record<string, AdonisEndpoint>
+
+export { routes }
 
 export const registry = {
   routes,
@@ -299,7 +261,26 @@ export const registry = {
 }
 
 declare module '@tuyau/core/types' {
-  export interface UserApiDefinition extends ApiDefinition {}
+  export interface UserRegistry {
+    routes: typeof routes
+    $tree: ApiDefinition
+  }
+}
+`
+}
+
+/**
+ * Generate the tree types file content
+ */
+function generateTreeContent(routes: ScannedRoute[]): string {
+  const tree = buildTreeStructure(routes)
+  const treeInterface = generateTreeInterface(tree)
+
+  return `/* eslint-disable prettier/prettier */
+import type { routes } from './registry.ts'
+
+export interface ApiDefinition {
+${treeInterface}
 }
 `
 }
@@ -319,44 +300,6 @@ import type { Infer } from '@vinejs/vine/types'
 export interface Registry {
 ${registryEntries}
 }
-
-declare module '@tuyau/core/types' {
-  export interface UserRegistry extends Registry {}
-}
-`
-}
-
-/**
- * Generate the complete registry file content (legacy)
- */
-function generateRegistryContent(routes: ScannedRoute[]): string {
-  const registryEntries = routes.map(generateRegistryEntry).join(',\n')
-  const tree = buildTreeStructure(routes)
-  const treeInterface = generateTreeInterface(tree)
-
-  return `/* eslint-disable prettier/prettier */
-import type { AdonisEndpoint, ExtractBody, ExtractQuery } from '@tuyau/core/types'
-import type { Infer } from '@vinejs/vine/types'
-
-const placeholder: any = {}
-
-interface ApiDefinition {
-${treeInterface}
-}
-
-const routes = {
-${registryEntries}
-} as const satisfies Record<string, AdonisEndpoint>
-
-export const registry = {
-  routes,
-  $tree: {} as ApiDefinition,
-}
-
-declare module '@tuyau/core/types' {
-  type Registry = typeof routes
-  export interface UserRegistry extends Registry {}
-}
 `
 }
 
@@ -365,7 +308,6 @@ export function generateRegistry(options?: GenerateRegistryConfig): {
 } {
   const config = {
     output: './.adonisjs/client/registry.ts',
-    splitTypesFromRuntime: true,
     ...options,
   }
 
@@ -373,29 +315,26 @@ export function generateRegistry(options?: GenerateRegistryConfig): {
     async run(devServer, routesScanner) {
       const startTime = process.hrtime()
       const scannedRoutes = routesScanner.getScannedRoutes()
-
       const filteredRoutes = filterRoutes(scannedRoutes, config.routes)
-      if (config.splitTypesFromRuntime) {
-        // Generate separate runtime and types files
-        const runtimeContent = generateRuntimeContent(filteredRoutes)
-        const typesContent = generateTypesContent(filteredRoutes)
 
-        // Generate paths for files
-        const basePath = config.output.replace(/\.(ts|js)$/, '')
-        const runtimePath = `${basePath}.ts`
-        const typesPath = `${basePath}.schema.d.ts`
+      const runtimeContent = generateRuntimeContent(filteredRoutes)
+      const typesContent = generateTypesContent(filteredRoutes)
+      const treeContent = generateTreeContent(filteredRoutes)
 
-        // Write files
-        await writeOutputFile(runtimePath, runtimeContent)
-        await writeOutputFile(typesPath, typesContent)
+      const basePath = config.output.replace(/\.(ts|js)$/, '')
+      const runtimePath = `${basePath}.ts`
+      const typesPath = `${basePath}.schema.d.ts`
+      const treePath = `${basePath}.schema.tree.d.ts`
 
-        devServer.ui.logger.info(`created ${runtimePath}`, { startTime })
-        devServer.ui.logger.info(`created ${typesPath}`, { startTime })
-      } else {
-        const registryContent = generateRegistryContent(filteredRoutes)
-        await writeOutputFile(config.output, registryContent)
-        devServer.ui.logger.info(`created ${config.output}`, { startTime })
-      }
+      await Promise.all([
+        writeOutputFile(runtimePath, runtimeContent),
+        writeOutputFile(typesPath, typesContent),
+        writeOutputFile(treePath, treeContent),
+      ])
+
+      devServer.ui.logger.info(`created ${runtimePath}`, { startTime })
+      devServer.ui.logger.info(`created ${typesPath}`, { startTime })
+      devServer.ui.logger.info(`created ${treePath}`, { startTime })
     },
   } satisfies RouterHooks['routesScanned'][number]
 }
