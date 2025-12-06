@@ -191,6 +191,33 @@ function wrapResponseType(responseType: string): string {
 }
 
 /**
+ * Determine body and query types based on HTTP method and validator presence
+ *
+ * For GET/HEAD: all validator fields go to query, body is empty
+ * For POST/PUT/PATCH/DELETE: use ExtractBody/ExtractQuery to handle both body and query params
+ * This allows POST requests to have query params if the validator uses { query: {...} } wrapper
+ */
+function determineBodyAndQueryTypes(options: { methods: string[]; requestType: string }) {
+  const { methods, requestType } = options
+  const primaryMethod = methods[0]
+  const isGetLike = primaryMethod === 'GET' || primaryMethod === 'HEAD'
+  const hasValidator = requestType !== '{}'
+
+  if (!hasValidator) {
+    return { bodyType: '{}', queryType: '{}' }
+  }
+
+  if (isGetLike) {
+    return { bodyType: '{}', queryType: requestType }
+  }
+
+  return {
+    bodyType: `ExtractBody<${requestType}>`,
+    queryType: `ExtractQuery<${requestType}>`,
+  }
+}
+
+/**
  * Generate a single registry entry for a route (types only)
  */
 function generateTypesRegistryEntry(route: ScannedRoute): string {
@@ -199,10 +226,10 @@ function generateTypesRegistryEntry(route: ScannedRoute): string {
   const { paramsType, paramsTuple } = generateRouteParams(route)
   const routeName = route.name
 
-  // Use type helpers to extract body and query from the validator
-  const hasValidator = requestType !== '{}'
-  const bodyType = hasValidator ? `ExtractBody<${requestType}>` : '{}'
-  const queryType = hasValidator ? `ExtractQuery<${requestType}>` : '{}'
+  const { bodyType, queryType } = determineBodyAndQueryTypes({
+    methods: route.methods,
+    requestType,
+  })
 
   return `  '${routeName}': {
     methods: ${JSON.stringify(route.methods)}
@@ -226,10 +253,10 @@ function generateRegistryEntry(route: ScannedRoute): string {
   const { paramsType, paramsTuple } = generateRouteParams(route)
   const routeName = route.name
 
-  // Use type helpers to extract body and query from the validator
-  const hasValidator = requestType !== '{}'
-  const bodyType = hasValidator ? `ExtractBody<${requestType}>` : '{}'
-  const queryType = hasValidator ? `ExtractQuery<${requestType}>` : '{}'
+  const { bodyType, queryType } = determineBodyAndQueryTypes({
+    methods: route.methods,
+    requestType,
+  })
 
   return `  '${routeName}': {
     methods: ${JSON.stringify(route.methods)},

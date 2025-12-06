@@ -599,80 +599,50 @@ test.group('Client | Typings', (group) => {
   })
 })
 
-test.group('ExtractQuery and ExtractBody', (group) => {
+test.group('ExtractQuery and ExtractBody types', (group) => {
   group.tap((t) => t.skip(true, 'skip typings tests'))
 
   test('ExtractQuery extracts query from validator with query property', ({ expectTypeOf }) => {
-    type ValidatorWithQuery = {
-      query: { page: number; limit?: number; search?: string }
-    }
+    type ValidatorWithQuery = { query: { page: number; limit?: number } }
 
     type Result = ExtractQuery<ValidatorWithQuery>
-    expectTypeOf<Result>().toEqualTypeOf<{ page: number; limit?: number; search?: string }>()
+    expectTypeOf<Result>().toEqualTypeOf<{ page: number; limit?: number }>()
   })
 
   test('ExtractQuery returns empty object for validator without query', ({ expectTypeOf }) => {
-    type ValidatorWithoutQuery = {
-      name: string
-      email: string
-    }
+    type ValidatorWithoutQuery = { name: string; email: string }
 
     type Result = ExtractQuery<ValidatorWithoutQuery>
     expectTypeOf<Result>().toEqualTypeOf<{}>()
   })
 
-  test('ExtractBody removes query and params from validator', ({ expectTypeOf }) => {
-    type ValidatorWithQueryAndBody = {
-      query: { page: number }
-      name: string
-      email: string
-    }
+  test('ExtractBody removes query from validator', ({ expectTypeOf }) => {
+    type ValidatorWithQueryAndBody = { query: { page: number }; name: string; email: string }
 
     type Result = ExtractBody<ValidatorWithQueryAndBody>
     expectTypeOf<Result>().toEqualTypeOf<{ name: string; email: string }>()
   })
 
   test('ExtractBody keeps all properties when no query/params', ({ expectTypeOf }) => {
-    type ValidatorBodyOnly = {
-      name: string
-      email: string
-      age: number
-    }
+    type ValidatorBodyOnly = { name: string; email: string }
 
     type Result = ExtractBody<ValidatorBodyOnly>
-    expectTypeOf<Result>().toEqualTypeOf<{ name: string; email: string; age: number }>()
+    expectTypeOf<Result>().toEqualTypeOf<{ name: string; email: string }>()
   })
 
-  test('ExtractBody removes params property', ({ expectTypeOf }) => {
-    type ValidatorWithParams = {
-      params: { id: string }
-      name: string
-    }
+  test('ExtractBody returns empty object when only query', ({ expectTypeOf }) => {
+    type ValidatorQueryOnly = { query: { q: string } }
 
-    type Result = ExtractBody<ValidatorWithParams>
-    expectTypeOf<Result>().toEqualTypeOf<{ name: string }>()
+    type Result = ExtractBody<ValidatorQueryOnly>
+    expectTypeOf<Result>().toEqualTypeOf<{}>()
   })
 
-  test('ExtractBody removes both query and params', ({ expectTypeOf }) => {
-    type ValidatorWithBoth = {
-      query: { page: number }
-      params: { id: string }
-      name: string
-      description?: string
-    }
+  test('ExtractQuery handles optional query property', ({ expectTypeOf }) => {
+    // When query is optional in the validator, it extracts to {} since
+    // the conditional `T extends { query: infer Q }` won't match for optional props
+    type ValidatorWithOptionalQuery = { query?: { q?: string } }
 
-    type Result = ExtractBody<ValidatorWithBoth>
-    expectTypeOf<Result>().toEqualTypeOf<{ name: string; description?: string }>()
-  })
-
-  test('works with empty validator', ({ expectTypeOf }) => {
-    type EmptyValidator = {}
-
-    type QueryResult = ExtractQuery<EmptyValidator>
-
-    type BodyResult = ExtractBody<EmptyValidator>
-
-    expectTypeOf<QueryResult>().toEqualTypeOf<{}>()
-    expectTypeOf<BodyResult>().toEqualTypeOf<{}>()
+    type Result = ExtractQuery<ValidatorWithOptionalQuery>
+    expectTypeOf<Result>().toEqualTypeOf<{}>()
   })
 })

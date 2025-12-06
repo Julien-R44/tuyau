@@ -37,16 +37,22 @@ export interface AdonisEndpoint extends SchemaEndpoint {
 
 /**
  * Extract query params from a validator type if it has a 'query' property.
- * Used in generated registry to separate query params from body.
+ * Used in generated registry to separate query params from body for POST/PUT/PATCH/DELETE.
+ * For GET/HEAD, the validator type is used directly as query.
  */
-export type ExtractQuery<T> = T extends { query: infer Q } ? Q : {}
+export type ExtractQuery<T> = T extends { query: infer Q } ? (Q extends undefined ? {} : Q) : {}
 
 /**
  * Extract body from a validator type, excluding 'query' and 'params' properties.
- * Used in generated registry to separate body from query/params.
+ * Used in generated registry to separate body from query/params for POST/PUT/PATCH/DELETE.
+ * Returns {} if the validator only contains query/params, otherwise returns the body fields.
  */
 export type ExtractBody<T> = T extends { query: any } | { params: any }
-  ? Omit<T, 'query' | 'params'>
+  ? Omit<T, 'query' | 'params'> extends infer B
+    ? keyof B extends never
+      ? {}
+      : B
+    : {}
   : T
 
 /**

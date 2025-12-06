@@ -59,6 +59,20 @@ test.group('Client | Chained', () => {
     assert.equal(result.token, '123')
   })
 
+  test('GET request sends query params correctly', async ({ assert }) => {
+    const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry })
+
+    nock('http://localhost:3333')
+      .get('/products/search')
+      .query({ q: 'laptop', category: 'electronics', minPrice: '100' })
+      .reply(200, { products: [{ id: 1, name: 'Laptop' }] })
+
+    const result = await tuyau.api.products.search({
+      query: { q: 'laptop', category: 'electronics', minPrice: 100 },
+    })
+    assert.deepEqual(result.products, [{ id: 1, name: 'Laptop' }])
+  })
+
   test('parse as ArrayBuffer when octet-stream response', async ({ assert }) => {
     const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry })
 

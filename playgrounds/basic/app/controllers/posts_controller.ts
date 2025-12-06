@@ -17,12 +17,10 @@ const posts: Array<{ id: number; title: string; content: string; authorId: numbe
 export default class PostsController {
   static listValidator = vine.compile(
     vine.object({
-      query: vine.object({
-        page: vine.number().optional(),
-        limit: vine.number().optional(),
-        search: vine.string().optional(),
-        authorId: vine.number().optional(),
-      }),
+      page: vine.number().optional(),
+      limit: vine.number().optional(),
+      search: vine.string().optional(),
+      authorId: vine.number().optional(),
     })
   )
 
@@ -45,8 +43,12 @@ export default class PostsController {
    * List posts with pagination and filtering (for infinite query testing)
    */
   async list({ request }: HttpContext) {
-    const { query } = await request.validateUsing(PostsController.listValidator)
-    const { page = 1, limit = 3, search, authorId } = query
+    const {
+      page = 1,
+      limit = 3,
+      search,
+      authorId,
+    } = await request.validateUsing(PostsController.listValidator)
 
     let filteredPosts = [...posts]
 

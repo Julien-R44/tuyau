@@ -6,6 +6,7 @@ import { createTuyauReactQueryClient } from '@tuyau/react-query'
 export const client = createTuyau({
   baseUrl: 'http://localhost:3333',
   registry,
+  headers: { Accept: 'application/json' },
 })
 export const urlFor = client.urlFor
 

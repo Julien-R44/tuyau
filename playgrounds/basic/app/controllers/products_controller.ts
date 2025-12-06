@@ -19,13 +19,11 @@ const products: Array<{
 export default class ProductsController {
   static searchValidator = vine.compile(
     vine.object({
-      query: vine.object({
-        q: vine.string().optional(),
-        category: vine.string().optional(),
-        minPrice: vine.number().optional(),
-        maxPrice: vine.number().optional(),
-        inStock: vine.boolean().optional(),
-      }),
+      q: vine.string().optional(),
+      category: vine.string().optional(),
+      minPrice: vine.number().optional(),
+      maxPrice: vine.number().optional(),
+      inStock: vine.boolean().optional(),
     })
   )
 
@@ -42,8 +40,9 @@ export default class ProductsController {
    * Search products with multiple query params
    */
   async search({ request }: HttpContext) {
-    const { query } = await request.validateUsing(ProductsController.searchValidator)
-    const { q, category, minPrice, maxPrice, inStock } = query
+    const { q, category, minPrice, maxPrice, inStock } = await request.validateUsing(
+      ProductsController.searchValidator
+    )
 
     let filtered = [...products]
 
