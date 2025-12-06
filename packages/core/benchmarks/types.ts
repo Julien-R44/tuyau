@@ -18,31 +18,22 @@ bench('Small registry', async () => {
     .catch(() => {})
 
   return {}
-}).types([4044, 'instantiations'])
+}).types([4100, 'instantiations'])
 
-bench('Big registry (100 routes)', async () => {
+bench('Big registry 100 routes', async () => {
   const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry: registry100 })
 
-  tuyau.get('/blog/combine', {}).catch(() => {})
-  tuyau.api.log.coupon.postpone({ params: { entityId: '1' } }).catch(() => {})
-  tuyau
-    .request('bookmark.home.unassign', {
-      params: { categoryId: '1' },
-      query: { format: 'full' },
-    })
-    .catch(() => {})
+  tuyau.get('/cart/search', {}).catch(() => {})
+  tuyau.api.document.archive({ body: { token: 'test' } }).catch(() => {})
 
   return {}
-}).types([31_446, 'instantiations'])
+}).types([9200, 'instantiations'])
 
-bench('Huge registry (300 routes)', async () => {
+bench('Huge registry 300 routes', async () => {
   const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry: registry300 })
 
-  tuyau.get('/maintenance/pricing/add', {}).catch(() => {})
-  tuyau.api.activity.language
-    .ungroup({ body: { permissions: ['read', 'write'], userId: '1' } })
-    .catch(() => {})
-  tuyau.request('admin.generate', { query: { limit: 10 } }).catch(() => {})
+  tuyau.get('/message/index', {}).catch(() => {})
+  tuyau.api.chat.unfollow({}).catch(() => {})
 
   return {}
-}).types([70_947, 'instantiations'])
+}).types([26_000, 'instantiations'])

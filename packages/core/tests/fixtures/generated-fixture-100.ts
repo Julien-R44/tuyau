@@ -2,1102 +2,310 @@ import type { AdonisEndpoint } from '../../src/client/types/types.ts'
 
 const placeholder: any = {}
 
-export const generatedRegistry = {
-  'event.history.separate': {
-    methods: ['POST'],
-    pattern: '/event/history/separate',
+const routes = {
+  'offer.blog.share': {
+    methods: ['PUT'],
+    pattern: '/offer/blog/share/:groupId',
     tokens: [],
     types: placeholder as {
-      body: { settings: Record<string, any> }
-      params: {}
-      paramsTuple: []
-      query: { sort?: string; order?: string }
-      response: { profile: any; permissions: string[] }
-    },
-  },
-  'watchlist.sports.relocate': {
-    methods: ['GET'],
-    pattern: '/watchlist/sports/relocate',
-    tokens: [],
-    types: placeholder as {
-      body: {}
-      params: {}
-      paramsTuple: []
-      query: { active?: boolean; archived?: boolean }
-      response: { status: string; message: string }
-    },
-  },
-  'settings.team.subscribe': {
-    methods: ['PATCH'],
-    pattern: '/settings/team/subscribe/:itemId',
-    tokens: [],
-    types: placeholder as {
-      body: { settings: Record<string, any> }
-      params: { itemId: string }
-      paramsTuple: [string]
-      query: { includeDeleted?: boolean; expand?: string[] }
-      response: any
-    },
-  },
-  'payment.unfollow': {
-    methods: ['GET'],
-    pattern: '/payment/unfollow/:resourceId',
-    tokens: [],
-    types: placeholder as {
-      body: {}
-      params: { resourceId: string }
-      paramsTuple: [string]
-      query: { category?: string; tags?: string[] }
-      response: { updated: boolean; changes: any }
-    },
-  },
-  'shop.export.delete': {
-    methods: ['GET'],
-    pattern: '/shop/export/delete/:groupId',
-    tokens: [],
-    types: placeholder as {
-      body: {}
+      body: { query: string; limit?: number }
       params: { groupId: string }
       paramsTuple: [string]
-      query: { sort?: string; order?: string }
-      response: { profile: any; permissions: string[] }
+      query: { category?: string; tags?: string[] }
+      response: { url: string; filename: string }
     },
   },
-  'tracking.task.process': {
+  'document.archive': {
     methods: ['POST'],
-    pattern: '/tracking/task/process',
-    tokens: [],
-    types: placeholder as {
-      body: { settings: Record<string, any> }
-      params: {}
-      paramsTuple: []
-      query: { startDate?: string; endDate?: string }
-      response: { success: boolean }
-    },
-  },
-  'preferences.unfollow': {
-    methods: ['POST'],
-    pattern: '/preferences/unfollow',
-    tokens: [],
-    types: placeholder as {
-      body: { userId: string; permissions: string[] }
-      params: {}
-      paramsTuple: []
-      query: { format?: string; locale?: string }
-      response: { deleted: boolean; count: number }
-    },
-  },
-  'chat.toggle': {
-    methods: ['POST'],
-    pattern: '/chat/toggle/:categoryId',
-    tokens: [],
-    types: placeholder as {
-      body: { amount: number; currency?: string }
-      params: { categoryId: string }
-      paramsTuple: [string]
-      query: { active?: boolean; archived?: boolean }
-      response: { data: any[]; total: number }
-    },
-  },
-  'blog.combine': {
-    methods: ['GET'],
-    pattern: '/blog/combine',
-    tokens: [],
-    types: placeholder as {
-      body: {}
-      params: {}
-      paramsTuple: []
-      query: { startDate?: string; endDate?: string }
-      response: { status: string; message: string }
-    },
-  },
-  'payment.split': {
-    methods: ['GET'],
-    pattern: '/payment/split/:entityId',
-    tokens: [],
-    types: placeholder as {
-      body: {}
-      params: { entityId: string }
-      paramsTuple: [string]
-      query: { includeDeleted?: boolean; expand?: string[] }
-      response: { updated: boolean; changes: any }
-    },
-  },
-  'game.show': {
-    methods: ['PUT'],
-    pattern: '/game/show/:categoryId',
-    tokens: [],
-    types: placeholder as {
-      body: { name: string; email: string }
-      params: { categoryId: string }
-      paramsTuple: [string]
-      query: { active?: boolean; archived?: boolean }
-      response: { data: any[]; total: number }
-    },
-  },
-  'security.generate': {
-    methods: ['PATCH'],
-    pattern: '/security/generate',
+    pattern: '/document/archive',
     tokens: [],
     types: placeholder as {
       body: { token: string; expiresAt?: string }
       params: {}
       paramsTuple: []
-      query: { format?: string; locale?: string }
-      response: { updated: boolean; changes: any }
-    },
-  },
-  'settings.history.paginate': {
-    methods: ['POST'],
-    pattern: '/settings/history/paginate',
-    tokens: [],
-    types: placeholder as {
-      body: { content: string; tags?: string[] }
-      params: {}
-      paramsTuple: []
-      query: {}
-      response: { data: any[]; total: number }
-    },
-  },
-  'preferences.unassign': {
-    methods: ['GET'],
-    pattern: '/preferences/unassign',
-    tokens: [],
-    types: placeholder as {
-      body: {}
-      params: {}
-      paramsTuple: []
-      query: { category?: string; tags?: string[] }
-      response: { updated: boolean; changes: any }
-    },
-  },
-  'discount.remove': {
-    methods: ['GET', 'HEAD'],
-    pattern: '/discount/remove',
-    tokens: [],
-    types: placeholder as {
-      body: {}
-      params: {}
-      paramsTuple: []
-      query: {}
-      response: { data: any[]; total: number }
-    },
-  },
-  'market.coupon.delete': {
-    methods: ['GET'],
-    pattern: '/market/coupon/delete',
-    tokens: [],
-    types: placeholder as {
-      body: {}
-      params: {}
-      paramsTuple: []
-      query: { category?: string; tags?: string[] }
-      response: { id: string; name: string }
-    },
-  },
-  'product.restore': {
-    methods: ['PATCH'],
-    pattern: '/product/restore/:categoryId',
-    tokens: [],
-    types: placeholder as {
-      body: { file: Blob }
-      params: { categoryId: string }
-      paramsTuple: [string]
-      query: { startDate?: string; endDate?: string }
-      response: { profile: any; permissions: string[] }
-    },
-  },
-  'art.bookmark': {
-    methods: ['POST'],
-    pattern: '/art/bookmark',
-    tokens: [],
-    types: placeholder as {
-      body: { coordinates: [number, number] }
-      params: {}
-      paramsTuple: []
-      query: { search?: string; filter?: string }
-      response: { id: string; name: string }
-    },
-  },
-  'message.download': {
-    methods: ['PUT'],
-    pattern: '/message/download/:categoryId',
-    tokens: [],
-    types: placeholder as {
-      body: { startDate: string; endDate: string }
-      params: { categoryId: string }
-      paramsTuple: [string]
-      query: { sort?: string; order?: string }
-      response: { deleted: boolean; count: number }
-    },
-  },
-  'document.show': {
-    methods: ['GET'],
-    pattern: '/document/show/:userId',
-    tokens: [],
-    types: placeholder as {
-      body: {}
-      params: { userId: string }
-      paramsTuple: [string]
-      query: { limit?: number; page?: number }
-      response: { items: any[]; categories: string[] }
-    },
-  },
-  'shipment.leave': {
-    methods: ['PATCH'],
-    pattern: '/shipment/leave/:entityId',
-    tokens: [],
-    types: placeholder as {
-      body: { data: any; metadata?: any }
-      params: { entityId: string }
-      paramsTuple: [string]
-      query: { format?: string; locale?: string }
-      response: { updated: boolean; changes: any }
-    },
-  },
-  'schedule.share': {
-    methods: ['GET'],
-    pattern: '/schedule/share/:groupId',
-    tokens: [],
-    types: placeholder as {
-      body: {}
-      params: { groupId: string }
-      paramsTuple: [string]
-      query: { sort?: string; order?: string }
-      response: { created: boolean; item: any }
-    },
-  },
-  'analytics.share': {
-    methods: ['PATCH'],
-    pattern: '/analytics/share',
-    tokens: [],
-    types: placeholder as {
-      body: { userId: string; permissions: string[] }
-      params: {}
-      paramsTuple: []
-      query: { category?: string; tags?: string[] }
-      response: { status: string; message: string }
-    },
-  },
-  'maintenance.activate': {
-    methods: ['PATCH'],
-    pattern: '/maintenance/activate',
-    tokens: [],
-    types: placeholder as {
-      body: { data: any; metadata?: any }
-      params: {}
-      paramsTuple: []
-      query: { limit?: number; page?: number }
-      response: { data: any[]; total: number }
-    },
-  },
-  'security.store': {
-    methods: ['GET'],
-    pattern: '/security/store/:categoryId',
-    tokens: [],
-    types: placeholder as {
-      body: {}
-      params: { categoryId: string }
-      paramsTuple: [string]
-      query: {}
-      response: { results: any[]; pagination: any }
-    },
-  },
-  'label.dashboard.forward': {
-    methods: ['GET'],
-    pattern: '/label/dashboard/forward',
-    tokens: [],
-    types: placeholder as {
-      body: {}
-      params: {}
-      paramsTuple: []
-      query: { limit?: number; page?: number }
-      response: { profile: any; permissions: string[] }
-    },
-  },
-  'cart.sports.transform': {
-    methods: ['GET'],
-    pattern: '/cart/sports/transform/:groupId',
-    tokens: [],
-    types: placeholder as {
-      body: {}
-      params: { groupId: string }
-      paramsTuple: [string]
-      query: { active?: boolean; archived?: boolean }
-      response: { metrics: any; charts: any[] }
-    },
-  },
-  'authorization.calculate': {
-    methods: ['POST'],
-    pattern: '/authorization/calculate',
-    tokens: [],
-    types: placeholder as {
-      body: { settings: Record<string, any> }
-      params: {}
-      paramsTuple: []
-      query: { active?: boolean; archived?: boolean }
-      response: { results: any[]; pagination: any }
-    },
-  },
-  'home.preview': {
-    methods: ['PUT'],
-    pattern: '/home/preview',
-    tokens: [],
-    types: placeholder as {
-      body: { settings: Record<string, any> }
-      params: {}
-      paramsTuple: []
-      query: { startDate?: string; endDate?: string }
-      response: { status: string; message: string }
-    },
-  },
-  'label.list': {
-    methods: ['GET'],
-    pattern: '/label/list',
-    tokens: [],
-    types: placeholder as {
-      body: {}
-      params: {}
-      paramsTuple: []
-      query: { includeDeleted?: boolean; expand?: string[] }
-      response: { metrics: any; charts: any[] }
-    },
-  },
-  'access.refresh': {
-    methods: ['PATCH'],
-    pattern: '/access/refresh',
-    tokens: [],
-    types: placeholder as {
-      body: { data: any; metadata?: any }
-      params: {}
-      paramsTuple: []
-      query: {}
-      response: { results: any[]; pagination: any }
-    },
-  },
-  'podcast.forward': {
-    methods: ['PATCH'],
-    pattern: '/podcast/forward',
-    tokens: [],
-    types: placeholder as {
-      body: {}
-      params: {}
-      paramsTuple: []
-      query: { search?: string; filter?: string }
-      response: any
-    },
-  },
-  'message.destroy': {
-    methods: ['POST'],
-    pattern: '/message/destroy',
-    tokens: [],
-    types: placeholder as {
-      body: { file: Blob }
-      params: {}
-      paramsTuple: []
-      query: { includeDeleted?: boolean; expand?: string[] }
-      response: { success: boolean }
-    },
-  },
-  'file.block': {
-    methods: ['DELETE'],
-    pattern: '/file/block/:entityId',
-    tokens: [],
-    types: placeholder as {
-      body: {}
-      params: { entityId: string }
-      paramsTuple: [string]
-      query: { startDate?: string; endDate?: string }
-      response: { results: any[]; pagination: any }
-    },
-  },
-  'project.ban': {
-    methods: ['POST'],
-    pattern: '/project/ban',
-    tokens: [],
-    types: placeholder as {
-      body: { filters: any[]; options?: any }
-      params: {}
-      paramsTuple: []
-      query: { sort?: string; order?: string }
-      response: { profile: any; permissions: string[] }
-    },
-  },
-  'gallery.watchlist.ungroup': {
-    methods: ['GET'],
-    pattern: '/gallery/watchlist/ungroup/:categoryId',
-    tokens: [],
-    types: placeholder as {
-      body: {}
-      params: { categoryId: string }
-      paramsTuple: [string]
-      query: { active?: boolean; archived?: boolean }
-      response: { success: boolean }
-    },
-  },
-  'cinema.backup': {
-    methods: ['PUT'],
-    pattern: '/cinema/backup',
-    tokens: [],
-    types: placeholder as {
-      body: { userId: string; permissions: string[] }
-      params: {}
-      paramsTuple: []
-      query: { active?: boolean; archived?: boolean }
-      response: { metrics: any; charts: any[] }
-    },
-  },
-  'pricing.favorite': {
-    methods: ['PUT'],
-    pattern: '/pricing/favorite',
-    tokens: [],
-    types: placeholder as {
-      body: { userId: string; permissions: string[] }
-      params: {}
-      paramsTuple: []
-      query: { sort?: string; order?: string }
-      response: any
-    },
-  },
-  'backup.ungroup': {
-    methods: ['GET'],
-    pattern: '/backup/ungroup',
-    tokens: [],
-    types: placeholder as {
-      body: {}
-      params: {}
-      paramsTuple: []
-      query: { category?: string; tags?: string[] }
-      response: { updated: boolean; changes: any }
-    },
-  },
-  'wiki.offer.bookmark': {
-    methods: ['GET'],
-    pattern: '/wiki/offer/bookmark',
-    tokens: [],
-    types: placeholder as {
-      body: {}
-      params: {}
-      paramsTuple: []
-      query: { active?: boolean; archived?: boolean }
-      response: { token: string; expiresAt: string }
-    },
-  },
-  'education.sort': {
-    methods: ['PATCH'],
-    pattern: '/education/sort/:itemId/:id',
-    tokens: [],
-    types: placeholder as {
-      body: { file: Blob }
-      params: { itemId: string; id: string }
-      paramsTuple: [string, string]
-      query: { includeDeleted?: boolean; expand?: string[] }
-      response: { metrics: any; charts: any[] }
-    },
-  },
-  'project.edit': {
-    methods: ['GET'],
-    pattern: '/project/edit/:userId',
-    tokens: [],
-    types: placeholder as {
-      body: {}
-      params: { userId: string }
-      paramsTuple: [string]
-      query: { category?: string; tags?: string[] }
-      response: { status: string; message: string }
-    },
-  },
-  'integration.process': {
-    methods: ['GET'],
-    pattern: '/integration/process/:itemId',
-    tokens: [],
-    types: placeholder as {
-      body: {}
-      params: { itemId: string }
-      paramsTuple: [string]
-      query: { active?: boolean; archived?: boolean }
-      response: { status: string; message: string }
-    },
-  },
-  'bookmark.home.unassign': {
-    methods: ['PUT'],
-    pattern: '/bookmark/home/unassign/:categoryId',
-    tokens: [],
-    types: placeholder as {
-      body: {}
-      params: { categoryId: string }
-      paramsTuple: [string]
-      query: { format?: string; locale?: string }
-      response: any
-    },
-  },
-  'permission.member.leave': {
-    methods: ['GET'],
-    pattern: '/permission/member/leave/:itemId',
-    tokens: [],
-    types: placeholder as {
-      body: {}
-      params: { itemId: string }
-      paramsTuple: [string]
-      query: { limit?: number; page?: number }
-      response: { id: string; name: string }
-    },
-  },
-  'feedback.clone': {
-    methods: ['POST'],
-    pattern: '/feedback/clone',
-    tokens: [],
-    types: placeholder as {
-      body: { query: string; limit?: number }
-      params: {}
-      paramsTuple: []
-      query: { active?: boolean; archived?: boolean }
-      response: any
-    },
-  },
-  'discount.patch': {
-    methods: ['GET'],
-    pattern: '/discount/patch/:userId',
-    tokens: [],
-    types: placeholder as {
-      body: {}
-      params: { userId: string }
-      paramsTuple: [string]
-      query: { startDate?: string; endDate?: string }
-      response: { results: any[]; pagination: any }
-    },
-  },
-  'import.subscription.clone': {
-    methods: ['GET'],
-    pattern: '/import/subscription/clone/:userId',
-    tokens: [],
-    types: placeholder as {
-      body: {}
-      params: { userId: string }
-      paramsTuple: [string]
-      query: {}
-      response: { status: string; message: string }
-    },
-  },
-  'schedule.audio.invite': {
-    methods: ['GET'],
-    pattern: '/schedule/audio/invite/:teamId',
-    tokens: [],
-    types: placeholder as {
-      body: {}
-      params: { teamId: string }
-      paramsTuple: [string]
-      query: { startDate?: string; endDate?: string }
-      response: { data: any[]; total: number }
-    },
-  },
-  'authentication.kick': {
-    methods: ['PUT'],
-    pattern: '/authentication/kick/:itemId',
-    tokens: [],
-    types: placeholder as {
-      body: { name: string; email: string }
-      params: { itemId: string }
-      paramsTuple: [string]
-      query: { active?: boolean; archived?: boolean }
-      response: { results: any[]; pagination: any }
-    },
-  },
-  'feedback.show': {
-    methods: ['DELETE'],
-    pattern: '/feedback/show',
-    tokens: [],
-    types: placeholder as {
-      body: {}
-      params: {}
-      paramsTuple: []
-      query: { active?: boolean; archived?: boolean }
-      response: { data: any[]; total: number }
-    },
-  },
-  'filter.recommendation.ungroup': {
-    methods: ['GET'],
-    pattern: '/filter/recommendation/ungroup/:teamId',
-    tokens: [],
-    types: placeholder as {
-      body: {}
-      params: { teamId: string }
-      paramsTuple: [string]
-      query: { search?: string; filter?: string }
-      response: { items: any[]; categories: string[] }
-    },
-  },
-  'language.put': {
-    methods: ['GET'],
-    pattern: '/language/put',
-    tokens: [],
-    types: placeholder as {
-      body: {}
-      params: {}
-      paramsTuple: []
       query: { minPrice?: number; maxPrice?: number }
-      response: { metrics: any; charts: any[] }
+      response: { id: string; name: string }
     },
   },
-  'network.forum.import': {
-    methods: ['PATCH'],
-    pattern: '/network/forum/import',
+  'education.quality.block': {
+    methods: ['DELETE'],
+    pattern: '/education/quality/block',
     tokens: [],
     types: placeholder as {
-      body: { query: string; limit?: number }
+      body: {}
       params: {}
       paramsTuple: []
-      query: {}
-      response: { created: boolean; item: any }
+      query: { startDate?: string; endDate?: string }
+      response: { success: boolean }
     },
   },
-  'cart.bookmark': {
-    methods: ['POST'],
-    pattern: '/cart/bookmark',
+  'coupon.index': {
+    methods: ['DELETE'],
+    pattern: '/coupon/index/:itemId/:resourceId',
     tokens: [],
     types: placeholder as {
-      body: { filters: any[]; options?: any }
-      params: {}
-      paramsTuple: []
-      query: { limit?: number; page?: number }
+      body: {}
+      params: { itemId: string; resourceId: string }
+      paramsTuple: [string, string]
+      query: { sort?: string; order?: string }
       response: { results: any[]; pagination: any }
     },
   },
-  'message.analytics.merge': {
-    methods: ['POST'],
-    pattern: '/message/analytics/merge/:itemId/:categoryId',
+  'language.market.leave': {
+    methods: ['DELETE'],
+    pattern: '/language/market/leave/:categoryId',
     tokens: [],
     types: placeholder as {
       body: {}
-      params: { itemId: string; categoryId: string }
-      paramsTuple: [string, string]
-      query: { search?: string; filter?: string }
-      response: { token: string; expiresAt: string }
+      params: { categoryId: string }
+      paramsTuple: [string]
+      query: { sort?: string; order?: string }
+      response: { created: boolean; item: any }
     },
   },
-  'community.archive': {
-    methods: ['GET'],
-    pattern: '/community/archive',
+  'product.sync': {
+    methods: ['GET', 'HEAD'],
+    pattern: '/product/sync/:groupId/:userId',
+    tokens: [],
+    types: placeholder as {
+      body: {}
+      params: { groupId: string; userId: string }
+      paramsTuple: [string, string]
+      query: { format?: string; locale?: string }
+      response: { url: string; filename: string }
+    },
+  },
+  'cart.search': {
+    methods: ['GET', 'HEAD'],
+    pattern: '/cart/search',
     tokens: [],
     types: placeholder as {
       body: {}
       params: {}
       paramsTuple: []
-      query: { active?: boolean; archived?: boolean }
-      response: { token: string; expiresAt: string }
+      query: { format?: string; locale?: string }
+      response: { status: string; message: string }
     },
   },
-  'reservation.offer.follow': {
-    methods: ['DELETE'],
-    pattern: '/reservation/offer/follow/:resourceId/:itemId',
+  'garden.upload': {
+    methods: ['GET'],
+    pattern: '/garden/upload',
     tokens: [],
     types: placeholder as {
       body: {}
-      params: { resourceId: string; itemId: string }
-      paramsTuple: [string, string]
-      query: { format?: string; locale?: string }
-      response: { deleted: boolean; count: number }
+      params: {}
+      paramsTuple: []
+      query: { limit?: number; page?: number }
+      response: { metrics: any; charts: any[] }
     },
   },
-  'music.blog.import': {
+  'wiki.archive': {
     methods: ['PATCH'],
-    pattern: '/music/blog/import/:id',
+    pattern: '/wiki/archive',
     tokens: [],
     types: placeholder as {
       body: { title: string; description?: string }
-      params: { id: string }
-      paramsTuple: [string]
-      query: { includeDeleted?: boolean; expand?: string[] }
+      params: {}
+      paramsTuple: []
+      query: { category?: string; tags?: string[] }
       response: { settings: any; preferences: any }
     },
   },
-  'history.paginate': {
-    methods: ['POST'],
-    pattern: '/history/paginate',
-    tokens: [],
-    types: placeholder as {
-      body: { file: Blob }
-      params: {}
-      paramsTuple: []
-      query: { active?: boolean; archived?: boolean }
-      response: any
-    },
-  },
-  'filter.schedule': {
-    methods: ['POST'],
-    pattern: '/filter/schedule',
-    tokens: [],
-    types: placeholder as {
-      body: { amount: number; currency?: string }
-      params: {}
-      paramsTuple: []
-      query: { category?: string; tags?: string[] }
-      response: { updated: boolean; changes: any }
-    },
-  },
-  'subscription.role.unblock': {
-    methods: ['POST'],
-    pattern: '/subscription/role/unblock',
-    tokens: [],
-    types: placeholder as {
-      body: { data: any; metadata?: any }
-      params: {}
-      paramsTuple: []
-      query: {}
-      response: { id: string; name: string }
-    },
-  },
-  'label.patch': {
-    methods: ['GET'],
-    pattern: '/label/patch',
-    tokens: [],
-    types: placeholder as {
-      body: {}
-      params: {}
-      paramsTuple: []
-      query: { category?: string; tags?: string[] }
-      response: { data: any[]; total: number }
-    },
-  },
-  'role.billing.preview': {
-    methods: ['GET'],
-    pattern: '/role/billing/preview',
-    tokens: [],
-    types: placeholder as {
-      body: {}
-      params: {}
-      paramsTuple: []
-      query: { minPrice?: number; maxPrice?: number }
-      response: { status: string; message: string }
-    },
-  },
-  'shipping.user.upload': {
-    methods: ['POST'],
-    pattern: '/shipping/user/upload',
-    tokens: [],
-    types: placeholder as {
-      body: { amount: number; currency?: string }
-      params: {}
-      paramsTuple: []
-      query: { search?: string; filter?: string }
-      response: { url: string; filename: string }
-    },
-  },
-  'community.quality.confirm': {
-    methods: ['PUT'],
-    pattern: '/community/quality/confirm/:id/:categoryId',
-    tokens: [],
-    types: placeholder as {
-      body: { content: string; tags?: string[] }
-      params: { id: string; categoryId: string }
-      paramsTuple: [string, string]
-      query: { search?: string; filter?: string }
-      response: { settings: any; preferences: any }
-    },
-  },
-  'blog.protect': {
+  'feedback.sort': {
     methods: ['DELETE'],
-    pattern: '/blog/protect',
-    tokens: [],
-    types: placeholder as {
-      body: {}
-      params: {}
-      paramsTuple: []
-      query: { limit?: number; page?: number }
-      response: { updated: boolean; changes: any }
-    },
-  },
-  'conference.discount.kick': {
-    methods: ['GET'],
-    pattern: '/conference/discount/kick',
-    tokens: [],
-    types: placeholder as {
-      body: {}
-      params: {}
-      paramsTuple: []
-      query: { format?: string; locale?: string }
-      response: { url: string; filename: string }
-    },
-  },
-  'deal.transfer': {
-    methods: ['PUT'],
-    pattern: '/deal/transfer',
-    tokens: [],
-    types: placeholder as {
-      body: { filters: any[]; options?: any }
-      params: {}
-      paramsTuple: []
-      query: { startDate?: string; endDate?: string }
-      response: { settings: any; preferences: any }
-    },
-  },
-  'cinema.social.copy': {
-    methods: ['PATCH'],
-    pattern: '/cinema/social/copy',
-    tokens: [],
-    types: placeholder as {
-      body: { token: string; expiresAt?: string }
-      params: {}
-      paramsTuple: []
-      query: { includeDeleted?: boolean; expand?: string[] }
-      response: { items: any[]; categories: string[] }
-    },
-  },
-  'community.activate': {
-    methods: ['DELETE'],
-    pattern: '/community/activate/:resourceId',
-    tokens: [],
-    types: placeholder as {
-      body: {}
-      params: { resourceId: string }
-      paramsTuple: [string]
-      query: { category?: string; tags?: string[] }
-      response: { created: boolean; item: any }
-    },
-  },
-  'education.ban': {
-    methods: ['POST'],
-    pattern: '/education/ban/:resourceId',
-    tokens: [],
-    types: placeholder as {
-      body: { content: string; tags?: string[] }
-      params: { resourceId: string }
-      paramsTuple: [string]
-      query: { limit?: number; page?: number }
-      response: { items: any[]; categories: string[] }
-    },
-  },
-  'integration.disable': {
-    methods: ['GET'],
-    pattern: '/integration/disable',
-    tokens: [],
-    types: placeholder as {
-      body: {}
-      params: {}
-      paramsTuple: []
-      query: { search?: string; filter?: string }
-      response: { items: any[]; categories: string[] }
-    },
-  },
-  'billing.decline': {
-    methods: ['PATCH'],
-    pattern: '/billing/decline',
-    tokens: [],
-    types: placeholder as {
-      body: {}
-      params: {}
-      paramsTuple: []
-      query: { category?: string; tags?: string[] }
-      response: { created: boolean; item: any }
-    },
-  },
-  'report.backup': {
-    methods: ['GET', 'HEAD'],
-    pattern: '/report/backup/:itemId',
-    tokens: [],
-    types: placeholder as {
-      body: {}
-      params: { itemId: string }
-      paramsTuple: [string]
-      query: { format?: string; locale?: string }
-      response: any
-    },
-  },
-  'calendar.offer.postpone': {
-    methods: ['GET'],
-    pattern: '/calendar/offer/postpone/:userId/:id',
-    tokens: [],
-    types: placeholder as {
-      body: {}
-      params: { userId: string; id: string }
-      paramsTuple: [string, string]
-      query: { includeDeleted?: boolean; expand?: string[] }
-      response: { token: string; expiresAt: string }
-    },
-  },
-  'maintenance.approve': {
-    methods: ['DELETE'],
-    pattern: '/maintenance/approve',
-    tokens: [],
-    types: placeholder as {
-      body: {}
-      params: {}
-      paramsTuple: []
-      query: { limit?: number; page?: number }
-      response: any
-    },
-  },
-  'favorite.preview': {
-    methods: ['DELETE'],
-    pattern: '/favorite/preview/:categoryId',
+    pattern: '/feedback/sort/:categoryId',
     tokens: [],
     types: placeholder as {
       body: {}
       params: { categoryId: string }
       paramsTuple: [string]
+      query: {}
+      response: { metrics: any; charts: any[] }
+    },
+  },
+  'fashion.bookmark': {
+    methods: ['GET'],
+    pattern: '/fashion/bookmark',
+    tokens: [],
+    types: placeholder as {
+      body: {}
+      params: {}
+      paramsTuple: []
+      query: { sort?: string; order?: string }
+      response: { id: string; name: string }
+    },
+  },
+  'filter.service.move': {
+    methods: ['POST'],
+    pattern: '/filter/service/move',
+    tokens: [],
+    types: placeholder as {
+      body: { amount: number; currency?: string }
+      params: {}
+      paramsTuple: []
       query: { minPrice?: number; maxPrice?: number }
       response: { items: any[]; categories: string[] }
     },
   },
-  'subscription.cart.draft': {
-    methods: ['DELETE'],
-    pattern: '/subscription/cart/draft/:entityId',
+  'travel.discount.generate': {
+    methods: ['PATCH'],
+    pattern: '/travel/discount/generate',
     tokens: [],
     types: placeholder as {
-      body: {}
-      params: { entityId: string }
-      paramsTuple: [string]
-      query: { startDate?: string; endDate?: string }
-      response: { success: boolean }
-    },
-  },
-  'chat.mute': {
-    methods: ['GET'],
-    pattern: '/chat/mute/:entityId',
-    tokens: [],
-    types: placeholder as {
-      body: {}
-      params: { entityId: string }
-      paramsTuple: [string]
-      query: { sort?: string; order?: string }
-      response: { profile: any; permissions: string[] }
-    },
-  },
-  'calendar.pricing.validate': {
-    methods: ['GET'],
-    pattern: '/calendar/pricing/validate/:groupId',
-    tokens: [],
-    types: placeholder as {
-      body: {}
-      params: { groupId: string }
-      paramsTuple: [string]
-      query: { active?: boolean; archived?: boolean }
-      response: { metrics: any; charts: any[] }
-    },
-  },
-  'checkout.share': {
-    methods: ['POST'],
-    pattern: '/checkout/share',
-    tokens: [],
-    types: placeholder as {
-      body: { content: string; tags?: string[] }
+      body: { token: string; expiresAt?: string }
       params: {}
       paramsTuple: []
-      query: { format?: string; locale?: string }
+      query: { active?: boolean; archived?: boolean }
       response: { url: string; filename: string }
     },
   },
-  'analytics.publish': {
+  'invoice.edit': {
     methods: ['GET'],
-    pattern: '/analytics/publish',
+    pattern: '/invoice/edit',
     tokens: [],
     types: placeholder as {
       body: {}
       params: {}
       paramsTuple: []
-      query: { search?: string; filter?: string }
-      response: { settings: any; preferences: any }
+      query: {}
+      response: { success: boolean }
     },
   },
-  'payment.project.postpone': {
-    methods: ['POST'],
-    pattern: '/payment/project/postpone/:categoryId/:itemId',
+  'comment.switch': {
+    methods: ['DELETE'],
+    pattern: '/comment/switch',
     tokens: [],
     types: placeholder as {
-      body: { coordinates: [number, number] }
-      params: { categoryId: string; itemId: string }
-      paramsTuple: [string, string]
+      body: {}
+      params: {}
+      paramsTuple: []
+      query: {}
+      response: any
+    },
+  },
+  'billing.show': {
+    methods: ['POST'],
+    pattern: '/billing/show',
+    tokens: [],
+    types: placeholder as {
+      body: {}
+      params: {}
+      paramsTuple: []
       query: { format?: string; locale?: string }
       response: { updated: boolean; changes: any }
     },
   },
-  'profile.lock': {
-    methods: ['GET'],
-    pattern: '/profile/lock',
+  'sync.user.postpone': {
+    methods: ['PUT'],
+    pattern: '/sync/user/postpone',
     tokens: [],
     types: placeholder as {
-      body: {}
+      body: { filters: any[]; options?: any }
       params: {}
       paramsTuple: []
-      query: { sort?: string; order?: string }
-      response: { deleted: boolean; count: number }
+      query: {}
+      response: { token: string; expiresAt: string }
     },
   },
-  'forum.refresh': {
-    methods: ['GET'],
-    pattern: '/forum/refresh/:resourceId/:id',
-    tokens: [],
-    types: placeholder as {
-      body: {}
-      params: { resourceId: string; id: string }
-      paramsTuple: [string, string]
-      query: { includeDeleted?: boolean; expand?: string[] }
-      response: any
-    },
-  },
-  'feedback.postpone': {
+  'label.generate': {
     methods: ['POST'],
-    pattern: '/feedback/postpone',
+    pattern: '/label/generate',
     tokens: [],
     types: placeholder as {
       body: { priority: string; status?: string }
       params: {}
       paramsTuple: []
-      query: {}
-      response: any
-    },
-  },
-  'product.library.postpone': {
-    methods: ['GET'],
-    pattern: '/product/library/postpone',
-    tokens: [],
-    types: placeholder as {
-      body: {}
-      params: {}
-      paramsTuple: []
-      query: { active?: boolean; archived?: boolean }
-      response: { results: any[]; pagination: any }
-    },
-  },
-  'cart.unfollow': {
-    methods: ['DELETE'],
-    pattern: '/cart/unfollow',
-    tokens: [],
-    types: placeholder as {
-      body: {}
-      params: {}
-      paramsTuple: []
       query: { minPrice?: number; maxPrice?: number }
-      response: { deleted: boolean; count: number }
+      response: { token: string; expiresAt: string }
     },
   },
-  'maintenance.market.unlike': {
-    methods: ['POST'],
-    pattern: '/maintenance/market/unlike',
+  'sports.unpublish': {
+    methods: ['GET', 'HEAD'],
+    pattern: '/sports/unpublish/:categoryId',
     tokens: [],
     types: placeholder as {
-      body: { coordinates: [number, number] }
+      body: {}
+      params: { categoryId: string }
+      paramsTuple: [string]
+      query: { includeDeleted?: boolean; expand?: string[] }
+      response: { url: string; filename: string }
+    },
+  },
+  'watchlist.unmute': {
+    methods: ['DELETE'],
+    pattern: '/watchlist/unmute',
+    tokens: [],
+    types: placeholder as {
+      body: {}
+      params: {}
+      paramsTuple: []
+      query: { category?: string; tags?: string[] }
+      response: { url: string; filename: string }
+    },
+  },
+  'security.validate': {
+    methods: ['PATCH'],
+    pattern: '/security/validate',
+    tokens: [],
+    types: placeholder as {
+      body: {}
       params: {}
       paramsTuple: []
       query: { startDate?: string; endDate?: string }
-      response: { updated: boolean; changes: any }
+      response: { items: any[]; categories: string[] }
     },
   },
-  'pet.dashboard.paginate': {
+  'export.sync': {
+    methods: ['POST'],
+    pattern: '/export/sync/:id',
+    tokens: [],
+    types: placeholder as {
+      body: { startDate: string; endDate: string }
+      params: { id: string }
+      paramsTuple: [string]
+      query: { active?: boolean; archived?: boolean }
+      response: { deleted: boolean; count: number }
+    },
+  },
+  'filter.migrate': {
     methods: ['DELETE'],
-    pattern: '/pet/dashboard/paginate',
+    pattern: '/filter/migrate',
     tokens: [],
     types: placeholder as {
       body: {}
       params: {}
       paramsTuple: []
-      query: { includeDeleted?: boolean; expand?: string[] }
-      response: { metrics: any; charts: any[] }
+      query: { sort?: string; order?: string }
+      response: { status: string; message: string }
     },
   },
-  'import.forward': {
+  'shipment.leave': {
     methods: ['GET'],
-    pattern: '/import/forward',
+    pattern: '/shipment/leave/:categoryId/:userId',
+    tokens: [],
+    types: placeholder as {
+      body: {}
+      params: { categoryId: string; userId: string }
+      paramsTuple: [string, string]
+      query: { includeDeleted?: boolean; expand?: string[] }
+      response: any
+    },
+  },
+  'shipment.decline': {
+    methods: ['DELETE'],
+    pattern: '/shipment/decline/:userId',
+    tokens: [],
+    types: placeholder as {
+      body: {}
+      params: { userId: string }
+      paramsTuple: [string]
+      query: {}
+      response: { success: boolean }
+    },
+  },
+  'search.patch': {
+    methods: ['DELETE'],
+    pattern: '/search/patch',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1107,100 +315,1201 @@ export const generatedRegistry = {
       response: { success: boolean }
     },
   },
-  'chat.forum.ban': {
+  'chat.transfer': {
     methods: ['GET'],
-    pattern: '/chat/forum/ban',
+    pattern: '/chat/transfer',
     tokens: [],
     types: placeholder as {
       body: {}
       params: {}
       paramsTuple: []
-      query: { category?: string; tags?: string[] }
-      response: { token: string; expiresAt: string }
-    },
-  },
-  'log.coupon.postpone': {
-    methods: ['GET'],
-    pattern: '/log/coupon/postpone/:entityId',
-    tokens: [],
-    types: placeholder as {
-      body: {}
-      params: { entityId: string }
-      paramsTuple: [string]
-      query: { format?: string; locale?: string }
-      response: { id: string; name: string }
-    },
-  },
-  'recipe.video.process': {
-    methods: ['GET'],
-    pattern: '/recipe/video/process/:resourceId/:groupId',
-    tokens: [],
-    types: placeholder as {
-      body: {}
-      params: { resourceId: string; groupId: string }
-      paramsTuple: [string, string]
-      query: { limit?: number; page?: number }
-      response: { token: string; expiresAt: string }
-    },
-  },
-  'geolocation.unblock': {
-    methods: ['GET'],
-    pattern: '/geolocation/unblock/:teamId',
-    tokens: [],
-    types: placeholder as {
-      body: {}
-      params: { teamId: string }
-      paramsTuple: [string]
-      query: { limit?: number; page?: number }
-      response: { created: boolean; item: any }
-    },
-  },
-  'appointment.migrate': {
-    methods: ['POST'],
-    pattern: '/appointment/migrate/:resourceId',
-    tokens: [],
-    types: placeholder as {
-      body: { filters: any[]; options?: any }
-      params: { resourceId: string }
-      paramsTuple: [string]
-      query: { category?: string; tags?: string[] }
+      query: { includeDeleted?: boolean; expand?: string[] }
       response: { items: any[]; categories: string[] }
     },
   },
-  'recipe.invoice.subscribe': {
-    methods: ['PATCH'],
-    pattern: '/recipe/invoice/subscribe/:categoryId',
+  'checkout.team.index': {
+    methods: ['POST'],
+    pattern: '/checkout/team/index/:entityId',
+    tokens: [],
+    types: placeholder as {
+      body: { amount: number; currency?: string }
+      params: { entityId: string }
+      paramsTuple: [string]
+      query: { startDate?: string; endDate?: string }
+      response: { url: string; filename: string }
+    },
+  },
+  'team.block': {
+    methods: ['POST'],
+    pattern: '/team/block',
+    tokens: [],
+    types: placeholder as {
+      body: { filters: any[]; options?: any }
+      params: {}
+      paramsTuple: []
+      query: { active?: boolean; archived?: boolean }
+      response: any
+    },
+  },
+  'order.schedule.enable': {
+    methods: ['GET'],
+    pattern: '/order/schedule/enable/:groupId/:itemId',
     tokens: [],
     types: placeholder as {
       body: {}
-      params: { categoryId: string }
-      paramsTuple: [string]
-      query: { sort?: string; order?: string }
-      response: { token: string; expiresAt: string }
+      params: { groupId: string; itemId: string }
+      paramsTuple: [string, string]
+      query: { limit?: number; page?: number }
+      response: { settings: any; preferences: any }
     },
   },
-  'knowledge.accept': {
+  'podcast.ban': {
+    methods: ['GET'],
+    pattern: '/podcast/ban',
+    tokens: [],
+    types: placeholder as {
+      body: {}
+      params: {}
+      paramsTuple: []
+      query: { active?: boolean; archived?: boolean }
+      response: { settings: any; preferences: any }
+    },
+  },
+  'library.invite': {
+    methods: ['GET'],
+    pattern: '/library/invite',
+    tokens: [],
+    types: placeholder as {
+      body: {}
+      params: {}
+      paramsTuple: []
+      query: { minPrice?: number; maxPrice?: number }
+      response: { deleted: boolean; count: number }
+    },
+  },
+  'label.download': {
     methods: ['POST'],
-    pattern: '/knowledge/accept/:itemId',
+    pattern: '/label/download/:userId/:entityId',
     tokens: [],
     types: placeholder as {
       body: { coordinates: [number, number] }
-      params: { itemId: string }
-      paramsTuple: [string]
-      query: { sort?: string; order?: string }
-      response: { data: any[]; total: number }
+      params: { userId: string; entityId: string }
+      paramsTuple: [string, string]
+      query: { includeDeleted?: boolean; expand?: string[] }
+      response: { results: any[]; pagination: any }
     },
   },
-  'discount.kick': {
+  'access.get': {
     methods: ['PUT'],
-    pattern: '/discount/kick',
+    pattern: '/access/get',
     tokens: [],
     types: placeholder as {
       body: { settings: Record<string, any> }
       params: {}
       paramsTuple: []
+      query: { search?: string; filter?: string }
+      response: { metrics: any; charts: any[] }
+    },
+  },
+  'sync.index': {
+    methods: ['POST'],
+    pattern: '/sync/index',
+    tokens: [],
+    types: placeholder as {
+      body: { file: Blob }
+      params: {}
+      paramsTuple: []
+      query: { format?: string; locale?: string }
+      response: { token: string; expiresAt: string }
+    },
+  },
+  'pricing.message.compute': {
+    methods: ['POST'],
+    pattern: '/pricing/message/compute',
+    tokens: [],
+    types: placeholder as {
+      body: { coordinates: [number, number] }
+      params: {}
+      paramsTuple: []
+      query: { category?: string; tags?: string[] }
+      response: { profile: any; permissions: string[] }
+    },
+  },
+  'restaurant.insert': {
+    methods: ['GET', 'HEAD'],
+    pattern: '/restaurant/insert/:userId',
+    tokens: [],
+    types: placeholder as {
+      body: {}
+      params: { userId: string }
+      paramsTuple: [string]
+      query: { limit?: number; page?: number }
+      response: { updated: boolean; changes: any }
+    },
+  },
+  'library.appointment.unsubscribe': {
+    methods: ['POST'],
+    pattern: '/library/appointment/unsubscribe',
+    tokens: [],
+    types: placeholder as {
+      body: { userId: string; permissions: string[] }
+      params: {}
+      paramsTuple: []
+      query: { sort?: string; order?: string }
+      response: { status: string; message: string }
+    },
+  },
+  'travel.campaign.group': {
+    methods: ['GET'],
+    pattern: '/travel/campaign/group',
+    tokens: [],
+    types: placeholder as {
+      body: {}
+      params: {}
+      paramsTuple: []
+      query: { limit?: number; page?: number }
+      response: { items: any[]; categories: string[] }
+    },
+  },
+  'image.bookmark': {
+    methods: ['GET'],
+    pattern: '/image/bookmark',
+    tokens: [],
+    types: placeholder as {
+      body: {}
+      params: {}
+      paramsTuple: []
+      query: { search?: string; filter?: string }
+      response: { profile: any; permissions: string[] }
+    },
+  },
+  'schedule.analyze': {
+    methods: ['PUT'],
+    pattern: '/schedule/analyze',
+    tokens: [],
+    types: placeholder as {
+      body: { data: any; metadata?: any }
+      params: {}
+      paramsTuple: []
       query: { format?: string; locale?: string }
       response: { data: any[]; total: number }
     },
   },
+  'history.collaboration.destroy': {
+    methods: ['POST'],
+    pattern: '/history/collaboration/destroy',
+    tokens: [],
+    types: placeholder as {
+      body: { title: string; description?: string }
+      params: {}
+      paramsTuple: []
+      query: { limit?: number; page?: number }
+      response: { data: any[]; total: number }
+    },
+  },
+  'gallery.toggle': {
+    methods: ['GET', 'HEAD'],
+    pattern: '/gallery/toggle',
+    tokens: [],
+    types: placeholder as {
+      body: {}
+      params: {}
+      paramsTuple: []
+      query: { search?: string; filter?: string }
+      response: { data: any[]; total: number }
+    },
+  },
+  'checkout.favorite.like': {
+    methods: ['POST'],
+    pattern: '/checkout/favorite/like/:groupId',
+    tokens: [],
+    types: placeholder as {
+      body: { name: string; email: string }
+      params: { groupId: string }
+      paramsTuple: [string]
+      query: { active?: boolean; archived?: boolean }
+      response: { settings: any; preferences: any }
+    },
+  },
+  'analytics.sync': {
+    methods: ['GET'],
+    pattern: '/analytics/sync/:groupId',
+    tokens: [],
+    types: placeholder as {
+      body: {}
+      params: { groupId: string }
+      paramsTuple: [string]
+      query: { search?: string; filter?: string }
+      response: { items: any[]; categories: string[] }
+    },
+  },
+  'shipping.shipment.kick': {
+    methods: ['PUT'],
+    pattern: '/shipping/shipment/kick',
+    tokens: [],
+    types: placeholder as {
+      body: { settings: Record<string, any> }
+      params: {}
+      paramsTuple: []
+      query: { sort?: string; order?: string }
+      response: { settings: any; preferences: any }
+    },
+  },
+  'discount.edit': {
+    methods: ['GET'],
+    pattern: '/discount/edit',
+    tokens: [],
+    types: placeholder as {
+      body: {}
+      params: {}
+      paramsTuple: []
+      query: { search?: string; filter?: string }
+      response: { token: string; expiresAt: string }
+    },
+  },
+  'authorization.put': {
+    methods: ['GET'],
+    pattern: '/authorization/put',
+    tokens: [],
+    types: placeholder as {
+      body: {}
+      params: {}
+      paramsTuple: []
+      query: { limit?: number; page?: number }
+      response: { items: any[]; categories: string[] }
+    },
+  },
+  'campaign.unassign': {
+    methods: ['PATCH'],
+    pattern: '/campaign/unassign/:id',
+    tokens: [],
+    types: placeholder as {
+      body: { token: string; expiresAt?: string }
+      params: { id: string }
+      paramsTuple: [string]
+      query: { minPrice?: number; maxPrice?: number }
+      response: { profile: any; permissions: string[] }
+    },
+  },
+  'document.destroy': {
+    methods: ['PUT'],
+    pattern: '/document/destroy',
+    tokens: [],
+    types: placeholder as {
+      body: { filters: any[]; options?: any }
+      params: {}
+      paramsTuple: []
+      query: { includeDeleted?: boolean; expand?: string[] }
+      response: { created: boolean; item: any }
+    },
+  },
+  'task.unblock': {
+    methods: ['PUT'],
+    pattern: '/task/unblock/:teamId',
+    tokens: [],
+    types: placeholder as {
+      body: { data: any; metadata?: any }
+      params: { teamId: string }
+      paramsTuple: [string]
+      query: { active?: boolean; archived?: boolean }
+      response: { settings: any; preferences: any }
+    },
+  },
+  'search.combine': {
+    methods: ['POST'],
+    pattern: '/search/combine/:categoryId',
+    tokens: [],
+    types: placeholder as {
+      body: {}
+      params: { categoryId: string }
+      paramsTuple: [string]
+      query: { search?: string; filter?: string }
+      response: { token: string; expiresAt: string }
+    },
+  },
+  'video.review.draft': {
+    methods: ['GET'],
+    pattern: '/video/review/draft/:userId',
+    tokens: [],
+    types: placeholder as {
+      body: {}
+      params: { userId: string }
+      paramsTuple: [string]
+      query: { startDate?: string; endDate?: string }
+      response: { url: string; filename: string }
+    },
+  },
+  'notification.analytics.create': {
+    methods: ['PATCH'],
+    pattern: '/notification/analytics/create/:resourceId',
+    tokens: [],
+    types: placeholder as {
+      body: { query: string; limit?: number }
+      params: { resourceId: string }
+      paramsTuple: [string]
+      query: { active?: boolean; archived?: boolean }
+      response: { url: string; filename: string }
+    },
+  },
+  'upload.approve': {
+    methods: ['GET'],
+    pattern: '/upload/approve',
+    tokens: [],
+    types: placeholder as {
+      body: {}
+      params: {}
+      paramsTuple: []
+      query: { includeDeleted?: boolean; expand?: string[] }
+      response: { status: string; message: string }
+    },
+  },
+  'document.music.like': {
+    methods: ['GET'],
+    pattern: '/document/music/like/:groupId',
+    tokens: [],
+    types: placeholder as {
+      body: {}
+      params: { groupId: string }
+      paramsTuple: [string]
+      query: { limit?: number; page?: number }
+      response: { success: boolean }
+    },
+  },
+  'checkout.pet.refresh': {
+    methods: ['GET'],
+    pattern: '/checkout/pet/refresh',
+    tokens: [],
+    types: placeholder as {
+      body: {}
+      params: {}
+      paramsTuple: []
+      query: { startDate?: string; endDate?: string }
+      response: { data: any[]; total: number }
+    },
+  },
+  'label.store': {
+    methods: ['GET'],
+    pattern: '/label/store',
+    tokens: [],
+    types: placeholder as {
+      body: {}
+      params: {}
+      paramsTuple: []
+      query: { sort?: string; order?: string }
+      response: { updated: boolean; changes: any }
+    },
+  },
+  'access.video.edit': {
+    methods: ['GET'],
+    pattern: '/access/video/edit',
+    tokens: [],
+    types: placeholder as {
+      body: {}
+      params: {}
+      paramsTuple: []
+      query: { active?: boolean; archived?: boolean }
+      response: { results: any[]; pagination: any }
+    },
+  },
+  'bookmark.lock': {
+    methods: ['PUT'],
+    pattern: '/bookmark/lock',
+    tokens: [],
+    types: placeholder as {
+      body: { name: string; email: string }
+      params: {}
+      paramsTuple: []
+      query: { startDate?: string; endDate?: string }
+      response: { success: boolean }
+    },
+  },
+  'download.podcast.activate': {
+    methods: ['POST'],
+    pattern: '/download/podcast/activate',
+    tokens: [],
+    types: placeholder as {
+      body: { data: any; metadata?: any }
+      params: {}
+      paramsTuple: []
+      query: { category?: string; tags?: string[] }
+      response: { updated: boolean; changes: any }
+    },
+  },
+  'audio.share': {
+    methods: ['POST'],
+    pattern: '/audio/share',
+    tokens: [],
+    types: placeholder as {
+      body: { coordinates: [number, number] }
+      params: {}
+      paramsTuple: []
+      query: {}
+      response: { items: any[]; categories: string[] }
+    },
+  },
+  'integration.unpublish': {
+    methods: ['GET', 'HEAD'],
+    pattern: '/integration/unpublish',
+    tokens: [],
+    types: placeholder as {
+      body: {}
+      params: {}
+      paramsTuple: []
+      query: { startDate?: string; endDate?: string }
+      response: any
+    },
+  },
+  'discount.admin.unfollow': {
+    methods: ['GET'],
+    pattern: '/discount/admin/unfollow',
+    tokens: [],
+    types: placeholder as {
+      body: {}
+      params: {}
+      paramsTuple: []
+      query: { minPrice?: number; maxPrice?: number }
+      response: { url: string; filename: string }
+    },
+  },
+  'blog.create': {
+    methods: ['GET'],
+    pattern: '/blog/create',
+    tokens: [],
+    types: placeholder as {
+      body: {}
+      params: {}
+      paramsTuple: []
+      query: { category?: string; tags?: string[] }
+      response: { id: string; name: string }
+    },
+  },
+  'art.show': {
+    methods: ['GET'],
+    pattern: '/art/show',
+    tokens: [],
+    types: placeholder as {
+      body: {}
+      params: {}
+      paramsTuple: []
+      query: { sort?: string; order?: string }
+      response: { url: string; filename: string }
+    },
+  },
+  'reservation.unassign': {
+    methods: ['POST'],
+    pattern: '/reservation/unassign/:categoryId',
+    tokens: [],
+    types: placeholder as {
+      body: { title: string; description?: string }
+      params: { categoryId: string }
+      paramsTuple: [string]
+      query: { limit?: number; page?: number }
+      response: { profile: any; permissions: string[] }
+    },
+  },
+  'image.role.assign': {
+    methods: ['PUT'],
+    pattern: '/image/role/assign',
+    tokens: [],
+    types: placeholder as {
+      body: { filters: any[]; options?: any }
+      params: {}
+      paramsTuple: []
+      query: { search?: string; filter?: string }
+      response: { status: string; message: string }
+    },
+  },
+  'wiki.postpone': {
+    methods: ['GET'],
+    pattern: '/wiki/postpone/:groupId',
+    tokens: [],
+    types: placeholder as {
+      body: {}
+      params: { groupId: string }
+      paramsTuple: [string]
+      query: { startDate?: string; endDate?: string }
+      response: { deleted: boolean; count: number }
+    },
+  },
+  'log.unmute': {
+    methods: ['PUT'],
+    pattern: '/log/unmute/:entityId',
+    tokens: [],
+    types: placeholder as {
+      body: { content: string; tags?: string[] }
+      params: { entityId: string }
+      paramsTuple: [string]
+      query: { startDate?: string; endDate?: string }
+      response: { status: string; message: string }
+    },
+  },
+  'tracking.find': {
+    methods: ['PATCH'],
+    pattern: '/tracking/find/:resourceId',
+    tokens: [],
+    types: placeholder as {
+      body: { file: Blob }
+      params: { resourceId: string }
+      paramsTuple: [string]
+      query: { search?: string; filter?: string }
+      response: { id: string; name: string }
+    },
+  },
+  'community.group': {
+    methods: ['DELETE'],
+    pattern: '/community/group/:userId',
+    tokens: [],
+    types: placeholder as {
+      body: {}
+      params: { userId: string }
+      paramsTuple: [string]
+      query: { includeDeleted?: boolean; expand?: string[] }
+      response: { results: any[]; pagination: any }
+    },
+  },
+  'podcast.download': {
+    methods: ['GET'],
+    pattern: '/podcast/download/:id/:entityId',
+    tokens: [],
+    types: placeholder as {
+      body: {}
+      params: { id: string; entityId: string }
+      paramsTuple: [string, string]
+      query: { minPrice?: number; maxPrice?: number }
+      response: { token: string; expiresAt: string }
+    },
+  },
+  'backup.message.move': {
+    methods: ['GET'],
+    pattern: '/backup/message/move',
+    tokens: [],
+    types: placeholder as {
+      body: {}
+      params: {}
+      paramsTuple: []
+      query: { category?: string; tags?: string[] }
+      response: { token: string; expiresAt: string }
+    },
+  },
+  'restaurant.verify': {
+    methods: ['GET'],
+    pattern: '/restaurant/verify/:id',
+    tokens: [],
+    types: placeholder as {
+      body: {}
+      params: { id: string }
+      paramsTuple: [string]
+      query: {}
+      response: { success: boolean }
+    },
+  },
+  'import.share': {
+    methods: ['PUT'],
+    pattern: '/import/share/:resourceId',
+    tokens: [],
+    types: placeholder as {
+      body: { token: string; expiresAt?: string }
+      params: { resourceId: string }
+      paramsTuple: [string]
+      query: { active?: boolean; archived?: boolean }
+      response: { items: any[]; categories: string[] }
+    },
+  },
+  'task.upload': {
+    methods: ['GET'],
+    pattern: '/task/upload/:resourceId',
+    tokens: [],
+    types: placeholder as {
+      body: {}
+      params: { resourceId: string }
+      paramsTuple: [string]
+      query: { minPrice?: number; maxPrice?: number }
+      response: { url: string; filename: string }
+    },
+  },
+  'reservation.unmute': {
+    methods: ['GET'],
+    pattern: '/reservation/unmute',
+    tokens: [],
+    types: placeholder as {
+      body: {}
+      params: {}
+      paramsTuple: []
+      query: { startDate?: string; endDate?: string }
+      response: { profile: any; permissions: string[] }
+    },
+  },
+  'pricing.store': {
+    methods: ['GET'],
+    pattern: '/pricing/store/:groupId/:userId',
+    tokens: [],
+    types: placeholder as {
+      body: {}
+      params: { groupId: string; userId: string }
+      paramsTuple: [string, string]
+      query: {}
+      response: any
+    },
+  },
+  'campaign.combine': {
+    methods: ['PATCH'],
+    pattern: '/campaign/combine',
+    tokens: [],
+    types: placeholder as {
+      body: { userId: string; permissions: string[] }
+      params: {}
+      paramsTuple: []
+      query: { search?: string; filter?: string }
+      response: { updated: boolean; changes: any }
+    },
+  },
+  'service.generate': {
+    methods: ['GET'],
+    pattern: '/service/generate',
+    tokens: [],
+    types: placeholder as {
+      body: {}
+      params: {}
+      paramsTuple: []
+      query: { sort?: string; order?: string }
+      response: { status: string; message: string }
+    },
+  },
+  'garden.disable': {
+    methods: ['POST'],
+    pattern: '/garden/disable',
+    tokens: [],
+    types: placeholder as {
+      body: { priority: string; status?: string }
+      params: {}
+      paramsTuple: []
+      query: { active?: boolean; archived?: boolean }
+      response: { created: boolean; item: any }
+    },
+  },
+  'forum.join': {
+    methods: ['PUT'],
+    pattern: '/forum/join',
+    tokens: [],
+    types: placeholder as {
+      body: { settings: Record<string, any> }
+      params: {}
+      paramsTuple: []
+      query: { limit?: number; page?: number }
+      response: { id: string; name: string }
+    },
+  },
+  'weather.validate': {
+    methods: ['PATCH'],
+    pattern: '/weather/validate/:id',
+    tokens: [],
+    types: placeholder as {
+      body: { settings: Record<string, any> }
+      params: { id: string }
+      paramsTuple: [string]
+      query: { sort?: string; order?: string }
+      response: { data: any[]; total: number }
+    },
+  },
+  'weather.paginate': {
+    methods: ['GET'],
+    pattern: '/weather/paginate',
+    tokens: [],
+    types: placeholder as {
+      body: {}
+      params: {}
+      paramsTuple: []
+      query: { minPrice?: number; maxPrice?: number }
+      response: { results: any[]; pagination: any }
+    },
+  },
+  'image.authentication.list': {
+    methods: ['PATCH'],
+    pattern: '/image/authentication/list/:resourceId',
+    tokens: [],
+    types: placeholder as {
+      body: { query: string; limit?: number }
+      params: { resourceId: string }
+      paramsTuple: [string]
+      query: { includeDeleted?: boolean; expand?: string[] }
+      response: { id: string; name: string }
+    },
+  },
+  'recommendation.recipe.switch': {
+    methods: ['POST'],
+    pattern: '/recommendation/recipe/switch/:id',
+    tokens: [],
+    types: placeholder as {
+      body: { content: string; tags?: string[] }
+      params: { id: string }
+      paramsTuple: [string]
+      query: { search?: string; filter?: string }
+      response: { status: string; message: string }
+    },
+  },
+  'file.block': {
+    methods: ['POST'],
+    pattern: '/file/block',
+    tokens: [],
+    types: placeholder as {
+      body: { token: string; expiresAt?: string }
+      params: {}
+      paramsTuple: []
+      query: { includeDeleted?: boolean; expand?: string[] }
+      response: { status: string; message: string }
+    },
+  },
+  'coupon.backup': {
+    methods: ['POST'],
+    pattern: '/coupon/backup',
+    tokens: [],
+    types: placeholder as {
+      body: { filters: any[]; options?: any }
+      params: {}
+      paramsTuple: []
+      query: { format?: string; locale?: string }
+      response: { created: boolean; item: any }
+    },
+  },
+  'label.authorization.unblock': {
+    methods: ['DELETE'],
+    pattern: '/label/authorization/unblock',
+    tokens: [],
+    types: placeholder as {
+      body: {}
+      params: {}
+      paramsTuple: []
+      query: {}
+      response: { data: any[]; total: number }
+    },
+  },
+  'maintenance.document.unpublish': {
+    methods: ['POST'],
+    pattern: '/maintenance/document/unpublish',
+    tokens: [],
+    types: placeholder as {
+      body: { filters: any[]; options?: any }
+      params: {}
+      paramsTuple: []
+      query: { category?: string; tags?: string[] }
+      response: { url: string; filename: string }
+    },
+  },
+  'finance.unfollow': {
+    methods: ['GET'],
+    pattern: '/finance/unfollow/:groupId',
+    tokens: [],
+    types: placeholder as {
+      body: {}
+      params: { groupId: string }
+      paramsTuple: [string]
+      query: { includeDeleted?: boolean; expand?: string[] }
+      response: { results: any[]; pagination: any }
+    },
+  },
+  'reservation.store': {
+    methods: ['PUT'],
+    pattern: '/reservation/store',
+    tokens: [],
+    types: placeholder as {
+      body: { data: any; metadata?: any }
+      params: {}
+      paramsTuple: []
+      query: {}
+      response: { settings: any; preferences: any }
+    },
+  },
+  'integration.group': {
+    methods: ['GET'],
+    pattern: '/integration/group',
+    tokens: [],
+    types: placeholder as {
+      body: {}
+      params: {}
+      paramsTuple: []
+      query: {}
+      response: { status: string; message: string }
+    },
+  },
+  'user.product.sort': {
+    methods: ['PUT'],
+    pattern: '/user/product/sort/:id',
+    tokens: [],
+    types: placeholder as {
+      body: { amount: number; currency?: string }
+      params: { id: string }
+      paramsTuple: [string]
+      query: { active?: boolean; archived?: boolean }
+      response: { success: boolean }
+    },
+  },
+  'admin.draft': {
+    methods: ['GET'],
+    pattern: '/admin/draft',
+    tokens: [],
+    types: placeholder as {
+      body: {}
+      params: {}
+      paramsTuple: []
+      query: { category?: string; tags?: string[] }
+      response: any
+    },
+  },
+  'knowledge.unpublish': {
+    methods: ['GET'],
+    pattern: '/knowledge/unpublish/:id/:itemId',
+    tokens: [],
+    types: placeholder as {
+      body: {}
+      params: { id: string; itemId: string }
+      paramsTuple: [string, string]
+      query: { sort?: string; order?: string }
+      response: { token: string; expiresAt: string }
+    },
+  },
+  'shipment.access.unmute': {
+    methods: ['GET'],
+    pattern: '/shipment/access/unmute',
+    tokens: [],
+    types: placeholder as {
+      body: {}
+      params: {}
+      paramsTuple: []
+      query: { active?: boolean; archived?: boolean }
+      response: { deleted: boolean; count: number }
+    },
+  },
+  'recipe.sync': {
+    methods: ['GET'],
+    pattern: '/recipe/sync',
+    tokens: [],
+    types: placeholder as {
+      body: {}
+      params: {}
+      paramsTuple: []
+      query: { active?: boolean; archived?: boolean }
+      response: { results: any[]; pagination: any }
+    },
+  },
+  'chat.confirm': {
+    methods: ['POST'],
+    pattern: '/chat/confirm/:itemId',
+    tokens: [],
+    types: placeholder as {
+      body: {}
+      params: { itemId: string }
+      paramsTuple: [string]
+      query: {}
+      response: { token: string; expiresAt: string }
+    },
+  },
 } as const satisfies Record<string, AdonisEndpoint>
+
+type GeneratedRoutes = typeof routes
+
+/**
+ * Pre-computed API definition tree
+ */
+export interface GeneratedApiDefinition {
+  offer: {
+    blog: {
+      share: GeneratedRoutes['offer.blog.share']
+    }
+  }
+  document: {
+    archive: GeneratedRoutes['document.archive']
+    destroy: GeneratedRoutes['document.destroy']
+    music: {
+      like: GeneratedRoutes['document.music.like']
+    }
+  }
+  education: {
+    quality: {
+      block: GeneratedRoutes['education.quality.block']
+    }
+  }
+  coupon: {
+    index: GeneratedRoutes['coupon.index']
+    backup: GeneratedRoutes['coupon.backup']
+  }
+  language: {
+    market: {
+      leave: GeneratedRoutes['language.market.leave']
+    }
+  }
+  product: {
+    sync: GeneratedRoutes['product.sync']
+  }
+  cart: {
+    search: GeneratedRoutes['cart.search']
+  }
+  garden: {
+    upload: GeneratedRoutes['garden.upload']
+    disable: GeneratedRoutes['garden.disable']
+  }
+  wiki: {
+    archive: GeneratedRoutes['wiki.archive']
+    postpone: GeneratedRoutes['wiki.postpone']
+  }
+  feedback: {
+    sort: GeneratedRoutes['feedback.sort']
+  }
+  fashion: {
+    bookmark: GeneratedRoutes['fashion.bookmark']
+  }
+  filter: {
+    service: {
+      move: GeneratedRoutes['filter.service.move']
+    }
+    migrate: GeneratedRoutes['filter.migrate']
+  }
+  travel: {
+    discount: {
+      generate: GeneratedRoutes['travel.discount.generate']
+    }
+    campaign: {
+      group: GeneratedRoutes['travel.campaign.group']
+    }
+  }
+  invoice: {
+    edit: GeneratedRoutes['invoice.edit']
+  }
+  comment: {
+    switch: GeneratedRoutes['comment.switch']
+  }
+  billing: {
+    show: GeneratedRoutes['billing.show']
+  }
+  sync: {
+    user: {
+      postpone: GeneratedRoutes['sync.user.postpone']
+    }
+    index: GeneratedRoutes['sync.index']
+  }
+  label: {
+    generate: GeneratedRoutes['label.generate']
+    download: GeneratedRoutes['label.download']
+    store: GeneratedRoutes['label.store']
+    authorization: {
+      unblock: GeneratedRoutes['label.authorization.unblock']
+    }
+  }
+  sports: {
+    unpublish: GeneratedRoutes['sports.unpublish']
+  }
+  watchlist: {
+    unmute: GeneratedRoutes['watchlist.unmute']
+  }
+  security: {
+    validate: GeneratedRoutes['security.validate']
+  }
+  export: {
+    sync: GeneratedRoutes['export.sync']
+  }
+  shipment: {
+    leave: GeneratedRoutes['shipment.leave']
+    decline: GeneratedRoutes['shipment.decline']
+    access: {
+      unmute: GeneratedRoutes['shipment.access.unmute']
+    }
+  }
+  search: {
+    patch: GeneratedRoutes['search.patch']
+    combine: GeneratedRoutes['search.combine']
+  }
+  chat: {
+    transfer: GeneratedRoutes['chat.transfer']
+    confirm: GeneratedRoutes['chat.confirm']
+  }
+  checkout: {
+    team: {
+      index: GeneratedRoutes['checkout.team.index']
+    }
+    favorite: {
+      like: GeneratedRoutes['checkout.favorite.like']
+    }
+    pet: {
+      refresh: GeneratedRoutes['checkout.pet.refresh']
+    }
+  }
+  team: {
+    block: GeneratedRoutes['team.block']
+  }
+  order: {
+    schedule: {
+      enable: GeneratedRoutes['order.schedule.enable']
+    }
+  }
+  podcast: {
+    ban: GeneratedRoutes['podcast.ban']
+    download: GeneratedRoutes['podcast.download']
+  }
+  library: {
+    invite: GeneratedRoutes['library.invite']
+    appointment: {
+      unsubscribe: GeneratedRoutes['library.appointment.unsubscribe']
+    }
+  }
+  access: {
+    get: GeneratedRoutes['access.get']
+    video: {
+      edit: GeneratedRoutes['access.video.edit']
+    }
+  }
+  pricing: {
+    message: {
+      compute: GeneratedRoutes['pricing.message.compute']
+    }
+    store: GeneratedRoutes['pricing.store']
+  }
+  restaurant: {
+    insert: GeneratedRoutes['restaurant.insert']
+    verify: GeneratedRoutes['restaurant.verify']
+  }
+  image: {
+    bookmark: GeneratedRoutes['image.bookmark']
+    role: {
+      assign: GeneratedRoutes['image.role.assign']
+    }
+    authentication: {
+      list: GeneratedRoutes['image.authentication.list']
+    }
+  }
+  schedule: {
+    analyze: GeneratedRoutes['schedule.analyze']
+  }
+  history: {
+    collaboration: {
+      destroy: GeneratedRoutes['history.collaboration.destroy']
+    }
+  }
+  gallery: {
+    toggle: GeneratedRoutes['gallery.toggle']
+  }
+  analytics: {
+    sync: GeneratedRoutes['analytics.sync']
+  }
+  shipping: {
+    shipment: {
+      kick: GeneratedRoutes['shipping.shipment.kick']
+    }
+  }
+  discount: {
+    edit: GeneratedRoutes['discount.edit']
+    admin: {
+      unfollow: GeneratedRoutes['discount.admin.unfollow']
+    }
+  }
+  authorization: {
+    put: GeneratedRoutes['authorization.put']
+  }
+  campaign: {
+    unassign: GeneratedRoutes['campaign.unassign']
+    combine: GeneratedRoutes['campaign.combine']
+  }
+  task: {
+    unblock: GeneratedRoutes['task.unblock']
+    upload: GeneratedRoutes['task.upload']
+  }
+  video: {
+    review: {
+      draft: GeneratedRoutes['video.review.draft']
+    }
+  }
+  notification: {
+    analytics: {
+      create: GeneratedRoutes['notification.analytics.create']
+    }
+  }
+  upload: {
+    approve: GeneratedRoutes['upload.approve']
+  }
+  bookmark: {
+    lock: GeneratedRoutes['bookmark.lock']
+  }
+  download: {
+    podcast: {
+      activate: GeneratedRoutes['download.podcast.activate']
+    }
+  }
+  audio: {
+    share: GeneratedRoutes['audio.share']
+  }
+  integration: {
+    unpublish: GeneratedRoutes['integration.unpublish']
+    group: GeneratedRoutes['integration.group']
+  }
+  blog: {
+    create: GeneratedRoutes['blog.create']
+  }
+  art: {
+    show: GeneratedRoutes['art.show']
+  }
+  reservation: {
+    unassign: GeneratedRoutes['reservation.unassign']
+    unmute: GeneratedRoutes['reservation.unmute']
+    store: GeneratedRoutes['reservation.store']
+  }
+  log: {
+    unmute: GeneratedRoutes['log.unmute']
+  }
+  tracking: {
+    find: GeneratedRoutes['tracking.find']
+  }
+  community: {
+    group: GeneratedRoutes['community.group']
+  }
+  backup: {
+    message: {
+      move: GeneratedRoutes['backup.message.move']
+    }
+  }
+  import: {
+    share: GeneratedRoutes['import.share']
+  }
+  service: {
+    generate: GeneratedRoutes['service.generate']
+  }
+  forum: {
+    join: GeneratedRoutes['forum.join']
+  }
+  weather: {
+    validate: GeneratedRoutes['weather.validate']
+    paginate: GeneratedRoutes['weather.paginate']
+  }
+  recommendation: {
+    recipe: {
+      switch: GeneratedRoutes['recommendation.recipe.switch']
+    }
+  }
+  file: {
+    block: GeneratedRoutes['file.block']
+  }
+  maintenance: {
+    document: {
+      unpublish: GeneratedRoutes['maintenance.document.unpublish']
+    }
+  }
+  finance: {
+    unfollow: GeneratedRoutes['finance.unfollow']
+  }
+  user: {
+    product: {
+      sort: GeneratedRoutes['user.product.sort']
+    }
+  }
+  admin: {
+    draft: GeneratedRoutes['admin.draft']
+  }
+  knowledge: {
+    unpublish: GeneratedRoutes['knowledge.unpublish']
+  }
+  recipe: {
+    sync: GeneratedRoutes['recipe.sync']
+  }
+}
+
+export const generatedRegistry = {
+  routes,
+  $tree: {} as GeneratedApiDefinition,
+}

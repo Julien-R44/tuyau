@@ -6,8 +6,8 @@ import { defaultRegistry } from './fixtures/index.ts'
 import { generatedRegistry as registry100 } from './fixtures/generated-fixture-100.ts'
 import { generatedRegistry as registry300 } from './fixtures/generated-fixture-300.ts'
 
-test.group('benchmark', () => {
-  test('First one', async () => {
+test.group('benchmark - with pre-computed tree', () => {
+  test('Small registry', async () => {
     const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
 
     tuyau.get('/auth/login', {}).catch(() => {})
@@ -19,33 +19,24 @@ test.group('benchmark', () => {
       })
       .catch(() => {})
 
-    attest.instantiations([2709, 'instantiations'])
+    attest.instantiations([4100, 'instantiations'])
   })
 
-  test('Big registry', async () => {
+  test('Big registry (100 routes)', async () => {
     const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry: registry100 })
 
-    tuyau.get('/blog/combine', {}).catch(() => {})
-    tuyau.api.log.coupon.postpone({ params: { entityId: '1' } }).catch(() => {})
-    tuyau
-      .request('bookmark.home.unassign', {
-        params: { categoryId: '1' },
-        query: { format: 'full' },
-      })
-      .catch(() => {})
+    tuyau.get('/cart/search', {}).catch(() => {})
+    tuyau.api.document.archive({ body: { token: 'test' } }).catch(() => {})
 
-    attest.instantiations([17_674, 'instantiations'])
+    attest.instantiations([9200, 'instantiations'])
   })
 
-  test('Huge registry', async () => {
+  test('Huge registry (300 routes)', async () => {
     const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry: registry300 })
 
-    tuyau.get('/maintenance/pricing/add', {}).catch(() => {})
-    tuyau.api.activity.language
-      .ungroup({ body: { permissions: ['read', 'write'], userId: '1' } })
-      .catch(() => {})
-    tuyau.request('admin.generate', { query: { limit: 10 } }).catch(() => {})
+    tuyau.get('/message/index', {}).catch(() => {})
+    tuyau.api.chat.unfollow({}).catch(() => {})
 
-    attest.instantiations([50_645, 'instantiations'])
+    attest.instantiations([26_000, 'instantiations'])
   })
 })

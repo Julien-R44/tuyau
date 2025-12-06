@@ -5,9 +5,12 @@ import { createTuyau } from '../src/client/tuyau.ts'
 import { defaultRegistry as registry } from './fixtures/index.ts'
 import { TuyauHTTPError, TuyauNetworkError } from '../src/client/errors.ts'
 
+const createTestTuyau = (baseUrl: string = 'http://localhost:3333') =>
+  createTuyau({ baseUrl, registry })
+
 test.group('Client | Chained', () => {
   test('post something', async ({ assert }) => {
-    const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry })
+    const tuyau = createTestTuyau()
 
     nock('http://localhost:3333').post('/auth/login').reply(200, { token: '123' })
     const result = await tuyau.api.auth.login({ body: { email: 'foo@ok.com', password: 'secret' } })
@@ -16,7 +19,7 @@ test.group('Client | Chained', () => {
   })
 
   test('network error', async ({ assert }) => {
-    const tuyau = createTuyau({ baseUrl: 'http://localhost:9999', registry })
+    const tuyau = createTestTuyau('http://localhost:9999')
 
     let error: any = null
     await tuyau.api.auth
@@ -30,7 +33,7 @@ test.group('Client | Chained', () => {
     assert.include(error!.message, 'Network error: POST /auth/login')
   })
 
-  test('post with query parameters', async ({}) => {
+  test('post with query parameters', async () => {
     const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry })
 
     nock('http://localhost:3333')
@@ -153,21 +156,30 @@ test.group('Client | Chained', () => {
   })
 
   test('multiple query params', async () => {
+    const inlineRoutes = {
+      'users.index': {
+        methods: ['GET'] as 'GET'[],
+        pattern: '/users',
+        tokens: [{ old: '/users', type: 0 as const, val: 'users', end: '' }],
+        types: {} as any as {
+          body: {}
+          params: {}
+          paramsTuple: []
+          query: { foo: string; bar: string; ids: (string | number)[] }
+          response: { id: string }
+        },
+      },
+    }
+
+    interface InlineApi {
+      users: { index: (typeof inlineRoutes)['users.index'] }
+    }
+
     const tuyau = createTuyau({
       baseUrl: 'http://localhost:3333',
       registry: {
-        'users.index': {
-          methods: ['GET'],
-          pattern: '/users',
-          tokens: [{ old: '/users', type: 0, val: 'users', end: '' }],
-          types: {} as any as {
-            body: {}
-            params: {}
-            paramsTuple: []
-            query: { foo: string; bar: string; ids: (string | number)[] }
-            response: { id: string }
-          },
-        },
+        routes: inlineRoutes,
+        $tree: {} as InlineApi,
       },
     })
 

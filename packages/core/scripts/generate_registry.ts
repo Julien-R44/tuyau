@@ -370,7 +370,18 @@ function getParamsFromPattern(pattern: string) {
   }
 }
 
-function generateRoute(existingNames: Set<unknown> | undefined) {
+interface RouteInfo {
+  routeName: string
+  methods: string[]
+  pattern: string
+  params: string
+  paramsTuple: string
+  body: string
+  query: string
+  response: string
+}
+
+function generateRoute(existingNames: Set<unknown> | undefined): RouteInfo {
   const routeName = generateRouteName(existingNames)
   const methods = getRandomMethod()
   const pattern = generatePattern(routeName)
@@ -384,40 +395,117 @@ function generateRoute(existingNames: Set<unknown> | undefined) {
   const query = faker.helpers.arrayElement(queryTypes)
   const response = faker.helpers.arrayElement(responseTypes)
 
-  return `  '${routeName}': {
-    methods: [${methods.map((m) => `'${m}'`).join(', ')}],
-    pattern: '${pattern}',
+  return { routeName, methods, pattern, params, paramsTuple, body, query, response }
+}
+
+function routeToRegistryEntry(route: RouteInfo): string {
+  return `  '${route.routeName}': {
+    methods: [${route.methods.map((m) => `'${m}'`).join(', ')}],
+    pattern: '${route.pattern}',
     tokens: [],
     types: placeholder as {
-      body: ${body}
-      params: ${params}
-      paramsTuple: ${paramsTuple}
-      query: ${query}
-      response: ${response}
+      body: ${route.body}
+      params: ${route.params}
+      paramsTuple: ${route.paramsTuple}
+      query: ${route.query}
+      response: ${route.response}
     },
   },`
 }
 
+/**
+ * Convert snake_case to camelCase
+ */
+function toCamelCase(str: string): string {
+  return str.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase())
+}
+
+/**
+ * Build tree structure from routes
+ */
+function buildTreeStructure(routes: RouteInfo[]): Map<string, any> {
+  const tree = new Map<string, any>()
+
+  for (const route of routes) {
+    const segments = route.routeName.split('.')
+    let current = tree
+
+    for (let i = 0; i < segments.length; i++) {
+      const segment = toCamelCase(segments[i])
+      const isLast = i === segments.length - 1
+
+      if (isLast) {
+        current.set(segment, { routeName: route.routeName })
+      } else {
+        if (!current.has(segment)) {
+          current.set(segment, new Map<string, any>())
+        }
+        current = current.get(segment)
+      }
+    }
+  }
+
+  return tree
+}
+
+/**
+ * Generate TypeScript interface from tree structure
+ */
+function generateTreeInterface(tree: Map<string, any>, indent: number = 2): string {
+  const spaces = ' '.repeat(indent)
+  const lines: string[] = []
+
+  for (const [key, value] of tree) {
+    if (value instanceof Map) {
+      lines.push(`${spaces}${key}: {`)
+      lines.push(generateTreeInterface(value, indent + 2))
+      lines.push(`${spaces}}`)
+    } else {
+      lines.push(`${spaces}${key}: GeneratedRoutes['${value.routeName}']`)
+    }
+  }
+
+  return lines.join('\n')
+}
+
 function generateFixture(numberOfRoutes: number) {
-  const routes = []
+  const routes: RouteInfo[] = []
   const existingNames = new Set()
 
   for (let i = 0; i < numberOfRoutes; i++) {
     routes.push(generateRoute(existingNames))
   }
 
-  return `import { AdonisEndpoint } from '../src/types.ts'
+  const registryEntries = routes.map(routeToRegistryEntry).join('\n')
+  const tree = buildTreeStructure(routes)
+  const treeInterface = generateTreeInterface(tree)
+
+  return `import type { AdonisEndpoint } from '../../src/client/types/types.ts'
 
 const placeholder: any = {}
 
-export const generatedRegistry = {
-${routes.join('\n')}
+const routes = {
+${registryEntries}
 } as const satisfies Record<string, AdonisEndpoint>
+
+type GeneratedRoutes = typeof routes
+
+/**
+ * Pre-computed API definition tree
+ */
+export interface GeneratedApiDefinition {
+${treeInterface}
+}
+
+export const generatedRegistry = {
+  routes,
+  $tree: {} as GeneratedApiDefinition,
+}
 `
 }
 
 const fixtureContent = generateFixture(nbRoutes)
-const outputPath = path.join(process.cwd(), `generated-fixture-${nbRoutes}.ts`)
+const outputPath = path.join(process.cwd(), `tests/fixtures/generated-fixture-${nbRoutes}.ts`)
 
 fs.writeFileSync(outputPath, fixtureContent)
 

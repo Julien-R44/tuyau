@@ -13,26 +13,35 @@ import {
 } from './utils.ts'
 import type {
   AdonisEndpoint,
-  BuildNamed,
   EndpointByMethodPattern,
+  InferRoutes,
+  InferTree,
   Method,
   PatternsByMethod,
   RegistryGroupedByMethod,
   RequestArgs,
   StrKeys,
+  TransformApiDefinition,
   TuyauConfiguration,
+  TuyauRegistry,
 } from './types/types.ts'
 
 /**
  * Main client class for making HTTP requests to AdonisJS endpoints
  * Provides both fluent API and direct method calling capabilities
+ *
+ * @typeParam Reg - The full registry containing routes and $tree
+ * @typeParam Routes - The routes record extracted from the registry
  */
-export class Tuyau<R extends Record<string, AdonisEndpoint>> {
-  readonly api: BuildNamed<R>
-  readonly urlFor: UrlFor<RegistryGroupedByMethod<R>>
-  readonly #entries: [StrKeys<R>, R[StrKeys<R>]][]
+export class Tuyau<
+  Reg extends TuyauRegistry,
+  Routes extends Record<string, AdonisEndpoint> = InferRoutes<Reg>,
+> {
+  readonly api: TransformApiDefinition<InferTree<Reg>>
+  readonly urlFor: UrlFor<RegistryGroupedByMethod<Routes>>
+  readonly #entries: [StrKeys<Routes>, Routes[StrKeys<Routes>]][]
   readonly #client: KyInstance
-  readonly #config: TuyauConfiguration<R>
+  readonly #config: TuyauConfiguration<Reg>
 
   /**
    * Merges the default Ky configuration with user-provided config
@@ -69,10 +78,13 @@ export class Tuyau<R extends Record<string, AdonisEndpoint>> {
   /**
    * Initializes the Tuyau client with provided configuration
    */
-  constructor(config: TuyauConfiguration<R>) {
+  constructor(config: TuyauConfiguration<Reg>) {
     this.#config = config
     this.api = this.#makeNamed([])
-    this.#entries = Object.entries(this.#config.registry) as [StrKeys<R>, R[StrKeys<R>]][]
+    this.#entries = Object.entries(this.#config.registry.routes) as [
+      StrKeys<Routes>,
+      Routes[StrKeys<Routes>],
+    ][]
     this.urlFor = this.#createUrlBuilder()
 
     this.#applyPlugins()
@@ -214,79 +226,79 @@ export class Tuyau<R extends Record<string, AdonisEndpoint>> {
   /**
    * Makes a GET request to the specified pattern
    */
-  get<P extends PatternsByMethod<R, 'GET'>>(
+  get<P extends PatternsByMethod<Routes, 'GET'>>(
     pattern: P,
-    args: RequestArgs<EndpointByMethodPattern<R, 'GET', P>>,
-  ): Promise<EndpointByMethodPattern<R, 'GET', P>['types']['response']> {
+    args: RequestArgs<EndpointByMethodPattern<Routes, 'GET', P>>,
+  ): Promise<EndpointByMethodPattern<Routes, 'GET', P>['types']['response']> {
     return this.#request('GET', pattern, args)
   }
 
   /**
    * Makes a POST request to the specified pattern
    */
-  post<P extends PatternsByMethod<R, 'POST'>>(
+  post<P extends PatternsByMethod<Routes, 'POST'>>(
     pattern: P,
-    args: RequestArgs<EndpointByMethodPattern<R, 'POST', P>>,
-  ): Promise<EndpointByMethodPattern<R, 'POST', P>['types']['response']> {
+    args: RequestArgs<EndpointByMethodPattern<Routes, 'POST', P>>,
+  ): Promise<EndpointByMethodPattern<Routes, 'POST', P>['types']['response']> {
     return this.#request('POST', pattern, args)
   }
 
   /**
    * Makes a PUT request to the specified pattern
    */
-  put<P extends PatternsByMethod<R, 'PUT'>>(
+  put<P extends PatternsByMethod<Routes, 'PUT'>>(
     pattern: P,
-    args: RequestArgs<EndpointByMethodPattern<R, 'PUT', P>>,
-  ): Promise<EndpointByMethodPattern<R, 'PUT', P>['types']['response']> {
+    args: RequestArgs<EndpointByMethodPattern<Routes, 'PUT', P>>,
+  ): Promise<EndpointByMethodPattern<Routes, 'PUT', P>['types']['response']> {
     return this.#request('PUT', pattern, args)
   }
 
   /**
    * Makes a PATCH request to the specified pattern
    */
-  patch<P extends PatternsByMethod<R, 'PATCH'>>(
+  patch<P extends PatternsByMethod<Routes, 'PATCH'>>(
     pattern: P,
-    args: RequestArgs<EndpointByMethodPattern<R, 'PATCH', P>>,
-  ): Promise<EndpointByMethodPattern<R, 'PATCH', P>['types']['response']> {
+    args: RequestArgs<EndpointByMethodPattern<Routes, 'PATCH', P>>,
+  ): Promise<EndpointByMethodPattern<Routes, 'PATCH', P>['types']['response']> {
     return this.#request('PATCH', pattern, args)
   }
 
   /**
    * Makes a DELETE request to the specified pattern
    */
-  delete<P extends PatternsByMethod<R, 'DELETE'>>(
+  delete<P extends PatternsByMethod<Routes, 'DELETE'>>(
     pattern: P,
-    args: RequestArgs<EndpointByMethodPattern<R, 'DELETE', P>>,
-  ): Promise<EndpointByMethodPattern<R, 'DELETE', P>['types']['response']> {
+    args: RequestArgs<EndpointByMethodPattern<Routes, 'DELETE', P>>,
+  ): Promise<EndpointByMethodPattern<Routes, 'DELETE', P>['types']['response']> {
     return this.#request('DELETE', pattern, args)
   }
 
   /**
    * Makes a HEAD request to the specified pattern
    */
-  head<P extends PatternsByMethod<R, 'HEAD'>>(
+  head<P extends PatternsByMethod<Routes, 'HEAD'>>(
     pattern: P,
-    args: RequestArgs<EndpointByMethodPattern<R, 'HEAD', P>>,
-  ): Promise<EndpointByMethodPattern<R, 'HEAD', P>['types']['response']> {
+    args: RequestArgs<EndpointByMethodPattern<Routes, 'HEAD', P>>,
+  ): Promise<EndpointByMethodPattern<Routes, 'HEAD', P>['types']['response']> {
     return this.#request('HEAD', pattern, args)
   }
 
   /**
    * Makes a request to a named endpoint
    */
-  request<Name extends StrKeys<R>>(
+  request<Name extends StrKeys<Routes>>(
     name: Name,
-    args: RequestArgs<R[Name]>,
-  ): Promise<R[Name]['types']['response']> {
-    const def = this.#config.registry[name]
+    args: RequestArgs<Routes[Name]>,
+  ): Promise<Routes[Name]['types']['response']> {
+    const def = this.#config.registry.routes[name]
     return this.#doFetch(name, def.methods[0], args)
   }
 
   /**
    * Gets route information by name including URL and HTTP method
    */
-  getRoute<Name extends StrKeys<R>>(name: Name, args: RequestArgs<R[Name]>) {
-    const def = this.#config.registry[name]
+  getRoute<Name extends StrKeys<Routes>>(name: Name, args: RequestArgs<Routes[Name]>) {
+    const def = this.#config.registry.routes[name]
     if (!def) throw new Error(`Route ${String(name)} not found`)
 
     const url = this.#buildUrl(name, def.methods[0], args)
@@ -299,7 +311,7 @@ export class Tuyau<R extends Record<string, AdonisEndpoint>> {
   #makeNamed(segments: string[]): any {
     const routeName = segmentsToRouteName(segments)
 
-    const def = this.#config.registry[routeName]
+    const def = this.#config.registry.routes[routeName]
     if (def) {
       const fn = (args: any) => this.#doFetch(routeName, def.methods[0], args)
       return new Proxy(fn, {
@@ -314,8 +326,6 @@ export class Tuyau<R extends Record<string, AdonisEndpoint>> {
 /**
  * Factory function to create a new Tuyau client instance
  */
-export function createTuyau<R extends Record<string, AdonisEndpoint>>(
-  config: TuyauConfiguration<R>,
-) {
-  return new Tuyau(config)
+export function createTuyau<Reg extends TuyauRegistry>(config: TuyauConfiguration<Reg>) {
+  return new Tuyau<Reg>(config)
 }

@@ -95,6 +95,64 @@ function generateRouteParams(route: ScannedRoute) {
 }
 
 /**
+ * Convert a string to camelCase
+ * Examples: 'get_me' -> 'getMe', 'foo_bar_baz' -> 'fooBarBaz'
+ */
+function toCamelCase(str: string): string {
+  return str.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase())
+}
+
+/**
+ * Build a nested tree structure from flat route names
+ * Example: ['auth.login', 'auth.register', 'users.show'] ->
+ * { auth: { login: ..., register: ... }, users: { show: ... } }
+ */
+function buildTreeStructure(routes: ScannedRoute[]): Map<string, any> {
+  const tree = new Map<string, any>()
+
+  for (const route of routes) {
+    const segments = route.name.split('.')
+    let current = tree
+
+    for (let i = 0; i < segments.length; i++) {
+      const segment = toCamelCase(segments[i])
+      const isLast = i === segments.length - 1
+
+      if (isLast) {
+        current.set(segment, { routeName: route.name, route })
+      } else {
+        if (!current.has(segment)) {
+          current.set(segment, new Map<string, any>())
+        }
+        current = current.get(segment)
+      }
+    }
+  }
+
+  return tree
+}
+
+/**
+ * Generate TypeScript interface from tree structure
+ */
+function generateTreeInterface(tree: Map<string, any>, indent: number = 2): string {
+  const spaces = ' '.repeat(indent)
+  const lines: string[] = []
+
+  for (const [key, value] of tree) {
+    if (value instanceof Map) {
+      lines.push(`${spaces}${key}: {`)
+      lines.push(generateTreeInterface(value, indent + 2))
+      lines.push(`${spaces}}`)
+    } else {
+      lines.push(`${spaces}${key}: Registry['${value.routeName}']`)
+    }
+  }
+
+  return lines.join('\n')
+}
+
+/**
  * Normalize import paths in type strings by converting relative paths to subpath imports.
  * For example: `import('app/validators/user.ts')` becomes `import('#app/validators/user')`
  *
@@ -169,15 +227,25 @@ function generateRegistryEntry(route: ScannedRoute): string {
  */
 function generateRuntimeContent(routes: ScannedRoute[]): string {
   const registryEntries = routes.map(generateRuntimeRegistryEntry).join(',\n')
+  const tree = buildTreeStructure(routes)
+  const treeInterface = generateTreeInterface(tree)
 
   return `/* eslint-disable prettier/prettier */
-import { type AdonisEndpoint } from '@tuyau/core/types'
 import type { Registry } from './registry.schema.d.ts'
 const placeholder: any = {}
 
+interface ApiDefinition {
+${treeInterface}
+}
+
+const routes = {
+${registryEntries},
+}
+
 export const registry = {
-${registryEntries}
-} as const satisfies Record<string, AdonisEndpoint>
+  routes,
+  $tree: {} as ApiDefinition,
+}
 `
 }
 
@@ -208,18 +276,30 @@ declare module '@tuyau/core/types' {
  */
 function generateRegistryContent(routes: ScannedRoute[]): string {
   const registryEntries = routes.map(generateRegistryEntry).join(',\n')
+  const tree = buildTreeStructure(routes)
+  const treeInterface = generateTreeInterface(tree)
 
   return `/* eslint-disable prettier/prettier */
 import type { AdonisEndpoint } from '@tuyau/core/types'
 import type { Infer } from '@vinejs/vine/types'
 
 const placeholder: any = {}
-export const registry = {
+
+interface ApiDefinition {
+${treeInterface}
+}
+
+const routes = {
 ${registryEntries}
 } as const satisfies Record<string, AdonisEndpoint>
 
+export const registry = {
+  routes,
+  $tree: {} as ApiDefinition,
+}
+
 declare module '@tuyau/core/types' {
-  type Registry = typeof registry
+  type Registry = typeof routes
   export interface UserRegistry extends Registry {}
 }
 `
@@ -246,12 +326,12 @@ export function generateRegistry(options?: GenerateRegistryConfig): {
         const runtimeContent = generateRuntimeContent(filteredRoutes)
         const typesContent = generateTypesContent(filteredRoutes)
 
-        // Generate paths for both files
+        // Generate paths for files
         const basePath = config.output.replace(/\.(ts|js)$/, '')
         const runtimePath = `${basePath}.ts`
         const typesPath = `${basePath}.schema.d.ts`
 
-        // Write both files
+        // Write files
         await writeOutputFile(runtimePath, runtimeContent)
         await writeOutputFile(typesPath, typesContent)
 

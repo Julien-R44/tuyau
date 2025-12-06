@@ -27,11 +27,38 @@ export interface AdonisEndpoint {
  */
 export interface AdonisRegistry extends Record<string, AdonisEndpoint> {}
 
+/**
+ * Should be augmented by the user to provide their API definition tree
+ * This is the pre-computed tree structure generated at build time
+ */
+export interface UserApiDefinition {}
+
 export type ValueOf<T> = T[keyof T]
 
 type IsEmptyObj<T> = keyof T extends never ? true : false
 
 type IsEmptyTuple<T> = T extends [] ? true : false
+
+/**
+ * Structure of a Tuyau registry containing routes and optional tree
+ */
+export interface TuyauRegistry<
+  Routes extends Record<string, AdonisEndpoint> = Record<string, AdonisEndpoint>,
+  Tree = unknown,
+> {
+  routes: Routes
+  $tree?: Tree
+}
+
+/**
+ * Extracts the $tree type from a registry
+ */
+export type InferTree<R extends TuyauRegistry> = R extends { $tree: infer T } ? T : {}
+
+/**
+ * Extracts the routes from a registry
+ */
+export type InferRoutes<R extends TuyauRegistry> = R['routes']
 
 export type Endpoints = ValueOf<AdonisRegistry>
 
@@ -84,67 +111,19 @@ export type RequestArgs<E extends AdonisEndpoint> = RawRequestArgs<E> &
 export type ResponseOf<E extends AdonisEndpoint> = E['types']['response']
 
 /**
- * Splits a dot-separated string into an array of strings
- */
-export type Split<S extends string> = S extends `${infer H}.${infer T}` ? [H, ...Split<T>] : [S]
-
-/**
- * Converts a string to camelCase
- */
-export type CamelCase<S extends string> = S extends `${infer H}${infer T}`
-  ? `${Lowercase<H>}${CamelCaseRest<T>}`
-  : S
-
-type CamelCaseRest<S extends string> = S extends `_${infer H}${infer T}`
-  ? `${Uppercase<H>}${CamelCaseRest<T>}`
-  : S extends `${infer H}${infer T}`
-    ? `${H}${CamelCaseRest<T>}`
-    : S
-
-/**
- * Applies camelCase to each segment in a split array
- */
-export type CamelCaseSplit<T extends string[]> = T extends [
-  infer H extends string,
-  ...infer Rest extends string[],
-]
-  ? [CamelCase<H>, ...CamelCaseSplit<Rest>]
-  : []
-
-/**
- * Converts a union type to an intersection type
- */
-export type UnionToIntersection<U> = (U extends any ? (x: U) => void : never) extends (
-  x: infer I,
-) => void
-  ? I
-  : never
-
-/**
- * Builds a nested object type for the fluent API based on endpoint names
- */
-export type BuildNamed<Reg extends Record<string, AdonisEndpoint>> = UnionToIntersection<
-  {
-    [K in keyof Reg & string]: SetAtPath<CamelCaseSplit<Split<K>>, EndpointFn<Reg[K]>>
-  }[keyof Reg & string]
->
-
-/**
- * Sets a value at a specific path in a nested object type
- */
-export type SetAtPath<Path extends string[], V> = Path extends [
-  infer H extends string,
-  ...infer T extends string[],
-]
-  ? { [K in H]: T['length'] extends 0 ? V : SetAtPath<T, V> }
-  : {}
-
-/**
  * Function type for calling an endpoint
  */
-type EndpointFn<E extends AdonisEndpoint> = (
+export type EndpointFn<E extends AdonisEndpoint> = (
   args: RequestArgs<E>,
 ) => Promise<E['types']['response']>
+
+/**
+ * Transforms a pre-computed ApiDefinition tree into callable endpoint functions
+ * This recursively converts each endpoint in the tree to a callable function
+ */
+export type TransformApiDefinition<T> = {
+  [K in keyof T]: T[K] extends AdonisEndpoint ? EndpointFn<T[K]> : TransformApiDefinition<T[K]>
+}
 
 /**
  * Filters endpoints by HTTP method
@@ -192,7 +171,7 @@ export interface QueryParameters
 /**
  * Configuration options for creating a Tuyau client
  */
-export interface TuyauConfiguration<T extends Record<string, AdonisEndpoint>>
+export interface TuyauConfiguration<T extends TuyauRegistry>
   extends Omit<KyOptions, 'prefixUrl' | 'body' | 'json' | 'method' | 'searchParams'> {
   registry: T
   baseUrl: string

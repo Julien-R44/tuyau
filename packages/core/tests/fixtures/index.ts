@@ -1,7 +1,11 @@
 import type { AdonisEndpoint } from '../../src/client/types/types.ts'
+import type { ApiDefinition } from './api_definition.ts'
+
+export type { ApiDefinition } from './api_definition.ts'
 
 const placeholder: any = {}
-export const defaultRegistry = {
+
+const routes = {
   'auth.login': {
     methods: ['POST'],
     pattern: '/auth/login',
@@ -150,3 +154,8 @@ export const defaultRegistry = {
     },
   },
 } as const satisfies Record<string, AdonisEndpoint>
+
+export const defaultRegistry = {
+  routes,
+  $tree: {} as ApiDefinition,
+}
