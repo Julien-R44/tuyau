@@ -4,6 +4,7 @@ import { test } from '@japa/runner'
 import { createTuyau } from '../src/client/tuyau.ts'
 import { defaultRegistry as registry } from './fixtures/index.ts'
 import { TuyauHTTPError, TuyauNetworkError } from '../src/client/errors.ts'
+import { buildSearchParams } from '../src/client/utils.ts'
 
 const createTestTuyau = (baseUrl: string = 'http://localhost:3333') =>
   createTuyau({ baseUrl, registry })
@@ -427,5 +428,19 @@ test.group('Client | url', () => {
 
     assert.equal(r1.token, '123')
     assert.equal(r2.id, '1')
+  })
+})
+
+test.group('Client | buildSearchParams', () => {
+  test('pass query params as nested object', async ({ assert }) => {
+    const queryParams = buildSearchParams({
+      filter: {
+        // @ts-expect-error
+        name: { like: 'foo' },
+        price: { gte: 1200 },
+      },
+    })
+
+    assert.equal(decodeURIComponent(queryParams), '?filter[name][like]=foo&filter[price][gte]=1200')
   })
 })

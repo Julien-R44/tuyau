@@ -7,32 +7,34 @@ import type { QueryParameters } from './types/types.ts'
  * - It will skip the key/value if value is `null` or `undefined`
  */
 export function buildSearchParams(query: QueryParameters) {
-  if (!query) return
+  if (!query) return ''
 
   let stringified = ''
-  const append = (
-    key: string,
-    value: string | number | boolean | null | undefined,
-    isArray = false,
-  ) => {
+
+  const append = (key: string, value?: string | number | boolean | null) => {
     if (value === undefined || value === null) return
 
-    const encodedKey = encodeURIComponent(key)
-    const encodedValue = encodeURIComponent(value)
-    const keyValuePair = `${encodedKey}${isArray ? '[]' : ''}=${encodedValue}`
-
-    stringified += (stringified ? '&' : '?') + keyValuePair
+    stringified +=
+      (stringified ? '&' : '?') + encodeURIComponent(key) + '=' + encodeURIComponent(value)
   }
 
-  for (const [key, value] of Object.entries(query)) {
-    if (!value) continue
+  const build = (obj: QueryParameters, prefix = '') => {
+    for (const [key, value] of Object.entries(obj)) {
+      if (value === undefined || value === null) continue
 
-    if (Array.isArray(value)) {
-      for (const v of value) append(key, v, true)
-    } else {
-      append(key, `${value}`)
+      const fullKey = prefix ? `${prefix}[${key}]` : key
+
+      if (Array.isArray(value)) {
+        value.forEach((v) => append(`${fullKey}[]`, v))
+      } else if (typeof value === 'object') {
+        build(value, fullKey)
+      } else {
+        append(fullKey, value)
+      }
     }
   }
+
+  build(query)
 
   return stringified
 }
