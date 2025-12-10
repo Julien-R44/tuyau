@@ -177,6 +177,51 @@ const routes = {
       response: { id: number; name: string }
     },
   },
+  'users.update': {
+    methods: ['PUT'],
+    pattern: '/users/:id',
+    tokens: [
+      { old: '/users/:id', type: 0, val: 'users', end: '' },
+      { old: '/users/:id', type: 1, val: 'id', end: '' },
+    ],
+    types: placeholder as {
+      paramsTuple: [string]
+      body: { name: string }
+      params: { id: string }
+      query: {}
+      response: { id: string; name: string }
+    },
+  },
+  'users.patch': {
+    methods: ['PATCH'],
+    pattern: '/users/:id',
+    tokens: [
+      { old: '/users/:id', type: 0, val: 'users', end: '' },
+      { old: '/users/:id', type: 1, val: 'id', end: '' },
+    ],
+    types: placeholder as {
+      paramsTuple: [string]
+      body: { name?: string }
+      params: { id: string }
+      query: {}
+      response: { id: string; name: string }
+    },
+  },
+  'users.destroy': {
+    methods: ['DELETE'],
+    pattern: '/users/:id',
+    tokens: [
+      { old: '/users/:id', type: 0, val: 'users', end: '' },
+      { old: '/users/:id', type: 1, val: 'id', end: '' },
+    ],
+    types: placeholder as {
+      paramsTuple: [string]
+      body: {}
+      params: { id: string }
+      query: {}
+      response: { success: boolean }
+    },
+  },
 } as const satisfies Record<string, AdonisEndpoint>
 
 export const defaultRegistry = {
