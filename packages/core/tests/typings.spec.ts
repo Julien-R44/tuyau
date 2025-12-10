@@ -391,7 +391,7 @@ test.group('Client | Typings', (group) => {
     })
 
     // @ts-expect-error route doesn't support DELETE method
-    tuyau.delete('/users/:id', {
+    tuyau.delete('/products', {
       params: { id: '1' },
     })
 

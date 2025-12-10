@@ -12,7 +12,4 @@ export const urlFor = client.urlFor
 
 export const queryClient = new QueryClient()
 
-export const query = createTuyauReactQueryClient({
-  client,
-  queryClient,
-})
+export const query = createTuyauReactQueryClient({ client })
