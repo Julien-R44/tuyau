@@ -1,7 +1,7 @@
 {
   "name": "@tuyau/react-query",
   "type": "module",
-  "version": "1.0.0-beta.1",
+  "version": "1.0.0-beta.2",
   "description": "React Query plugin for Tuyau",
   "author": "Julien Ripouteau <julien@ripouteau.com>",
   "license": "ISC",
