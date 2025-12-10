@@ -529,3 +529,38 @@ test.group('Query | ExtractQuery/ExtractBody endpoints', () => {
     ])
   })
 })
+
+test.group('Query | Ky retry disabled', () => {
+  test('should pass retry: 0 to disable Ky retries', async ({ assert }) => {
+    let capturedOptions: any
+
+    const client = createTuyau({
+      baseUrl: 'http://localhost:3333',
+      registry: defaultRegistry,
+    })
+
+    const originalRequest = client.request.bind(client)
+    client.request = async (routeName: string, opts?: any) => {
+      capturedOptions = opts
+      return originalRequest(routeName as any, opts)
+    }
+
+    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+
+    nock('http://localhost:3333')
+      .get('/users')
+      .query({ name: 'retry-test' })
+      .reply(200, [{ id: 1, name: 'retry-test' }])
+
+    const options = tuyau.users.index.queryOptions({ query: { name: 'retry-test' } })
+
+    await options.queryFn!({
+      queryKey: options.queryKey,
+      meta: undefined,
+      signal: new AbortController().signal,
+      client: queryClient,
+    })
+
+    assert.equal(capturedOptions.retry, 0)
+  })
+})

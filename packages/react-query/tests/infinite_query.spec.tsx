@@ -114,4 +114,40 @@ test.group('Infinite Query', () => {
       },
     )
   })
+
+  test('should pass retry: 0 to disable Ky retries', async ({ assert }) => {
+    let capturedOptions: any
+
+    const client = createTuyau({
+      baseUrl: 'http://localhost:3333',
+      registry: defaultRegistry,
+    })
+
+    const originalRequest = client.request.bind(client)
+    client.request = async (routeName: string, opts?: any) => {
+      capturedOptions = opts
+      return originalRequest(routeName as any, opts)
+    }
+
+    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+
+    nock('http://localhost:3333')
+      .get('/articles')
+      .query({ page: 1, limit: 10 })
+      .reply(200, { data: [{ id: 1, title: 'Article 1' }], nextCursor: null })
+
+    const options = tuyau.articles.index.infiniteQueryOptions(
+      { query: { page: 1, limit: 10 } },
+      {
+        pageParamKey: 'page',
+        initialPageParam: 1,
+        getNextPageParam: (lastPage) => lastPage.nextCursor,
+      },
+    )
+
+    const { result } = renderHookWithWrapper(() => useInfiniteQuery(options))
+    await waitFor(() => assert.isTrue(result.current.isSuccess))
+
+    assert.equal(capturedOptions.retry, 0)
+  })
 })

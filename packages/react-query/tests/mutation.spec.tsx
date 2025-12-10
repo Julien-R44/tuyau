@@ -269,3 +269,31 @@ test.group('Mutation | onSuccess Override', () => {
     assert.equal(result.current.isSuccess, true)
   })
 })
+
+test.group('Mutation | Ky retry disabled', () => {
+  test('should pass retry: 0 to disable Ky retries', async ({ assert }) => {
+    let capturedOptions: any
+
+    const client = createTuyau({
+      baseUrl: 'http://localhost:3333',
+      registry: defaultRegistry,
+    })
+
+    const originalRequest = client.request.bind(client)
+    client.request = async (routeName: string, opts?: any) => {
+      capturedOptions = opts
+      return originalRequest(routeName as any, opts)
+    }
+
+    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+
+    nock('http://localhost:3333').post('/users').reply(201, { id: 1, name: 'retry-test' })
+
+    const { result } = renderHookWithWrapper(() => useMutation(tuyau.users.store.mutationOptions()))
+
+    result.current.mutate({ body: { name: 'retry-test' } })
+    await setTimeout(300)
+
+    assert.equal(capturedOptions.retry, 0)
+  })
+})

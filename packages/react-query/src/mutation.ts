@@ -48,7 +48,7 @@ export function tuyauMutationOptions(options: TuyauMutationOptionsOptions) {
 
   const mutationFn: MutationFunction = async (request: any) => {
     const requestArgs: RawRequestArgs<any> = request || {}
-    return await client.request(routeName, requestArgs)
+    return await client.request(routeName, { ...requestArgs, retry: 0 })
   }
 
   return mutationOptions({ ...opts, mutationKey, mutationFn })

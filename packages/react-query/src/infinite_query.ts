@@ -45,6 +45,7 @@ export function tuyauInfiniteQueryOptions(options: TuyauInfiniteQueryOptionsOpti
 
       return await client.request(routeName, {
         ...requestArgs,
+        retry: 0,
         ...(effectiveAbortOnUnmount ? { signal: queryFnContext.signal } : {}),
       })
     }

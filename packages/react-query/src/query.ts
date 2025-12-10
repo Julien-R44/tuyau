@@ -31,6 +31,7 @@ export function tuyauQueryOptions(options: TuyauQueryOptionsOptions) {
 
       return await client.request(routeName, {
         ...request,
+        retry: 0,
         ...(effectiveAbortOnUnmount ? { signal: queryFnContext.signal } : {}),
       })
     }
