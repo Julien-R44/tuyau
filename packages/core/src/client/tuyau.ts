@@ -2,15 +2,9 @@ import { serialize } from 'object-to-formdata'
 import ky, { HTTPError, type KyInstance } from 'ky'
 import { createUrlBuilder, type UrlFor } from '@adonisjs/http-server/client/url_builder'
 
+import { buildSearchParams } from './serializer.ts'
 import { parseResponse, TuyauHTTPError, TuyauNetworkError } from './errors.ts'
-import {
-  buildSearchParams,
-  isObject,
-  isReactNative,
-  isServer,
-  removeSlash,
-  segmentsToRouteName,
-} from './utils.ts'
+import { isObject, isReactNative, isServer, removeSlash, segmentsToRouteName } from './utils.ts'
 import type {
   AdonisEndpoint,
   EndpointByMethodPattern,

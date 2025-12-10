@@ -194,14 +194,18 @@ export type MaybeArray<T> = T | T[]
 /**
  * Type for URL query parameters
  */
-export interface QueryParameters
-  extends Record<string, MaybeArray<string | number | boolean | null | undefined>> {}
+export interface QueryParameters extends Record<
+  string,
+  MaybeArray<string | number | boolean | null | undefined> | QueryParameters
+> {}
 
 /**
  * Configuration options for creating a Tuyau client
  */
-export interface TuyauConfiguration<T extends TuyauRegistry>
-  extends Omit<KyOptions, 'prefixUrl' | 'body' | 'json' | 'method' | 'searchParams'> {
+export interface TuyauConfiguration<T extends TuyauRegistry> extends Omit<
+  KyOptions,
+  'prefixUrl' | 'body' | 'json' | 'method' | 'searchParams'
+> {
   registry: T
   baseUrl: string
   plugins?: TuyauPlugin[]
