@@ -4,12 +4,12 @@ import { useQueryClient } from '@tanstack/react-query'
 
 import { defaultRegistry } from './fixtures/index.ts'
 import { TuyauQueryKey } from '../src/types/common.ts'
+import { renderHookWithWrapper } from './helpers/index.tsx'
 import { createTuyauReactQueryClient } from '../src/main.ts'
-import { queryClient, renderHookWithWrapper } from './helpers/index.tsx'
 
 const testContext = () => {
   const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
-  const tuyau = createTuyauReactQueryClient({ client, queryClient })
+  const tuyau = createTuyauReactQueryClient({ client })
 
   return { client, tuyau }
 }

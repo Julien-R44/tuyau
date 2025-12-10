@@ -1,5 +1,4 @@
 import { Tuyau } from '@tuyau/core/client'
-import { QueryClient } from '@tanstack/react-query'
 import type { QueryFilters } from '@tanstack/react-query'
 import type {
   AdonisEndpoint,
@@ -33,7 +32,6 @@ export function createTuyauReactQueryClient<
   Routes extends Record<string, AdonisEndpoint> = InferRoutes<Reg>,
 >(options: {
   client: Tuyau<Reg, Routes>
-  queryClient: QueryClient | (() => QueryClient)
   globalOptions?: TuyauReactRequestOptions
 }): TransformToReactQuery<Tree> {
   const { client, globalOptions } = options

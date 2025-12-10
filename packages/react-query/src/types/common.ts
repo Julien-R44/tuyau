@@ -34,7 +34,8 @@ export type TuyauMutationKey = [readonly string[]]
  * Query options with defined initial data
  */
 export interface DefinedTuyauQueryOptionsIn<TQueryFnData, TData, TError>
-  extends DistributiveOmit<
+  extends
+    DistributiveOmit<
       DefinedInitialDataOptions<TQueryFnData, TError, TData, TuyauQueryKey>,
       'queryKey' | 'queryFn' | 'queryHashFn' | 'queryHash'
     >,
@@ -44,7 +45,8 @@ export interface DefinedTuyauQueryOptionsIn<TQueryFnData, TData, TError>
  * Query options with undefined initial data
  */
 export interface UndefinedTuyauQueryOptionsIn<TQueryFnData, TData, TError>
-  extends DistributiveOmit<
+  extends
+    DistributiveOmit<
       UndefinedInitialDataOptions<TQueryFnData, TError, TData, TuyauQueryKey>,
       'queryKey' | 'queryFn' | 'queryHashFn' | 'queryHash'
     >,
@@ -54,7 +56,8 @@ export interface UndefinedTuyauQueryOptionsIn<TQueryFnData, TData, TError>
  * Query options with unused skip token
  */
 export interface UnusedSkipTokenTuyauQueryOptionsIn<TQueryFnData, TData, TError>
-  extends DistributiveOmit<
+  extends
+    DistributiveOmit<
       UnusedSkipTokenOptions<TQueryFnData, TError, TData, TuyauQueryKey>,
       'queryKey' | 'queryFn' | 'queryHashFn' | 'queryHash'
     >,
@@ -63,24 +66,33 @@ export interface UnusedSkipTokenTuyauQueryOptionsIn<TQueryFnData, TData, TError>
 /**
  * Output type for query options with defined initial data
  */
-export interface DefinedTuyauQueryOptionsOut<TQueryFnData, TData, TError>
-  extends DefinedInitialDataOptions<TQueryFnData, TError, TData, TuyauQueryKey> {
+export interface DefinedTuyauQueryOptionsOut<
+  TQueryFnData,
+  TData,
+  TError,
+> extends DefinedInitialDataOptions<TQueryFnData, TError, TData, TuyauQueryKey> {
   queryKey: DataTag<TuyauQueryKey, TData, TError>
 }
 
 /**
  * Output type for query options with undefined initial data
  */
-export interface UndefinedTuyauQueryOptionsOut<TQueryFnData, TData, TError>
-  extends UndefinedInitialDataOptions<TQueryFnData, TError, TData, TuyauQueryKey> {
+export interface UndefinedTuyauQueryOptionsOut<
+  TQueryFnData,
+  TData,
+  TError,
+> extends UndefinedInitialDataOptions<TQueryFnData, TError, TData, TuyauQueryKey> {
   queryKey: DataTag<TuyauQueryKey, TData, TError>
 }
 
 /**
  * Output type for query options with unused skip token
  */
-export interface UnusedSkipTokenTuyauQueryOptionsOut<TQueryFnData, TData, TError>
-  extends UnusedSkipTokenOptions<TQueryFnData, TError, TData, TuyauQueryKey> {
+export interface UnusedSkipTokenTuyauQueryOptionsOut<
+  TQueryFnData,
+  TData,
+  TError,
+> extends UnusedSkipTokenOptions<TQueryFnData, TError, TData, TuyauQueryKey> {
   queryKey: DataTag<TuyauQueryKey, TData, TError>
 }
 

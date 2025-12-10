@@ -2,13 +2,7 @@ import nock from 'nock'
 import { test } from '@japa/runner'
 import { createTuyau } from '@tuyau/core/client'
 import { setTimeout } from 'node:timers/promises'
-import {
-  useQuery,
-  useSuspenseQuery,
-  useMutation,
-  skipToken,
-  QueryClient,
-} from '@tanstack/react-query'
+import { useQuery, useSuspenseQuery, useMutation, skipToken } from '@tanstack/react-query'
 
 import { defaultRegistry } from './fixtures/index.ts'
 import { TuyauQueryKey } from '../src/types/common.ts'
@@ -18,7 +12,7 @@ import { queryClient, renderHookWithWrapper } from './helpers/index.tsx'
 test.group('Query | useQuery', () => {
   test('basic', async ({ expectTypeOf, assert }) => {
     const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+    const tuyau = createTuyauReactQueryClient({ client })
 
     nock('http://localhost:3333')
       .get('/users')
@@ -39,7 +33,7 @@ test.group('Query | useQuery', () => {
 
   test('with initial data', ({ expectTypeOf }) => {
     const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+    const tuyau = createTuyauReactQueryClient({ client })
 
     nock('http://localhost:3333')
       .get('/users')
@@ -63,7 +57,7 @@ test.group('Query | useQuery', () => {
 test.group('Query | queryOptions', () => {
   test('basic', ({ assert }) => {
     const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+    const tuyau = createTuyauReactQueryClient({ client })
 
     const result = tuyau.users.index.queryOptions(
       { query: { name: 'foo' } },
@@ -80,7 +74,7 @@ test.group('Query | queryOptions', () => {
 
   test('with route param call', ({ assert }) => {
     const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+    const tuyau = createTuyauReactQueryClient({ client })
 
     const result = tuyau.users.show.queryOptions({ params: { id: '1' } })
 
@@ -95,7 +89,7 @@ test.group('Query | queryOptions', () => {
 test.group('Query | queryKey', () => {
   test('basic', ({ assert }) => {
     const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+    const tuyau = createTuyauReactQueryClient({ client })
 
     const r1 = tuyau.users.index.queryKey({ query: { name: 'foo' } })
     const r2 = tuyau.users.index.queryKey()
@@ -116,7 +110,7 @@ test.group('Query | queryKey', () => {
 test.group('Query | pathKey', () => {
   test('basic', ({ assert }) => {
     const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+    const tuyau = createTuyauReactQueryClient({ client })
 
     const r1 = tuyau.users.pathKey()
     const r4 = tuyau.users.comments.pathKey()
@@ -133,7 +127,7 @@ test.group('Query | pathKey', () => {
 test.group('Query | UseSuspenseQuery', () => {
   test('basic', async ({ expectTypeOf, assert }) => {
     const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+    const tuyau = createTuyauReactQueryClient({ client })
 
     nock('http://localhost:3333')
       .get('/users')
@@ -154,7 +148,7 @@ test.group('Query | UseSuspenseQuery', () => {
 test.group('Query | Filters', () => {
   test('queryFilter should merge filters with queryKey', ({ assert }) => {
     const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+    const tuyau = createTuyauReactQueryClient({ client })
 
     const filter = tuyau.users.index.queryFilter({ query: { name: 'foo' } }, { stale: true })
 
@@ -169,7 +163,7 @@ test.group('Query | Filters', () => {
 
   test('pathFilter should merge filters with pathKey', ({ assert }) => {
     const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+    const tuyau = createTuyauReactQueryClient({ client })
 
     const filter = tuyau.users.pathFilter({ stale: true })
 
@@ -183,7 +177,7 @@ test.group('Query | Filters', () => {
 test.group('Query | Skip Token', () => {
   test('should handle skipToken in queryOptions', ({ assert }) => {
     const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+    const tuyau = createTuyauReactQueryClient({ client })
 
     const options = tuyau.users.index.queryOptions(skipToken)
 
@@ -194,7 +188,7 @@ test.group('Query | Skip Token', () => {
 
   test('should work with conditional queries', ({ assert }) => {
     const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+    const tuyau = createTuyauReactQueryClient({ client })
 
     let shouldFetch = false
     const getConditionalOptions = () =>
@@ -212,24 +206,10 @@ test.group('Query | Skip Token', () => {
   })
 })
 
-test.group('Query | Lazy QueryClient', () => {
-  test('should support lazy queryClient initialization', ({ assert }) => {
-    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
-    const lazyQueryClient = () => new QueryClient()
-    const tuyau = createTuyauReactQueryClient({ client, queryClient: lazyQueryClient })
-
-    const options = tuyau.users.index.queryOptions({ query: { name: 'foo' } })
-
-    assert.isObject(options)
-    assert.property(options, 'queryKey')
-    assert.property(options, 'queryFn')
-  })
-})
-
 test.group('Query | Route Parameters', () => {
   test('should handle single route parameters', ({ assert }) => {
     const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+    const tuyau = createTuyauReactQueryClient({ client })
 
     const options = tuyau.users.show.queryOptions({ params: { id: '1' } })
     const queryKey = tuyau.users.show.queryKey({ params: { id: '1' } })
@@ -246,7 +226,7 @@ test.group('Query | Route Parameters', () => {
 
   test('should handle nested route parameters', ({ assert }) => {
     const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+    const tuyau = createTuyauReactQueryClient({ client })
 
     const options = tuyau.posts.comments.likes.detail.queryOptions({
       params: { postId: '1', commentId: '2', likeId: '3' },
@@ -289,7 +269,7 @@ test.group('Query | CamelCase to snake_case conversion', () => {
       return originalRequest(routeName as any, opts)
     }
 
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+    const tuyau = createTuyauReactQueryClient({ client })
 
     // Access using camelCase (byCategory) but route is registered as snake_case (by_category)
     // @ts-ignore tkt
@@ -313,7 +293,7 @@ test.group('Query | CamelCase to snake_case conversion', () => {
 
   test('should preserve query key with camelCase segments for cache consistency', ({ assert }) => {
     const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+    const tuyau = createTuyauReactQueryClient({ client })
 
     const queryKey = tuyau.products.byCategory.queryKey({ params: { category: 'electronics' } })
 
@@ -328,7 +308,7 @@ test.group('Query | CamelCase to snake_case conversion', () => {
 test.group('Types | Query Types', () => {
   test('queryOptions should return correct types', ({ expectTypeOf }) => {
     const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+    const tuyau = createTuyauReactQueryClient({ client })
 
     const undefinedOptions = tuyau.users.index.queryOptions({ query: { name: 'foo' } })
     expectTypeOf(undefinedOptions.queryKey).toMatchTypeOf<TuyauQueryKey>()
@@ -344,7 +324,7 @@ test.group('Types | Query Types', () => {
 
   test('queryKey should return TuyauQueryKey type', ({ expectTypeOf }) => {
     const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+    const tuyau = createTuyauReactQueryClient({ client })
 
     const queryKey = tuyau.users.index.queryKey({ query: { name: 'foo' } })
     expectTypeOf(queryKey).toMatchTypeOf<TuyauQueryKey>()
@@ -353,7 +333,7 @@ test.group('Types | Query Types', () => {
 
   test('pathKey should return TuyauQueryKey type', ({ expectTypeOf }) => {
     const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+    const tuyau = createTuyauReactQueryClient({ client })
 
     const pathKey = tuyau.users.pathKey()
     expectTypeOf(pathKey).toMatchTypeOf<TuyauQueryKey>()
@@ -364,7 +344,7 @@ test.group('Types | Query Types', () => {
 test.group('Types | Response Extraction', () => {
   test('should extract data from status code 200/201', async ({ assert }) => {
     const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+    const tuyau = createTuyauReactQueryClient({ client })
 
     nock('http://localhost:3333')
       .get('/users')
@@ -387,7 +367,7 @@ test.group('Types | Response Extraction', () => {
 test.group('Query | Advanced Options', () => {
   test('should support custom query options', ({ assert }) => {
     const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+    const tuyau = createTuyauReactQueryClient({ client })
 
     const options = tuyau.users.index.queryOptions(
       { query: { name: 'foo' } },
@@ -405,7 +385,7 @@ test.group('Query | Advanced Options', () => {
 
   test('should support initialData with correct types', ({ assert }) => {
     const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+    const tuyau = createTuyauReactQueryClient({ client })
 
     const initialData = [{ id: 1, name: 'initial' }]
     const options = tuyau.users.index.queryOptions(
@@ -421,7 +401,7 @@ test.group('Query | Advanced Options', () => {
 test.group('Integration | Complete Workflow', () => {
   test('should handle complete query workflow', ({ expectTypeOf, assert }) => {
     const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+    const tuyau = createTuyauReactQueryClient({ client })
 
     // Query
     const { result: queryResult } = renderHookWithWrapper(() =>
@@ -455,7 +435,7 @@ test.group('Integration | Complete Workflow', () => {
 test.group('Query | ExtractQuery/ExtractBody endpoints', () => {
   test('should handle GET endpoints with query params', async ({ expectTypeOf, assert }) => {
     const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+    const tuyau = createTuyauReactQueryClient({ client })
 
     nock('http://localhost:3333')
       .get('/products/search')
@@ -480,7 +460,7 @@ test.group('Query | ExtractQuery/ExtractBody endpoints', () => {
 
   test('should handle POST endpoints with body params', ({ expectTypeOf }) => {
     const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+    const tuyau = createTuyauReactQueryClient({ client })
 
     nock('http://localhost:3333')
       .post('/products', { name: 'New Product', price: 50 })
@@ -499,7 +479,7 @@ test.group('Query | ExtractQuery/ExtractBody endpoints', () => {
 
   test('queryKey should include query params for GET endpoints', ({ assert }) => {
     const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+    const tuyau = createTuyauReactQueryClient({ client })
 
     const queryKey = tuyau.products.search.queryKey({
       query: { q: 'laptop', category: 'electronics' },
@@ -516,7 +496,7 @@ test.group('Query | ExtractQuery/ExtractBody endpoints', () => {
 
   test('queryOptions should correctly type query params', ({ expectTypeOf, assert }) => {
     const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+    const tuyau = createTuyauReactQueryClient({ client })
 
     const options = tuyau.products.search.queryOptions({
       query: { q: 'test', minPrice: 10, maxPrice: 100 },
@@ -545,7 +525,7 @@ test.group('Query | Ky retry disabled', () => {
       return originalRequest(routeName as any, opts)
     }
 
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+    const tuyau = createTuyauReactQueryClient({ client })
 
     nock('http://localhost:3333')
       .get('/users')

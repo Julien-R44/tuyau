@@ -31,13 +31,28 @@ export function buildKey(opts: {
     return splitPath.length ? [splitPath] : ([] as unknown as TuyauQueryKey)
   }
 
-  if (
-    type === 'infinite' &&
-    isObject(request) &&
-    ('direction' in request || 'cursor' in request) // todo fix should be in request.body or query
-  ) {
-    const { cursor: _, direction: __, ...inputWithoutCursorAndDirection } = request
-    return [splitPath, { request: inputWithoutCursorAndDirection, type: 'infinite' }]
+  if (type === 'infinite' && isObject(request)) {
+    const query = request.query as Record<string, unknown> | undefined
+    const body = request.body as Record<string, unknown> | undefined
+
+    const hasCursorInQuery = isObject(query) && ('direction' in query || 'cursor' in query)
+    const hasCursorInBody = isObject(body) && ('direction' in body || 'cursor' in body)
+
+    if (hasCursorInQuery || hasCursorInBody) {
+      const cleanedRequest: Record<string, unknown> = { ...request }
+
+      if (hasCursorInQuery && isObject(query)) {
+        const { cursor: _, direction: __, ...cleanQuery } = query
+        cleanedRequest.query = cleanQuery
+      }
+
+      if (hasCursorInBody && isObject(body)) {
+        const { cursor: _, direction: __, ...cleanBody } = body
+        cleanedRequest.body = cleanBody
+      }
+
+      return [splitPath, { request: cleanedRequest, type: 'infinite' }]
+    }
   }
 
   return [

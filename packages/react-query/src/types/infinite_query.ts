@@ -17,7 +17,8 @@ type Response<E extends SchemaEndpoint> = E['types']['response']
  * Infinite query options input type
  */
 export interface TuyauInfiniteQueryOptionsIn<TQueryFnData, TError, TData>
-  extends DistributiveOmit<
+  extends
+    DistributiveOmit<
       InfiniteQueryObserverOptions<TQueryFnData, TError, TData>,
       'queryKey' | 'queryFn' | 'queryHashFn' | 'queryHash'
     >,
@@ -33,8 +34,10 @@ export interface TuyauInfiniteQueryOptionsIn<TQueryFnData, TError, TData>
 /**
  * Infinite query options output type
  */
-export interface TuyauInfiniteQueryOptionsOut<TQueryFnData, TError, TData>
-  extends Omit<InfiniteQueryObserverOptions<TQueryFnData, TError, TData>, 'queryKey'> {
+export interface TuyauInfiniteQueryOptionsOut<TQueryFnData, TError, TData> extends Omit<
+  InfiniteQueryObserverOptions<TQueryFnData, TError, TData>,
+  'queryKey'
+> {
   queryKey: DataTag<TuyauQueryKey, TData>
 }
 

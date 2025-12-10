@@ -11,11 +11,16 @@ type ReservedOptions = 'mutationKey' | 'mutationFn'
 type Response<E extends SchemaEndpoint> = E['types']['response']
 
 export interface TuyauMutationOptionsIn<TInput, TError, TOutput, TContext>
-  extends DistributiveOmit<UseMutationOptions<TOutput, TError, TInput, TContext>, ReservedOptions>,
+  extends
+    DistributiveOmit<UseMutationOptions<TOutput, TError, TInput, TContext>, ReservedOptions>,
     TuyauQueryBaseOptions {}
 
-export interface TuyauMutationOptionsOut<TInput, TError, TOutput, TContext>
-  extends UseMutationOptions<TOutput, TError, TInput, TContext> {
+export interface TuyauMutationOptionsOut<
+  TInput,
+  TError,
+  TOutput,
+  TContext,
+> extends UseMutationOptions<TOutput, TError, TInput, TContext> {
   mutationKey: TuyauMutationKey
 }
 

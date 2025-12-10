@@ -6,13 +6,13 @@ import { useMutation } from '@tanstack/react-query'
 
 import { defaultRegistry } from './fixtures/index.ts'
 import { TuyauMutationKey } from '../src/types/common.ts'
-import { createTuyauReactQueryClient } from '../src/main.ts'
-import { queryClient, renderHookWithWrapper } from './helpers/index.tsx'
+import { renderHookWithWrapper } from './helpers/index.tsx'
+import { createTuyauReactQueryClient } from '../src/index.ts'
 
 test.group('Mutation | Options', () => {
   test('mutationOptions should create valid mutation options object', ({ assert }) => {
     const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+    const tuyau = createTuyauReactQueryClient({ client })
 
     const options = tuyau.users.store.mutationOptions({
       onSuccess: () => {},
@@ -30,7 +30,7 @@ test.group('Mutation | Options', () => {
 
   test('mutationKey should generate consistent keys', ({ assert }) => {
     const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+    const tuyau = createTuyauReactQueryClient({ client })
 
     const key1 = tuyau.users.store.mutationKey()
     const key2 = tuyau.users.store.mutationKey()
@@ -41,7 +41,7 @@ test.group('Mutation | Options', () => {
 
   test('should work with useMutation hook', async ({ assert, expectTypeOf }) => {
     const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+    const tuyau = createTuyauReactQueryClient({ client })
 
     nock('http://localhost:3333').post('/users').reply(201, { id: 1, name: 'foo' })
 
@@ -56,7 +56,7 @@ test.group('Mutation | Options', () => {
 
   test('mutationOptions should return correct types', ({ expectTypeOf }) => {
     const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+    const tuyau = createTuyauReactQueryClient({ client })
 
     const mutationOptions = tuyau.users.store.mutationOptions({
       onSuccess: (data) => {
@@ -73,7 +73,7 @@ test.group('Mutation | Options', () => {
 
   test('mutation without payload shouldnt require payload', async () => {
     const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+    const tuyau = createTuyauReactQueryClient({ client })
 
     nock('http://localhost:3333').post('/auth/doSomething').reply(200, { success: true })
 
@@ -86,7 +86,7 @@ test.group('Mutation | Options', () => {
 
   test('mutationKey should return TuyauMutationKey type', ({ expectTypeOf }) => {
     const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+    const tuyau = createTuyauReactQueryClient({ client })
 
     const mutationKey = tuyau.do.something.mutationKey()
     expectTypeOf(mutationKey).toMatchTypeOf<TuyauMutationKey>()
@@ -95,7 +95,7 @@ test.group('Mutation | Options', () => {
 
   test('payload not required when request is unknown', async () => {
     const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+    const tuyau = createTuyauReactQueryClient({ client })
 
     nock('http://localhost:3333').post('/auth/doSomethingElse').reply(200, { success: true })
 
@@ -110,7 +110,7 @@ test.group('Mutation | Options', () => {
 test.group('Mutation | onSuccess Override', () => {
   test('should call original onSuccess when no override provided', async ({ assert }) => {
     const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+    const tuyau = createTuyauReactQueryClient({ client })
 
     let originalCalled = false
     const originalOnSuccess = () => {
@@ -136,7 +136,7 @@ test.group('Mutation | onSuccess Override', () => {
 
   test('should call override onSuccess when provided', async ({ assert }) => {
     const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+    const tuyau = createTuyauReactQueryClient({ client })
 
     let originalCalled = false
     let overrideCalled = false
@@ -165,7 +165,7 @@ test.group('Mutation | onSuccess Override', () => {
 
   test('should work with override that does not call original', async ({ assert }) => {
     const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+    const tuyau = createTuyauReactQueryClient({ client })
 
     let originalCalled = false
     let overrideCalled = false
@@ -192,7 +192,7 @@ test.group('Mutation | onSuccess Override', () => {
 
   test('should provide correct metadata to override', async ({ assert }) => {
     const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+    const tuyau = createTuyauReactQueryClient({ client })
 
     let metaReceived = false
 
@@ -219,7 +219,7 @@ test.group('Mutation | onSuccess Override', () => {
 
   test('should work with async override functions', async ({ assert }) => {
     const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+    const tuyau = createTuyauReactQueryClient({ client })
 
     let originalCalled = false
     let overrideCalled = false
@@ -253,7 +253,7 @@ test.group('Mutation | onSuccess Override', () => {
 
   test('should work without user-provided onSuccess', async ({ assert }) => {
     const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+    const tuyau = createTuyauReactQueryClient({ client })
 
     let overrideCalled = false
 
@@ -285,7 +285,7 @@ test.group('Mutation | Ky retry disabled', () => {
       return originalRequest(routeName as any, opts)
     }
 
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+    const tuyau = createTuyauReactQueryClient({ client })
 
     nock('http://localhost:3333').post('/users').reply(201, { id: 1, name: 'retry-test' })
 

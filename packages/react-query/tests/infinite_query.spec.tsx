@@ -4,6 +4,7 @@ import { createTuyau } from '@tuyau/core/client'
 import { waitFor, act } from '@testing-library/react'
 import { useInfiniteQuery } from '@tanstack/react-query'
 
+import { buildKey } from '../src/utils.ts'
 import { defaultRegistry } from './fixtures/index.ts'
 import { createTuyauReactQueryClient } from '../src/index.ts'
 import { queryClient, renderHookWithWrapper } from './helpers/index.tsx'
@@ -11,7 +12,7 @@ import { queryClient, renderHookWithWrapper } from './helpers/index.tsx'
 test.group('Infinite Query', () => {
   test('basic', async ({ assert, expectTypeOf }) => {
     const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+    const tuyau = createTuyauReactQueryClient({ client })
 
     nock('http://localhost:3333')
       .get('/articles')
@@ -62,7 +63,7 @@ test.group('Infinite Query', () => {
 
   test('query keys', async ({ assert }) => {
     const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+    const tuyau = createTuyauReactQueryClient({ client })
 
     nock('http://localhost:3333')
       .get('/articles')
@@ -91,7 +92,7 @@ test.group('Infinite Query', () => {
 
   test('typings', async ({ expectTypeOf }) => {
     const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+    const tuyau = createTuyauReactQueryClient({ client })
 
     nock('http://localhost:3333')
       .get('/articles')
@@ -129,7 +130,7 @@ test.group('Infinite Query', () => {
       return originalRequest(routeName as any, opts)
     }
 
-    const tuyau = createTuyauReactQueryClient({ client, queryClient })
+    const tuyau = createTuyauReactQueryClient({ client })
 
     nock('http://localhost:3333')
       .get('/articles')
@@ -149,5 +150,77 @@ test.group('Infinite Query', () => {
     await waitFor(() => assert.isTrue(result.current.isSuccess))
 
     assert.equal(capturedOptions.retry, 0)
+  })
+})
+
+test.group('Infinite Query | buildKey cursor/direction stripping', () => {
+  test('should strip cursor and direction from query params in infinite query key', ({
+    assert,
+  }) => {
+    const key = buildKey({
+      segments: ['articles', 'index'],
+      request: { query: { page: 1, cursor: 'abc123', direction: 'forward', limit: 10 } },
+      type: 'infinite',
+    })
+
+    assert.deepEqual(key, [
+      ['articles', 'index'],
+      { request: { query: { page: 1, limit: 10 } }, type: 'infinite' },
+    ])
+  })
+
+  test('should strip cursor and direction from body params in infinite query key', ({ assert }) => {
+    const key = buildKey({
+      segments: ['articles', 'index'],
+      request: { body: { cursor: 'abc123', direction: 'backward', filter: 'active' } },
+      type: 'infinite',
+    })
+
+    assert.deepEqual(key, [
+      ['articles', 'index'],
+      { request: { body: { filter: 'active' } }, type: 'infinite' },
+    ])
+  })
+
+  test('should strip cursor/direction from both query and body', ({ assert }) => {
+    const key = buildKey({
+      segments: ['articles', 'index'],
+      request: {
+        query: { cursor: 'q-cursor', page: 1 },
+        body: { direction: 'forward', data: 'test' },
+      },
+      type: 'infinite',
+    })
+
+    assert.deepEqual(key, [
+      ['articles', 'index'],
+      { request: { query: { page: 1 }, body: { data: 'test' } }, type: 'infinite' },
+    ])
+  })
+
+  test('should not strip cursor/direction for regular queries', ({ assert }) => {
+    const key = buildKey({
+      segments: ['articles', 'index'],
+      request: { query: { cursor: 'abc123', direction: 'forward', page: 1 } },
+      type: 'query',
+    })
+
+    assert.deepEqual(key, [
+      ['articles', 'index'],
+      { request: { query: { cursor: 'abc123', direction: 'forward', page: 1 } }, type: 'query' },
+    ])
+  })
+
+  test('should handle request without cursor/direction gracefully', ({ assert }) => {
+    const key = buildKey({
+      segments: ['articles', 'index'],
+      request: { query: { page: 1, limit: 10 } },
+      type: 'infinite',
+    })
+
+    assert.deepEqual(key, [
+      ['articles', 'index'],
+      { request: { query: { page: 1, limit: 10 } }, type: 'infinite' },
+    ])
   })
 })
