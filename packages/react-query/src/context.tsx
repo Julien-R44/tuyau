@@ -37,7 +37,7 @@ export function createTuyauContext<
   ) {
     const value = React.useMemo(() => {
       return createTuyauReactQueryClient({ client: props.client })
-    }, [props.client, props.queryClient])
+    }, [props.client])
 
     return (
       <TuyauClientContext.Provider value={props.client}>

@@ -381,6 +381,42 @@ test.group('Client | Chained', () => {
       assert.deepEqual(error.message, 'Request failed with status code 400: POST /auth/login')
     }
   })
+
+  test('handle CSRF token with empty value', async () => {
+    // @ts-ignore
+    globalThis.document ||= {}
+    globalThis.document.cookie = 'XSRF-TOKEN='
+
+    const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry })
+
+    nock('http://localhost:3333').get('/users').reply(200, { token: '123' })
+
+    await tuyau.api.users.index({})
+  })
+
+  test('handle CSRF token with malformed URI encoding', async () => {
+    // @ts-ignore
+    globalThis.document ||= {}
+    globalThis.document.cookie = 'XSRF-TOKEN=%E0%A4%A'
+
+    const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry })
+
+    nock('http://localhost:3333').get('/users').reply(200, { token: '123' })
+
+    await tuyau.api.users.index({})
+  })
+
+  test('handle Content-Type with extra whitespace', async ({ assert }) => {
+    const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry })
+
+    nock('http://localhost:3333')
+      .get('/users')
+      .reply(200, { id: 1 }, { 'Content-Type': 'application/json ; charset=utf-8' })
+
+    const result = await tuyau.api.users.index({})
+
+    assert.deepEqual(result, { id: 1 })
+  })
 })
 
 test.group('Client | request', () => {

@@ -90,13 +90,16 @@ export class Tuyau<
    * Automatically appends CSRF token from cookies to requests
    */
   #appendCsrfToken(request: Request) {
-    const xCsrfToken = globalThis.document?.cookie
-      .split('; ')
-      .find((row) => row.startsWith('XSRF-TOKEN='))
+    const cookies = globalThis.document?.cookie
+    if (!cookies) return
 
-    if (!xCsrfToken) return
+    const tokenMatch = cookies.match(/(?:^|;\s*)XSRF-TOKEN=([^;]+)/)
+    const token = tokenMatch?.[1]
+    if (!token) return
 
-    request.headers.set('X-XSRF-TOKEN', decodeURIComponent(xCsrfToken.split('=')[1]))
+    try {
+      request.headers.set('X-XSRF-TOKEN', decodeURIComponent(token))
+    } catch {}
   }
 
   /**
@@ -175,7 +178,7 @@ export class Tuyau<
       /**
        * Parse the response based on the content type
        */
-      const responseType = res.headers.get('Content-Type')?.split(';')[0]
+      const responseType = res.headers.get('Content-Type')?.split(';')[0]?.trim()
       if (responseType === 'application/json') {
         data = await res.json()
       } else if (responseType === 'application/octet-stream') {
