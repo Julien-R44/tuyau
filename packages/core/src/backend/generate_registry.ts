@@ -1,6 +1,6 @@
 import { dirname } from 'node:path'
 import { writeFile, mkdir } from 'node:fs/promises'
-import type { ScannedRoute, RouterHooks } from '@adonisjs/assembler/types'
+import type { ScannedRoute, AllHooks, RoutesListItem } from '@adonisjs/assembler/types'
 
 interface GenerateRegistryConfig {
   /**
@@ -51,13 +51,12 @@ function matchesPattern(
 }
 
 /**
- * Filter routes based on only/except patterns
+ * Filter route based on only/except patterns
  */
-function filterRoutes(
-  routes: ScannedRoute[],
-  filters?: GenerateRegistryConfig['routes'],
-): ScannedRoute[] {
-  if (!filters) return routes
+function filterRoute(route: RoutesListItem, filters?: GenerateRegistryConfig['routes']): boolean {
+  if (!filters) {
+    return true
+  }
 
   const { only, except } = filters
 
@@ -65,14 +64,14 @@ function filterRoutes(
     throw new Error('Cannot use both "only" and "except" filters at the same time')
 
   if (only) {
-    return routes.filter((route) => only.some((pattern) => matchesPattern(route.name, pattern)))
+    return only.some((pattern) => matchesPattern(route.name!, pattern))
   }
 
   if (except) {
-    return routes.filter((route) => !except.some((pattern) => matchesPattern(route.name, pattern)))
+    return !except.some((pattern) => matchesPattern(route.name!, pattern))
   }
 
-  return routes
+  return true
 }
 
 /**
@@ -312,29 +311,35 @@ export function generateRegistry(options?: GenerateRegistryConfig): {
   }
 
   return {
-    async run(devServer, routesScanner) {
-      const startTime = process.hrtime()
-      const scannedRoutes = routesScanner.getScannedRoutes()
-      const filteredRoutes = filterRoutes(scannedRoutes, config.routes)
+    async run(_, hooks) {
+      hooks.add('routesScanning', (_, routesScanner) => {
+        routesScanner.filter((route) => {
+          return filterRoute(route, config.routes)
+        })
+      })
+      hooks.add('routesScanned', async (devServer, routesScanner) => {
+        const startTime = process.hrtime()
+        const scannedRoutes = routesScanner.getScannedRoutes()
 
-      const runtimeContent = generateRuntimeContent(filteredRoutes)
-      const typesContent = generateTypesContent(filteredRoutes)
-      const treeContent = generateTreeContent(filteredRoutes)
+        const runtimeContent = generateRuntimeContent(scannedRoutes)
+        const typesContent = generateTypesContent(scannedRoutes)
+        const treeContent = generateTreeContent(scannedRoutes)
 
-      const basePath = config.output.replace(/\.(ts|js)$/, '')
-      const runtimePath = `${basePath}.ts`
-      const typesPath = `${basePath}.schema.d.ts`
-      const treePath = `${basePath}.schema.tree.d.ts`
+        const basePath = config.output.replace(/\.(ts|js)$/, '')
+        const runtimePath = `${basePath}.ts`
+        const typesPath = `${basePath}.schema.d.ts`
+        const treePath = `${basePath}.schema.tree.d.ts`
 
-      await Promise.all([
-        writeOutputFile(runtimePath, runtimeContent),
-        writeOutputFile(typesPath, typesContent),
-        writeOutputFile(treePath, treeContent),
-      ])
+        await Promise.all([
+          writeOutputFile(runtimePath, runtimeContent),
+          writeOutputFile(typesPath, typesContent),
+          writeOutputFile(treePath, treeContent),
+        ])
 
-      devServer.ui.logger.info(`created ${runtimePath}`, { startTime })
-      devServer.ui.logger.info(`created ${typesPath}`, { startTime })
-      devServer.ui.logger.info(`created ${treePath}`, { startTime })
+        devServer.ui.logger.info(`created ${runtimePath}`, { startTime })
+        devServer.ui.logger.info(`created ${typesPath}`, { startTime })
+        devServer.ui.logger.info(`created ${treePath}`, { startTime })
+      })
     },
-  } satisfies RouterHooks['routesScanned'][number]
+  } satisfies AllHooks['init'][number]
 }
