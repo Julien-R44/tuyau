@@ -36,17 +36,17 @@
     "prepublishOnly": "npm run build"
   },
   "peerDependencies": {
-    "@adonisjs/assembler": "8.0.0-next.19",
-    "@adonisjs/core": "^7.0.0-next.10"
+    "@adonisjs/assembler": "^8.0.0-next.26",
+    "@adonisjs/core": "^7.0.0-next.14"
   },
   "dependencies": {
     "ky": "^1.14.0",
     "object-to-formdata": "^4.5.1"
   },
   "devDependencies": {
-    "@adonisjs/assembler": "8.0.0-next.19",
-    "@adonisjs/core": "^7.0.0-next.13",
-    "@adonisjs/http-server": "8.0.0-next.12",
+    "@adonisjs/assembler": "^8.0.0-next.26",
+    "@adonisjs/core": "^7.0.0-next.14",
+    "@adonisjs/http-server": "^8.0.0-next.16",
     "@faker-js/faker": "^10.1.0",
     "@poppinss/ts-exec": "^1.4.1",
     "@types/node": "^24.10.1",
