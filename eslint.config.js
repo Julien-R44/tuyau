@@ -12,6 +12,7 @@ export default await julr(
       root: true,
       strict: true,
     },
+    ignores: ['**/*/.adonisjs/**/*'],
   },
   {
     rules: {
