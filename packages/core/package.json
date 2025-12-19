@@ -46,7 +46,7 @@
   "devDependencies": {
     "@adonisjs/assembler": "^8.0.0-next.26",
     "@adonisjs/core": "^7.0.0-next.14",
-    "@adonisjs/http-server": "^8.0.0-next.15",
+    "@adonisjs/http-server": "^8.0.0-next.16",
     "@faker-js/faker": "^10.1.0",
     "@poppinss/ts-exec": "^1.4.1",
     "@types/node": "^24.10.1",
