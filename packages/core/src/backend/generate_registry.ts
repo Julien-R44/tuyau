@@ -294,7 +294,7 @@ function generateTypesContent(routes: ScannedRoute[]): string {
 /// <reference path="../../adonisrc.ts" />
 
 import type { ExtractBody, ExtractQuery } from '@tuyau/core/types'
-import type { Infer } from '@vinejs/vine/types'
+import type { InferInput } from '@vinejs/vine/types'
 
 export interface Registry {
 ${registryEntries}
