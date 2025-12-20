@@ -36,22 +36,22 @@
     "prepublishOnly": "npm run build"
   },
   "peerDependencies": {
-    "@adonisjs/assembler": "^8.0.0-next.26",
-    "@adonisjs/core": "^7.0.0-next.14"
+    "@adonisjs/assembler": "^8.0.0-next.27",
+    "@adonisjs/core": "^7.0.0-next.16"
   },
   "dependencies": {
-    "ky": "^1.14.0",
+    "ky": "^1.14.1",
     "object-to-formdata": "^4.5.1"
   },
   "devDependencies": {
-    "@adonisjs/assembler": "^8.0.0-next.26",
-    "@adonisjs/core": "^7.0.0-next.14",
+    "@adonisjs/assembler": "^8.0.0-next.27",
+    "@adonisjs/core": "^7.0.0-next.16",
     "@adonisjs/http-server": "^8.0.0-next.16",
     "@faker-js/faker": "^10.1.0",
     "@poppinss/ts-exec": "^1.4.1",
-    "@types/node": "^24.10.1",
+    "@types/node": "^25.0.3",
     "@typescript/analyze-trace": "^0.10.1",
-    "@vinejs/vine": "^4.1.0"
+    "@vinejs/vine": "^4.2.0"
   },
   "publishConfig": {
     "access": "public",
