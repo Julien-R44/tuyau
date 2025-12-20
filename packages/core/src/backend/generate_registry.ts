@@ -4,8 +4,8 @@ import type { ScannedRoute, AllHooks, RoutesListItem } from '@adonisjs/assembler
 
 interface GenerateRegistryConfig {
   /**
-   * Path to write the generated registry file
-   * @default ./.adonisjs/client/registry.ts
+   * Path to write the generated registry directory
+   * @default ./.adonisjs/client/registry
    */
   output?: string
 
@@ -243,8 +243,8 @@ function generateRuntimeContent(routes: ScannedRoute[]): string {
 
   return `/* eslint-disable prettier/prettier */
 import type { AdonisEndpoint } from '@tuyau/core/types'
-import type { Registry } from './registry.schema.d.ts'
-import type { ApiDefinition } from './registry.schema.tree.d.ts'
+import type { Registry } from './schema.d.ts'
+import type { ApiDefinition } from './tree.d.ts'
 
 const placeholder: any = {}
 
@@ -276,7 +276,7 @@ function generateTreeContent(routes: ScannedRoute[]): string {
   const treeInterface = generateTreeInterface(tree)
 
   return `/* eslint-disable prettier/prettier */
-import type { routes } from './registry.ts'
+import type { routes } from './index.ts'
 
 export interface ApiDefinition {
 ${treeInterface}
@@ -291,7 +291,7 @@ function generateTypesContent(routes: ScannedRoute[]): string {
   const registryEntries = routes.map(generateTypesRegistryEntry).join('\n')
 
   return `/* eslint-disable prettier/prettier */
-/// <reference path="../../adonisrc.ts" />
+/// <reference path="../manifest.d.ts" />
 
 import type { ExtractBody, ExtractQuery } from '@tuyau/core/types'
 import type { InferInput } from '@vinejs/vine/types'
@@ -306,7 +306,7 @@ export function generateRegistry(options?: GenerateRegistryConfig): {
   run(devServer: any, routesScanner: any): Promise<void>
 } {
   const config = {
-    output: './.adonisjs/client/registry.ts',
+    output: './.adonisjs/client/registry',
     ...options,
   }
 
@@ -325,10 +325,10 @@ export function generateRegistry(options?: GenerateRegistryConfig): {
         const typesContent = generateTypesContent(scannedRoutes)
         const treeContent = generateTreeContent(scannedRoutes)
 
-        const basePath = config.output.replace(/\.(ts|js)$/, '')
-        const runtimePath = `${basePath}.ts`
-        const typesPath = `${basePath}.schema.d.ts`
-        const treePath = `${basePath}.schema.tree.d.ts`
+        const registryDir = config.output.replace(/\/$/, '')
+        const runtimePath = `${registryDir}/index.ts`
+        const typesPath = `${registryDir}/schema.d.ts`
+        const treePath = `${registryDir}/tree.d.ts`
 
         await Promise.all([
           writeOutputFile(runtimePath, runtimeContent),

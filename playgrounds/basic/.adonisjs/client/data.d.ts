@@ -1,3 +1,4 @@
+/// <reference path="./manifest.d.ts" />
 import type { InferData, InferVariants } from '@adonisjs/core/types/transformers'
 import type { InferSharedProps } from '@adonisjs/inertia/types'
 import type UserTransformer from '#transformers/user_transformer'

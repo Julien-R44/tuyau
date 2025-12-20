@@ -114,8 +114,8 @@ export default defineConfig({
     init: [
       indexEntities({ transformers: { enabled: true, withSharedProps: true } }),
       indexPages({ framework: 'react' }),
+      generateRegistry(),
     ],
-    routesScanned: [generateRegistry()],
 
     buildStarting: [() => import('@adonisjs/vite/build_hook')],
   },
