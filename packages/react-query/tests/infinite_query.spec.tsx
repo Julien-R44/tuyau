@@ -7,6 +7,7 @@ import { useInfiniteQuery } from '@tanstack/react-query'
 import { buildKey } from '../src/utils.ts'
 import { defaultRegistry } from './fixtures/index.ts'
 import { createTuyauReactQueryClient } from '../src/index.ts'
+import { withRequestCapture } from './helpers/request_capture.ts'
 import { queryClient, renderHookWithWrapper } from './helpers/index.tsx'
 
 test.group('Infinite Query', () => {
@@ -222,5 +223,131 @@ test.group('Infinite Query | buildKey cursor/direction stripping', () => {
       ['articles', 'index'],
       { request: { query: { page: 1, limit: 10 } }, type: 'infinite' },
     ])
+  })
+})
+
+test.group('Infinite Query | Ky options', (group) => {
+  group.each.setup(() => queryClient.clear())
+
+  test('should pass timeout option to client.request', async ({ assert }) => {
+    const { client, capture } = withRequestCapture(
+      createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry }),
+    )
+    const tuyau = createTuyauReactQueryClient({ client })
+
+    nock('http://localhost:3333')
+      .get('/articles')
+      .query({ page: 1, limit: 10 })
+      .reply(200, { data: [{ id: 1, title: 'Timeout Test' }], nextCursor: null })
+
+    const options = tuyau.articles.index.infiniteQueryOptions(
+      { query: { limit: 10 } },
+      {
+        pageParamKey: 'page',
+        initialPageParam: 1,
+        getNextPageParam: (lastPage) => lastPage.nextCursor,
+        tuyau: { timeout: 60_000 },
+      },
+    )
+
+    const { result } = renderHookWithWrapper(() => useInfiniteQuery(options))
+    await waitFor(() => assert.isTrue(result.current.isSuccess))
+
+    const lastRequest = capture.getLastRequest()
+    assert.equal(lastRequest?.options.timeout, 60_000)
+    assert.equal(lastRequest?.options.retry, 0)
+  })
+
+  test('should pass custom headers option to client.request', async ({ assert }) => {
+    const { client, capture } = withRequestCapture(
+      createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry }),
+    )
+    const tuyau = createTuyauReactQueryClient({ client })
+
+    nock('http://localhost:3333')
+      .get('/articles')
+      .query({ page: 1, limit: 10 })
+      .reply(200, { data: [{ id: 1, title: 'Headers Test' }], nextCursor: null })
+
+    const options = tuyau.articles.index.infiniteQueryOptions(
+      { query: { limit: 10 } },
+      {
+        pageParamKey: 'page',
+        initialPageParam: 1,
+        getNextPageParam: (lastPage) => lastPage.nextCursor,
+        tuyau: { headers: { 'X-Custom-Header': 'custom-value' } },
+      },
+    )
+
+    const { result } = renderHookWithWrapper(() => useInfiniteQuery(options))
+    await waitFor(() => assert.isTrue(result.current.isSuccess))
+
+    assert.deepEqual(capture.getLastRequest()?.options.headers, {
+      'X-Custom-Header': 'custom-value',
+    })
+  })
+
+  test('should pass multiple Ky options to client.request', async ({ assert }) => {
+    const { client, capture } = withRequestCapture(
+      createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry }),
+    )
+    const tuyau = createTuyauReactQueryClient({ client })
+
+    nock('http://localhost:3333')
+      .get('/articles')
+      .query({ page: 1, limit: 10 })
+      .reply(200, { data: [{ id: 1, title: 'Multi Options Test' }], nextCursor: null })
+
+    const options = tuyau.articles.index.infiniteQueryOptions(
+      { query: { limit: 10 } },
+      {
+        pageParamKey: 'page',
+        initialPageParam: 1,
+        getNextPageParam: (lastPage) => lastPage.nextCursor,
+        tuyau: {
+          timeout: 30_000,
+          headers: { Authorization: 'Bearer token123' },
+          credentials: 'include',
+        },
+      },
+    )
+
+    const { result } = renderHookWithWrapper(() => useInfiniteQuery(options))
+    await waitFor(() => assert.isTrue(result.current.isSuccess))
+
+    const lastRequest = capture.getLastRequest()
+    assert.equal(lastRequest?.options.timeout, 30_000)
+    assert.deepEqual(lastRequest?.options.headers, { Authorization: 'Bearer token123' })
+    assert.equal(lastRequest?.options.credentials, 'include')
+    assert.equal(lastRequest?.options.retry, 0)
+  })
+
+  test('abortOnUnmount should not be passed to client.request', async ({ assert }) => {
+    const { client, capture } = withRequestCapture(
+      createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry }),
+    )
+    const tuyau = createTuyauReactQueryClient({ client })
+
+    nock('http://localhost:3333')
+      .get('/articles')
+      .query({ page: 1, limit: 10 })
+      .reply(200, { data: [{ id: 1, title: 'Abort Test' }], nextCursor: null })
+
+    const options = tuyau.articles.index.infiniteQueryOptions(
+      { query: { limit: 10 } },
+      {
+        pageParamKey: 'page',
+        initialPageParam: 1,
+        getNextPageParam: (lastPage) => lastPage.nextCursor,
+        tuyau: { abortOnUnmount: true, timeout: 5000 },
+      },
+    )
+
+    const { result } = renderHookWithWrapper(() => useInfiniteQuery(options))
+    await waitFor(() => assert.isTrue(result.current.isSuccess))
+
+    const lastRequest = capture.getLastRequest()
+    assert.equal(lastRequest?.options.timeout, 5000)
+    assert.notProperty(lastRequest?.options, 'abortOnUnmount')
   })
 })

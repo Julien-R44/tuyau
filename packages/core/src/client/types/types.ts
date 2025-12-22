@@ -100,7 +100,7 @@ export type EndpointByName<Name extends keyof AdonisRegistry & string> = AdonisR
 /**
  * Pre-computed base Ky options to avoid recomputing Omit on every request
  */
-type BaseRequestOptions = Omit<
+export type BaseRequestOptions = Omit<
   KyOptions,
   'body' | 'params' | 'searchParams' | 'method' | 'json' | 'prefixUrl'
 >

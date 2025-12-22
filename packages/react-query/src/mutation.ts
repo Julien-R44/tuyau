@@ -3,6 +3,7 @@ import { mutationOptions } from '@tanstack/react-query'
 import type { SchemaEndpoint, RawRequestArgs } from '@tuyau/core/types'
 import type { MutationFunction, UseMutationOptions } from '@tanstack/react-query'
 
+import { extractKyOptions } from './utils.ts'
 import type { DistributiveOmit } from './types/utils.ts'
 import type { TuyauQueryBaseOptions, TuyauMutationKey } from './types/common.ts'
 
@@ -50,10 +51,11 @@ export function tuyauMutationOptions(options: TuyauMutationOptionsOptions) {
   const { opts, routeName, client } = options
 
   const mutationKey = getMutationKeyInternal({ segments: routeName.split('.') })
+  const kyOptions = extractKyOptions(opts?.tuyau)
 
   const mutationFn: MutationFunction = async (request: any) => {
     const requestArgs: RawRequestArgs<any> = request || {}
-    return await client.request(routeName, { ...requestArgs, retry: 0 })
+    return await client.request(routeName, { ...requestArgs, ...kyOptions, retry: 0 })
   }
 
   return mutationOptions({ ...opts, mutationKey, mutationFn })

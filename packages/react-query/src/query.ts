@@ -3,7 +3,7 @@ import type { RawRequestArgs } from '@tuyau/core/types'
 import { queryOptions, skipToken } from '@tanstack/react-query'
 import type { QueryFunctionContext, SkipToken } from '@tanstack/react-query'
 
-import { invoke } from './utils.ts'
+import { invoke, extractKyOptions } from './utils.ts'
 import type {
   TuyauQueryBaseOptions,
   TuyauQueryKey,
@@ -29,8 +29,11 @@ export function tuyauQueryOptions(options: TuyauQueryOptionsOptions) {
       const effectiveAbortOnUnmount =
         opts?.tuyau?.abortOnUnmount ?? globalOptions?.abortOnUnmount ?? false
 
+      const kyOptions = extractKyOptions(opts?.tuyau)
+
       return await client.request(routeName, {
         ...request,
+        ...kyOptions,
         retry: 0,
         ...(effectiveAbortOnUnmount ? { signal: queryFnContext.signal } : {}),
       })

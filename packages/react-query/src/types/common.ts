@@ -1,4 +1,4 @@
-import type { SchemaEndpoint, RawRequestArgs } from '@tuyau/core/types'
+import type { SchemaEndpoint, RawRequestArgs, BaseRequestOptions } from '@tuyau/core/types'
 import type {
   DataTag,
   DefinedInitialDataOptions,
@@ -99,7 +99,7 @@ export interface UnusedSkipTokenTuyauQueryOptionsOut<
 /**
  * Tuyau-specific request options for React Query integration
  */
-export interface TuyauReactRequestOptions {
+export interface TuyauReactRequestOptions extends BaseRequestOptions {
   /**
    * Opt out or into aborting request on unmount
    */
@@ -107,9 +107,12 @@ export interface TuyauReactRequestOptions {
 }
 
 /**
- * Base options for Tuyau queries
+ * Base options for Tuyau queries and mutations
  */
 export interface TuyauQueryBaseOptions {
+  /**
+   * Tuyau-specific options including Ky request options (timeout, retry, headers, etc.)
+   */
   tuyau?: TuyauReactRequestOptions
 }
 

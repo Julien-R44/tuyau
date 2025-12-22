@@ -8,6 +8,7 @@ import { defaultRegistry } from './fixtures/index.ts'
 import { TuyauMutationKey } from '../src/types/common.ts'
 import { renderHookWithWrapper } from './helpers/index.tsx'
 import { createTuyauReactQueryClient } from '../src/index.ts'
+import { withRequestCapture } from './helpers/request_capture.ts'
 
 test.group('Mutation | Options', () => {
   test('mutationOptions should create valid mutation options object', ({ assert }) => {
@@ -272,19 +273,9 @@ test.group('Mutation | onSuccess Override', () => {
 
 test.group('Mutation | Ky retry disabled', () => {
   test('should pass retry: 0 to disable Ky retries', async ({ assert }) => {
-    let capturedOptions: any
-
-    const client = createTuyau({
-      baseUrl: 'http://localhost:3333',
-      registry: defaultRegistry,
-    })
-
-    const originalRequest = client.request.bind(client)
-    client.request = async (routeName: string, opts?: any) => {
-      capturedOptions = opts
-      return originalRequest(routeName as any, opts)
-    }
-
+    const { client, capture } = withRequestCapture(
+      createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry }),
+    )
     const tuyau = createTuyauReactQueryClient({ client })
 
     nock('http://localhost:3333').post('/users').reply(201, { id: 1, name: 'retry-test' })
@@ -294,6 +285,110 @@ test.group('Mutation | Ky retry disabled', () => {
     result.current.mutate({ body: { name: 'retry-test' } })
     await setTimeout(300)
 
-    assert.equal(capturedOptions.retry, 0)
+    assert.equal(capture.getLastRequest()?.options.retry, 0)
+  })
+})
+
+test.group('Mutation | Ky options', () => {
+  test('should pass timeout option to client.request', async ({ assert }) => {
+    const { client, capture } = withRequestCapture(
+      createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry }),
+    )
+    const tuyau = createTuyauReactQueryClient({ client })
+
+    nock('http://localhost:3333').post('/users').reply(201, { id: 1, name: 'timeout-test' })
+
+    const { result } = renderHookWithWrapper(() =>
+      useMutation(
+        tuyau.users.store.mutationOptions({
+          tuyau: { timeout: 60_000 },
+        }),
+      ),
+    )
+
+    result.current.mutate({ body: { name: 'timeout-test' } })
+    await setTimeout(300)
+
+    const lastRequest = capture.getLastRequest()
+    assert.equal(lastRequest?.options.timeout, 60_000)
+    assert.equal(lastRequest?.options.retry, 0)
+  })
+
+  test('should pass custom headers option to client.request', async ({ assert }) => {
+    const { client, capture } = withRequestCapture(
+      createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry }),
+    )
+    const tuyau = createTuyauReactQueryClient({ client })
+
+    nock('http://localhost:3333').post('/users').reply(201, { id: 1, name: 'headers-test' })
+
+    const { result } = renderHookWithWrapper(() =>
+      useMutation(
+        tuyau.users.store.mutationOptions({
+          tuyau: { headers: { 'X-Custom-Header': 'custom-value' } },
+        }),
+      ),
+    )
+
+    result.current.mutate({ body: { name: 'headers-test' } })
+    await setTimeout(300)
+
+    assert.deepEqual(capture.getLastRequest()?.options.headers, {
+      'X-Custom-Header': 'custom-value',
+    })
+  })
+
+  test('should pass multiple Ky options to client.request', async ({ assert }) => {
+    const { client, capture } = withRequestCapture(
+      createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry }),
+    )
+    const tuyau = createTuyauReactQueryClient({ client })
+
+    nock('http://localhost:3333').post('/users').reply(201, { id: 1, name: 'multi-options-test' })
+
+    const { result } = renderHookWithWrapper(() =>
+      useMutation(
+        tuyau.users.store.mutationOptions({
+          tuyau: {
+            timeout: 30_000,
+            headers: { Authorization: 'Bearer token123' },
+            credentials: 'include',
+          },
+        }),
+      ),
+    )
+
+    result.current.mutate({ body: { name: 'multi-options-test' } })
+    await setTimeout(300)
+
+    const lastRequest = capture.getLastRequest()
+    assert.equal(lastRequest?.options.timeout, 30_000)
+    assert.deepEqual(lastRequest?.options.headers, { Authorization: 'Bearer token123' })
+    assert.equal(lastRequest?.options.credentials, 'include')
+    assert.equal(lastRequest?.options.retry, 0)
+  })
+
+  test('abortOnUnmount should not be passed to client.request', async ({ assert }) => {
+    const { client, capture } = withRequestCapture(
+      createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry }),
+    )
+    const tuyau = createTuyauReactQueryClient({ client })
+
+    nock('http://localhost:3333').post('/users').reply(201, { id: 1, name: 'abort-test' })
+
+    const { result } = renderHookWithWrapper(() =>
+      useMutation(
+        tuyau.users.store.mutationOptions({
+          tuyau: { abortOnUnmount: true, timeout: 5000 },
+        }),
+      ),
+    )
+
+    result.current.mutate({ body: { name: 'abort-test' } })
+    await setTimeout(300)
+
+    const lastRequest = capture.getLastRequest()
+    assert.equal(lastRequest?.options.timeout, 5000)
+    assert.notProperty(lastRequest?.options, 'abortOnUnmount')
   })
 })

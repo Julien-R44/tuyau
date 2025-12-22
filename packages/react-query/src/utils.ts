@@ -1,7 +1,7 @@
 import { skipToken } from '@tanstack/react-query'
 
 import type { Fn } from './types/utils.ts'
-import type { QueryType, TuyauQueryKey } from './types/common.ts'
+import type { QueryType, TuyauQueryKey, TuyauReactRequestOptions } from './types/common.ts'
 
 /**
  * Check if value is an object
@@ -62,4 +62,18 @@ export function buildKey(opts: {
       ...(type && type !== 'any' && { type }),
     },
   ]
+}
+
+/**
+ * Extract Ky options from TuyauReactRequestOptions.
+ * Removes tuyau-specific options like abortOnUnmount.
+ */
+export function extractKyOptions(
+  tuyauOpts?: TuyauReactRequestOptions,
+): Omit<TuyauReactRequestOptions, 'abortOnUnmount'> {
+  if (!tuyauOpts) return {}
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { abortOnUnmount, ...kyOptions } = tuyauOpts
+  return kyOptions
 }

@@ -3,7 +3,7 @@ import type { RawRequestArgs } from '@tuyau/core/types'
 import { infiniteQueryOptions, skipToken } from '@tanstack/react-query'
 import type { QueryFunctionContext, SkipToken } from '@tanstack/react-query'
 
-import { invoke } from './utils.ts'
+import { invoke, extractKyOptions } from './utils.ts'
 import type { TuyauInfiniteQueryOptionsIn } from './types/infinite_query.ts'
 import type { TuyauQueryKey, TuyauReactRequestOptions } from './types/common.ts'
 
@@ -27,6 +27,7 @@ export function tuyauInfiniteQueryOptions(options: TuyauInfiniteQueryOptionsOpti
       const effectiveAbortOnUnmount =
         opts?.tuyau?.abortOnUnmount ?? globalOptions?.abortOnUnmount ?? false
 
+      const kyOptions = extractKyOptions(opts?.tuyau)
       const pageParamKey = opts?.pageParamKey || 'page'
       let requestArgs: RawRequestArgs<any>
 
@@ -45,6 +46,7 @@ export function tuyauInfiniteQueryOptions(options: TuyauInfiniteQueryOptionsOpti
 
       return await client.request(routeName, {
         ...requestArgs,
+        ...kyOptions,
         retry: 0,
         ...(effectiveAbortOnUnmount ? { signal: queryFnContext.signal } : {}),
       })

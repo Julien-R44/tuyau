@@ -7,6 +7,7 @@ import { useQuery, useSuspenseQuery, useMutation, skipToken } from '@tanstack/re
 import { defaultRegistry } from './fixtures/index.ts'
 import { TuyauQueryKey } from '../src/types/common.ts'
 import { createTuyauReactQueryClient } from '../src/main.ts'
+import { withRequestCapture } from './helpers/request_capture.ts'
 import { queryClient, renderHookWithWrapper } from './helpers/index.tsx'
 
 test.group('Query | useQuery', () => {
@@ -512,19 +513,9 @@ test.group('Query | ExtractQuery/ExtractBody endpoints', () => {
 
 test.group('Query | Ky retry disabled', () => {
   test('should pass retry: 0 to disable Ky retries', async ({ assert }) => {
-    let capturedOptions: any
-
-    const client = createTuyau({
-      baseUrl: 'http://localhost:3333',
-      registry: defaultRegistry,
-    })
-
-    const originalRequest = client.request.bind(client)
-    client.request = async (routeName: string, opts?: any) => {
-      capturedOptions = opts
-      return originalRequest(routeName as any, opts)
-    }
-
+    const { client, capture } = withRequestCapture(
+      createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry }),
+    )
     const tuyau = createTuyauReactQueryClient({ client })
 
     nock('http://localhost:3333')
@@ -541,6 +532,128 @@ test.group('Query | Ky retry disabled', () => {
       client: queryClient,
     })
 
-    assert.equal(capturedOptions.retry, 0)
+    assert.equal(capture.getLastRequest()?.options.retry, 0)
+  })
+})
+
+test.group('Query | Ky options', () => {
+  test('should pass timeout option to client.request', async ({ assert }) => {
+    const { client, capture } = withRequestCapture(
+      createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry }),
+    )
+    const tuyau = createTuyauReactQueryClient({ client })
+
+    nock('http://localhost:3333')
+      .get('/users')
+      .query({ name: 'timeout-test' })
+      .reply(200, [{ id: 1, name: 'timeout-test' }])
+
+    const options = tuyau.users.index.queryOptions(
+      { query: { name: 'timeout-test' } },
+      { tuyau: { timeout: 60_000 } },
+    )
+
+    await options.queryFn!({
+      queryKey: options.queryKey,
+      meta: undefined,
+      signal: new AbortController().signal,
+      client: queryClient,
+    })
+
+    const lastRequest = capture.getLastRequest()
+    assert.equal(lastRequest?.options.timeout, 60_000)
+    assert.equal(lastRequest?.options.retry, 0)
+  })
+
+  test('should pass custom headers option to client.request', async ({ assert }) => {
+    const { client, capture } = withRequestCapture(
+      createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry }),
+    )
+    const tuyau = createTuyauReactQueryClient({ client })
+
+    nock('http://localhost:3333')
+      .get('/users')
+      .query({ name: 'headers-test' })
+      .reply(200, [{ id: 1, name: 'headers-test' }])
+
+    const options = tuyau.users.index.queryOptions(
+      { query: { name: 'headers-test' } },
+      { tuyau: { headers: { 'X-Custom-Header': 'custom-value' } } },
+    )
+
+    await options.queryFn!({
+      queryKey: options.queryKey,
+      meta: undefined,
+      signal: new AbortController().signal,
+      client: queryClient,
+    })
+
+    assert.deepEqual(capture.getLastRequest()?.options.headers, {
+      'X-Custom-Header': 'custom-value',
+    })
+  })
+
+  test('should pass multiple Ky options to client.request', async ({ assert }) => {
+    const { client, capture } = withRequestCapture(
+      createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry }),
+    )
+    const tuyau = createTuyauReactQueryClient({ client })
+
+    nock('http://localhost:3333')
+      .get('/users')
+      .query({ name: 'multi-options-test' })
+      .reply(200, [{ id: 1, name: 'multi-options-test' }])
+
+    const options = tuyau.users.index.queryOptions(
+      { query: { name: 'multi-options-test' } },
+      {
+        tuyau: {
+          timeout: 30_000,
+          headers: { Authorization: 'Bearer token123' },
+          credentials: 'include',
+        },
+      },
+    )
+
+    await options.queryFn!({
+      queryKey: options.queryKey,
+      meta: undefined,
+      signal: new AbortController().signal,
+      client: queryClient,
+    })
+
+    const lastRequest = capture.getLastRequest()
+    assert.equal(lastRequest?.options.timeout, 30_000)
+    assert.deepEqual(lastRequest?.options.headers, { Authorization: 'Bearer token123' })
+    assert.equal(lastRequest?.options.credentials, 'include')
+    assert.equal(lastRequest?.options.retry, 0)
+  })
+
+  test('abortOnUnmount should not be passed to client.request', async ({ assert }) => {
+    const { client, capture } = withRequestCapture(
+      createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry }),
+    )
+    const tuyau = createTuyauReactQueryClient({ client })
+
+    nock('http://localhost:3333')
+      .get('/users')
+      .query({ name: 'abort-test' })
+      .reply(200, [{ id: 1, name: 'abort-test' }])
+
+    const options = tuyau.users.index.queryOptions(
+      { query: { name: 'abort-test' } },
+      { tuyau: { abortOnUnmount: true, timeout: 5000 } },
+    )
+
+    await options.queryFn!({
+      queryKey: options.queryKey,
+      meta: undefined,
+      signal: new AbortController().signal,
+      client: queryClient,
+    })
+
+    const lastRequest = capture.getLastRequest()
+    assert.equal(lastRequest?.options.timeout, 5000)
+    assert.notProperty(lastRequest?.options, 'abortOnUnmount')
   })
 })
