@@ -2,13 +2,26 @@
   "name": "@tuyau/core",
   "type": "module",
   "version": "1.0.0-beta.9",
-  "description": "e2e client for AdonisJS",
+  "description": "E2E typesafe client for AdonisJS",
   "author": "Julien Ripouteau <julien@ripouteau.com>",
   "license": "MIT",
+  "homepage": "https://github.com/Julien-R44/tuyau#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Julien-R44/tuyau.git",
+    "directory": "packages/core"
+  },
+  "bugs": {
+    "url": "https://github.com/Julien-R44/tuyau/issues"
+  },
   "keywords": [
     "adonisjs",
-    "e2e",
-    "client"
+    "typescript",
+    "typesafe",
+    "api",
+    "rpc",
+    "client",
+    "e2e"
   ],
   "exports": {
     "./client": "./build/client/index.js",

@@ -2,10 +2,25 @@
   "name": "@tuyau/superjson",
   "type": "module",
   "version": "1.0.0-beta.0",
-  "description": "Superjson transformer for Tuyau",
+  "description": "SuperJSON plugin for Tuyau and AdonisJS",
   "author": "Julien Ripouteau <julien@ripouteau.com>",
   "license": "MIT",
-  "keywords": [],
+  "homepage": "https://github.com/Julien-R44/tuyau#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Julien-R44/tuyau.git",
+    "directory": "packages/superjson"
+  },
+  "bugs": {
+    "url": "https://github.com/Julien-R44/tuyau/issues"
+  },
+  "keywords": [
+    "adonisjs",
+    "typescript",
+    "superjson",
+    "serialization",
+    "tuyau"
+  ],
   "exports": {
     ".": "./build/index.js",
     "./types": "./build/src/types.js",

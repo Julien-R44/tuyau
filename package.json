@@ -2,12 +2,26 @@
   "name": "@tuyau/monorepo",
   "type": "module",
   "version": "0.0.0",
+  "private": true,
   "packageManager": "pnpm@10.26.1",
-  "description": "",
+  "description": "Typesafe API toolkit for AdonisJS",
   "author": "Julien Ripouteau <julien@ripouteau.com>",
-  "license": "ISC",
-  "keywords": [],
-  "main": "index.js",
+  "license": "MIT",
+  "homepage": "https://github.com/Julien-R44/tuyau#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Julien-R44/tuyau.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Julien-R44/tuyau/issues"
+  },
+  "keywords": [
+    "adonisjs",
+    "typescript",
+    "typesafe",
+    "api",
+    "rpc"
+  ],
   "scripts": {
     "typecheck": "pnpm run --parallel --filter=!@tuyau/playground* typecheck",
     "lint": "eslint .",

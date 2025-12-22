@@ -2,10 +2,26 @@
   "name": "@tuyau/react-query",
   "type": "module",
   "version": "1.0.0-beta.2",
-  "description": "React Query plugin for Tuyau",
+  "description": "Tanstack Query integration for Tuyau",
   "author": "Julien Ripouteau <julien@ripouteau.com>",
-  "license": "ISC",
-  "keywords": [],
+  "license": "MIT",
+  "homepage": "https://github.com/Julien-R44/tuyau#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Julien-R44/tuyau.git",
+    "directory": "packages/react-query"
+  },
+  "bugs": {
+    "url": "https://github.com/Julien-R44/tuyau/issues"
+  },
+  "keywords": [
+    "adonisjs",
+    "typescript",
+    "typesafe",
+    "react-query",
+    "tanstack-query",
+    "tuyau"
+  ],
   "exports": {
     ".": "./build/index.js"
   },
@@ -26,7 +42,7 @@
   },
   "peerDependencies": {
     "@tanstack/react-query": "^5.74.7",
-    "@tuyau/core": "1.0.0-beta.2"
+    "@tuyau/core": "^1.0.0-beta.2"
   },
   "devDependencies": {
     "@adonisjs/core": "^7.0.0-next.16",
