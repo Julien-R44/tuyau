@@ -2,7 +2,7 @@ import nock from 'nock'
 import { test } from '@japa/runner'
 import { createTuyau } from '@tuyau/core/client'
 import { waitFor, act } from '@testing-library/react'
-import { useInfiniteQuery } from '@tanstack/react-query'
+import { useInfiniteQuery, useSuspenseInfiniteQuery, skipToken } from '@tanstack/react-query'
 
 import { buildKey } from '../src/utils.ts'
 import { defaultRegistry } from './fixtures/index.ts'
@@ -349,5 +349,201 @@ test.group('Infinite Query | Ky options', (group) => {
     const lastRequest = capture.getLastRequest()
     assert.equal(lastRequest?.options.timeout, 5000)
     assert.notProperty(lastRequest?.options, 'abortOnUnmount')
+  })
+})
+
+test.group('Infinite Query | useSuspenseInfiniteQuery', (group) => {
+  group.each.setup(() => queryClient.clear())
+
+  test('basic', async ({ assert, expectTypeOf }) => {
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
+    const tuyau = createTuyauReactQueryClient({ client })
+
+    nock('http://localhost:3333')
+      .get('/articles')
+      .query({ page: 1, limit: 20 })
+      .reply(200, { data: [{ id: 1, title: 'Suspense Article 1' }], nextCursor: 2 })
+
+    const options = tuyau.articles.index.infiniteQueryOptions(
+      { query: { page: 1, limit: 20 } },
+      {
+        pageParamKey: 'page',
+        initialPageParam: 1,
+        getNextPageParam: (lastPage) => lastPage.nextCursor,
+      },
+    )
+
+    const { result } = renderHookWithWrapper(() => useSuspenseInfiniteQuery(options))
+    await waitFor(() => assert.isDefined(result.current.data))
+
+    assert.lengthOf(result.current.data.pages, 1)
+    assert.equal(result.current.data.pages[0].data[0].title, 'Suspense Article 1')
+
+    expectTypeOf(result.current.data.pages[0]).toEqualTypeOf<{
+      data: { id: number; title: string }[]
+      nextCursor: number | null
+    }>()
+  })
+
+  test('should fetch next page', async ({ assert }) => {
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
+    const tuyau = createTuyauReactQueryClient({ client })
+
+    nock('http://localhost:3333')
+      .get('/articles')
+      .query({ page: 1, limit: 25 })
+      .reply(200, { data: [{ id: 1, title: 'Page 1' }], nextCursor: 2 })
+
+    nock('http://localhost:3333')
+      .get('/articles')
+      .query({ page: 2, limit: 25 })
+      .reply(200, { data: [{ id: 2, title: 'Page 2' }], nextCursor: null })
+
+    const options = tuyau.articles.index.infiniteQueryOptions(
+      { query: { page: 1, limit: 25 } },
+      {
+        pageParamKey: 'page',
+        initialPageParam: 1,
+        getNextPageParam: (lastPage) => lastPage.nextCursor,
+      },
+    )
+
+    const { result } = renderHookWithWrapper(() => useSuspenseInfiniteQuery(options))
+    await waitFor(() => assert.lengthOf(result.current.data.pages, 1))
+
+    // hasNextPage depends on getNextPageParam returning a truthy value
+    await waitFor(() => assert.isTrue(result.current.hasNextPage))
+
+    await act(async () => await result.current.fetchNextPage())
+    await waitFor(() => assert.lengthOf(result.current.data.pages, 2))
+
+    assert.equal(result.current.data.pages[0].data[0].title, 'Page 1')
+    assert.equal(result.current.data.pages[1].data[0].title, 'Page 2')
+    assert.isFalse(result.current.hasNextPage)
+  })
+
+  test('data should not be undefined with suspense', async ({ assert, expectTypeOf }) => {
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
+    const tuyau = createTuyauReactQueryClient({ client })
+
+    nock('http://localhost:3333')
+      .get('/articles')
+      .query({ page: 1, limit: 30 })
+      .reply(200, { data: [{ id: 1, title: 'Test' }], nextCursor: null })
+
+    const options = tuyau.articles.index.infiniteQueryOptions(
+      { query: { page: 1, limit: 30 } },
+      {
+        pageParamKey: 'page',
+        initialPageParam: 1,
+        getNextPageParam: (lastPage) => lastPage.nextCursor,
+      },
+    )
+
+    const { result } = renderHookWithWrapper(() => useSuspenseInfiniteQuery(options))
+    await waitFor(() => assert.isDefined(result.current.data))
+
+    // With suspense, data should never be undefined after the hook resolves
+    expectTypeOf(result.current.data).not.toBeUndefined()
+    assert.isNotNull(result.current.data)
+    assert.isArray(result.current.data.pages)
+  })
+
+  test('should share cache with useInfiniteQuery', async ({ assert }) => {
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
+    const tuyau = createTuyauReactQueryClient({ client })
+
+    nock('http://localhost:3333')
+      .get('/articles')
+      .query({ page: 1, limit: 35 })
+      .reply(200, { data: [{ id: 1, title: 'Cached Article' }], nextCursor: null })
+
+    const options = tuyau.articles.index.infiniteQueryOptions(
+      { query: { page: 1, limit: 35 } },
+      {
+        pageParamKey: 'page',
+        initialPageParam: 1,
+        getNextPageParam: (lastPage) => lastPage.nextCursor,
+      },
+    )
+
+    // First, use regular useInfiniteQuery to populate cache
+    const { result: regularResult, unmount } = renderHookWithWrapper(() =>
+      useInfiniteQuery(options),
+    )
+    await waitFor(() => assert.isTrue(regularResult.current.isSuccess))
+    unmount()
+
+    // Then use useSuspenseInfiniteQuery - should get cached data without network request
+    const { result: suspenseResult } = renderHookWithWrapper(() =>
+      useSuspenseInfiniteQuery(options),
+    )
+    await waitFor(() => assert.isDefined(suspenseResult.current.data))
+
+    assert.equal(suspenseResult.current.data.pages[0].data[0].title, 'Cached Article')
+  })
+})
+
+test.group('Infinite Query | skipToken', (group) => {
+  group.each.setup(() => queryClient.clear())
+
+  test('should handle skipToken in infiniteQueryOptions', ({ assert }) => {
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
+    const tuyau = createTuyauReactQueryClient({ client })
+
+    const options = tuyau.articles.index.infiniteQueryOptions(skipToken, {
+      pageParamKey: 'page',
+      initialPageParam: 1,
+      getNextPageParam: () => null,
+    })
+
+    assert.isObject(options)
+    assert.property(options, 'queryKey')
+    assert.equal(options.queryFn, skipToken)
+  })
+
+  test('should work with conditional infinite queries', ({ assert }) => {
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
+    const tuyau = createTuyauReactQueryClient({ client })
+
+    let shouldFetch = false
+    const getConditionalOptions = () =>
+      tuyau.articles.index.infiniteQueryOptions(
+        shouldFetch ? { query: { page: 1, limit: 10 } } : skipToken,
+        {
+          pageParamKey: 'page',
+          initialPageParam: 1,
+          getNextPageParam: () => null,
+        },
+      )
+
+    // Should use skipToken when condition is false
+    const options1 = getConditionalOptions()
+    assert.equal(options1.queryFn, skipToken)
+
+    // Should use actual queryFn when condition is true
+    shouldFetch = true
+    const options2 = getConditionalOptions()
+    assert.notEqual(options2.queryFn, skipToken)
+    assert.isFunction(options2.queryFn)
+  })
+
+  test('useInfiniteQuery should not fetch when using skipToken', async ({ assert }) => {
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
+    const tuyau = createTuyauReactQueryClient({ client })
+
+    // Don't set up nock - if a request is made, the test should fail
+    const options = tuyau.articles.index.infiniteQueryOptions(skipToken, {
+      pageParamKey: 'page',
+      initialPageParam: 1,
+      getNextPageParam: () => null,
+    })
+
+    const { result } = renderHookWithWrapper(() => useInfiniteQuery(options))
+
+    // With skipToken, the query should be in pending state but not fetching
+    assert.isTrue(result.current.isPending)
+    assert.isFalse(result.current.isFetching)
+    assert.isUndefined(result.current.data)
   })
 })

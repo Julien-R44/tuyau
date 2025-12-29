@@ -1,10 +1,12 @@
 import type { SchemaEndpoint, RawRequestArgs } from '@tuyau/core/types'
 import type {
   DataTag,
+  DefinedInitialDataInfiniteOptions,
   InfiniteData,
-  InfiniteQueryObserverOptions,
   QueryFilters,
   SkipToken,
+  UndefinedInitialDataInfiniteOptions,
+  UnusedSkipTokenInfiniteOptions,
   WithRequired,
 } from '@tanstack/react-query'
 
@@ -13,16 +15,12 @@ import type { TuyauQueryBaseOptions, TuyauQueryKey } from './common.ts'
 
 type Response<E extends SchemaEndpoint> = E['types']['response']
 
+type ReservedInfiniteQueryOptions = 'queryKey' | 'queryFn' | 'queryHashFn' | 'queryHash'
+
 /**
- * Infinite query options input type
+ * Base infinite query options with Tuyau-specific options
  */
-export interface TuyauInfiniteQueryOptionsIn<TQueryFnData, TError, TData>
-  extends
-    DistributiveOmit<
-      InfiniteQueryObserverOptions<TQueryFnData, TError, TData>,
-      'queryKey' | 'queryFn' | 'queryHashFn' | 'queryHash'
-    >,
-    TuyauQueryBaseOptions {
+interface TuyauInfiniteQueryBaseOptionsIn {
   /**
    * The key that will be used for the page parameter in the request.
    * For example, if your API expects ?page=1, set this to 'page'.
@@ -32,28 +30,125 @@ export interface TuyauInfiniteQueryOptionsIn<TQueryFnData, TError, TData>
 }
 
 /**
- * Infinite query options output type
+ * Infinite query options when initialData is undefined (default case)
  */
-export interface TuyauInfiniteQueryOptionsOut<TQueryFnData, TError, TData> extends Omit<
-  InfiniteQueryObserverOptions<TQueryFnData, TError, TData>,
+export interface UndefinedTuyauInfiniteQueryOptionsIn<TQueryFnData, TError, TData>
+  extends
+    DistributiveOmit<
+      UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TuyauQueryKey, unknown>,
+      ReservedInfiniteQueryOptions
+    >,
+    TuyauQueryBaseOptions,
+    TuyauInfiniteQueryBaseOptionsIn {}
+
+/**
+ * Output type when initialData is undefined - queryFn can be SkipToken
+ */
+export interface UndefinedTuyauInfiniteQueryOptionsOut<
+  TQueryFnData,
+  TError,
+  TData,
+> extends DistributiveOmit<
+  UndefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TuyauQueryKey, unknown>,
   'queryKey'
 > {
   queryKey: DataTag<TuyauQueryKey, TData>
 }
 
 /**
- * Type definition for infinite query options
+ * Infinite query options when initialData is defined
+ */
+export interface DefinedTuyauInfiniteQueryOptionsIn<TQueryFnData, TError, TData>
+  extends
+    DistributiveOmit<
+      DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TuyauQueryKey, unknown>,
+      ReservedInfiniteQueryOptions
+    >,
+    TuyauQueryBaseOptions,
+    TuyauInfiniteQueryBaseOptionsIn {}
+
+/**
+ * Output type when initialData is defined - queryFn can be SkipToken
+ */
+export interface DefinedTuyauInfiniteQueryOptionsOut<
+  TQueryFnData,
+  TError,
+  TData,
+> extends DistributiveOmit<
+  DefinedInitialDataInfiniteOptions<TQueryFnData, TError, TData, TuyauQueryKey, unknown>,
+  'queryKey'
+> {
+  queryKey: DataTag<TuyauQueryKey, TData>
+}
+
+/**
+ * Infinite query options when SkipToken is NOT used as input.
+ * This makes the result compatible with useSuspenseInfiniteQuery.
+ */
+export interface UnusedSkipTokenTuyauInfiniteQueryOptionsIn<TQueryFnData, TError, TData>
+  extends
+    DistributiveOmit<
+      UnusedSkipTokenInfiniteOptions<TQueryFnData, TError, TData, TuyauQueryKey, unknown>,
+      ReservedInfiniteQueryOptions
+    >,
+    TuyauQueryBaseOptions,
+    TuyauInfiniteQueryBaseOptionsIn {}
+
+/**
+ * Output type when SkipToken is NOT used - queryFn excludes SkipToken.
+ * This makes it compatible with useSuspenseInfiniteQuery.
+ */
+export interface UnusedSkipTokenTuyauInfiniteQueryOptionsOut<
+  TQueryFnData,
+  TError,
+  TData,
+> extends DistributiveOmit<
+  UnusedSkipTokenInfiniteOptions<TQueryFnData, TError, TData, TuyauQueryKey, unknown>,
+  'queryKey'
+> {
+  queryKey: DataTag<TuyauQueryKey, TData>
+}
+
+/**
+ * Any infinite query options input type (used internally)
+ */
+export type AnyTuyauInfiniteQueryOptionsIn<TQueryFnData, TError, TData> =
+  | UndefinedTuyauInfiniteQueryOptionsIn<TQueryFnData, TError, TData>
+  | DefinedTuyauInfiniteQueryOptionsIn<TQueryFnData, TError, TData>
+  | UnusedSkipTokenTuyauInfiniteQueryOptionsIn<TQueryFnData, TError, TData>
+
+/**
+ * Type definition for infinite query options with proper overloads.
+ *
+ * Three overloads handle different cases:
+ * 1. Input without SkipToken => Returns type compatible with useSuspenseInfiniteQuery
+ * 2. Input with SkipToken + defined initialData => Returns type with SkipToken possible
+ * 3. Input with SkipToken (default) => Returns type with SkipToken possible
  */
 export interface TuyauReactInfiniteQueryOptions<EDef extends SchemaEndpoint> {
+  /**
+   * Overload 1: When input is NOT SkipToken, return options compatible with useSuspenseInfiniteQuery
+   */
+  <TData = InfiniteData<Response<EDef>>>(
+    input: RawRequestArgs<EDef>,
+    opts: UnusedSkipTokenTuyauInfiniteQueryOptionsIn<Response<EDef>, unknown, TData>,
+  ): UnusedSkipTokenTuyauInfiniteQueryOptionsOut<Response<EDef>, unknown, TData>
+
+  /**
+   * Overload 2: When initialData is defined
+   */
   <TData = InfiniteData<Response<EDef>>>(
     input: RawRequestArgs<EDef> | SkipToken,
-    opts: TuyauInfiniteQueryOptionsIn<Response<EDef>, unknown, TData>,
-  ): TuyauInfiniteQueryOptionsOut<Response<EDef>, unknown, TData>
+    opts: DefinedTuyauInfiniteQueryOptionsIn<Response<EDef>, unknown, TData>,
+  ): DefinedTuyauInfiniteQueryOptionsOut<Response<EDef>, unknown, TData>
 
+  /**
+   * Overload 3: Default case - input may be SkipToken, initialData undefined
+   */
   <TData = InfiniteData<Response<EDef>>>(
     input?: RawRequestArgs<EDef> | SkipToken,
-    opts?: TuyauInfiniteQueryOptionsIn<Response<EDef>, unknown, TData>,
-  ): TuyauInfiniteQueryOptionsOut<Response<EDef>, unknown, TData>
+    opts?: UndefinedTuyauInfiniteQueryOptionsIn<Response<EDef>, unknown, TData>,
+  ): UndefinedTuyauInfiniteQueryOptionsOut<Response<EDef>, unknown, TData>
 }
 
 /**

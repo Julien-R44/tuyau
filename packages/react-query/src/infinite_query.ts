@@ -4,12 +4,12 @@ import { infiniteQueryOptions, skipToken } from '@tanstack/react-query'
 import type { QueryFunctionContext, SkipToken } from '@tanstack/react-query'
 
 import { invoke, extractKyOptions } from './utils.ts'
-import type { TuyauInfiniteQueryOptionsIn } from './types/infinite_query.ts'
+import type { AnyTuyauInfiniteQueryOptionsIn } from './types/infinite_query.ts'
 import type { TuyauQueryKey, TuyauReactRequestOptions } from './types/common.ts'
 
 interface TuyauInfiniteQueryOptionsOptions {
   request: RawRequestArgs<any> | SkipToken
-  opts?: TuyauInfiniteQueryOptionsIn<any, any, any>
+  opts?: AnyTuyauInfiniteQueryOptionsIn<any, any, any>
   queryKey: TuyauQueryKey
   routeName: string
   client: Tuyau<any>
