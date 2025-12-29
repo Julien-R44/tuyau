@@ -73,7 +73,6 @@ export function extractKyOptions(
 ): Omit<TuyauReactRequestOptions, 'abortOnUnmount'> {
   if (!tuyauOpts) return {}
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { abortOnUnmount, ...kyOptions } = tuyauOpts
   return kyOptions
 }
