@@ -5,20 +5,16 @@ import User from '#models/user'
 import UserTransformer from '#transformers/user_transformer'
 
 export default class UsersController {
-  static createValidator = vine.compile(
-    vine.object({
-      fullName: vine.string().minLength(2).maxLength(100),
-      email: vine.string().email(),
-      password: vine.string().minLength(6),
-    })
-  )
+  static createValidator = vine.create({
+    fullName: vine.string().minLength(2).maxLength(100),
+    email: vine.string().email(),
+    password: vine.string().minLength(6),
+  })
 
-  static updateValidator = vine.compile(
-    vine.object({
-      fullName: vine.string().minLength(2).maxLength(100).optional(),
-      email: vine.string().email().optional(),
-    })
-  )
+  static updateValidator = vine.create({
+    fullName: vine.string().minLength(2).maxLength(100).optional(),
+    email: vine.string().email().optional(),
+  })
 
   /**
    * List all users with transformer

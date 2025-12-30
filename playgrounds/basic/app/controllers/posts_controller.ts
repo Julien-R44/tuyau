@@ -15,29 +15,23 @@ const posts: Array<{ id: number; title: string; content: string; authorId: numbe
 ]
 
 export default class PostsController {
-  static listValidator = vine.compile(
-    vine.object({
-      page: vine.number().optional(),
-      limit: vine.number().optional(),
-      search: vine.string().optional(),
-      authorId: vine.number().optional(),
-    })
-  )
+  static listValidator = vine.create({
+    page: vine.number().optional(),
+    limit: vine.number().optional(),
+    search: vine.string().optional(),
+    authorId: vine.number().optional(),
+  })
 
-  static createValidator = vine.compile(
-    vine.object({
-      title: vine.string().minLength(3).maxLength(100),
-      content: vine.string().minLength(10),
-      authorId: vine.number(),
-    })
-  )
+  static createValidator = vine.create({
+    title: vine.string().minLength(3).maxLength(100),
+    content: vine.string().minLength(10),
+    authorId: vine.number(),
+  })
 
-  static updateValidator = vine.compile(
-    vine.object({
-      title: vine.string().minLength(3).maxLength(100).optional(),
-      content: vine.string().minLength(10).optional(),
-    })
-  )
+  static updateValidator = vine.create({
+    title: vine.string().minLength(3).maxLength(100).optional(),
+    content: vine.string().minLength(10).optional(),
+  })
 
   /**
    * List posts with pagination and filtering (for infinite query testing)

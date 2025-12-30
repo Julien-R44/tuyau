@@ -6,11 +6,9 @@ import { signupValidator } from '#validators/user'
 import UserTransformer from '#transformers/user_transformer'
 
 export default class AccountsController {
-  static validator = vine.compile(
-    vine.object({
-      email: vine.string().email(),
-    })
-  )
+  static validator = vine.create({
+    email: vine.string().email(),
+  })
 
   async list({ request, serialize }: HttpContext) {
     await request.validateUsing(AccountsController.validator)
@@ -21,11 +19,9 @@ export default class AccountsController {
     }
   }
 
-  static uploadProfilePictureValidator = vine.compile(
-    vine.object({
-      profilePicture: vine.file(),
-    })
-  )
+  static uploadProfilePictureValidator = vine.create({
+    profilePicture: vine.file(),
+  })
 
   async uploadProfilePicture({ request }: HttpContext) {
     await request.validateUsing(AccountsController.uploadProfilePictureValidator)

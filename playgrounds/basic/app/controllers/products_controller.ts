@@ -17,36 +17,32 @@ const products: Array<{
 ]
 
 export default class ProductsController {
-  static searchValidator = vine.compile(
-    vine.object({
-      headers: vine
-        .object({
-          'x-api-key': vine.string(),
-        })
-        .optional(),
+  static searchValidator = vine.create({
+    headers: vine
+      .object({
+        'x-api-key': vine.string(),
+      })
+      .optional(),
 
-      params: vine
-        .object({
-          category: vine.string().optional(),
-        })
-        .optional(),
+    params: vine
+      .object({
+        category: vine.string().optional(),
+      })
+      .optional(),
 
-      q: vine.string().optional(),
-      category: vine.string().optional(),
-      minPrice: vine.number().optional(),
-      maxPrice: vine.number().optional(),
-      inStock: vine.boolean().optional(),
-    })
-  )
+    q: vine.string().optional(),
+    category: vine.string().optional(),
+    minPrice: vine.number().optional(),
+    maxPrice: vine.number().optional(),
+    inStock: vine.boolean().optional(),
+  })
 
-  static createValidator = vine.compile(
-    vine.object({
-      name: vine.string().minLength(2).maxLength(100),
-      price: vine.number().positive(),
-      category: vine.string(),
-      inStock: vine.boolean().optional(),
-    })
-  )
+  static createValidator = vine.create({
+    name: vine.string().minLength(2).maxLength(100),
+    price: vine.number().positive(),
+    category: vine.string(),
+    inStock: vine.boolean().optional(),
+  })
 
   /**
    * Search products with multiple query params
