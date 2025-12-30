@@ -23,7 +23,7 @@
     "rpc"
   ],
   "scripts": {
-    "typecheck": "pnpm run --parallel --filter=!@tuyau/playground* typecheck",
+    "typecheck": "pnpm run --parallel typecheck",
     "lint": "eslint .",
     "test": "pnpm run --parallel --filter=!@tuyau/playground* test",
     "build": "pnpm run -r --filter=!@tuyau/playground* build",

@@ -222,6 +222,48 @@ const routes = {
       response: { success: boolean }
     },
   },
+  /**
+   * Route with headers and cookies validation (POST)
+   * Simulates a validator like:
+   * vine.object({
+   *   username: vine.string(),
+   *   headers: vine.object({ authorization: vine.string() }),
+   *   cookies: vine.object({ sessionId: vine.string() }),
+   * })
+   */
+  'secure.create': {
+    methods: ['POST'],
+    pattern: '/secure',
+    tokens: [{ old: '/secure', type: 0, val: 'secure', end: '' }],
+    types: placeholder as {
+      paramsTuple: []
+      body: { username: string }
+      params: {}
+      query: {}
+      response: { success: boolean }
+    },
+  },
+  /**
+   * Route with headers, cookies and query validation (GET)
+   * Simulates a validator like:
+   * vine.object({
+   *   search: vine.string().optional(),
+   *   headers: vine.object({ 'x-api-key': vine.string() }),
+   *   cookies: vine.object({ token: vine.string().optional() }),
+   * })
+   */
+  'secure.search': {
+    methods: ['GET'],
+    pattern: '/secure/search',
+    tokens: [{ old: '/secure/search', type: 0, val: 'secure/search', end: '' }],
+    types: placeholder as {
+      paramsTuple: []
+      body: {}
+      params: {}
+      query: { search?: string }
+      response: { results: string[] }
+    },
+  },
 } as const satisfies Record<string, AdonisEndpoint>
 
 export const defaultRegistry = {

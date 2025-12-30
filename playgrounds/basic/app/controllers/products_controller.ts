@@ -19,6 +19,18 @@ const products: Array<{
 export default class ProductsController {
   static searchValidator = vine.compile(
     vine.object({
+      headers: vine
+        .object({
+          'x-api-key': vine.string(),
+        })
+        .optional(),
+
+      params: vine
+        .object({
+          category: vine.string().optional(),
+        })
+        .optional(),
+
       q: vine.string().optional(),
       category: vine.string().optional(),
       minPrice: vine.number().optional(),

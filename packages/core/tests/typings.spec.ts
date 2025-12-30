@@ -5,6 +5,7 @@ import { defaultRegistry as registry } from './fixtures/index.ts'
 import type {
   ExtractBody,
   ExtractQuery,
+  ExtractQueryForGet,
   PathWithRegistry,
   RouteWithRegistry,
 } from '../src/client/types/types.ts'
@@ -607,6 +608,64 @@ test.group('ExtractQuery and ExtractBody types', (group) => {
 
     type Result = ExtractQuery<ValidatorWithQuery>
     expectTypeOf<Result>().toEqualTypeOf<{ page: number; limit?: number }>()
+  })
+
+  test('ExtractBody excludes headers and cookies from validator', ({ expectTypeOf }) => {
+    type ValidatorWithHeadersAndCookies = {
+      username: string
+      headers: { authorization: string }
+      cookies: { sessionId: string }
+    }
+
+    type Result = ExtractBody<ValidatorWithHeadersAndCookies>
+    expectTypeOf<Result>().toEqualTypeOf<{ username: string }>()
+  })
+
+  test('ExtractBody excludes query, params, headers, and cookies', ({ expectTypeOf }) => {
+    type FullValidator = {
+      name: string
+      email: string
+      query: { page: number }
+      params: { id: string }
+      headers: { 'x-api-key': string }
+      cookies: { token: string }
+    }
+
+    type Result = ExtractBody<FullValidator>
+    expectTypeOf<Result>().toEqualTypeOf<{ name: string; email: string }>()
+  })
+
+  test('ExtractQuery does not include headers or cookies', ({ expectTypeOf }) => {
+    // ExtractQuery only extracts nested query property, not the whole type
+    type GetValidator = {
+      search: string
+      headers: { authorization: string }
+      cookies: { session: string }
+    }
+
+    type Result = ExtractQuery<GetValidator>
+    expectTypeOf<Result>().toEqualTypeOf<{}>()
+  })
+
+  test('ExtractQueryForGet excludes headers, cookies, and params', ({ expectTypeOf }) => {
+    // For GET requests, ExtractQueryForGet is used to exclude reserved properties
+    type GetValidator = {
+      search: string
+      page?: number
+      headers: { authorization: string }
+      cookies: { session: string }
+      params: { id: string }
+    }
+
+    type Result = ExtractQueryForGet<GetValidator>
+    expectTypeOf<Result>().toEqualTypeOf<{ search: string; page?: number }>()
+  })
+
+  test('ExtractQueryForGet returns full type when no reserved properties', ({ expectTypeOf }) => {
+    type SimpleValidator = { q: string; limit?: number }
+
+    type Result = ExtractQueryForGet<SimpleValidator>
+    expectTypeOf<Result>().toEqualTypeOf<{ q: string; limit?: number }>()
   })
 
   test('ExtractQuery returns empty object for validator without query', ({ expectTypeOf }) => {

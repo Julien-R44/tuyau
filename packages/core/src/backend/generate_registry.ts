@@ -184,7 +184,7 @@ function wrapResponseType(responseType: string): string {
 /**
  * Determine body and query types based on HTTP method and validator presence
  *
- * For GET/HEAD: all validator fields go to query, body is empty
+ * For GET/HEAD: use ExtractQueryForGet to exclude headers/cookies/params from query
  * For POST/PUT/PATCH/DELETE: use ExtractBody/ExtractQuery to handle both body and query params
  * This allows POST requests to have query params if the validator uses { query: {...} } wrapper
  */
@@ -199,7 +199,7 @@ function determineBodyAndQueryTypes(options: { methods: string[]; requestType: s
   }
 
   if (isGetLike) {
-    return { bodyType: '{}', queryType: requestType }
+    return { bodyType: '{}', queryType: `ExtractQueryForGet<${requestType}>` }
   }
 
   return {
@@ -293,7 +293,7 @@ function generateTypesContent(routes: ScannedRoute[]): string {
   return `/* eslint-disable prettier/prettier */
 /// <reference path="../manifest.d.ts" />
 
-import type { ExtractBody, ExtractQuery } from '@tuyau/core/types'
+import type { ExtractBody, ExtractQuery, ExtractQueryForGet } from '@tuyau/core/types'
 import type { InferInput } from '@vinejs/vine/types'
 
 export interface Registry {

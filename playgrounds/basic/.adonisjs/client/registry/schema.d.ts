@@ -1,8 +1,8 @@
 /* eslint-disable prettier/prettier */
 /// <reference path="../manifest.d.ts" />
 
-import type { ExtractBody, ExtractQuery } from '@tuyau/core/types'
-import type { Infer } from '@vinejs/vine/types'
+import type { ExtractBody, ExtractQuery, ExtractQueryForGet } from '@tuyau/core/types'
+import type { InferInput } from '@vinejs/vine/types'
 
 export interface Registry {
   'home': {
@@ -64,10 +64,10 @@ export interface Registry {
     methods: ['POST']
     pattern: '/signup'
     types: {
-      body: ExtractBody<Infer<typeof import('#validators/user').signupValidator>>
+      body: ExtractBody<InferInput<typeof import('#validators/user').signupValidator>>
       paramsTuple: []
       params: {}
-      query: ExtractQuery<Infer<typeof import('#validators/user').signupValidator>>
+      query: ExtractQuery<InferInput<typeof import('#validators/user').signupValidator>>
       response: Awaited<ReturnType<import('#controllers/accounts_controller').default['store']>>
     }
   }
@@ -76,14 +76,14 @@ export interface Registry {
     pattern: '/users/profile-picture'
     types: {
       body: ExtractBody<
-        Infer<
+        InferInput<
           (typeof import('#controllers/accounts_controller').default)['uploadProfilePictureValidator']
         >
       >
       paramsTuple: []
       params: {}
       query: ExtractQuery<
-        Infer<
+        InferInput<
           (typeof import('#controllers/accounts_controller').default)['uploadProfilePictureValidator']
         >
       >
@@ -152,12 +152,12 @@ export interface Registry {
     pattern: '/users'
     types: {
       body: ExtractBody<
-        Infer<(typeof import('#controllers/users_controller').default)['createValidator']>
+        InferInput<(typeof import('#controllers/users_controller').default)['createValidator']>
       >
       paramsTuple: []
       params: {}
       query: ExtractQuery<
-        Infer<(typeof import('#controllers/users_controller').default)['createValidator']>
+        InferInput<(typeof import('#controllers/users_controller').default)['createValidator']>
       >
       response: Awaited<ReturnType<import('#controllers/users_controller').default['store']>>
     }
@@ -167,12 +167,12 @@ export interface Registry {
     pattern: '/users/:id'
     types: {
       body: ExtractBody<
-        Infer<(typeof import('#controllers/users_controller').default)['updateValidator']>
+        InferInput<(typeof import('#controllers/users_controller').default)['updateValidator']>
       >
       paramsTuple: [string]
       params: { id: string }
       query: ExtractQuery<
-        Infer<(typeof import('#controllers/users_controller').default)['updateValidator']>
+        InferInput<(typeof import('#controllers/users_controller').default)['updateValidator']>
       >
       response: Awaited<ReturnType<import('#controllers/users_controller').default['update']>>
     }
@@ -195,7 +195,9 @@ export interface Registry {
       body: {}
       paramsTuple: []
       params: {}
-      query: Infer<(typeof import('#controllers/posts_controller').default)['listValidator']>
+      query: ExtractQueryForGet<
+        InferInput<(typeof import('#controllers/posts_controller').default)['listValidator']>
+      >
       response: Awaited<ReturnType<import('#controllers/posts_controller').default['list']>>
     }
   }
@@ -215,12 +217,12 @@ export interface Registry {
     pattern: '/posts'
     types: {
       body: ExtractBody<
-        Infer<(typeof import('#controllers/posts_controller').default)['createValidator']>
+        InferInput<(typeof import('#controllers/posts_controller').default)['createValidator']>
       >
       paramsTuple: []
       params: {}
       query: ExtractQuery<
-        Infer<(typeof import('#controllers/posts_controller').default)['createValidator']>
+        InferInput<(typeof import('#controllers/posts_controller').default)['createValidator']>
       >
       response: Awaited<ReturnType<import('#controllers/posts_controller').default['store']>>
     }
@@ -230,12 +232,12 @@ export interface Registry {
     pattern: '/posts/:id'
     types: {
       body: ExtractBody<
-        Infer<(typeof import('#controllers/posts_controller').default)['updateValidator']>
+        InferInput<(typeof import('#controllers/posts_controller').default)['updateValidator']>
       >
       paramsTuple: [string]
       params: { id: string }
       query: ExtractQuery<
-        Infer<(typeof import('#controllers/posts_controller').default)['updateValidator']>
+        InferInput<(typeof import('#controllers/posts_controller').default)['updateValidator']>
       >
       response: Awaited<ReturnType<import('#controllers/posts_controller').default['update']>>
     }
@@ -258,7 +260,9 @@ export interface Registry {
       body: {}
       paramsTuple: []
       params: {}
-      query: Infer<(typeof import('#controllers/products_controller').default)['searchValidator']>
+      query: ExtractQueryForGet<
+        InferInput<(typeof import('#controllers/products_controller').default)['searchValidator']>
+      >
       response: Awaited<ReturnType<import('#controllers/products_controller').default['search']>>
     }
   }
@@ -304,12 +308,12 @@ export interface Registry {
     pattern: '/products'
     types: {
       body: ExtractBody<
-        Infer<(typeof import('#controllers/products_controller').default)['createValidator']>
+        InferInput<(typeof import('#controllers/products_controller').default)['createValidator']>
       >
       paramsTuple: []
       params: {}
       query: ExtractQuery<
-        Infer<(typeof import('#controllers/products_controller').default)['createValidator']>
+        InferInput<(typeof import('#controllers/products_controller').default)['createValidator']>
       >
       response: Awaited<ReturnType<import('#controllers/products_controller').default['store']>>
     }
