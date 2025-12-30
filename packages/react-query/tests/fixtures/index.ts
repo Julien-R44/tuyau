@@ -229,6 +229,27 @@ const routes = {
       response: Array<{ id: number; name: string; price: number }>
     },
   },
+  'auth.status': {
+    methods: ['GET', 'HEAD'],
+    pattern: '/auth/status',
+    tokens: [
+      { old: '/auth/status', type: 0, val: 'auth', end: '' },
+      { old: '/auth/status', type: 0, val: 'status', end: '' },
+    ],
+    types: placeholder as {
+      paramsTuple: []
+      body: {}
+      params: {}
+      query: {}
+      response:
+        | {
+            user: { id: string; name: string; email: string }
+            authenticated: true
+            team: { id: string; name: string; currency: string }
+          }
+        | { readonly authenticated: false }
+    },
+  },
 } as const satisfies Record<string, AdonisEndpoint>
 
 type Routes = typeof routes
@@ -244,6 +265,7 @@ export interface ApiDefinition {
     login: Routes['auth.login'] & {
       show: Routes['auth.login.show']
     }
+    status: Routes['auth.status']
   }
   users: {
     index: Routes['users.index']

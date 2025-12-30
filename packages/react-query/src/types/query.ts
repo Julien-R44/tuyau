@@ -41,9 +41,15 @@ export interface TuyauReactQueryOptions<EDef extends SchemaEndpoint> {
     opts?: UnusedSkipTokenTuyauQueryOptionsIn<Response<EDef>, TData, unknown>,
   ): UnusedSkipTokenTuyauQueryOptionsOut<Response<EDef>, TData, unknown>
 
-  // Without initial data - when opts has no initialData or input can be SkipToken
+  // No arguments - no skipToken possible
+  (): UnusedSkipTokenTuyauQueryOptionsOut<Response<EDef>, Response<EDef>, unknown>
+
+  // With skipToken only (no options)
+  (input: SkipToken): UndefinedTuyauQueryOptionsOut<Response<EDef>, Response<EDef>, unknown>
+
+  // With skipToken or conditional (request | skipToken) with optional options
   <TData = Response<EDef>>(
-    input?: RawRequestArgs<EDef> | SkipToken,
+    input: RawRequestArgs<EDef> | SkipToken,
     opts?: UndefinedTuyauQueryOptionsIn<Response<EDef>, TData, unknown>,
   ): UndefinedTuyauQueryOptionsOut<Response<EDef>, TData, unknown>
 }

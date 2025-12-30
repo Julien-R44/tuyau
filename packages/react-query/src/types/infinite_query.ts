@@ -119,11 +119,6 @@ export type AnyTuyauInfiniteQueryOptionsIn<TQueryFnData, TError, TData> =
 
 /**
  * Type definition for infinite query options with proper overloads.
- *
- * Three overloads handle different cases:
- * 1. Input without SkipToken => Returns type compatible with useSuspenseInfiniteQuery
- * 2. Input with SkipToken + defined initialData => Returns type with SkipToken possible
- * 3. Input with SkipToken (default) => Returns type with SkipToken possible
  */
 export interface TuyauReactInfiniteQueryOptions<EDef extends SchemaEndpoint> {
   /**
@@ -143,11 +138,20 @@ export interface TuyauReactInfiniteQueryOptions<EDef extends SchemaEndpoint> {
   ): DefinedTuyauInfiniteQueryOptionsOut<Response<EDef>, unknown, TData>
 
   /**
-   * Overload 3: Default case - input may be SkipToken, initialData undefined
+   * Overload 3: No arguments - no skipToken possible
+   */
+  (): UnusedSkipTokenTuyauInfiniteQueryOptionsOut<
+    Response<EDef>,
+    unknown,
+    InfiniteData<Response<EDef>>
+  >
+
+  /**
+   * Overload 4: With skipToken or conditional (request | skipToken) and options
    */
   <TData = InfiniteData<Response<EDef>>>(
-    input?: RawRequestArgs<EDef> | SkipToken,
-    opts?: UndefinedTuyauInfiniteQueryOptionsIn<Response<EDef>, unknown, TData>,
+    input: RawRequestArgs<EDef> | SkipToken,
+    opts: UndefinedTuyauInfiniteQueryOptionsIn<Response<EDef>, unknown, TData>,
   ): UndefinedTuyauInfiniteQueryOptionsOut<Response<EDef>, unknown, TData>
 }
 

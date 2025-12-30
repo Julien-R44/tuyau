@@ -144,6 +144,110 @@ test.group('Query | UseSuspenseQuery', () => {
     assert.deepEqual(result.current.data, [{ id: 10, name: 'suspense' }])
     expectTypeOf(result.current.data).toEqualTypeOf<Array<{ id: number; name: string }>>()
   })
+
+  test('queryOptions without args should work with useSuspenseQuery', async ({ assert }) => {
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
+    const tuyau = createTuyauReactQueryClient({ client })
+
+    nock('http://localhost:3333').get('/auth/status').reply(200, { authenticated: false })
+
+    const { result } = renderHookWithWrapper(() =>
+      useSuspenseQuery({
+        ...tuyau.auth.status.queryOptions(),
+        staleTime: Infinity,
+        gcTime: Infinity,
+        retry: false,
+      }),
+    )
+
+    await setTimeout(300)
+    assert.deepEqual(result.current.data, { authenticated: false })
+  })
+})
+
+test.group('Types | queryOptions useSuspenseQuery compatibility', () => {
+  test('queryOptions() without args - useSuspenseQuery compatible', () => {
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
+    const tuyau = createTuyauReactQueryClient({ client })
+
+    const options = tuyau.auth.status.queryOptions()
+
+    void (() => useSuspenseQuery(options))
+    void (() => useSuspenseQuery({ ...options, staleTime: Infinity }))
+  })
+
+  test('queryOptions({}) with empty object - useSuspenseQuery compatible', () => {
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
+    const tuyau = createTuyauReactQueryClient({ client })
+
+    const options = tuyau.auth.status.queryOptions({})
+
+    void (() => useSuspenseQuery(options))
+  })
+
+  test('queryOptions with request args - useSuspenseQuery compatible', () => {
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
+    const tuyau = createTuyauReactQueryClient({ client })
+
+    const options = tuyau.users.index.queryOptions({ query: { name: 'foo' } })
+
+    void (() => useSuspenseQuery(options))
+  })
+
+  test('queryOptions with initialData - useSuspenseQuery compatible', () => {
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
+    const tuyau = createTuyauReactQueryClient({ client })
+
+    const options = tuyau.users.index.queryOptions(
+      { query: { name: 'foo' } },
+      { initialData: () => [{ id: 1, name: 'initial' }] },
+    )
+
+    void (() => useSuspenseQuery(options))
+  })
+
+  test('queryOptions with skipToken - works with useQuery', () => {
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
+    const tuyau = createTuyauReactQueryClient({ client })
+
+    const options = tuyau.users.index.queryOptions(skipToken)
+
+    void (() => useQuery(options))
+  })
+
+  test('queryOptions with conditional skipToken - works with useQuery', () => {
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
+    const tuyau = createTuyauReactQueryClient({ client })
+
+    const shouldFetch = Math.random() > 0.5
+    const options = tuyau.users.index.queryOptions(
+      shouldFetch ? { query: { name: 'foo' } } : skipToken,
+    )
+
+    void (() => useQuery(options))
+  })
+
+  test('queryOptions with skipToken and options - works with useQuery', () => {
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
+    const tuyau = createTuyauReactQueryClient({ client })
+
+    const options = tuyau.users.index.queryOptions(skipToken, { staleTime: 5000, retry: 3 })
+
+    void (() => useQuery(options))
+  })
+
+  test('queryOptions with conditional skipToken and options - works with useQuery', () => {
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
+    const tuyau = createTuyauReactQueryClient({ client })
+
+    const shouldFetch = Math.random() > 0.5
+    const options = tuyau.users.index.queryOptions(
+      shouldFetch ? { query: { name: 'foo' } } : skipToken,
+      { staleTime: 5000, retry: 3 },
+    )
+
+    void (() => useQuery(options))
+  })
 })
 
 test.group('Query | Filters', () => {

@@ -547,3 +547,52 @@ test.group('Infinite Query | skipToken', (group) => {
     assert.isUndefined(result.current.data)
   })
 })
+
+test.group('Types | infiniteQueryOptions useSuspenseInfiniteQuery compatibility', () => {
+  test('infiniteQueryOptions with request args - useSuspenseInfiniteQuery compatible', () => {
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
+    const tuyau = createTuyauReactQueryClient({ client })
+
+    const options = tuyau.articles.index.infiniteQueryOptions(
+      { query: { page: 1, limit: 10 } },
+      {
+        pageParamKey: 'page',
+        initialPageParam: 1,
+        getNextPageParam: (lastPage) => lastPage.nextCursor,
+      },
+    )
+
+    void (() => useSuspenseInfiniteQuery(options))
+    void (() => useSuspenseInfiniteQuery({ ...options, staleTime: Infinity }))
+  })
+
+  test('infiniteQueryOptions with skipToken - works with useInfiniteQuery only', () => {
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
+    const tuyau = createTuyauReactQueryClient({ client })
+
+    const options = tuyau.articles.index.infiniteQueryOptions(skipToken, {
+      pageParamKey: 'page',
+      initialPageParam: 1,
+      getNextPageParam: () => null,
+    })
+
+    void (() => useInfiniteQuery(options))
+  })
+
+  test('infiniteQueryOptions with conditional skipToken - works with useInfiniteQuery', () => {
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
+    const tuyau = createTuyauReactQueryClient({ client })
+
+    const shouldFetch = Math.random() > 0.5
+    const options = tuyau.articles.index.infiniteQueryOptions(
+      shouldFetch ? { query: { page: 1, limit: 10 } } : skipToken,
+      {
+        pageParamKey: 'page',
+        initialPageParam: 1,
+        getNextPageParam: () => null,
+      },
+    )
+
+    void (() => useInfiniteQuery(options))
+  })
+})

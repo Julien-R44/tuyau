@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from '@inertiajs/react'
-import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query'
+import { skipToken, useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query'
 
 import { query, queryClient, urlFor } from '~/tuyau'
 
@@ -26,7 +26,7 @@ export default function Posts() {
   const [selectedPostId, setSelectedPostId] = useState<number | null>(null)
   const singlePostQuery = useQuery(
     query.posts.show.queryOptions(
-      selectedPostId ? { params: { id: selectedPostId.toString() } } : undefined,
+      selectedPostId ? { params: { id: selectedPostId.toString() } } : skipToken,
       { enabled: !!selectedPostId }
     )
   )
