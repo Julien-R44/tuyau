@@ -52,6 +52,14 @@
     "@adonisjs/assembler": "^8.0.0-next.27",
     "@adonisjs/core": "^7.0.0-next.16"
   },
+  "peerDependenciesMeta": {
+    "@adonisjs/assembler": {
+      "optional": true
+    },
+    "@adonisjs/core": {
+      "optional": true
+    }
+  },
   "dependencies": {
     "ky": "^1.14.2",
     "object-to-formdata": "^4.5.1"
