@@ -39,7 +39,9 @@ router.get('/users', [controllers.Users, 'list'])
 router.get('/users/:id', [controllers.Users, 'show'])
 router.post('/users', [controllers.Users, 'store'])
 router.put('/users/:id', [controllers.Users, 'update'])
-router.delete('/users/:id', [controllers.Users, 'delete'])
+router.delete('/users/:id', [controllers.Users, 'delete']).where('id', {
+  match: /^\d+$/,
+})
 
 // Posts API (for infinite query testing)
 router

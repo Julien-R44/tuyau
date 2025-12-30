@@ -155,15 +155,24 @@ function normalizeImportPaths(typeString: string): string {
 }
 
 /**
+ * Sanitize tokens to only include properties expected by ClientRouteMatchItTokens
+ * Removes matcher and other server-only properties
+ */
+function sanitizeTokens(tokens: ScannedRoute['tokens']) {
+  return tokens.map(({ old, type, val, end }) => ({ old, type, val, end }))
+}
+
+/**
  * Generate a single registry entry for a route (runtime values only)
  */
 function generateRuntimeRegistryEntry(route: ScannedRoute): string {
   const routeName = route.name
+  const sanitizedTokens = sanitizeTokens(route.tokens)
 
   return `  '${routeName}': {
     methods: ${JSON.stringify(route.methods)},
     pattern: '${route.pattern}',
-    tokens: ${JSON.stringify(route.tokens)},
+    tokens: ${JSON.stringify(sanitizedTokens)},
     types: placeholder as Registry['${routeName}']['types'],
   }`
 }

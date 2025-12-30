@@ -6,7 +6,7 @@ import type { InferInput } from '@vinejs/vine/types'
 
 export interface Registry {
   'home': {
-    methods: ['GET', 'HEAD']
+    methods: ["GET","HEAD"]
     pattern: '/'
     types: {
       body: {}
@@ -17,7 +17,7 @@ export interface Registry {
     }
   }
   'posts.page': {
-    methods: ['GET', 'HEAD']
+    methods: ["GET","HEAD"]
     pattern: '/posts-page'
     types: {
       body: {}
@@ -28,7 +28,7 @@ export interface Registry {
     }
   }
   'products.page': {
-    methods: ['GET', 'HEAD']
+    methods: ["GET","HEAD"]
     pattern: '/products-page'
     types: {
       body: {}
@@ -39,7 +39,7 @@ export interface Registry {
     }
   }
   'users.page': {
-    methods: ['GET', 'HEAD']
+    methods: ["GET","HEAD"]
     pattern: '/users-page'
     types: {
       body: {}
@@ -50,7 +50,7 @@ export interface Registry {
     }
   }
   'accounts.create': {
-    methods: ['GET', 'HEAD']
+    methods: ["GET","HEAD"]
     pattern: '/signup'
     types: {
       body: {}
@@ -61,39 +61,29 @@ export interface Registry {
     }
   }
   'accounts.store': {
-    methods: ['POST']
+    methods: ["POST"]
     pattern: '/signup'
     types: {
-      body: ExtractBody<InferInput<typeof import('#validators/user').signupValidator>>
+      body: ExtractBody<InferInput<(typeof import('#validators/user').signupValidator)>>
       paramsTuple: []
       params: {}
-      query: ExtractQuery<InferInput<typeof import('#validators/user').signupValidator>>
+      query: ExtractQuery<InferInput<(typeof import('#validators/user').signupValidator)>>
       response: Awaited<ReturnType<import('#controllers/accounts_controller').default['store']>>
     }
   }
   'accounts.upload_profile_picture': {
-    methods: ['POST']
+    methods: ["POST"]
     pattern: '/users/profile-picture'
     types: {
-      body: ExtractBody<
-        InferInput<
-          (typeof import('#controllers/accounts_controller').default)['uploadProfilePictureValidator']
-        >
-      >
+      body: ExtractBody<InferInput<(typeof import('#controllers/accounts_controller').default)['uploadProfilePictureValidator']>>
       paramsTuple: []
       params: {}
-      query: ExtractQuery<
-        InferInput<
-          (typeof import('#controllers/accounts_controller').default)['uploadProfilePictureValidator']
-        >
-      >
-      response: Awaited<
-        ReturnType<import('#controllers/accounts_controller').default['uploadProfilePicture']>
-      >
+      query: ExtractQuery<InferInput<(typeof import('#controllers/accounts_controller').default)['uploadProfilePictureValidator']>>
+      response: Awaited<ReturnType<import('#controllers/accounts_controller').default['uploadProfilePicture']>>
     }
   }
   'session.create': {
-    methods: ['GET', 'HEAD']
+    methods: ["GET","HEAD"]
     pattern: '/login'
     types: {
       body: {}
@@ -104,7 +94,7 @@ export interface Registry {
     }
   }
   'session.store': {
-    methods: ['POST']
+    methods: ["POST"]
     pattern: '/login'
     types: {
       body: {}
@@ -115,7 +105,7 @@ export interface Registry {
     }
   }
   'session.destroy': {
-    methods: ['POST']
+    methods: ["POST"]
     pattern: '/logout'
     types: {
       body: {}
@@ -126,7 +116,7 @@ export interface Registry {
     }
   }
   'users.list': {
-    methods: ['GET', 'HEAD']
+    methods: ["GET","HEAD"]
     pattern: '/users'
     types: {
       body: {}
@@ -137,7 +127,7 @@ export interface Registry {
     }
   }
   'users.show': {
-    methods: ['GET', 'HEAD']
+    methods: ["GET","HEAD"]
     pattern: '/users/:id'
     types: {
       body: {}
@@ -148,37 +138,29 @@ export interface Registry {
     }
   }
   'users.store': {
-    methods: ['POST']
+    methods: ["POST"]
     pattern: '/users'
     types: {
-      body: ExtractBody<
-        InferInput<(typeof import('#controllers/users_controller').default)['createValidator']>
-      >
+      body: ExtractBody<InferInput<(typeof import('#controllers/users_controller').default)['createValidator']>>
       paramsTuple: []
       params: {}
-      query: ExtractQuery<
-        InferInput<(typeof import('#controllers/users_controller').default)['createValidator']>
-      >
+      query: ExtractQuery<InferInput<(typeof import('#controllers/users_controller').default)['createValidator']>>
       response: Awaited<ReturnType<import('#controllers/users_controller').default['store']>>
     }
   }
   'users.update': {
-    methods: ['PUT']
+    methods: ["PUT"]
     pattern: '/users/:id'
     types: {
-      body: ExtractBody<
-        InferInput<(typeof import('#controllers/users_controller').default)['updateValidator']>
-      >
+      body: ExtractBody<InferInput<(typeof import('#controllers/users_controller').default)['updateValidator']>>
       paramsTuple: [string]
       params: { id: string }
-      query: ExtractQuery<
-        InferInput<(typeof import('#controllers/users_controller').default)['updateValidator']>
-      >
+      query: ExtractQuery<InferInput<(typeof import('#controllers/users_controller').default)['updateValidator']>>
       response: Awaited<ReturnType<import('#controllers/users_controller').default['update']>>
     }
   }
   'users.delete': {
-    methods: ['DELETE']
+    methods: ["DELETE"]
     pattern: '/users/:id'
     types: {
       body: {}
@@ -189,20 +171,18 @@ export interface Registry {
     }
   }
   'posts.list': {
-    methods: ['GET', 'HEAD']
+    methods: ["GET","HEAD"]
     pattern: '/posts'
     types: {
       body: {}
       paramsTuple: []
       params: {}
-      query: ExtractQueryForGet<
-        InferInput<(typeof import('#controllers/posts_controller').default)['listValidator']>
-      >
+      query: ExtractQueryForGet<InferInput<(typeof import('#controllers/posts_controller').default)['listValidator']>>
       response: Awaited<ReturnType<import('#controllers/posts_controller').default['list']>>
     }
   }
   'posts.show': {
-    methods: ['GET', 'HEAD']
+    methods: ["GET","HEAD"]
     pattern: '/posts/:id'
     types: {
       body: {}
@@ -213,37 +193,29 @@ export interface Registry {
     }
   }
   'posts.store': {
-    methods: ['POST']
+    methods: ["POST"]
     pattern: '/posts'
     types: {
-      body: ExtractBody<
-        InferInput<(typeof import('#controllers/posts_controller').default)['createValidator']>
-      >
+      body: ExtractBody<InferInput<(typeof import('#controllers/posts_controller').default)['createValidator']>>
       paramsTuple: []
       params: {}
-      query: ExtractQuery<
-        InferInput<(typeof import('#controllers/posts_controller').default)['createValidator']>
-      >
+      query: ExtractQuery<InferInput<(typeof import('#controllers/posts_controller').default)['createValidator']>>
       response: Awaited<ReturnType<import('#controllers/posts_controller').default['store']>>
     }
   }
   'posts.update': {
-    methods: ['PUT']
+    methods: ["PUT"]
     pattern: '/posts/:id'
     types: {
-      body: ExtractBody<
-        InferInput<(typeof import('#controllers/posts_controller').default)['updateValidator']>
-      >
+      body: ExtractBody<InferInput<(typeof import('#controllers/posts_controller').default)['updateValidator']>>
       paramsTuple: [string]
       params: { id: string }
-      query: ExtractQuery<
-        InferInput<(typeof import('#controllers/posts_controller').default)['updateValidator']>
-      >
+      query: ExtractQuery<InferInput<(typeof import('#controllers/posts_controller').default)['updateValidator']>>
       response: Awaited<ReturnType<import('#controllers/posts_controller').default['update']>>
     }
   }
   'posts.delete': {
-    methods: ['DELETE']
+    methods: ["DELETE"]
     pattern: '/posts/:id'
     types: {
       body: {}
@@ -254,46 +226,40 @@ export interface Registry {
     }
   }
   'products.search': {
-    methods: ['GET', 'HEAD']
+    methods: ["GET","HEAD"]
     pattern: '/products/search'
     types: {
       body: {}
       paramsTuple: []
       params: {}
-      query: ExtractQueryForGet<
-        InferInput<(typeof import('#controllers/products_controller').default)['searchValidator']>
-      >
+      query: ExtractQueryForGet<InferInput<(typeof import('#controllers/products_controller').default)['searchValidator']>>
       response: Awaited<ReturnType<import('#controllers/products_controller').default['search']>>
     }
   }
   'products.categories': {
-    methods: ['GET', 'HEAD']
+    methods: ["GET","HEAD"]
     pattern: '/products/categories'
     types: {
       body: {}
       paramsTuple: []
       params: {}
       query: {}
-      response: Awaited<
-        ReturnType<import('#controllers/products_controller').default['categories']>
-      >
+      response: Awaited<ReturnType<import('#controllers/products_controller').default['categories']>>
     }
   }
   'products.by_category': {
-    methods: ['GET', 'HEAD']
+    methods: ["GET","HEAD"]
     pattern: '/products/category/:category'
     types: {
       body: {}
       paramsTuple: [string]
       params: { category: string }
       query: {}
-      response: Awaited<
-        ReturnType<import('#controllers/products_controller').default['byCategory']>
-      >
+      response: Awaited<ReturnType<import('#controllers/products_controller').default['byCategory']>>
     }
   }
   'products.show': {
-    methods: ['GET', 'HEAD']
+    methods: ["GET","HEAD"]
     pattern: '/products/:id'
     types: {
       body: {}
@@ -304,22 +270,18 @@ export interface Registry {
     }
   }
   'products.store': {
-    methods: ['POST']
+    methods: ["POST"]
     pattern: '/products'
     types: {
-      body: ExtractBody<
-        InferInput<(typeof import('#controllers/products_controller').default)['createValidator']>
-      >
+      body: ExtractBody<InferInput<(typeof import('#controllers/products_controller').default)['createValidator']>>
       paramsTuple: []
       params: {}
-      query: ExtractQuery<
-        InferInput<(typeof import('#controllers/products_controller').default)['createValidator']>
-      >
+      query: ExtractQuery<InferInput<(typeof import('#controllers/products_controller').default)['createValidator']>>
       response: Awaited<ReturnType<import('#controllers/products_controller').default['store']>>
     }
   }
   'products.delete': {
-    methods: ['DELETE']
+    methods: ["DELETE"]
     pattern: '/products/:id'
     types: {
       body: {}
