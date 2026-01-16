@@ -145,18 +145,23 @@ export type EndpointFn<E extends SchemaEndpoint> = (
 ) => Promise<E['types']['response']>
 
 /**
+ * Function type for an endpoint with inlined args
+ */
+type EndpointFnInline<E extends AdonisEndpoint> = (
+  args: ParamsArg<E['types']['params']> &
+    QueryArg<E['types']['query']> &
+    BodyArg<E['types']['body']> &
+    BaseRequestOptions,
+) => Promise<E['types']['response']>
+
+/**
  * Transforms a pre-computed ApiDefinition tree into callable endpoint functions
  * This recursively converts each endpoint in the tree to a callable function
- * Fully inlined for maximum performance
+ * Handles intersection types where a node is both an endpoint AND has children
  */
 export type TransformApiDefinition<T> = {
   [K in keyof T]: T[K] extends AdonisEndpoint
-    ? (
-        args: ParamsArg<T[K]['types']['params']> &
-          QueryArg<T[K]['types']['query']> &
-          BodyArg<T[K]['types']['body']> &
-          BaseRequestOptions,
-      ) => Promise<T[K]['types']['response']>
+    ? EndpointFnInline<T[K]> & TransformApiDefinition<Omit<T[K], keyof AdonisEndpoint>>
     : TransformApiDefinition<T[K]>
 }
 

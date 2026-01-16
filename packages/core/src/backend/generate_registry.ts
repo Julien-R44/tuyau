@@ -90,6 +90,9 @@ function generateRouteParams(route: ScannedRoute) {
  * Build a nested tree structure from flat route names
  * Example: ['auth.login', 'auth.register', 'users.show'] ->
  * { auth: { login: ..., register: ... }, users: { show: ... } }
+ *
+ * Handles the case where a route name is both a leaf AND a prefix for other routes.
+ * Example: 'auth.login' and 'auth.login.render' can coexist by using $self key.
  */
 function buildTreeStructure(routes: ScannedRoute[]): Map<string, any> {
   const tree = new Map<string, any>()
@@ -103,10 +106,24 @@ function buildTreeStructure(routes: ScannedRoute[]): Map<string, any> {
       const isLast = i === segments.length - 1
 
       if (isLast) {
-        current.set(segment, { routeName: route.name, route })
+        // Check if segment already exists as a Map (intermediate node with children)
+        if (current.has(segment) && current.get(segment) instanceof Map) {
+          // Add the route as $self to the existing Map
+          current.get(segment).set('$self', { routeName: route.name, route })
+        } else {
+          current.set(segment, { routeName: route.name, route })
+        }
       } else {
         if (!current.has(segment)) {
           current.set(segment, new Map<string, any>())
+        } else {
+          const existing = current.get(segment)
+          // If existing is a leaf (not a Map), convert it to a Map with $self
+          if (!(existing instanceof Map)) {
+            const newMap = new Map<string, any>()
+            newMap.set('$self', existing)
+            current.set(segment, newMap)
+          }
         }
         current = current.get(segment)
       }
@@ -118,16 +135,28 @@ function buildTreeStructure(routes: ScannedRoute[]): Map<string, any> {
 
 /**
  * Generate TypeScript interface from tree structure using typeof routes
+ * Handles intersection types where a node is both an endpoint AND has children.
  */
 function generateTreeInterface(tree: Map<string, any>, indent: number = 2): string {
   const spaces = ' '.repeat(indent)
   const lines: string[] = []
 
   for (const [key, value] of tree) {
+    // Skip $self entries here, they are handled by the parent
+    if (key === '$self') continue
+
     if (value instanceof Map) {
-      lines.push(`${spaces}${key}: {`)
-      lines.push(generateTreeInterface(value, indent + 2))
-      lines.push(`${spaces}}`)
+      const selfRoute = value.get('$self')
+      if (selfRoute) {
+        // Node is both a route AND has children - use intersection type
+        lines.push(`${spaces}${key}: typeof routes['${selfRoute.routeName}'] & {`)
+        lines.push(generateTreeInterface(value, indent + 2))
+        lines.push(`${spaces}}`)
+      } else {
+        lines.push(`${spaces}${key}: {`)
+        lines.push(generateTreeInterface(value, indent + 2))
+        lines.push(`${spaces}}`)
+      }
     } else {
       lines.push(`${spaces}${key}: typeof routes['${value.routeName}']`)
     }
