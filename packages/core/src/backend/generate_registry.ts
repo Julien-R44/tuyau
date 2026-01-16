@@ -1,5 +1,6 @@
 import { dirname } from 'node:path'
 import { writeFile, mkdir } from 'node:fs/promises'
+import stringHelpers from '@adonisjs/core/helpers/string'
 import type { ScannedRoute, AllHooks, RoutesListItem } from '@adonisjs/assembler/types'
 
 interface GenerateRegistryConfig {
@@ -86,14 +87,6 @@ function generateRouteParams(route: ScannedRoute) {
 }
 
 /**
- * Convert a string to camelCase
- * Examples: 'get_me' -> 'getMe', 'foo_bar_baz' -> 'fooBarBaz'
- */
-function toCamelCase(str: string): string {
-  return str.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase())
-}
-
-/**
  * Build a nested tree structure from flat route names
  * Example: ['auth.login', 'auth.register', 'users.show'] ->
  * { auth: { login: ..., register: ... }, users: { show: ... } }
@@ -106,7 +99,7 @@ function buildTreeStructure(routes: ScannedRoute[]): Map<string, any> {
     let current = tree
 
     for (let i = 0; i < segments.length; i++) {
-      const segment = toCamelCase(segments[i])
+      const segment = stringHelpers.camelCase(segments[i])
       const isLast = i === segments.length - 1
 
       if (isLast) {
