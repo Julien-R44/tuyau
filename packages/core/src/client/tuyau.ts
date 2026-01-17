@@ -4,7 +4,14 @@ import { createUrlBuilder, type UrlFor } from '@adonisjs/http-server/client/url_
 
 import { buildSearchParams } from './serializer.ts'
 import { parseResponse, TuyauHTTPError, TuyauNetworkError } from './errors.ts'
-import { isObject, isReactNative, isServer, removeSlash, segmentsToRouteName } from './utils.ts'
+import {
+  isObject,
+  isReactNative,
+  isServer,
+  removeSlash,
+  segmentsToKebabRouteName,
+  segmentsToRouteName,
+} from './utils.ts'
 import type {
   AdonisEndpoint,
   EndpointByMethodPattern,
@@ -306,9 +313,15 @@ export class Tuyau<
    * Creates a proxy-based fluent API for accessing endpoints by name
    */
   #makeNamed(segments: string[]): any {
-    const routeName = segmentsToRouteName(segments)
+    let routeName = segmentsToRouteName(segments)
+    let def = this.#config.registry.routes[routeName]
 
-    const def = this.#config.registry.routes[routeName]
+    // Fallback to kebab-case if not found
+    if (!def) {
+      routeName = segmentsToKebabRouteName(segments)
+      def = this.#config.registry.routes[routeName]
+    }
+
     if (def) {
       const fn = (args: any) => this.#doFetch(routeName, def.methods[0], args)
       return new Proxy(fn, {

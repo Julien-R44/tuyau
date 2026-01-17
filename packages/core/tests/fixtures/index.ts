@@ -222,6 +222,54 @@ const routes = {
       response: { success: boolean }
     },
   },
+
+  'subscriber_lists.store': {
+    methods: ['POST'],
+    pattern: '/api/subscriber-lists',
+    tokens: [
+      { old: '/api/subscriber-lists', type: 0, val: 'api', end: '' },
+      { old: '/api/subscriber-lists', type: 0, val: 'subscriber-lists', end: '' },
+    ],
+    types: placeholder as {
+      paramsTuple: []
+      body: { name: string }
+      params: {}
+      query: {}
+      response: { id: number; name: string }
+    },
+  },
+  'subscriber_lists.index': {
+    methods: ['GET'],
+    pattern: '/api/subscriber-lists',
+    tokens: [
+      { old: '/api/subscriber-lists', type: 0, val: 'api', end: '' },
+      { old: '/api/subscriber-lists', type: 0, val: 'subscriber-lists', end: '' },
+    ],
+    types: placeholder as {
+      paramsTuple: []
+      body: {}
+      params: {}
+      query: {}
+      response: { lists: Array<{ id: number; name: string }> }
+    },
+  },
+
+  'subscriber-lists.show': {
+    methods: ['GET'],
+    pattern: '/api/subscriber-lists/:id',
+    tokens: [
+      { old: '/api/subscriber-lists/:id', type: 0, val: 'api', end: '' },
+      { old: '/api/subscriber-lists/:id', type: 0, val: 'subscriber-lists', end: '' },
+      { old: '/api/subscriber-lists/:id', type: 1, val: 'id', end: '' },
+    ],
+    types: placeholder as {
+      paramsTuple: [string]
+      body: {}
+      params: { id: string }
+      query: {}
+      response: { id: number; name: string }
+    },
+  },
   /**
    * Route with headers and cookies validation (POST)
    * Simulates a validator like:

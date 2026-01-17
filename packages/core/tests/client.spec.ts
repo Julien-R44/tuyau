@@ -417,6 +417,40 @@ test.group('Client | Chained', () => {
 
     assert.deepEqual(result, { id: 1 })
   })
+
+  test('route with snake_case name (subscriber_lists)', async ({ assert }) => {
+    const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry })
+
+    nock('http://localhost:3333')
+      .post('/api/subscriber-lists')
+      .reply(200, { id: 1, name: 'Test List' })
+
+    const result = await tuyau.api.subscriberLists.store({ body: { name: 'Test List' } })
+
+    assert.deepEqual(result, { id: 1, name: 'Test List' })
+  })
+
+  test('GET route with snake_case name', async ({ assert }) => {
+    const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry })
+
+    nock('http://localhost:3333')
+      .get('/api/subscriber-lists')
+      .reply(200, { lists: [{ id: 1, name: 'Test' }] })
+
+    const result = await tuyau.api.subscriberLists.index({})
+
+    assert.deepEqual(result, { lists: [{ id: 1, name: 'Test' }] })
+  })
+
+  test('route with kebab-case name (subscriber-lists)', async ({ assert }) => {
+    const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry })
+
+    nock('http://localhost:3333').get('/api/subscriber-lists/1').reply(200, { id: 1, name: 'Test' })
+
+    const result = await tuyau.api.subscriberLists.show({ params: { id: '1' } })
+
+    assert.deepEqual(result, { id: 1, name: 'Test' })
+  })
 })
 
 test.group('Client | request', () => {

@@ -30,4 +30,9 @@ export interface ApiDefinition {
     search: Routes['products.search']
     store: Routes['products.store']
   }
+  subscriberLists: {
+    store: Routes['subscriber_lists.store']
+    index: Routes['subscriber_lists.index']
+    show: Routes['subscriber-lists.show']
+  }
 }

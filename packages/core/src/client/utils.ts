@@ -16,9 +16,18 @@ export const isServer = typeof FileList === 'undefined'
 export const isReactNative = typeof navigator !== 'undefined' && navigator.product === 'ReactNative'
 
 /**
- * Converts camelCase segments to kebab-case route name
+ * Converts camelCase segments to snake_case route name
  */
 export function segmentsToRouteName(segments: string[]): string {
+  return segments
+    .map((segment) => segment.replace(/[A-Z]/g, (g) => `_${g.toLowerCase()}`))
+    .join('.')
+}
+
+/**
+ * Converts camelCase segments to kebab-case route name
+ */
+export function segmentsToKebabRouteName(segments: string[]): string {
   return segments
     .map((segment) => segment.replace(/[A-Z]/g, (g) => `-${g.toLowerCase()}`))
     .join('.')
