@@ -61,10 +61,15 @@ type SuccessStatus = 200 | 201 | 202 | 203 | 204 | 205 | 206
 
 /**
  * Extract the actual response type from a controller return type.
- * Only extracts `__response` from successful responses (2xx status codes).
- * For error responses or types without __response, returns the original type.
+ * - Success responses (2xx): extracts `__response`
+ * - Error responses (non-2xx with __response/__status): returns `never` to filter from unions
+ * - Plain types (no __status): returns as-is
  */
-export type ExtractResponse<T> = T extends { __response: infer R; __status: SuccessStatus } ? R : T
+export type ExtractResponse<T> = T extends { __response: infer R; __status: SuccessStatus }
+  ? R
+  : T extends { __response: unknown; __status: number }
+    ? never
+    : T
 
 /**
  * Registry mapping endpoint names to their definitions

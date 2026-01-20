@@ -755,32 +755,32 @@ test.group('ExtractResponse type', (group) => {
     expectTypeOf<Result>().toEqualTypeOf<undefined>()
   })
 
-  test('does NOT extract from 400 Bad Request response', ({ expectTypeOf }) => {
+  test('returns never for 400 Bad Request response', ({ expectTypeOf }) => {
     type BadRequestResponse = { __response: { error: string }; __status: 400 }
 
     type Result = ExtractResponse<BadRequestResponse>
-    expectTypeOf<Result>().toEqualTypeOf<BadRequestResponse>()
+    expectTypeOf<Result>().toEqualTypeOf<never>()
   })
 
-  test('does NOT extract from 401 Unauthorized response', ({ expectTypeOf }) => {
+  test('returns never for 401 Unauthorized response', ({ expectTypeOf }) => {
     type UnauthorizedResponse = { __response: { message: string }; __status: 401 }
 
     type Result = ExtractResponse<UnauthorizedResponse>
-    expectTypeOf<Result>().toEqualTypeOf<UnauthorizedResponse>()
+    expectTypeOf<Result>().toEqualTypeOf<never>()
   })
 
-  test('does NOT extract from 404 Not Found response', ({ expectTypeOf }) => {
+  test('returns never for 404 Not Found response', ({ expectTypeOf }) => {
     type NotFoundResponse = { __response: { error: string }; __status: 404 }
 
     type Result = ExtractResponse<NotFoundResponse>
-    expectTypeOf<Result>().toEqualTypeOf<NotFoundResponse>()
+    expectTypeOf<Result>().toEqualTypeOf<never>()
   })
 
-  test('does NOT extract from 500 Internal Server Error response', ({ expectTypeOf }) => {
+  test('returns never for 500 Internal Server Error response', ({ expectTypeOf }) => {
     type ServerErrorResponse = { __response: { error: string }; __status: 500 }
 
     type Result = ExtractResponse<ServerErrorResponse>
-    expectTypeOf<Result>().toEqualTypeOf<ServerErrorResponse>()
+    expectTypeOf<Result>().toEqualTypeOf<never>()
   })
 
   test('returns original type when no __response property', ({ expectTypeOf }) => {
@@ -808,7 +808,7 @@ test.group('ExtractResponse type', (group) => {
     expectTypeOf<Result>().toEqualTypeOf<{ data: string } | { id: number }>()
   })
 
-  test('handles union of success and error responses', ({ expectTypeOf }) => {
+  test('filters out error responses from union, keeps only success', ({ expectTypeOf }) => {
     type OkResponse = { __response: { data: string }; __status: 200 }
 
     type NotFoundResponse = { __response: { error: string }; __status: 404 }
@@ -816,6 +816,19 @@ test.group('ExtractResponse type', (group) => {
     type UnionResponse = OkResponse | NotFoundResponse
 
     type Result = ExtractResponse<UnionResponse>
-    expectTypeOf<Result>().toEqualTypeOf<{ data: string } | NotFoundResponse>()
+    expectTypeOf<Result>().toEqualTypeOf<{ data: string }>()
+  })
+
+  test('filters out multiple error responses from union', ({ expectTypeOf }) => {
+    type OkResponse = { __response: { price: number }; __status: 200 }
+
+    type NotFoundResponse = { __response: unknown; __status: 404 }
+
+    type ServerErrorResponse = { __response: { error: string }; __status: 500 }
+
+    type UnionResponse = OkResponse | NotFoundResponse | ServerErrorResponse
+
+    type Result = ExtractResponse<UnionResponse>
+    expectTypeOf<Result>().toEqualTypeOf<{ price: number }>()
   })
 })
