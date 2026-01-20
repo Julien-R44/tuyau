@@ -1,3 +1,5 @@
+import './types.js'
+
 import { dirname } from 'node:path'
 import { writeFile, mkdir } from 'node:fs/promises'
 import stringHelpers from '@adonisjs/core/helpers/string'
@@ -200,16 +202,18 @@ function generateRuntimeRegistryEntry(route: ScannedRoute): string {
 }
 
 /**
- * Wrap ReturnType with Awaited to unwrap Promise types from async methods
- * Pretty hackish, should probably also be fixed in adonisjs/assembler. Lets do that later
+ * Wrap response type with ExtractResponse and Awaited to:
+ * 1. Unwrap Promise types from async methods
+ * 2. Extract __response property from typed response methods (ok(), created(), etc.)
  */
 function wrapResponseType(responseType: string): string {
   if (responseType === 'unknown' || responseType === '{}') return responseType
-  // Wrap ReturnType<...> with Awaited<...> to handle async methods
+
   if (responseType.startsWith('ReturnType<')) {
-    return `Awaited<${responseType}>`
+    return `ExtractResponse<Awaited<${responseType}>>`
   }
-  return responseType
+
+  return `ExtractResponse<${responseType}>`
 }
 
 /**
@@ -324,7 +328,7 @@ function generateTypesContent(routes: ScannedRoute[]): string {
   return `/* eslint-disable prettier/prettier */
 /// <reference path="../manifest.d.ts" />
 
-import type { ExtractBody, ExtractQuery, ExtractQueryForGet } from '@tuyau/core/types'
+import type { ExtractBody, ExtractQuery, ExtractQueryForGet, ExtractResponse } from '@tuyau/core/types'
 import type { InferInput } from '@vinejs/vine/types'
 
 export interface Registry {

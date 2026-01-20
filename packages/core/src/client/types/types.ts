@@ -55,6 +55,13 @@ export type ExtractQueryForGet<T> = Omit<T, 'headers' | 'cookies' | 'params'>
 export type ExtractBody<T> = Omit<T, 'query' | 'params' | 'headers' | 'cookies'>
 
 /**
+ * Extract the actual response type from a controller return type.
+ * If the type has a `__response` property (from typed response methods like ok(), created(), etc.),
+ * extract that. Otherwise return the original type.
+ */
+export type ExtractResponse<T> = T extends { __response: infer R } ? R : T
+
+/**
  * Registry mapping endpoint names to their definitions
  */
 export interface AdonisRegistry extends Record<string, AdonisEndpoint> {}

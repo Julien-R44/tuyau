@@ -16,3 +16,4 @@ todo.md
 **/*/public/assets
 tmp
 .attest
+.osgrep
