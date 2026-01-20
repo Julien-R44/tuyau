@@ -6,6 +6,7 @@ import type {
   ExtractBody,
   ExtractQuery,
   ExtractQueryForGet,
+  ExtractResponse,
   PathWithRegistry,
   RouteWithRegistry,
 } from '../src/client/types/types.ts'
@@ -720,5 +721,101 @@ test.group('ExtractQuery and ExtractBody types', (group) => {
       email: string
       password: string
     }>()
+  })
+})
+
+test.group('ExtractResponse type', (group) => {
+  group.tap((t) => t.skip(true, 'skip typings tests'))
+
+  test('extracts __response from 200 OK response', ({ expectTypeOf }) => {
+    type OkResponse = { __response: { users: string[] }; __status: 200 }
+
+    type Result = ExtractResponse<OkResponse>
+    expectTypeOf<Result>().toEqualTypeOf<{ users: string[] }>()
+  })
+
+  test('extracts __response from 201 Created response', ({ expectTypeOf }) => {
+    type CreatedResponse = { __response: { id: number }; __status: 201 }
+
+    type Result = ExtractResponse<CreatedResponse>
+    expectTypeOf<Result>().toEqualTypeOf<{ id: number }>()
+  })
+
+  test('extracts __response from 202 Accepted response', ({ expectTypeOf }) => {
+    type AcceptedResponse = { __response: { jobId: string }; __status: 202 }
+
+    type Result = ExtractResponse<AcceptedResponse>
+    expectTypeOf<Result>().toEqualTypeOf<{ jobId: string }>()
+  })
+
+  test('extracts __response from 204 No Content response', ({ expectTypeOf }) => {
+    type NoContentResponse = { __response: undefined; __status: 204 }
+
+    type Result = ExtractResponse<NoContentResponse>
+    expectTypeOf<Result>().toEqualTypeOf<undefined>()
+  })
+
+  test('does NOT extract from 400 Bad Request response', ({ expectTypeOf }) => {
+    type BadRequestResponse = { __response: { error: string }; __status: 400 }
+
+    type Result = ExtractResponse<BadRequestResponse>
+    expectTypeOf<Result>().toEqualTypeOf<BadRequestResponse>()
+  })
+
+  test('does NOT extract from 401 Unauthorized response', ({ expectTypeOf }) => {
+    type UnauthorizedResponse = { __response: { message: string }; __status: 401 }
+
+    type Result = ExtractResponse<UnauthorizedResponse>
+    expectTypeOf<Result>().toEqualTypeOf<UnauthorizedResponse>()
+  })
+
+  test('does NOT extract from 404 Not Found response', ({ expectTypeOf }) => {
+    type NotFoundResponse = { __response: { error: string }; __status: 404 }
+
+    type Result = ExtractResponse<NotFoundResponse>
+    expectTypeOf<Result>().toEqualTypeOf<NotFoundResponse>()
+  })
+
+  test('does NOT extract from 500 Internal Server Error response', ({ expectTypeOf }) => {
+    type ServerErrorResponse = { __response: { error: string }; __status: 500 }
+
+    type Result = ExtractResponse<ServerErrorResponse>
+    expectTypeOf<Result>().toEqualTypeOf<ServerErrorResponse>()
+  })
+
+  test('returns original type when no __response property', ({ expectTypeOf }) => {
+    type PlainResponse = { data: string; count: number }
+
+    type Result = ExtractResponse<PlainResponse>
+    expectTypeOf<Result>().toEqualTypeOf<PlainResponse>()
+  })
+
+  test('returns original type for plain object without status', ({ expectTypeOf }) => {
+    type PlainObject = { users: { id: number; name: string }[] }
+
+    type Result = ExtractResponse<PlainObject>
+    expectTypeOf<Result>().toEqualTypeOf<PlainObject>()
+  })
+
+  test('handles union of success responses', ({ expectTypeOf }) => {
+    type OkResponse = { __response: { data: string }; __status: 200 }
+
+    type CreatedResponse = { __response: { id: number }; __status: 201 }
+
+    type UnionResponse = OkResponse | CreatedResponse
+
+    type Result = ExtractResponse<UnionResponse>
+    expectTypeOf<Result>().toEqualTypeOf<{ data: string } | { id: number }>()
+  })
+
+  test('handles union of success and error responses', ({ expectTypeOf }) => {
+    type OkResponse = { __response: { data: string }; __status: 200 }
+
+    type NotFoundResponse = { __response: { error: string }; __status: 404 }
+
+    type UnionResponse = OkResponse | NotFoundResponse
+
+    type Result = ExtractResponse<UnionResponse>
+    expectTypeOf<Result>().toEqualTypeOf<{ data: string } | NotFoundResponse>()
   })
 })

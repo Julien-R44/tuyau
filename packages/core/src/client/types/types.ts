@@ -55,11 +55,16 @@ export type ExtractQueryForGet<T> = Omit<T, 'headers' | 'cookies' | 'params'>
 export type ExtractBody<T> = Omit<T, 'query' | 'params' | 'headers' | 'cookies'>
 
 /**
- * Extract the actual response type from a controller return type.
- * If the type has a `__response` property (from typed response methods like ok(), created(), etc.),
- * extract that. Otherwise return the original type.
+ * Success status codes (2xx)
  */
-export type ExtractResponse<T> = T extends { __response: infer R } ? R : T
+type SuccessStatus = 200 | 201 | 202 | 203 | 204 | 205 | 206
+
+/**
+ * Extract the actual response type from a controller return type.
+ * Only extracts `__response` from successful responses (2xx status codes).
+ * For error responses or types without __response, returns the original type.
+ */
+export type ExtractResponse<T> = T extends { __response: infer R; __status: SuccessStatus } ? R : T
 
 /**
  * Registry mapping endpoint names to their definitions
