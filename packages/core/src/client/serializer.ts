@@ -33,5 +33,5 @@ export function buildSearchParams(query: QueryParameters): string {
   }
 
   serialize(query)
-  return parts.length ? `?${parts.join('&')}` : ''
+  return parts.length ? parts.join('&') : ''
 }

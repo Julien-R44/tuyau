@@ -28,6 +28,16 @@ test.group('Client | getRoute', () => {
   })
 })
 
+test.group('Client | urlFor', () => {
+  test('urlFor should not produce double ?? with query params', ({ assert }) => {
+    const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry })
+
+    const result = tuyau.urlFor.get('users.index', {}, { qs: { var: 'hi' } }).url
+    assert.isFalse(result.includes('??'), `URL contains double "??": ${result}`)
+    assert.include(result, '?var=hi')
+  })
+})
+
 test.group('Client | Errors', () => {
   test('throws error for non-existent pattern', async ({ assert }) => {
     const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry })
