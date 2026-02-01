@@ -174,6 +174,7 @@ test.group('Client | Chained', () => {
       'users.index': {
         methods: ['GET'] as 'GET'[],
         pattern: '/users',
+        domain: 'root',
         tokens: [{ old: '/users', type: 0 as const, val: 'users', end: '' }],
         types: {} as any as {
           body: {}

@@ -401,6 +401,7 @@ function routeToRegistryEntry(route: RouteInfo): string {
   return `  '${route.routeName}': {
     methods: [${route.methods.map((m) => `'${m}'`).join(', ')}],
     pattern: '${route.pattern}',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: ${route.body}

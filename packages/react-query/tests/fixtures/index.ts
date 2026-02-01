@@ -5,6 +5,7 @@ const routes = {
   'articles.index': {
     methods: ['GET'],
     pattern: '/articles',
+    domain: 'root',
     tokens: [{ old: '/articles', type: 0, val: 'articles', end: '' }],
     types: placeholder as {
       body: {}
@@ -17,6 +18,7 @@ const routes = {
   'auth.login': {
     methods: ['POST'],
     pattern: '/auth/login',
+    domain: 'root',
     tokens: [{ old: '/auth/login', type: 0, val: 'auth/login', end: '' }],
     types: placeholder as {
       body: { email: string; password: string; file?: any }
@@ -29,6 +31,7 @@ const routes = {
   'auth.login.show': {
     methods: ['GET'],
     pattern: '/auth/login',
+    domain: 'root',
     tokens: [{ old: '/auth/login', type: 0, val: 'auth/login', end: '' }],
     types: placeholder as {
       body: {}
@@ -41,6 +44,7 @@ const routes = {
   'users.index': {
     methods: ['GET'],
     pattern: '/users',
+    domain: 'root',
     tokens: [{ old: '/users', type: 0, val: 'users', end: '' }],
     types: placeholder as {
       body: {}
@@ -53,6 +57,7 @@ const routes = {
   'users.bar': {
     methods: ['GET'],
     pattern: '/users/foo',
+    domain: 'root',
     tokens: [{ old: '/users/foo', type: 0, val: 'users', end: '' }],
     types: placeholder as {
       body: {}
@@ -65,6 +70,7 @@ const routes = {
   'users.store': {
     methods: ['POST'],
     pattern: '/users',
+    domain: 'root',
     tokens: [{ old: '/users', type: 0, val: 'users', end: '' }],
     types: placeholder as {
       paramsTuple: [string, string, string]
@@ -77,6 +83,7 @@ const routes = {
   'posts.comments.likes.detail': {
     methods: ['GET'],
     pattern: '/posts/:postId/comments/:commentId/likes/:likeId',
+    domain: 'root',
     tokens: [
       { old: '/posts/:postId/comments/:commentId/likes/:likeId', type: 0, val: 'posts', end: '' },
       { old: '/posts/:postId/comments/:commentId/likes/:likeId', type: 1, val: 'postId', end: '' },
@@ -106,6 +113,7 @@ const routes = {
   'posts.comments.likes.toggle': {
     methods: ['POST'],
     pattern: '/posts/:postId/comments/:commentId/likes/:likeId/toggle',
+    domain: 'root',
     tokens: [
       {
         old: '/posts/:postId/comments/:commentId/likes/:likeId/toggle',
@@ -149,6 +157,7 @@ const routes = {
   'users.comments.index': {
     methods: ['GET'],
     pattern: '/users/:userId/comments',
+    domain: 'root',
     tokens: [
       { old: '/users/:userId/comments', type: 0, val: 'users', end: '' },
       { old: '/users/:userId/comments', type: 1, val: 'userId', end: '' },
@@ -165,6 +174,7 @@ const routes = {
   'users.show': {
     methods: ['GET'],
     pattern: '/users/:id',
+    domain: 'root',
     tokens: [
       { old: '/users/:id', type: 0, val: 'users', end: '' },
       { old: '/users/:id', type: 1, val: 'id', end: '' },
@@ -180,6 +190,7 @@ const routes = {
   'do.something': {
     methods: ['POST'],
     pattern: '/do-something',
+    domain: 'root',
     tokens: [{ old: '/do-something', type: 0, val: 'do-something', end: '' }],
     types: placeholder as {
       paramsTuple: []
@@ -192,6 +203,7 @@ const routes = {
   'products.search': {
     methods: ['GET'],
     pattern: '/products/search',
+    domain: 'root',
     tokens: [{ old: '/products/search', type: 0, val: 'products/search', end: '' }],
     types: placeholder as {
       paramsTuple: []
@@ -204,6 +216,7 @@ const routes = {
   'products.create': {
     methods: ['POST'],
     pattern: '/products',
+    domain: 'root',
     tokens: [{ old: '/products', type: 0, val: 'products', end: '' }],
     types: placeholder as {
       paramsTuple: []
@@ -216,6 +229,7 @@ const routes = {
   'products.by_category': {
     methods: ['GET'],
     pattern: '/products/category/:category',
+    domain: 'root',
     tokens: [
       { old: '/products/category/:category', type: 0, val: 'products', end: '' },
       { old: '/products/category/:category', type: 0, val: 'category', end: '' },
@@ -232,6 +246,7 @@ const routes = {
   'auth.status': {
     methods: ['GET', 'HEAD'],
     pattern: '/auth/status',
+    domain: 'root',
     tokens: [
       { old: '/auth/status', type: 0, val: 'auth', end: '' },
       { old: '/auth/status', type: 0, val: 'status', end: '' },

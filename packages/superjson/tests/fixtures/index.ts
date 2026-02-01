@@ -6,6 +6,7 @@ const routes = {
   'users.index': {
     methods: ['GET'],
     pattern: '/users',
+    domain: 'root',
     tokens: [{ old: '/users', type: 0, val: 'users', end: '' }],
     types: placeholder as {
       body: {}
@@ -18,6 +19,7 @@ const routes = {
   'users.store': {
     methods: ['POST'],
     pattern: '/users',
+    domain: 'root',
     tokens: [{ old: '/users', type: 0, val: 'users', end: '' }],
     types: placeholder as {
       paramsTuple: []

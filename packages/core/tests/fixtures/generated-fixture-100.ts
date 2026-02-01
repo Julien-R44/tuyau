@@ -6,6 +6,7 @@ const routes = {
   'offer.blog.share': {
     methods: ['PUT'],
     pattern: '/offer/blog/share/:groupId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { query: string; limit?: number }
@@ -18,6 +19,7 @@ const routes = {
   'document.archive': {
     methods: ['POST'],
     pattern: '/document/archive',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { token: string; expiresAt?: string }
@@ -30,6 +32,7 @@ const routes = {
   'education.quality.block': {
     methods: ['DELETE'],
     pattern: '/education/quality/block',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -42,6 +45,7 @@ const routes = {
   'coupon.index': {
     methods: ['DELETE'],
     pattern: '/coupon/index/:itemId/:resourceId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -54,6 +58,7 @@ const routes = {
   'language.market.leave': {
     methods: ['DELETE'],
     pattern: '/language/market/leave/:categoryId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -66,6 +71,7 @@ const routes = {
   'product.sync': {
     methods: ['GET', 'HEAD'],
     pattern: '/product/sync/:groupId/:userId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -78,6 +84,7 @@ const routes = {
   'cart.search': {
     methods: ['GET', 'HEAD'],
     pattern: '/cart/search',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -90,6 +97,7 @@ const routes = {
   'garden.upload': {
     methods: ['GET'],
     pattern: '/garden/upload',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -102,6 +110,7 @@ const routes = {
   'wiki.archive': {
     methods: ['PATCH'],
     pattern: '/wiki/archive',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { title: string; description?: string }
@@ -114,6 +123,7 @@ const routes = {
   'feedback.sort': {
     methods: ['DELETE'],
     pattern: '/feedback/sort/:categoryId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -126,6 +136,7 @@ const routes = {
   'fashion.bookmark': {
     methods: ['GET'],
     pattern: '/fashion/bookmark',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -138,6 +149,7 @@ const routes = {
   'filter.service.move': {
     methods: ['POST'],
     pattern: '/filter/service/move',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { amount: number; currency?: string }
@@ -150,6 +162,7 @@ const routes = {
   'travel.discount.generate': {
     methods: ['PATCH'],
     pattern: '/travel/discount/generate',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { token: string; expiresAt?: string }
@@ -162,6 +175,7 @@ const routes = {
   'invoice.edit': {
     methods: ['GET'],
     pattern: '/invoice/edit',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -174,6 +188,7 @@ const routes = {
   'comment.switch': {
     methods: ['DELETE'],
     pattern: '/comment/switch',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -186,6 +201,7 @@ const routes = {
   'billing.show': {
     methods: ['POST'],
     pattern: '/billing/show',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -198,6 +214,7 @@ const routes = {
   'sync.user.postpone': {
     methods: ['PUT'],
     pattern: '/sync/user/postpone',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { filters: any[]; options?: any }
@@ -210,6 +227,7 @@ const routes = {
   'label.generate': {
     methods: ['POST'],
     pattern: '/label/generate',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { priority: string; status?: string }
@@ -222,6 +240,7 @@ const routes = {
   'sports.unpublish': {
     methods: ['GET', 'HEAD'],
     pattern: '/sports/unpublish/:categoryId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -234,6 +253,7 @@ const routes = {
   'watchlist.unmute': {
     methods: ['DELETE'],
     pattern: '/watchlist/unmute',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -246,6 +266,7 @@ const routes = {
   'security.validate': {
     methods: ['PATCH'],
     pattern: '/security/validate',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -258,6 +279,7 @@ const routes = {
   'export.sync': {
     methods: ['POST'],
     pattern: '/export/sync/:id',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { startDate: string; endDate: string }
@@ -270,6 +292,7 @@ const routes = {
   'filter.migrate': {
     methods: ['DELETE'],
     pattern: '/filter/migrate',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -282,6 +305,7 @@ const routes = {
   'shipment.leave': {
     methods: ['GET'],
     pattern: '/shipment/leave/:categoryId/:userId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -294,6 +318,7 @@ const routes = {
   'shipment.decline': {
     methods: ['DELETE'],
     pattern: '/shipment/decline/:userId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -306,6 +331,7 @@ const routes = {
   'search.patch': {
     methods: ['DELETE'],
     pattern: '/search/patch',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -318,6 +344,7 @@ const routes = {
   'chat.transfer': {
     methods: ['GET'],
     pattern: '/chat/transfer',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -330,6 +357,7 @@ const routes = {
   'checkout.team.index': {
     methods: ['POST'],
     pattern: '/checkout/team/index/:entityId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { amount: number; currency?: string }
@@ -342,6 +370,7 @@ const routes = {
   'team.block': {
     methods: ['POST'],
     pattern: '/team/block',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { filters: any[]; options?: any }
@@ -354,6 +383,7 @@ const routes = {
   'order.schedule.enable': {
     methods: ['GET'],
     pattern: '/order/schedule/enable/:groupId/:itemId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -366,6 +396,7 @@ const routes = {
   'podcast.ban': {
     methods: ['GET'],
     pattern: '/podcast/ban',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -378,6 +409,7 @@ const routes = {
   'library.invite': {
     methods: ['GET'],
     pattern: '/library/invite',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -390,6 +422,7 @@ const routes = {
   'label.download': {
     methods: ['POST'],
     pattern: '/label/download/:userId/:entityId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { coordinates: [number, number] }
@@ -402,6 +435,7 @@ const routes = {
   'access.get': {
     methods: ['PUT'],
     pattern: '/access/get',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { settings: Record<string, any> }
@@ -414,6 +448,7 @@ const routes = {
   'sync.index': {
     methods: ['POST'],
     pattern: '/sync/index',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { file: Blob }
@@ -426,6 +461,7 @@ const routes = {
   'pricing.message.compute': {
     methods: ['POST'],
     pattern: '/pricing/message/compute',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { coordinates: [number, number] }
@@ -438,6 +474,7 @@ const routes = {
   'restaurant.insert': {
     methods: ['GET', 'HEAD'],
     pattern: '/restaurant/insert/:userId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -450,6 +487,7 @@ const routes = {
   'library.appointment.unsubscribe': {
     methods: ['POST'],
     pattern: '/library/appointment/unsubscribe',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { userId: string; permissions: string[] }
@@ -462,6 +500,7 @@ const routes = {
   'travel.campaign.group': {
     methods: ['GET'],
     pattern: '/travel/campaign/group',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -474,6 +513,7 @@ const routes = {
   'image.bookmark': {
     methods: ['GET'],
     pattern: '/image/bookmark',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -486,6 +526,7 @@ const routes = {
   'schedule.analyze': {
     methods: ['PUT'],
     pattern: '/schedule/analyze',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { data: any; metadata?: any }
@@ -498,6 +539,7 @@ const routes = {
   'history.collaboration.destroy': {
     methods: ['POST'],
     pattern: '/history/collaboration/destroy',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { title: string; description?: string }
@@ -510,6 +552,7 @@ const routes = {
   'gallery.toggle': {
     methods: ['GET', 'HEAD'],
     pattern: '/gallery/toggle',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -522,6 +565,7 @@ const routes = {
   'checkout.favorite.like': {
     methods: ['POST'],
     pattern: '/checkout/favorite/like/:groupId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { name: string; email: string }
@@ -534,6 +578,7 @@ const routes = {
   'analytics.sync': {
     methods: ['GET'],
     pattern: '/analytics/sync/:groupId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -546,6 +591,7 @@ const routes = {
   'shipping.shipment.kick': {
     methods: ['PUT'],
     pattern: '/shipping/shipment/kick',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { settings: Record<string, any> }
@@ -558,6 +604,7 @@ const routes = {
   'discount.edit': {
     methods: ['GET'],
     pattern: '/discount/edit',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -570,6 +617,7 @@ const routes = {
   'authorization.put': {
     methods: ['GET'],
     pattern: '/authorization/put',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -582,6 +630,7 @@ const routes = {
   'campaign.unassign': {
     methods: ['PATCH'],
     pattern: '/campaign/unassign/:id',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { token: string; expiresAt?: string }
@@ -594,6 +643,7 @@ const routes = {
   'document.destroy': {
     methods: ['PUT'],
     pattern: '/document/destroy',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { filters: any[]; options?: any }
@@ -606,6 +656,7 @@ const routes = {
   'task.unblock': {
     methods: ['PUT'],
     pattern: '/task/unblock/:teamId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { data: any; metadata?: any }
@@ -618,6 +669,7 @@ const routes = {
   'search.combine': {
     methods: ['POST'],
     pattern: '/search/combine/:categoryId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -630,6 +682,7 @@ const routes = {
   'video.review.draft': {
     methods: ['GET'],
     pattern: '/video/review/draft/:userId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -642,6 +695,7 @@ const routes = {
   'notification.analytics.create': {
     methods: ['PATCH'],
     pattern: '/notification/analytics/create/:resourceId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { query: string; limit?: number }
@@ -654,6 +708,7 @@ const routes = {
   'upload.approve': {
     methods: ['GET'],
     pattern: '/upload/approve',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -666,6 +721,7 @@ const routes = {
   'document.music.like': {
     methods: ['GET'],
     pattern: '/document/music/like/:groupId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -678,6 +734,7 @@ const routes = {
   'checkout.pet.refresh': {
     methods: ['GET'],
     pattern: '/checkout/pet/refresh',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -690,6 +747,7 @@ const routes = {
   'label.store': {
     methods: ['GET'],
     pattern: '/label/store',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -702,6 +760,7 @@ const routes = {
   'access.video.edit': {
     methods: ['GET'],
     pattern: '/access/video/edit',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -714,6 +773,7 @@ const routes = {
   'bookmark.lock': {
     methods: ['PUT'],
     pattern: '/bookmark/lock',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { name: string; email: string }
@@ -726,6 +786,7 @@ const routes = {
   'download.podcast.activate': {
     methods: ['POST'],
     pattern: '/download/podcast/activate',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { data: any; metadata?: any }
@@ -738,6 +799,7 @@ const routes = {
   'audio.share': {
     methods: ['POST'],
     pattern: '/audio/share',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { coordinates: [number, number] }
@@ -750,6 +812,7 @@ const routes = {
   'integration.unpublish': {
     methods: ['GET', 'HEAD'],
     pattern: '/integration/unpublish',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -762,6 +825,7 @@ const routes = {
   'discount.admin.unfollow': {
     methods: ['GET'],
     pattern: '/discount/admin/unfollow',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -774,6 +838,7 @@ const routes = {
   'blog.create': {
     methods: ['GET'],
     pattern: '/blog/create',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -786,6 +851,7 @@ const routes = {
   'art.show': {
     methods: ['GET'],
     pattern: '/art/show',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -798,6 +864,7 @@ const routes = {
   'reservation.unassign': {
     methods: ['POST'],
     pattern: '/reservation/unassign/:categoryId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { title: string; description?: string }
@@ -810,6 +877,7 @@ const routes = {
   'image.role.assign': {
     methods: ['PUT'],
     pattern: '/image/role/assign',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { filters: any[]; options?: any }
@@ -822,6 +890,7 @@ const routes = {
   'wiki.postpone': {
     methods: ['GET'],
     pattern: '/wiki/postpone/:groupId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -834,6 +903,7 @@ const routes = {
   'log.unmute': {
     methods: ['PUT'],
     pattern: '/log/unmute/:entityId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { content: string; tags?: string[] }
@@ -846,6 +916,7 @@ const routes = {
   'tracking.find': {
     methods: ['PATCH'],
     pattern: '/tracking/find/:resourceId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { file: Blob }
@@ -858,6 +929,7 @@ const routes = {
   'community.group': {
     methods: ['DELETE'],
     pattern: '/community/group/:userId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -870,6 +942,7 @@ const routes = {
   'podcast.download': {
     methods: ['GET'],
     pattern: '/podcast/download/:id/:entityId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -882,6 +955,7 @@ const routes = {
   'backup.message.move': {
     methods: ['GET'],
     pattern: '/backup/message/move',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -894,6 +968,7 @@ const routes = {
   'restaurant.verify': {
     methods: ['GET'],
     pattern: '/restaurant/verify/:id',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -906,6 +981,7 @@ const routes = {
   'import.share': {
     methods: ['PUT'],
     pattern: '/import/share/:resourceId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { token: string; expiresAt?: string }
@@ -918,6 +994,7 @@ const routes = {
   'task.upload': {
     methods: ['GET'],
     pattern: '/task/upload/:resourceId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -930,6 +1007,7 @@ const routes = {
   'reservation.unmute': {
     methods: ['GET'],
     pattern: '/reservation/unmute',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -942,6 +1020,7 @@ const routes = {
   'pricing.store': {
     methods: ['GET'],
     pattern: '/pricing/store/:groupId/:userId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -954,6 +1033,7 @@ const routes = {
   'campaign.combine': {
     methods: ['PATCH'],
     pattern: '/campaign/combine',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { userId: string; permissions: string[] }
@@ -966,6 +1046,7 @@ const routes = {
   'service.generate': {
     methods: ['GET'],
     pattern: '/service/generate',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -978,6 +1059,7 @@ const routes = {
   'garden.disable': {
     methods: ['POST'],
     pattern: '/garden/disable',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { priority: string; status?: string }
@@ -990,6 +1072,7 @@ const routes = {
   'forum.join': {
     methods: ['PUT'],
     pattern: '/forum/join',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { settings: Record<string, any> }
@@ -1002,6 +1085,7 @@ const routes = {
   'weather.validate': {
     methods: ['PATCH'],
     pattern: '/weather/validate/:id',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { settings: Record<string, any> }
@@ -1014,6 +1098,7 @@ const routes = {
   'weather.paginate': {
     methods: ['GET'],
     pattern: '/weather/paginate',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1026,6 +1111,7 @@ const routes = {
   'image.authentication.list': {
     methods: ['PATCH'],
     pattern: '/image/authentication/list/:resourceId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { query: string; limit?: number }
@@ -1038,6 +1124,7 @@ const routes = {
   'recommendation.recipe.switch': {
     methods: ['POST'],
     pattern: '/recommendation/recipe/switch/:id',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { content: string; tags?: string[] }
@@ -1050,6 +1137,7 @@ const routes = {
   'file.block': {
     methods: ['POST'],
     pattern: '/file/block',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { token: string; expiresAt?: string }
@@ -1062,6 +1150,7 @@ const routes = {
   'coupon.backup': {
     methods: ['POST'],
     pattern: '/coupon/backup',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { filters: any[]; options?: any }
@@ -1074,6 +1163,7 @@ const routes = {
   'label.authorization.unblock': {
     methods: ['DELETE'],
     pattern: '/label/authorization/unblock',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1086,6 +1176,7 @@ const routes = {
   'maintenance.document.unpublish': {
     methods: ['POST'],
     pattern: '/maintenance/document/unpublish',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { filters: any[]; options?: any }
@@ -1098,6 +1189,7 @@ const routes = {
   'finance.unfollow': {
     methods: ['GET'],
     pattern: '/finance/unfollow/:groupId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1110,6 +1202,7 @@ const routes = {
   'reservation.store': {
     methods: ['PUT'],
     pattern: '/reservation/store',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { data: any; metadata?: any }
@@ -1122,6 +1215,7 @@ const routes = {
   'integration.group': {
     methods: ['GET'],
     pattern: '/integration/group',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1134,6 +1228,7 @@ const routes = {
   'user.product.sort': {
     methods: ['PUT'],
     pattern: '/user/product/sort/:id',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { amount: number; currency?: string }
@@ -1146,6 +1241,7 @@ const routes = {
   'admin.draft': {
     methods: ['GET'],
     pattern: '/admin/draft',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1158,6 +1254,7 @@ const routes = {
   'knowledge.unpublish': {
     methods: ['GET'],
     pattern: '/knowledge/unpublish/:id/:itemId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1170,6 +1267,7 @@ const routes = {
   'shipment.access.unmute': {
     methods: ['GET'],
     pattern: '/shipment/access/unmute',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1182,6 +1280,7 @@ const routes = {
   'recipe.sync': {
     methods: ['GET'],
     pattern: '/recipe/sync',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1194,6 +1293,7 @@ const routes = {
   'chat.confirm': {
     methods: ['POST'],
     pattern: '/chat/confirm/:itemId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}

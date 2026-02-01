@@ -66,6 +66,8 @@ router
   })
   .prefix('/products')
 
-router.group(() => {
-  router.get('/posts-api', [controllers.Posts, 'list']).as('blog.posts.api')
-}).domain('blog')
+router
+  .group(() => {
+    router.get('/posts-api', [controllers.Posts, 'list']).as('blog.posts.api')
+  })
+  .domain('blog')
