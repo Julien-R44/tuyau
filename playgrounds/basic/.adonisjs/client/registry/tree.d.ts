@@ -38,4 +38,9 @@ export interface ApiDefinition {
     store: typeof routes['session.store']
     destroy: typeof routes['session.destroy']
   }
+  blog: {
+    posts: {
+      api: typeof routes['blog.posts.api']
+    }
+  }
 }

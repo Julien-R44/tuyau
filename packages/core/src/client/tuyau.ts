@@ -72,7 +72,7 @@ export class Tuyau<
    * Creates a URL builder instance for generating URLs based on the route registry
    */
   #createUrlBuilder() {
-    const rootEntries = this.#entries.map(([name, entry]) => ({ name, domain: 'root', ...entry }))
+    const rootEntries = this.#entries.map(([name, entry]) => ({ name, ...entry }))
     return createUrlBuilder({ root: rootEntries }, buildSearchParams as any)
   }
 

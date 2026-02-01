@@ -65,3 +65,7 @@ router
     router.delete('/:id', [controllers.Products, 'delete'])
   })
   .prefix('/products')
+
+router.group(() => {
+  router.get('/posts-api', [controllers.Posts, 'list']).as('blog.posts.api')
+}).domain('blog')

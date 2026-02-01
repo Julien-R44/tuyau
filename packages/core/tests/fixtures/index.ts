@@ -9,6 +9,7 @@ const routes = {
   'auth.login': {
     methods: ['POST'],
     pattern: '/auth/login',
+    domain: 'root',
     tokens: [{ old: '/auth/login', type: 0, val: 'auth/login', end: '' }],
     types: placeholder as {
       body: { email: string; password: string; file?: any }
@@ -21,6 +22,7 @@ const routes = {
   'auth.login.show': {
     methods: ['GET'],
     pattern: '/auth/login',
+    domain: 'root',
     tokens: [{ old: '/auth/login', type: 0, val: 'auth/login', end: '' }],
     types: placeholder as {
       body: {}
@@ -33,6 +35,7 @@ const routes = {
   'users.index': {
     methods: ['GET'],
     pattern: '/users',
+    domain: 'root',
     tokens: [{ old: '/users', type: 0, val: 'users', end: '' }],
     types: placeholder as {
       body: {}
@@ -45,6 +48,7 @@ const routes = {
   'users.bar': {
     methods: ['GET'],
     pattern: '/users/foo',
+    domain: 'root',
     tokens: [{ old: '/users/foo', type: 0, val: 'users', end: '' }],
     types: placeholder as {
       body: {}
@@ -57,6 +61,7 @@ const routes = {
   'users.store': {
     methods: ['POST'],
     pattern: '/users',
+    domain: 'root',
     tokens: [{ old: '/users', type: 0, val: 'users', end: '' }],
     types: placeholder as {
       paramsTuple: [string, string, string]
@@ -69,6 +74,7 @@ const routes = {
   'posts.comments.likes.detail': {
     methods: ['GET'],
     pattern: '/posts/:postId/comments/:commentId/likes/:likeId',
+    domain: 'root',
     tokens: [
       { old: '/posts/:postId/comments/:commentId/likes/:likeId', type: 0, val: 'posts', end: '' },
       { old: '/posts/:postId/comments/:commentId/likes/:likeId', type: 1, val: 'postId', end: '' },
@@ -98,6 +104,7 @@ const routes = {
   'posts.comments.likes.toggle': {
     methods: ['POST'],
     pattern: '/posts/:postId/comments/:commentId/likes/:likeId/toggle',
+    domain: 'root',
     tokens: [
       {
         old: '/posts/:postId/comments/:commentId/likes/:likeId/toggle',
@@ -141,6 +148,7 @@ const routes = {
   'users.show': {
     methods: ['GET'],
     pattern: '/users/:id',
+    domain: 'root',
     tokens: [
       { old: '/users/:id', type: 0, val: 'users', end: '' },
       { old: '/users/:id', type: 1, val: 'id', end: '' },
@@ -156,6 +164,7 @@ const routes = {
   'products.search': {
     methods: ['GET'],
     pattern: '/products/search',
+    domain: 'root',
     tokens: [{ old: '/products/search', type: 0, val: 'products/search', end: '' }],
     types: placeholder as {
       paramsTuple: []
@@ -168,6 +177,7 @@ const routes = {
   'products.store': {
     methods: ['POST'],
     pattern: '/products',
+    domain: 'root',
     tokens: [{ old: '/products', type: 0, val: 'products', end: '' }],
     types: placeholder as {
       paramsTuple: []
@@ -180,6 +190,7 @@ const routes = {
   'users.update': {
     methods: ['PUT'],
     pattern: '/users/:id',
+    domain: 'root',
     tokens: [
       { old: '/users/:id', type: 0, val: 'users', end: '' },
       { old: '/users/:id', type: 1, val: 'id', end: '' },
@@ -195,6 +206,7 @@ const routes = {
   'users.patch': {
     methods: ['PATCH'],
     pattern: '/users/:id',
+    domain: 'root',
     tokens: [
       { old: '/users/:id', type: 0, val: 'users', end: '' },
       { old: '/users/:id', type: 1, val: 'id', end: '' },
@@ -210,6 +222,7 @@ const routes = {
   'users.destroy': {
     methods: ['DELETE'],
     pattern: '/users/:id',
+    domain: 'root',
     tokens: [
       { old: '/users/:id', type: 0, val: 'users', end: '' },
       { old: '/users/:id', type: 1, val: 'id', end: '' },
@@ -226,6 +239,7 @@ const routes = {
   'subscriber_lists.store': {
     methods: ['POST'],
     pattern: '/api/subscriber-lists',
+    domain: 'root',
     tokens: [
       { old: '/api/subscriber-lists', type: 0, val: 'api', end: '' },
       { old: '/api/subscriber-lists', type: 0, val: 'subscriber-lists', end: '' },
@@ -241,6 +255,7 @@ const routes = {
   'subscriber_lists.index': {
     methods: ['GET'],
     pattern: '/api/subscriber-lists',
+    domain: 'root',
     tokens: [
       { old: '/api/subscriber-lists', type: 0, val: 'api', end: '' },
       { old: '/api/subscriber-lists', type: 0, val: 'subscriber-lists', end: '' },
@@ -257,6 +272,7 @@ const routes = {
   'subscriber-lists.show': {
     methods: ['GET'],
     pattern: '/api/subscriber-lists/:id',
+    domain: 'root',
     tokens: [
       { old: '/api/subscriber-lists/:id', type: 0, val: 'api', end: '' },
       { old: '/api/subscriber-lists/:id', type: 0, val: 'subscriber-lists', end: '' },
@@ -282,6 +298,7 @@ const routes = {
   'secure.create': {
     methods: ['POST'],
     pattern: '/secure',
+    domain: 'root',
     tokens: [{ old: '/secure', type: 0, val: 'secure', end: '' }],
     types: placeholder as {
       paramsTuple: []
@@ -303,6 +320,7 @@ const routes = {
   'secure.search': {
     methods: ['GET'],
     pattern: '/secure/search',
+    domain: 'root',
     tokens: [{ old: '/secure/search', type: 0, val: 'secure/search', end: '' }],
     types: placeholder as {
       paramsTuple: []
@@ -310,6 +328,19 @@ const routes = {
       params: {}
       query: { search?: string }
       response: { results: string[] }
+    },
+  },
+  'api.v1.teste': {
+    methods: ['GET'],
+    pattern: '/v1/teste',
+    domain: 'api',
+    tokens: [{ old: '/v1/teste', type: 0, val: 'v1/teste', end: '' }],
+    types: placeholder as {
+      paramsTuple: []
+      body: {}
+      params: {}
+      query: {}
+      response: { message: string }
     },
   },
 } as const satisfies Record<string, AdonisEndpoint>
