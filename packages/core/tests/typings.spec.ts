@@ -676,6 +676,13 @@ test.group('ExtractQuery and ExtractBody types', (group) => {
     expectTypeOf<Result>().toEqualTypeOf<{}>()
   })
 
+  test('ExtractQuery returns empty object for empty validator type', ({ expectTypeOf }) => {
+    type EmptyValidator = {}
+
+    type Result = ExtractQuery<EmptyValidator>
+    expectTypeOf<Result>().toEqualTypeOf<{}>()
+  })
+
   test('ExtractBody removes query from validator', ({ expectTypeOf }) => {
     type ValidatorWithQueryAndBody = { query: { page: number }; name: string; email: string }
 

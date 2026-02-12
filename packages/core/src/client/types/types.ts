@@ -40,7 +40,11 @@ export interface AdonisEndpoint extends SchemaEndpoint {
  * Used in generated registry to separate query params from body for POST/PUT/PATCH/DELETE.
  * For GET/HEAD, use ExtractQueryForGet instead.
  */
-export type ExtractQuery<T> = T extends { query?: infer Q } ? Q : {}
+export type ExtractQuery<T> = 'query' extends keyof T
+  ? T extends { query?: infer Q }
+    ? Q
+    : {}
+  : {}
 
 /**
  * Extract query params for GET/HEAD requests.
