@@ -371,9 +371,9 @@ export function generateRegistry(options?: GenerateRegistryConfig): {
           writeOutputFile(treePath, treeContent),
         ])
 
-        devServer.ui.logger.info(`created ${runtimePath}`, { startTime })
-        devServer.ui.logger.info(`created ${typesPath}`, { startTime })
-        devServer.ui.logger.info(`created ${treePath}`, { startTime })
+        devServer.ui.logger.info(`tuyau: created api client registry (${registryDir})`, {
+          startTime,
+        })
       })
     },
   } satisfies AllHooks['init'][number]
