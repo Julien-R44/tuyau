@@ -8,10 +8,11 @@
     "@tuyau/openapi": "1.0.2",
     "@tuyau/react-query": "0.0.0",
     "@tuyau/superjson": "0.1.2",
-    "@tuyau/utils": "0.0.9"
+    "@tuyau/utils": "0.0.9",
+    "@tuyau/playground-basic": "0.0.0"
   },
   "changesets": [
-    "nasty-mice-change",
+    "dirty-dryers-win",
     "seven-webs-hope",
     "shiny-carrots-post"
   ]

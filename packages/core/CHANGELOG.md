@@ -1,5 +1,11 @@
 # @tuyau/core
 
+## 1.0.0-next.17
+
+### Patch Changes
+
+- acc8351: Improve codegen logs and allow route params to be string, number, boolean, or a bigInt
+
 ## 0.4.2
 
 ### Patch Changes
