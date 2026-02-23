@@ -82,8 +82,8 @@ function filterRoute(route: RoutesListItem, filters?: GenerateRegistryConfig['ro
  */
 function generateRouteParams(route: ScannedRoute) {
   const dynamicParams = route.tokens.filter((token) => token.type === 1)
-  const paramsType = dynamicParams.map((token) => `${token.val}: string`).join('; ')
-  const paramsTuple = dynamicParams.map(() => 'string').join(', ')
+  const paramsType = dynamicParams.map((token) => `${token.val}: ParamValue`).join('; ')
+  const paramsTuple = dynamicParams.map(() => 'ParamValue').join(', ')
 
   return { paramsType, paramsTuple }
 }
@@ -331,6 +331,8 @@ function generateTypesContent(routes: ScannedRoute[]): string {
 import type { ExtractBody, ExtractQuery, ExtractQueryForGet, ExtractResponse } from '@tuyau/core/types'
 import type { InferInput } from '@vinejs/vine/types'
 
+export type ParamValue = string | number | bigint | boolean
+
 export interface Registry {
 ${registryEntries}
 }
@@ -371,9 +373,9 @@ export function generateRegistry(options?: GenerateRegistryConfig): {
           writeOutputFile(treePath, treeContent),
         ])
 
-        devServer.ui.logger.info(`created ${runtimePath}`, { startTime })
-        devServer.ui.logger.info(`created ${typesPath}`, { startTime })
-        devServer.ui.logger.info(`created ${treePath}`, { startTime })
+        devServer.ui.logger.info(`tuyau: created api client registry (${registryDir})`, {
+          startTime,
+        })
       })
     },
   } satisfies AllHooks['init'][number]
