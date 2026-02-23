@@ -1,0 +1,54 @@
+name: release
+on: workflow_dispatch
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  checks:
+    uses: ./.github/workflows/test.yml
+
+  release:
+    needs: checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@latest --activate
+
+      - name: Configure git
+        run: |
+          git config user.name "${GITHUB_ACTOR}"
+          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Version packages
+        run: pnpm changeset version
+
+      - name: Commit version changes
+        run: |
+          git add .
+          git diff --staged --quiet || git commit -m "chore(release): version packages"
+
+      - name: Build and publish
+        run: pnpm run release
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Push changes and tags
+        run: git push --follow-tags
