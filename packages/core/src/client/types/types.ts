@@ -11,7 +11,7 @@ export type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'HEAD' | 'OPT
  */
 export interface EndpointTypes {
   paramsTuple: [...any[]]
-  params: Record<string, string | number | boolean>
+  params: Record<string, string | number | boolean | bigint>
   query: Record<string, any>
   body: unknown
   response: unknown
