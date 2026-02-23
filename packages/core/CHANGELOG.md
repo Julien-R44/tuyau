@@ -1,5 +1,11 @@
 # @tuyau/core
 
+## 1.0.0-next.18
+
+### Patch Changes
+
+- 12c1bf5: Allow bigint in route params
+
 ## 1.0.0-next.17
 
 ### Patch Changes
