@@ -33,6 +33,7 @@ export interface SchemaEndpoint {
  */
 export interface AdonisEndpoint extends SchemaEndpoint {
   tokens: ClientRouteMatchItTokens[]
+  domain: string
 }
 
 /**

@@ -38,6 +38,18 @@ test.group('Client | urlFor', () => {
   })
 })
 
+test.group('Client | Registry domain', () => {
+  test('route definition includes domain property', ({ assert }) => {
+    const route = registry.routes['api.v1.teste']
+    assert.equal(route.domain, 'api')
+  })
+
+  test('route without explicit domain defaults to root', ({ assert }) => {
+    const route = registry.routes['users.index']
+    assert.equal(route.domain, 'root')
+  })
+})
+
 test.group('Client | Errors', () => {
   test('throws error for non-existent pattern', async ({ assert }) => {
     const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry })

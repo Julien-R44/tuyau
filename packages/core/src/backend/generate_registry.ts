@@ -196,6 +196,7 @@ function generateRuntimeRegistryEntry(route: ScannedRoute): string {
   return `  '${routeName}': {
     methods: ${JSON.stringify(route.methods)},
     pattern: '${route.pattern}',
+    domain: '${route.domain}',
     tokens: ${JSON.stringify(sanitizedTokens)},
     types: placeholder as Registry['${routeName}']['types'],
   }`
@@ -260,6 +261,7 @@ function generateTypesRegistryEntry(route: ScannedRoute): string {
   return `  '${routeName}': {
     methods: ${JSON.stringify(route.methods)}
     pattern: '${route.pattern}'
+    domain: '${route.domain}'
     types: {
       body: ${bodyType}
       paramsTuple: [${paramsTuple}]

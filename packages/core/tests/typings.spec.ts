@@ -569,6 +569,7 @@ test.group('Client | Typings', (group) => {
       'new_account.create': {
         methods: ['GET', 'HEAD'] as ('GET' | 'HEAD')[],
         pattern: '/signup',
+        domain: 'root',
         tokens: [{ old: '/signup', type: 0 as const, val: 'signup', end: '' }],
         types: {} as {
           body: { email: string; password: string; file?: any }

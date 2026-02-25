@@ -6,6 +6,7 @@ export const generatedRegistry = {
   'education.travel.delete': {
     methods: ['GET'],
     pattern: '/education/travel/delete',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -18,6 +19,7 @@ export const generatedRegistry = {
   'bookmark.export': {
     methods: ['GET'],
     pattern: '/bookmark/export/:entityId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -30,6 +32,7 @@ export const generatedRegistry = {
   'image.patch': {
     methods: ['POST'],
     pattern: '/image/patch/:teamId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { priority: string; status?: string }
@@ -42,6 +45,7 @@ export const generatedRegistry = {
   'pet.post': {
     methods: ['PUT'],
     pattern: '/pet/post',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { priority: string; status?: string }
@@ -54,6 +58,7 @@ export const generatedRegistry = {
   'wiki.unpublish': {
     methods: ['POST'],
     pattern: '/wiki/unpublish',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { title: string; description?: string }
@@ -66,6 +71,7 @@ export const generatedRegistry = {
   'appointment.restore': {
     methods: ['GET'],
     pattern: '/appointment/restore',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -78,6 +84,7 @@ export const generatedRegistry = {
   'music.migrate': {
     methods: ['PUT'],
     pattern: '/music/migrate',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { data: any; metadata?: any }
@@ -90,6 +97,7 @@ export const generatedRegistry = {
   'audio.process': {
     methods: ['GET'],
     pattern: '/audio/process/:id',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -102,6 +110,7 @@ export const generatedRegistry = {
   'report.put': {
     methods: ['PUT'],
     pattern: '/report/put',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { file: Blob }
@@ -114,6 +123,7 @@ export const generatedRegistry = {
   'billing.workflow.archive': {
     methods: ['PATCH'],
     pattern: '/billing/workflow/archive/:userId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { priority: string; status?: string }
@@ -126,6 +136,7 @@ export const generatedRegistry = {
   'collaboration.search.paginate': {
     methods: ['GET'],
     pattern: '/collaboration/search/paginate',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -138,6 +149,7 @@ export const generatedRegistry = {
   'profile.add': {
     methods: ['GET'],
     pattern: '/profile/add/:userId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -150,6 +162,7 @@ export const generatedRegistry = {
   'restaurant.approve': {
     methods: ['POST'],
     pattern: '/restaurant/approve',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { filters: any[]; options?: any }
@@ -162,6 +175,7 @@ export const generatedRegistry = {
   'discount.decline': {
     methods: ['GET'],
     pattern: '/discount/decline/:resourceId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -174,6 +188,7 @@ export const generatedRegistry = {
   'maintenance.sync': {
     methods: ['POST'],
     pattern: '/maintenance/sync',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { file: Blob }
@@ -186,6 +201,7 @@ export const generatedRegistry = {
   'security.decline': {
     methods: ['DELETE'],
     pattern: '/security/decline',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -198,6 +214,7 @@ export const generatedRegistry = {
   'reservation.sync': {
     methods: ['GET'],
     pattern: '/reservation/sync',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -210,6 +227,7 @@ export const generatedRegistry = {
   'invoice.add': {
     methods: ['DELETE'],
     pattern: '/invoice/add',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -222,6 +240,7 @@ export const generatedRegistry = {
   'profile.validate': {
     methods: ['PUT'],
     pattern: '/profile/validate',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { name: string; email: string }
@@ -234,6 +253,7 @@ export const generatedRegistry = {
   'recommendation.switch': {
     methods: ['GET'],
     pattern: '/recommendation/switch',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -246,6 +266,7 @@ export const generatedRegistry = {
   'wiki.reject': {
     methods: ['GET'],
     pattern: '/wiki/reject/:userId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -258,6 +279,7 @@ export const generatedRegistry = {
   'inventory.unfollow': {
     methods: ['GET'],
     pattern: '/inventory/unfollow',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -270,6 +292,7 @@ export const generatedRegistry = {
   'geolocation.calculate': {
     methods: ['DELETE'],
     pattern: '/geolocation/calculate/:entityId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -282,6 +305,7 @@ export const generatedRegistry = {
   'media.maintenance.subscribe': {
     methods: ['DELETE'],
     pattern: '/media/maintenance/subscribe/:teamId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -294,6 +318,7 @@ export const generatedRegistry = {
   'offer.subscribe': {
     methods: ['POST'],
     pattern: '/offer/subscribe',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { settings: Record<string, any> }
@@ -306,6 +331,7 @@ export const generatedRegistry = {
   'social.enable': {
     methods: ['GET', 'HEAD'],
     pattern: '/social/enable',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -318,6 +344,7 @@ export const generatedRegistry = {
   'member.update': {
     methods: ['PATCH'],
     pattern: '/member/update/:teamId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { name: string; email: string }
@@ -330,6 +357,7 @@ export const generatedRegistry = {
   'campaign.get': {
     methods: ['POST'],
     pattern: '/campaign/get/:groupId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { settings: Record<string, any> }
@@ -342,6 +370,7 @@ export const generatedRegistry = {
   'order.add': {
     methods: ['PATCH'],
     pattern: '/order/add',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -354,6 +383,7 @@ export const generatedRegistry = {
   'podcast.export.postpone': {
     methods: ['GET'],
     pattern: '/podcast/export/postpone/:id',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -366,6 +396,7 @@ export const generatedRegistry = {
   'travel.find': {
     methods: ['GET'],
     pattern: '/travel/find',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -378,6 +409,7 @@ export const generatedRegistry = {
   'schedule.pricing.verify': {
     methods: ['PUT'],
     pattern: '/schedule/pricing/verify/:id',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { amount: number; currency?: string }
@@ -390,6 +422,7 @@ export const generatedRegistry = {
   'offer.join': {
     methods: ['GET', 'HEAD'],
     pattern: '/offer/join/:id',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -402,6 +435,7 @@ export const generatedRegistry = {
   'integration.music.list': {
     methods: ['POST'],
     pattern: '/integration/music/list',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { startDate: string; endDate: string }
@@ -414,6 +448,7 @@ export const generatedRegistry = {
   'pet.home.accept': {
     methods: ['GET'],
     pattern: '/pet/home/accept',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -426,6 +461,7 @@ export const generatedRegistry = {
   'portfolio.ban': {
     methods: ['GET'],
     pattern: '/portfolio/ban',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -438,6 +474,7 @@ export const generatedRegistry = {
   'forum.offer.search': {
     methods: ['POST'],
     pattern: '/forum/offer/search/:entityId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { name: string; email: string }
@@ -450,6 +487,7 @@ export const generatedRegistry = {
   'service.delete': {
     methods: ['POST'],
     pattern: '/service/delete/:groupId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { file: Blob }
@@ -462,6 +500,7 @@ export const generatedRegistry = {
   'workflow.pet.follow': {
     methods: ['GET'],
     pattern: '/workflow/pet/follow/:teamId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -474,6 +513,7 @@ export const generatedRegistry = {
   'travel.analyze': {
     methods: ['PUT'],
     pattern: '/travel/analyze',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { content: string; tags?: string[] }
@@ -486,6 +526,7 @@ export const generatedRegistry = {
   'billing.transform': {
     methods: ['POST'],
     pattern: '/billing/transform/:resourceId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { startDate: string; endDate: string }
@@ -498,6 +539,7 @@ export const generatedRegistry = {
   'subscription.split': {
     methods: ['POST'],
     pattern: '/subscription/split',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { settings: Record<string, any> }
@@ -510,6 +552,7 @@ export const generatedRegistry = {
   'inventory.cinema.verify': {
     methods: ['POST'],
     pattern: '/inventory/cinema/verify',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { filters: any[]; options?: any }
@@ -522,6 +565,7 @@ export const generatedRegistry = {
   'social.compute': {
     methods: ['GET'],
     pattern: '/social/compute/:itemId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -534,6 +578,7 @@ export const generatedRegistry = {
   'market.activate': {
     methods: ['GET'],
     pattern: '/market/activate',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -546,6 +591,7 @@ export const generatedRegistry = {
   'recipe.combine': {
     methods: ['GET'],
     pattern: '/recipe/combine',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -558,6 +604,7 @@ export const generatedRegistry = {
   'role.show': {
     methods: ['GET'],
     pattern: '/role/show/:teamId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -570,6 +617,7 @@ export const generatedRegistry = {
   'offer.survey.add': {
     methods: ['POST'],
     pattern: '/offer/survey/add',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { name: string; email: string }
@@ -582,6 +630,7 @@ export const generatedRegistry = {
   'travel.disable': {
     methods: ['POST'],
     pattern: '/travel/disable/:teamId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { coordinates: [number, number] }
@@ -594,6 +643,7 @@ export const generatedRegistry = {
   'shop.message.archive': {
     methods: ['PATCH'],
     pattern: '/shop/message/archive/:entityId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { token: string; expiresAt?: string }
@@ -606,6 +656,7 @@ export const generatedRegistry = {
   'event.bookmark': {
     methods: ['DELETE'],
     pattern: '/event/bookmark',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -618,6 +669,7 @@ export const generatedRegistry = {
   'garden.draft': {
     methods: ['DELETE'],
     pattern: '/garden/draft/:groupId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -630,6 +682,7 @@ export const generatedRegistry = {
   'image.transfer': {
     methods: ['POST'],
     pattern: '/image/transfer/:entityId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { priority: string; status?: string }
@@ -642,6 +695,7 @@ export const generatedRegistry = {
   'activity.social.draft': {
     methods: ['GET'],
     pattern: '/activity/social/draft/:resourceId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -654,6 +708,7 @@ export const generatedRegistry = {
   'language.block': {
     methods: ['GET'],
     pattern: '/language/block/:itemId/:teamId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -666,6 +721,7 @@ export const generatedRegistry = {
   'booking.store': {
     methods: ['DELETE'],
     pattern: '/booking/store/:teamId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -678,6 +734,7 @@ export const generatedRegistry = {
   'authorization.move': {
     methods: ['GET'],
     pattern: '/authorization/move',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -690,6 +747,7 @@ export const generatedRegistry = {
   'game.member.subscribe': {
     methods: ['GET'],
     pattern: '/game/member/subscribe',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -702,6 +760,7 @@ export const generatedRegistry = {
   'game.publish': {
     methods: ['GET'],
     pattern: '/game/publish',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -714,6 +773,7 @@ export const generatedRegistry = {
   'pricing.show': {
     methods: ['DELETE'],
     pattern: '/pricing/show/:itemId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -726,6 +786,7 @@ export const generatedRegistry = {
   'download.unassign': {
     methods: ['GET'],
     pattern: '/download/unassign/:itemId/:resourceId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -738,6 +799,7 @@ export const generatedRegistry = {
   'coupon.kick': {
     methods: ['DELETE'],
     pattern: '/coupon/kick',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -750,6 +812,7 @@ export const generatedRegistry = {
   'role.settings.cancel': {
     methods: ['GET'],
     pattern: '/role/settings/cancel',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -762,6 +825,7 @@ export const generatedRegistry = {
   'permission.lock': {
     methods: ['GET'],
     pattern: '/permission/lock',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -774,6 +838,7 @@ export const generatedRegistry = {
   'discount.language.switch': {
     methods: ['GET'],
     pattern: '/discount/language/switch/:resourceId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -786,6 +851,7 @@ export const generatedRegistry = {
   'feedback.gallery.sync': {
     methods: ['GET'],
     pattern: '/feedback/gallery/sync/:groupId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -798,6 +864,7 @@ export const generatedRegistry = {
   'user.post': {
     methods: ['PATCH'],
     pattern: '/user/post/:id',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { file: Blob }
@@ -810,6 +877,7 @@ export const generatedRegistry = {
   'fashion.show': {
     methods: ['GET'],
     pattern: '/fashion/show',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -822,6 +890,7 @@ export const generatedRegistry = {
   'subscription.message.paginate': {
     methods: ['PATCH'],
     pattern: '/subscription/message/paginate/:id',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { title: string; description?: string }
@@ -834,6 +903,7 @@ export const generatedRegistry = {
   'dashboard.protect': {
     methods: ['GET'],
     pattern: '/dashboard/protect/:groupId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -846,6 +916,7 @@ export const generatedRegistry = {
   'review.bookmark': {
     methods: ['GET'],
     pattern: '/review/bookmark',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -858,6 +929,7 @@ export const generatedRegistry = {
   'reservation.comment.follow': {
     methods: ['PUT'],
     pattern: '/reservation/comment/follow/:resourceId/:entityId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { token: string; expiresAt?: string }
@@ -870,6 +942,7 @@ export const generatedRegistry = {
   'booking.clone': {
     methods: ['GET'],
     pattern: '/booking/clone',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -882,6 +955,7 @@ export const generatedRegistry = {
   'workflow.switch': {
     methods: ['GET'],
     pattern: '/workflow/switch',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -894,6 +968,7 @@ export const generatedRegistry = {
   'download.clone': {
     methods: ['GET'],
     pattern: '/download/clone',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -906,6 +981,7 @@ export const generatedRegistry = {
   'download.publish': {
     methods: ['GET'],
     pattern: '/download/publish',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -918,6 +994,7 @@ export const generatedRegistry = {
   'gallery.workflow.secure': {
     methods: ['GET'],
     pattern: '/gallery/workflow/secure',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -930,6 +1007,7 @@ export const generatedRegistry = {
   'delivery.portfolio.copy': {
     methods: ['GET'],
     pattern: '/delivery/portfolio/copy',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -942,6 +1020,7 @@ export const generatedRegistry = {
   'settings.forward': {
     methods: ['POST'],
     pattern: '/settings/forward',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { priority: string; status?: string }
@@ -954,6 +1033,7 @@ export const generatedRegistry = {
   'category.draft': {
     methods: ['GET'],
     pattern: '/category/draft',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -966,6 +1046,7 @@ export const generatedRegistry = {
   'inventory.verify': {
     methods: ['GET'],
     pattern: '/inventory/verify',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -978,6 +1059,7 @@ export const generatedRegistry = {
   'label.product.process': {
     methods: ['POST'],
     pattern: '/label/product/process',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { query: string; limit?: number }
@@ -990,6 +1072,7 @@ export const generatedRegistry = {
   'integration.collaboration.ban': {
     methods: ['PUT'],
     pattern: '/integration/collaboration/ban',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { userId: string; permissions: string[] }
@@ -1002,6 +1085,7 @@ export const generatedRegistry = {
   'music.shipping.show': {
     methods: ['PATCH'],
     pattern: '/music/shipping/show',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { settings: Record<string, any> }
@@ -1014,6 +1098,7 @@ export const generatedRegistry = {
   'access.deactivate': {
     methods: ['DELETE'],
     pattern: '/access/deactivate',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1026,6 +1111,7 @@ export const generatedRegistry = {
   'comment.knowledge.reject': {
     methods: ['GET'],
     pattern: '/comment/knowledge/reject',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1038,6 +1124,7 @@ export const generatedRegistry = {
   'feedback.delete': {
     methods: ['DELETE'],
     pattern: '/feedback/delete',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1050,6 +1137,7 @@ export const generatedRegistry = {
   'task.blog.join': {
     methods: ['GET'],
     pattern: '/task/blog/join/:entityId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1062,6 +1150,7 @@ export const generatedRegistry = {
   'comment.search': {
     methods: ['GET', 'HEAD'],
     pattern: '/comment/search',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1074,6 +1163,7 @@ export const generatedRegistry = {
   'watchlist.market.verify': {
     methods: ['PUT'],
     pattern: '/watchlist/market/verify',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { query: string; limit?: number }
@@ -1086,6 +1176,7 @@ export const generatedRegistry = {
   'image.preview': {
     methods: ['POST'],
     pattern: '/image/preview/:teamId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1098,6 +1189,7 @@ export const generatedRegistry = {
   'conference.calculate': {
     methods: ['GET'],
     pattern: '/conference/calculate/:entityId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1110,6 +1202,7 @@ export const generatedRegistry = {
   'service.unpublish': {
     methods: ['GET'],
     pattern: '/service/unpublish',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1122,6 +1215,7 @@ export const generatedRegistry = {
   'promotion.maintenance.patch': {
     methods: ['PUT'],
     pattern: '/promotion/maintenance/patch/:itemId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { filters: any[]; options?: any }
@@ -1134,6 +1228,7 @@ export const generatedRegistry = {
   'favorite.service.duplicate': {
     methods: ['PUT'],
     pattern: '/favorite/service/duplicate/:categoryId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1146,6 +1241,7 @@ export const generatedRegistry = {
   'invoice.import': {
     methods: ['POST'],
     pattern: '/invoice/import/:id',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { title: string; description?: string }
@@ -1158,6 +1254,7 @@ export const generatedRegistry = {
   'network.draft': {
     methods: ['PUT'],
     pattern: '/network/draft/:resourceId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { filters: any[]; options?: any }
@@ -1170,6 +1267,7 @@ export const generatedRegistry = {
   'task.block': {
     methods: ['GET'],
     pattern: '/task/block',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1182,6 +1280,7 @@ export const generatedRegistry = {
   'image.duplicate': {
     methods: ['POST'],
     pattern: '/image/duplicate',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { file: Blob }
@@ -1194,6 +1293,7 @@ export const generatedRegistry = {
   'billing.download': {
     methods: ['GET'],
     pattern: '/billing/download',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1206,6 +1306,7 @@ export const generatedRegistry = {
   'cinema.separate': {
     methods: ['GET'],
     pattern: '/cinema/separate',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1218,6 +1319,7 @@ export const generatedRegistry = {
   'permission.decline': {
     methods: ['POST'],
     pattern: '/permission/decline/:id',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { content: string; tags?: string[] }
@@ -1230,6 +1332,7 @@ export const generatedRegistry = {
   'portfolio.restore': {
     methods: ['PUT'],
     pattern: '/portfolio/restore/:entityId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { query: string; limit?: number }
@@ -1242,6 +1345,7 @@ export const generatedRegistry = {
   'art.edit': {
     methods: ['GET'],
     pattern: '/art/edit',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1254,6 +1358,7 @@ export const generatedRegistry = {
   'reservation.store': {
     methods: ['GET'],
     pattern: '/reservation/store/:teamId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1266,6 +1371,7 @@ export const generatedRegistry = {
   'history.search.split': {
     methods: ['POST'],
     pattern: '/history/search/split',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { startDate: string; endDate: string }
@@ -1278,6 +1384,7 @@ export const generatedRegistry = {
   'game.store': {
     methods: ['POST'],
     pattern: '/game/store/:id',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { title: string; description?: string }
@@ -1290,6 +1397,7 @@ export const generatedRegistry = {
   'shipping.geolocation.download': {
     methods: ['GET'],
     pattern: '/shipping/geolocation/download/:userId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1302,6 +1410,7 @@ export const generatedRegistry = {
   'tag.unassign': {
     methods: ['DELETE'],
     pattern: '/tag/unassign',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1314,6 +1423,7 @@ export const generatedRegistry = {
   'search.follow': {
     methods: ['POST'],
     pattern: '/search/follow',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { name: string; email: string }
@@ -1326,6 +1436,7 @@ export const generatedRegistry = {
   'history.merge': {
     methods: ['POST'],
     pattern: '/history/merge',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { coordinates: [number, number] }
@@ -1338,6 +1449,7 @@ export const generatedRegistry = {
   'geolocation.schedule': {
     methods: ['GET', 'HEAD'],
     pattern: '/geolocation/schedule',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1350,6 +1462,7 @@ export const generatedRegistry = {
   'cart.unmute': {
     methods: ['POST'],
     pattern: '/cart/unmute',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { startDate: string; endDate: string }
@@ -1362,6 +1475,7 @@ export const generatedRegistry = {
   'quality.lock': {
     methods: ['GET'],
     pattern: '/quality/lock',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1374,6 +1488,7 @@ export const generatedRegistry = {
   'project.task.search': {
     methods: ['GET'],
     pattern: '/project/task/search',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1386,6 +1501,7 @@ export const generatedRegistry = {
   'admin.like': {
     methods: ['DELETE'],
     pattern: '/admin/like/:categoryId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1398,6 +1514,7 @@ export const generatedRegistry = {
   'member.toggle': {
     methods: ['GET'],
     pattern: '/member/toggle',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1410,6 +1527,7 @@ export const generatedRegistry = {
   'survey.generate': {
     methods: ['POST'],
     pattern: '/survey/generate',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { amount: number; currency?: string }
@@ -1422,6 +1540,7 @@ export const generatedRegistry = {
   'knowledge.assign': {
     methods: ['POST'],
     pattern: '/knowledge/assign',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { coordinates: [number, number] }
@@ -1434,6 +1553,7 @@ export const generatedRegistry = {
   'deal.compute': {
     methods: ['GET', 'HEAD'],
     pattern: '/deal/compute',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1446,6 +1566,7 @@ export const generatedRegistry = {
   'subscription.chat.unmute': {
     methods: ['PATCH'],
     pattern: '/subscription/chat/unmute',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { query: string; limit?: number }
@@ -1458,6 +1579,7 @@ export const generatedRegistry = {
   'bookmark.generate': {
     methods: ['POST'],
     pattern: '/bookmark/generate/:teamId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1470,6 +1592,7 @@ export const generatedRegistry = {
   'subscription.knowledge.create': {
     methods: ['GET'],
     pattern: '/subscription/knowledge/create/:categoryId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1482,6 +1605,7 @@ export const generatedRegistry = {
   'review.separate': {
     methods: ['PATCH'],
     pattern: '/review/separate/:resourceId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { token: string; expiresAt?: string }
@@ -1494,6 +1618,7 @@ export const generatedRegistry = {
   'recommendation.workflow.sync': {
     methods: ['POST'],
     pattern: '/recommendation/workflow/sync/:id',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { startDate: string; endDate: string }
@@ -1506,6 +1631,7 @@ export const generatedRegistry = {
   'watchlist.conference.scroll': {
     methods: ['DELETE'],
     pattern: '/watchlist/conference/scroll/:itemId/:groupId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1518,6 +1644,7 @@ export const generatedRegistry = {
   'category.portfolio.accept': {
     methods: ['DELETE'],
     pattern: '/category/portfolio/accept/:userId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1530,6 +1657,7 @@ export const generatedRegistry = {
   'comment.combine': {
     methods: ['POST'],
     pattern: '/comment/combine/:categoryId/:entityId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { startDate: string; endDate: string }
@@ -1542,6 +1670,7 @@ export const generatedRegistry = {
   'travel.ungroup': {
     methods: ['GET'],
     pattern: '/travel/ungroup/:userId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1554,6 +1683,7 @@ export const generatedRegistry = {
   'export.sync': {
     methods: ['GET', 'HEAD'],
     pattern: '/export/sync',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1566,6 +1696,7 @@ export const generatedRegistry = {
   'network.import': {
     methods: ['GET'],
     pattern: '/network/import/:entityId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1578,6 +1709,7 @@ export const generatedRegistry = {
   'deal.search.postpone': {
     methods: ['GET'],
     pattern: '/deal/search/postpone',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1590,6 +1722,7 @@ export const generatedRegistry = {
   'user.integration.protect': {
     methods: ['DELETE'],
     pattern: '/user/integration/protect/:userId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1602,6 +1735,7 @@ export const generatedRegistry = {
   'travel.member.duplicate': {
     methods: ['DELETE'],
     pattern: '/travel/member/duplicate',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1614,6 +1748,7 @@ export const generatedRegistry = {
   'library.transfer': {
     methods: ['GET', 'HEAD'],
     pattern: '/library/transfer',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1626,6 +1761,7 @@ export const generatedRegistry = {
   'upload.unlike': {
     methods: ['GET', 'HEAD'],
     pattern: '/upload/unlike',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1638,6 +1774,7 @@ export const generatedRegistry = {
   'dashboard.split': {
     methods: ['GET'],
     pattern: '/dashboard/split',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1650,6 +1787,7 @@ export const generatedRegistry = {
   'pricing.follow': {
     methods: ['GET'],
     pattern: '/pricing/follow/:categoryId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1662,6 +1800,7 @@ export const generatedRegistry = {
   'sync.preview': {
     methods: ['POST'],
     pattern: '/sync/preview',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { amount: number; currency?: string }
@@ -1674,6 +1813,7 @@ export const generatedRegistry = {
   'education.forward': {
     methods: ['GET'],
     pattern: '/education/forward',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1686,6 +1826,7 @@ export const generatedRegistry = {
   'favorite.unlock': {
     methods: ['PUT'],
     pattern: '/favorite/unlock',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { settings: Record<string, any> }
@@ -1698,6 +1839,7 @@ export const generatedRegistry = {
   'authorization.verify': {
     methods: ['GET'],
     pattern: '/authorization/verify',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1710,6 +1852,7 @@ export const generatedRegistry = {
   'tracking.unblock': {
     methods: ['PATCH'],
     pattern: '/tracking/unblock',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { query: string; limit?: number }
@@ -1722,6 +1865,7 @@ export const generatedRegistry = {
   'activity.language.ungroup': {
     methods: ['POST'],
     pattern: '/activity/language/ungroup',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { userId: string; permissions: string[] }
@@ -1734,6 +1878,7 @@ export const generatedRegistry = {
   'wiki.art.export': {
     methods: ['GET', 'HEAD'],
     pattern: '/wiki/art/export',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1746,6 +1891,7 @@ export const generatedRegistry = {
   'authorization.preferences.lock': {
     methods: ['PUT'],
     pattern: '/authorization/preferences/lock',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { coordinates: [number, number] }
@@ -1758,6 +1904,7 @@ export const generatedRegistry = {
   'user.upload.sync': {
     methods: ['PUT'],
     pattern: '/user/upload/sync',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { coordinates: [number, number] }
@@ -1770,6 +1917,7 @@ export const generatedRegistry = {
   'file.preferences.assign': {
     methods: ['GET'],
     pattern: '/file/preferences/assign/:entityId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1782,6 +1930,7 @@ export const generatedRegistry = {
   'profile.forum.store': {
     methods: ['GET'],
     pattern: '/profile/forum/store/:userId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1794,6 +1943,7 @@ export const generatedRegistry = {
   'podcast.calculate': {
     methods: ['DELETE'],
     pattern: '/podcast/calculate',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1806,6 +1956,7 @@ export const generatedRegistry = {
   'discount.workflow.verify': {
     methods: ['PUT'],
     pattern: '/discount/workflow/verify',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { filters: any[]; options?: any }
@@ -1818,6 +1969,7 @@ export const generatedRegistry = {
   'member.add': {
     methods: ['POST'],
     pattern: '/member/add',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { file: Blob }
@@ -1830,6 +1982,7 @@ export const generatedRegistry = {
   'analytics.watchlist.unsubscribe': {
     methods: ['PATCH'],
     pattern: '/analytics/watchlist/unsubscribe',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { coordinates: [number, number] }
@@ -1842,6 +1995,7 @@ export const generatedRegistry = {
   'image.video.invite': {
     methods: ['GET'],
     pattern: '/image/video/invite/:resourceId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1854,6 +2008,7 @@ export const generatedRegistry = {
   'language.sync': {
     methods: ['GET'],
     pattern: '/language/sync',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1866,6 +2021,7 @@ export const generatedRegistry = {
   'security.settings.relocate': {
     methods: ['PUT'],
     pattern: '/security/settings/relocate',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { filters: any[]; options?: any }
@@ -1878,6 +2034,7 @@ export const generatedRegistry = {
   'authorization.paginate': {
     methods: ['DELETE'],
     pattern: '/authorization/paginate',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1890,6 +2047,7 @@ export const generatedRegistry = {
   'filter.member.enable': {
     methods: ['PUT'],
     pattern: '/filter/member/enable',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { content: string; tags?: string[] }
@@ -1902,6 +2060,7 @@ export const generatedRegistry = {
   'backup.group': {
     methods: ['GET', 'HEAD'],
     pattern: '/backup/group/:userId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1914,6 +2073,7 @@ export const generatedRegistry = {
   'history.library.schedule': {
     methods: ['POST'],
     pattern: '/history/library/schedule/:teamId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { settings: Record<string, any> }
@@ -1926,6 +2086,7 @@ export const generatedRegistry = {
   'pricing.generate': {
     methods: ['GET'],
     pattern: '/pricing/generate/:categoryId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1938,6 +2099,7 @@ export const generatedRegistry = {
   'search.search': {
     methods: ['PATCH'],
     pattern: '/search/search/:userId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { filters: any[]; options?: any }
@@ -1950,6 +2112,7 @@ export const generatedRegistry = {
   'garden.shipment.activate': {
     methods: ['GET'],
     pattern: '/garden/shipment/activate/:teamId/:id',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1962,6 +2125,7 @@ export const generatedRegistry = {
   'cart.publish': {
     methods: ['DELETE'],
     pattern: '/cart/publish',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -1974,6 +2138,7 @@ export const generatedRegistry = {
   'backup.generate': {
     methods: ['POST'],
     pattern: '/backup/generate/:itemId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { settings: Record<string, any> }
@@ -1986,6 +2151,7 @@ export const generatedRegistry = {
   'reservation.create': {
     methods: ['PATCH'],
     pattern: '/reservation/create/:userId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { userId: string; permissions: string[] }
@@ -1998,6 +2164,7 @@ export const generatedRegistry = {
   'settings.shipment.draft': {
     methods: ['POST'],
     pattern: '/settings/shipment/draft',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { filters: any[]; options?: any }
@@ -2010,6 +2177,7 @@ export const generatedRegistry = {
   'media.lock': {
     methods: ['POST'],
     pattern: '/media/lock',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { token: string; expiresAt?: string }
@@ -2022,6 +2190,7 @@ export const generatedRegistry = {
   'service.reject': {
     methods: ['POST'],
     pattern: '/service/reject/:id',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { token: string; expiresAt?: string }
@@ -2034,6 +2203,7 @@ export const generatedRegistry = {
   'conference.delete': {
     methods: ['GET'],
     pattern: '/conference/delete',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -2046,6 +2216,7 @@ export const generatedRegistry = {
   'recommendation.decline': {
     methods: ['PATCH'],
     pattern: '/recommendation/decline',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { amount: number; currency?: string }
@@ -2058,6 +2229,7 @@ export const generatedRegistry = {
   'activity.search': {
     methods: ['POST'],
     pattern: '/activity/search',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { data: any; metadata?: any }
@@ -2070,6 +2242,7 @@ export const generatedRegistry = {
   'report.store': {
     methods: ['GET'],
     pattern: '/report/store/:resourceId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -2082,6 +2255,7 @@ export const generatedRegistry = {
   'tag.activity.postpone': {
     methods: ['GET'],
     pattern: '/tag/activity/postpone/:entityId/:id',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -2094,6 +2268,7 @@ export const generatedRegistry = {
   'order.migrate': {
     methods: ['POST'],
     pattern: '/order/migrate',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { filters: any[]; options?: any }
@@ -2106,6 +2281,7 @@ export const generatedRegistry = {
   'game.calculate': {
     methods: ['GET'],
     pattern: '/game/calculate/:userId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -2118,6 +2294,7 @@ export const generatedRegistry = {
   'offer.workflow.unblock': {
     methods: ['GET'],
     pattern: '/offer/workflow/unblock',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -2130,6 +2307,7 @@ export const generatedRegistry = {
   'integration.cart.search': {
     methods: ['POST'],
     pattern: '/integration/cart/search/:teamId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { filters: any[]; options?: any }
@@ -2142,6 +2320,7 @@ export const generatedRegistry = {
   'conference.transfer': {
     methods: ['PATCH'],
     pattern: '/conference/transfer',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { data: any; metadata?: any }
@@ -2154,6 +2333,7 @@ export const generatedRegistry = {
   'delivery.add': {
     methods: ['GET'],
     pattern: '/delivery/add/:entityId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -2166,6 +2346,7 @@ export const generatedRegistry = {
   'maintenance.rating.bookmark': {
     methods: ['PATCH'],
     pattern: '/maintenance/rating/bookmark',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { settings: Record<string, any> }
@@ -2178,6 +2359,7 @@ export const generatedRegistry = {
   'campaign.move': {
     methods: ['GET', 'HEAD'],
     pattern: '/campaign/move',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -2190,6 +2372,7 @@ export const generatedRegistry = {
   'project.fashion.put': {
     methods: ['GET'],
     pattern: '/project/fashion/put',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -2202,6 +2385,7 @@ export const generatedRegistry = {
   'message.post': {
     methods: ['GET'],
     pattern: '/message/post',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -2214,6 +2398,7 @@ export const generatedRegistry = {
   'blog.unpublish': {
     methods: ['POST'],
     pattern: '/blog/unpublish',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { file: Blob }
@@ -2226,6 +2411,7 @@ export const generatedRegistry = {
   'security.patch': {
     methods: ['PUT'],
     pattern: '/security/patch',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { title: string; description?: string }
@@ -2238,6 +2424,7 @@ export const generatedRegistry = {
   'home.favorite': {
     methods: ['GET'],
     pattern: '/home/favorite',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -2250,6 +2437,7 @@ export const generatedRegistry = {
   'social.upload': {
     methods: ['GET'],
     pattern: '/social/upload',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -2262,6 +2450,7 @@ export const generatedRegistry = {
   'inventory.unmute': {
     methods: ['GET'],
     pattern: '/inventory/unmute',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -2274,6 +2463,7 @@ export const generatedRegistry = {
   'category.music.search': {
     methods: ['DELETE'],
     pattern: '/category/music/search',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -2286,6 +2476,7 @@ export const generatedRegistry = {
   'favorite.split': {
     methods: ['POST'],
     pattern: '/favorite/split/:id/:groupId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { query: string; limit?: number }
@@ -2298,6 +2489,7 @@ export const generatedRegistry = {
   'portfolio.follow': {
     methods: ['GET'],
     pattern: '/portfolio/follow',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -2310,6 +2502,7 @@ export const generatedRegistry = {
   'maintenance.block': {
     methods: ['POST'],
     pattern: '/maintenance/block',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { title: string; description?: string }
@@ -2322,6 +2515,7 @@ export const generatedRegistry = {
   'tracking.backup.download': {
     methods: ['GET'],
     pattern: '/tracking/backup/download/:categoryId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -2334,6 +2528,7 @@ export const generatedRegistry = {
   'game.disable': {
     methods: ['DELETE'],
     pattern: '/game/disable',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -2346,6 +2541,7 @@ export const generatedRegistry = {
   'product.shop.create': {
     methods: ['POST'],
     pattern: '/product/shop/create/:itemId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { content: string; tags?: string[] }
@@ -2358,6 +2554,7 @@ export const generatedRegistry = {
   'comment.recommendation.refresh': {
     methods: ['GET'],
     pattern: '/comment/recommendation/refresh/:groupId/:categoryId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -2370,6 +2567,7 @@ export const generatedRegistry = {
   'social.cinema.block': {
     methods: ['GET'],
     pattern: '/social/cinema/block',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -2382,6 +2580,7 @@ export const generatedRegistry = {
   'weather.cancel': {
     methods: ['PATCH'],
     pattern: '/weather/cancel',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { settings: Record<string, any> }
@@ -2394,6 +2593,7 @@ export const generatedRegistry = {
   'maintenance.join': {
     methods: ['POST'],
     pattern: '/maintenance/join',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { name: string; email: string }
@@ -2406,6 +2606,7 @@ export const generatedRegistry = {
   'shop.music.leave': {
     methods: ['POST'],
     pattern: '/shop/music/leave/:userId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { name: string; email: string }
@@ -2418,6 +2619,7 @@ export const generatedRegistry = {
   'watchlist.paginate': {
     methods: ['POST'],
     pattern: '/watchlist/paginate',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { priority: string; status?: string }
@@ -2430,6 +2632,7 @@ export const generatedRegistry = {
   'checkout.subscribe': {
     methods: ['PUT'],
     pattern: '/checkout/subscribe/:itemId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { priority: string; status?: string }
@@ -2442,6 +2645,7 @@ export const generatedRegistry = {
   'social.show': {
     methods: ['POST'],
     pattern: '/social/show',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { userId: string; permissions: string[] }
@@ -2454,6 +2658,7 @@ export const generatedRegistry = {
   'tracking.enable': {
     methods: ['GET'],
     pattern: '/tracking/enable/:entityId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -2466,6 +2671,7 @@ export const generatedRegistry = {
   'message.music.show': {
     methods: ['PATCH'],
     pattern: '/message/music/show',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { query: string; limit?: number }
@@ -2478,6 +2684,7 @@ export const generatedRegistry = {
   'service.lock': {
     methods: ['GET', 'HEAD'],
     pattern: '/service/lock/:resourceId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -2490,6 +2697,7 @@ export const generatedRegistry = {
   'sports.archive': {
     methods: ['POST'],
     pattern: '/sports/archive/:groupId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { title: string; description?: string }
@@ -2502,6 +2710,7 @@ export const generatedRegistry = {
   'product.ban': {
     methods: ['GET'],
     pattern: '/product/ban/:entityId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -2514,6 +2723,7 @@ export const generatedRegistry = {
   'authentication.payment.list': {
     methods: ['POST'],
     pattern: '/authentication/payment/list',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { query: string; limit?: number }
@@ -2526,6 +2736,7 @@ export const generatedRegistry = {
   'analytics.show': {
     methods: ['POST'],
     pattern: '/analytics/show/:id',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { userId: string; permissions: string[] }
@@ -2538,6 +2749,7 @@ export const generatedRegistry = {
   'invoice.join': {
     methods: ['POST'],
     pattern: '/invoice/join',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { priority: string; status?: string }
@@ -2550,6 +2762,7 @@ export const generatedRegistry = {
   'podcast.generate': {
     methods: ['POST'],
     pattern: '/podcast/generate',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { name: string; email: string }
@@ -2562,6 +2775,7 @@ export const generatedRegistry = {
   'reservation.download': {
     methods: ['POST'],
     pattern: '/reservation/download',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -2574,6 +2788,7 @@ export const generatedRegistry = {
   'feedback.scroll': {
     methods: ['DELETE'],
     pattern: '/feedback/scroll',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -2586,6 +2801,7 @@ export const generatedRegistry = {
   'review.analyze': {
     methods: ['GET'],
     pattern: '/review/analyze',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -2598,6 +2814,7 @@ export const generatedRegistry = {
   'label.archive': {
     methods: ['GET'],
     pattern: '/label/archive',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -2610,6 +2827,7 @@ export const generatedRegistry = {
   'profile.unlock': {
     methods: ['POST'],
     pattern: '/profile/unlock/:groupId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { startDate: string; endDate: string }
@@ -2622,6 +2840,7 @@ export const generatedRegistry = {
   'survey.postpone': {
     methods: ['PATCH'],
     pattern: '/survey/postpone',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { data: any; metadata?: any }
@@ -2634,6 +2853,7 @@ export const generatedRegistry = {
   'checkout.unlike': {
     methods: ['POST'],
     pattern: '/checkout/unlike',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { title: string; description?: string }
@@ -2646,6 +2866,7 @@ export const generatedRegistry = {
   'payment.leave': {
     methods: ['GET'],
     pattern: '/payment/leave',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -2658,6 +2879,7 @@ export const generatedRegistry = {
   'video.bookmark.sync': {
     methods: ['POST'],
     pattern: '/video/bookmark/sync',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { token: string; expiresAt?: string }
@@ -2670,6 +2892,7 @@ export const generatedRegistry = {
   'integration.task.deactivate': {
     methods: ['POST'],
     pattern: '/integration/task/deactivate',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { token: string; expiresAt?: string }
@@ -2682,6 +2905,7 @@ export const generatedRegistry = {
   'sync.home.generate': {
     methods: ['DELETE'],
     pattern: '/sync/home/generate',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -2694,6 +2918,7 @@ export const generatedRegistry = {
   'quality.destroy': {
     methods: ['PATCH'],
     pattern: '/quality/destroy',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { userId: string; permissions: string[] }
@@ -2706,6 +2931,7 @@ export const generatedRegistry = {
   'integration.history.bookmark': {
     methods: ['POST'],
     pattern: '/integration/history/bookmark',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { startDate: string; endDate: string }
@@ -2718,6 +2944,7 @@ export const generatedRegistry = {
   'media.invite': {
     methods: ['POST'],
     pattern: '/media/invite',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { name: string; email: string }
@@ -2730,6 +2957,7 @@ export const generatedRegistry = {
   'game.collaboration.preview': {
     methods: ['PATCH'],
     pattern: '/game/collaboration/preview',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { query: string; limit?: number }
@@ -2742,6 +2970,7 @@ export const generatedRegistry = {
   'shop.refresh': {
     methods: ['GET'],
     pattern: '/shop/refresh',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -2754,6 +2983,7 @@ export const generatedRegistry = {
   'knowledge.ban': {
     methods: ['GET'],
     pattern: '/knowledge/ban',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -2766,6 +2996,7 @@ export const generatedRegistry = {
   'education.inventory.kick': {
     methods: ['PATCH'],
     pattern: '/education/inventory/kick/:resourceId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { userId: string; permissions: string[] }
@@ -2778,6 +3009,7 @@ export const generatedRegistry = {
   'geolocation.travel.remove': {
     methods: ['PUT'],
     pattern: '/geolocation/travel/remove',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { token: string; expiresAt?: string }
@@ -2790,6 +3022,7 @@ export const generatedRegistry = {
   'discount.post': {
     methods: ['GET'],
     pattern: '/discount/post',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -2802,6 +3035,7 @@ export const generatedRegistry = {
   'pricing.approve': {
     methods: ['GET'],
     pattern: '/pricing/approve',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -2814,6 +3048,7 @@ export const generatedRegistry = {
   'appointment.restaurant.restore': {
     methods: ['GET'],
     pattern: '/appointment/restaurant/restore',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -2826,6 +3061,7 @@ export const generatedRegistry = {
   'portfolio.copy': {
     methods: ['DELETE'],
     pattern: '/portfolio/copy',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -2838,6 +3074,7 @@ export const generatedRegistry = {
   'export.scroll': {
     methods: ['GET'],
     pattern: '/export/scroll',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -2850,6 +3087,7 @@ export const generatedRegistry = {
   'wiki.post': {
     methods: ['POST'],
     pattern: '/wiki/post/:teamId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { name: string; email: string }
@@ -2862,6 +3100,7 @@ export const generatedRegistry = {
   'authentication.unpublish': {
     methods: ['GET'],
     pattern: '/authentication/unpublish',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -2874,6 +3113,7 @@ export const generatedRegistry = {
   'pricing.store': {
     methods: ['GET'],
     pattern: '/pricing/store/:categoryId/:teamId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -2886,6 +3126,7 @@ export const generatedRegistry = {
   'invoice.preferences.assign': {
     methods: ['GET'],
     pattern: '/invoice/preferences/assign',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -2898,6 +3139,7 @@ export const generatedRegistry = {
   'role.unsubscribe': {
     methods: ['POST'],
     pattern: '/role/unsubscribe/:itemId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { query: string; limit?: number }
@@ -2910,6 +3152,7 @@ export const generatedRegistry = {
   'search.list': {
     methods: ['POST'],
     pattern: '/search/list',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { settings: Record<string, any> }
@@ -2922,6 +3165,7 @@ export const generatedRegistry = {
   'sync.unpublish': {
     methods: ['PATCH'],
     pattern: '/sync/unpublish/:groupId/:userId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { coordinates: [number, number] }
@@ -2934,6 +3178,7 @@ export const generatedRegistry = {
   'sync.patch': {
     methods: ['DELETE'],
     pattern: '/sync/patch',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -2946,6 +3191,7 @@ export const generatedRegistry = {
   'subscription.discount.analyze': {
     methods: ['GET'],
     pattern: '/subscription/discount/analyze/:userId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -2958,6 +3204,7 @@ export const generatedRegistry = {
   'shipment.secure': {
     methods: ['GET'],
     pattern: '/shipment/secure',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -2970,6 +3217,7 @@ export const generatedRegistry = {
   'wiki.booking.activate': {
     methods: ['POST'],
     pattern: '/wiki/booking/activate',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { userId: string; permissions: string[] }
@@ -2982,6 +3230,7 @@ export const generatedRegistry = {
   'pricing.enable': {
     methods: ['POST'],
     pattern: '/pricing/enable/:resourceId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { data: any; metadata?: any }
@@ -2994,6 +3243,7 @@ export const generatedRegistry = {
   'conference.refresh': {
     methods: ['DELETE'],
     pattern: '/conference/refresh',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -3006,6 +3256,7 @@ export const generatedRegistry = {
   'security.sync.update': {
     methods: ['GET'],
     pattern: '/security/sync/update',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -3018,6 +3269,7 @@ export const generatedRegistry = {
   'rating.accept': {
     methods: ['GET', 'HEAD'],
     pattern: '/rating/accept',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -3030,6 +3282,7 @@ export const generatedRegistry = {
   'sync.leave': {
     methods: ['PATCH'],
     pattern: '/sync/leave/:groupId/:categoryId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { data: any; metadata?: any }
@@ -3042,6 +3295,7 @@ export const generatedRegistry = {
   'project.follow': {
     methods: ['GET'],
     pattern: '/project/follow',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -3054,6 +3308,7 @@ export const generatedRegistry = {
   'admin.generate': {
     methods: ['GET'],
     pattern: '/admin/generate',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -3066,6 +3321,7 @@ export const generatedRegistry = {
   'settings.show': {
     methods: ['GET'],
     pattern: '/settings/show/:teamId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -3078,6 +3334,7 @@ export const generatedRegistry = {
   'booking.subscription.group': {
     methods: ['GET'],
     pattern: '/booking/subscription/group',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -3090,6 +3347,7 @@ export const generatedRegistry = {
   'conference.art.restore': {
     methods: ['POST'],
     pattern: '/conference/art/restore',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { title: string; description?: string }
@@ -3102,6 +3360,7 @@ export const generatedRegistry = {
   'coupon.toggle': {
     methods: ['POST'],
     pattern: '/coupon/toggle/:entityId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -3114,6 +3373,7 @@ export const generatedRegistry = {
   'video.unfollow': {
     methods: ['GET'],
     pattern: '/video/unfollow',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -3126,6 +3386,7 @@ export const generatedRegistry = {
   'collaboration.conference.relocate': {
     methods: ['GET'],
     pattern: '/collaboration/conference/relocate',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -3138,6 +3399,7 @@ export const generatedRegistry = {
   'subscription.duplicate': {
     methods: ['DELETE'],
     pattern: '/subscription/duplicate',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -3150,6 +3412,7 @@ export const generatedRegistry = {
   'art.collaboration.forward': {
     methods: ['POST'],
     pattern: '/art/collaboration/forward',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -3162,6 +3425,7 @@ export const generatedRegistry = {
   'geolocation.video.unassign': {
     methods: ['GET'],
     pattern: '/geolocation/video/unassign',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -3174,6 +3438,7 @@ export const generatedRegistry = {
   'language.search': {
     methods: ['GET'],
     pattern: '/language/search/:itemId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -3186,6 +3451,7 @@ export const generatedRegistry = {
   'promotion.calendar.bookmark': {
     methods: ['POST'],
     pattern: '/promotion/calendar/bookmark',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { priority: string; status?: string }
@@ -3198,6 +3464,7 @@ export const generatedRegistry = {
   'history.log.block': {
     methods: ['DELETE'],
     pattern: '/history/log/block/:categoryId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -3210,6 +3477,7 @@ export const generatedRegistry = {
   'weather.upload.post': {
     methods: ['GET'],
     pattern: '/weather/upload/post',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -3222,6 +3490,7 @@ export const generatedRegistry = {
   'image.edit': {
     methods: ['GET', 'HEAD'],
     pattern: '/image/edit',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -3234,6 +3503,7 @@ export const generatedRegistry = {
   'geolocation.show': {
     methods: ['GET'],
     pattern: '/geolocation/show',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -3246,6 +3516,7 @@ export const generatedRegistry = {
   'sync.bookmark': {
     methods: ['GET'],
     pattern: '/sync/bookmark',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -3258,6 +3529,7 @@ export const generatedRegistry = {
   'geolocation.profile.sort': {
     methods: ['PUT'],
     pattern: '/geolocation/profile/sort',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { query: string; limit?: number }
@@ -3270,6 +3542,7 @@ export const generatedRegistry = {
   'survey.accept': {
     methods: ['POST'],
     pattern: '/survey/accept/:entityId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { filters: any[]; options?: any }
@@ -3282,6 +3555,7 @@ export const generatedRegistry = {
   'community.post': {
     methods: ['GET'],
     pattern: '/community/post',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -3294,6 +3568,7 @@ export const generatedRegistry = {
   'sports.assign': {
     methods: ['PUT'],
     pattern: '/sports/assign/:resourceId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { coordinates: [number, number] }
@@ -3306,6 +3581,7 @@ export const generatedRegistry = {
   'offer.backup': {
     methods: ['GET'],
     pattern: '/offer/backup',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -3318,6 +3594,7 @@ export const generatedRegistry = {
   'preferences.cinema.destroy': {
     methods: ['GET'],
     pattern: '/preferences/cinema/destroy/:userId/:id',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -3330,6 +3607,7 @@ export const generatedRegistry = {
   'knowledge.unsubscribe': {
     methods: ['POST'],
     pattern: '/knowledge/unsubscribe',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { query: string; limit?: number }
@@ -3342,6 +3620,7 @@ export const generatedRegistry = {
   'tag.team.transfer': {
     methods: ['POST'],
     pattern: '/tag/team/transfer',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { name: string; email: string }
@@ -3354,6 +3633,7 @@ export const generatedRegistry = {
   'billing.permission.put': {
     methods: ['GET'],
     pattern: '/billing/permission/put',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -3366,6 +3646,7 @@ export const generatedRegistry = {
   'maintenance.pricing.add': {
     methods: ['GET'],
     pattern: '/maintenance/pricing/add',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -3378,6 +3659,7 @@ export const generatedRegistry = {
   'upload.home.combine': {
     methods: ['GET'],
     pattern: '/upload/home/combine',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -3390,6 +3672,7 @@ export const generatedRegistry = {
   'inventory.disable': {
     methods: ['GET'],
     pattern: '/inventory/disable/:resourceId/:categoryId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -3402,6 +3685,7 @@ export const generatedRegistry = {
   'filter.campaign.backup': {
     methods: ['GET'],
     pattern: '/filter/campaign/backup/:groupId/:teamId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -3414,6 +3698,7 @@ export const generatedRegistry = {
   'bookmark.mute': {
     methods: ['POST'],
     pattern: '/bookmark/mute',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { data: any; metadata?: any }
@@ -3426,6 +3711,7 @@ export const generatedRegistry = {
   'social.export': {
     methods: ['POST'],
     pattern: '/social/export/:userId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { query: string; limit?: number }
@@ -3438,6 +3724,7 @@ export const generatedRegistry = {
   'cart.appointment.add': {
     methods: ['GET', 'HEAD'],
     pattern: '/cart/appointment/add/:itemId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -3450,6 +3737,7 @@ export const generatedRegistry = {
   'authentication.cancel': {
     methods: ['GET', 'HEAD'],
     pattern: '/authentication/cancel',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -3462,6 +3750,7 @@ export const generatedRegistry = {
   'art.put': {
     methods: ['PATCH'],
     pattern: '/art/put/:teamId/:entityId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { query: string; limit?: number }
@@ -3474,6 +3763,7 @@ export const generatedRegistry = {
   'bookmark.invoice.move': {
     methods: ['PATCH'],
     pattern: '/bookmark/invoice/move',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { priority: string; status?: string }
@@ -3486,6 +3776,7 @@ export const generatedRegistry = {
   'comment.leave': {
     methods: ['POST'],
     pattern: '/comment/leave/:userId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { query: string; limit?: number }
@@ -3498,6 +3789,7 @@ export const generatedRegistry = {
   'offer.kick': {
     methods: ['GET'],
     pattern: '/offer/kick/:categoryId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -3510,6 +3802,7 @@ export const generatedRegistry = {
   'recipe.validate': {
     methods: ['GET'],
     pattern: '/recipe/validate',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -3522,6 +3815,7 @@ export const generatedRegistry = {
   'filter.kick': {
     methods: ['GET', 'HEAD'],
     pattern: '/filter/kick',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -3534,6 +3828,7 @@ export const generatedRegistry = {
   'analytics.edit': {
     methods: ['DELETE'],
     pattern: '/analytics/edit',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -3546,6 +3841,7 @@ export const generatedRegistry = {
   'product.search': {
     methods: ['PATCH'],
     pattern: '/product/search/:entityId',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -3558,6 +3854,7 @@ export const generatedRegistry = {
   'sync.validate': {
     methods: ['POST'],
     pattern: '/sync/validate',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: { title: string; description?: string }
@@ -3570,6 +3867,7 @@ export const generatedRegistry = {
   'community.language.find': {
     methods: ['DELETE'],
     pattern: '/community/language/find',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -3582,6 +3880,7 @@ export const generatedRegistry = {
   'settings.admin.migrate': {
     methods: ['GET'],
     pattern: '/settings/admin/migrate',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}
@@ -3594,6 +3893,7 @@ export const generatedRegistry = {
   'wiki.postpone': {
     methods: ['GET'],
     pattern: '/wiki/postpone',
+    domain: 'root',
     tokens: [],
     types: placeholder as {
       body: {}

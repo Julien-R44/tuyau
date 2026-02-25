@@ -9,42 +9,49 @@ const routes = {
   'home': {
     methods: ['GET', 'HEAD'],
     pattern: '/',
+    domain: 'root',
     tokens: [{ old: '/', type: 0, val: '/', end: '' }],
     types: placeholder as Registry['home']['types'],
   },
   'posts.page': {
     methods: ['GET', 'HEAD'],
     pattern: '/posts-page',
+    domain: 'root',
     tokens: [{ old: '/posts-page', type: 0, val: 'posts-page', end: '' }],
     types: placeholder as Registry['posts.page']['types'],
   },
   'products.page': {
     methods: ['GET', 'HEAD'],
     pattern: '/products-page',
+    domain: 'root',
     tokens: [{ old: '/products-page', type: 0, val: 'products-page', end: '' }],
     types: placeholder as Registry['products.page']['types'],
   },
   'users.page': {
     methods: ['GET', 'HEAD'],
     pattern: '/users-page',
+    domain: 'root',
     tokens: [{ old: '/users-page', type: 0, val: 'users-page', end: '' }],
     types: placeholder as Registry['users.page']['types'],
   },
   'accounts.create': {
     methods: ['GET', 'HEAD'],
     pattern: '/signup',
+    domain: 'root',
     tokens: [{ old: '/signup', type: 0, val: 'signup', end: '' }],
     types: placeholder as Registry['accounts.create']['types'],
   },
   'accounts.store': {
     methods: ['POST'],
     pattern: '/signup',
+    domain: 'root',
     tokens: [{ old: '/signup', type: 0, val: 'signup', end: '' }],
     types: placeholder as Registry['accounts.store']['types'],
   },
   'accounts.upload_profile_picture': {
     methods: ['POST'],
     pattern: '/users/profile-picture',
+    domain: 'root',
     tokens: [
       { old: '/users/profile-picture', type: 0, val: 'users', end: '' },
       { old: '/users/profile-picture', type: 0, val: 'profile-picture', end: '' },
@@ -54,30 +61,35 @@ const routes = {
   'session.create': {
     methods: ['GET', 'HEAD'],
     pattern: '/login',
+    domain: 'root',
     tokens: [{ old: '/login', type: 0, val: 'login', end: '' }],
     types: placeholder as Registry['session.create']['types'],
   },
   'session.store': {
     methods: ['POST'],
     pattern: '/login',
+    domain: 'root',
     tokens: [{ old: '/login', type: 0, val: 'login', end: '' }],
     types: placeholder as Registry['session.store']['types'],
   },
   'session.destroy': {
     methods: ['POST'],
     pattern: '/logout',
+    domain: 'root',
     tokens: [{ old: '/logout', type: 0, val: 'logout', end: '' }],
     types: placeholder as Registry['session.destroy']['types'],
   },
   'users.list': {
     methods: ['GET', 'HEAD'],
     pattern: '/users',
+    domain: 'root',
     tokens: [{ old: '/users', type: 0, val: 'users', end: '' }],
     types: placeholder as Registry['users.list']['types'],
   },
   'users.show': {
     methods: ['GET', 'HEAD'],
     pattern: '/users/:id',
+    domain: 'root',
     tokens: [
       { old: '/users/:id', type: 0, val: 'users', end: '' },
       { old: '/users/:id', type: 1, val: 'id', end: '' },
@@ -87,12 +99,14 @@ const routes = {
   'users.store': {
     methods: ['POST'],
     pattern: '/users',
+    domain: 'root',
     tokens: [{ old: '/users', type: 0, val: 'users', end: '' }],
     types: placeholder as Registry['users.store']['types'],
   },
   'users.update': {
     methods: ['PUT'],
     pattern: '/users/:id',
+    domain: 'root',
     tokens: [
       { old: '/users/:id', type: 0, val: 'users', end: '' },
       { old: '/users/:id', type: 1, val: 'id', end: '' },
@@ -102,6 +116,7 @@ const routes = {
   'users.delete': {
     methods: ['DELETE'],
     pattern: '/users/:id',
+    domain: 'root',
     tokens: [
       { old: '/users/:id', type: 0, val: 'users', end: '' },
       { old: '/users/:id', type: 1, val: 'id', end: '' },
@@ -111,12 +126,14 @@ const routes = {
   'posts.list': {
     methods: ['GET', 'HEAD'],
     pattern: '/posts',
+    domain: 'root',
     tokens: [{ old: '/posts', type: 0, val: 'posts', end: '' }],
     types: placeholder as Registry['posts.list']['types'],
   },
   'posts.show': {
     methods: ['GET', 'HEAD'],
     pattern: '/posts/:id',
+    domain: 'root',
     tokens: [
       { old: '/posts/:id', type: 0, val: 'posts', end: '' },
       { old: '/posts/:id', type: 1, val: 'id', end: '' },
@@ -126,12 +143,14 @@ const routes = {
   'posts.store': {
     methods: ['POST'],
     pattern: '/posts',
+    domain: 'root',
     tokens: [{ old: '/posts', type: 0, val: 'posts', end: '' }],
     types: placeholder as Registry['posts.store']['types'],
   },
   'posts.update': {
     methods: ['PUT'],
     pattern: '/posts/:id',
+    domain: 'root',
     tokens: [
       { old: '/posts/:id', type: 0, val: 'posts', end: '' },
       { old: '/posts/:id', type: 1, val: 'id', end: '' },
@@ -141,6 +160,7 @@ const routes = {
   'posts.delete': {
     methods: ['DELETE'],
     pattern: '/posts/:id',
+    domain: 'root',
     tokens: [
       { old: '/posts/:id', type: 0, val: 'posts', end: '' },
       { old: '/posts/:id', type: 1, val: 'id', end: '' },
@@ -150,6 +170,7 @@ const routes = {
   'products.search': {
     methods: ['GET', 'HEAD'],
     pattern: '/products/search',
+    domain: 'root',
     tokens: [
       { old: '/products/search', type: 0, val: 'products', end: '' },
       { old: '/products/search', type: 0, val: 'search', end: '' },
@@ -159,6 +180,7 @@ const routes = {
   'products.categories': {
     methods: ['GET', 'HEAD'],
     pattern: '/products/categories',
+    domain: 'root',
     tokens: [
       { old: '/products/categories', type: 0, val: 'products', end: '' },
       { old: '/products/categories', type: 0, val: 'categories', end: '' },
@@ -168,6 +190,7 @@ const routes = {
   'products.by_category': {
     methods: ['GET', 'HEAD'],
     pattern: '/products/category/:category',
+    domain: 'root',
     tokens: [
       { old: '/products/category/:category', type: 0, val: 'products', end: '' },
       { old: '/products/category/:category', type: 0, val: 'category', end: '' },
@@ -178,6 +201,7 @@ const routes = {
   'products.show': {
     methods: ['GET', 'HEAD'],
     pattern: '/products/:id',
+    domain: 'root',
     tokens: [
       { old: '/products/:id', type: 0, val: 'products', end: '' },
       { old: '/products/:id', type: 1, val: 'id', end: '' },
@@ -187,17 +211,26 @@ const routes = {
   'products.store': {
     methods: ['POST'],
     pattern: '/products',
+    domain: 'root',
     tokens: [{ old: '/products', type: 0, val: 'products', end: '' }],
     types: placeholder as Registry['products.store']['types'],
   },
   'products.delete': {
     methods: ['DELETE'],
     pattern: '/products/:id',
+    domain: 'root',
     tokens: [
       { old: '/products/:id', type: 0, val: 'products', end: '' },
       { old: '/products/:id', type: 1, val: 'id', end: '' },
     ],
     types: placeholder as Registry['products.delete']['types'],
+  },
+  'blog.posts.api': {
+    methods: ['GET', 'HEAD'],
+    pattern: '/posts-api',
+    domain: 'blog',
+    tokens: [{ old: '/posts-api', type: 0, val: 'posts-api', end: '' }],
+    types: placeholder as Registry['blog.posts.api']['types'],
   },
 } as const satisfies Record<string, AdonisEndpoint>
 
