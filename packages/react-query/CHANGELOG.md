@@ -1,5 +1,11 @@
 # @tuyau/react-query
 
+## 1.0.0
+
+### Major Changes
+
+- Complete rewrite of Tuyau. Documentation will be available soon on the AdonisJS website.
+
 ## 0.0.1-next.1
 
 ### Patch Changes

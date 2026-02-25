@@ -1,5 +1,11 @@
 # @tuyau/core
 
+## 1.0.0
+
+### Major Changes
+
+- Complete rewrite of Tuyau. Documentation will be available soon on the AdonisJS website.
+
 ## 1.0.0-next.18
 
 ### Patch Changes
