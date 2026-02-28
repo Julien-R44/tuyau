@@ -102,6 +102,51 @@ test.group('Client | Chained', () => {
     assert.equal(result, 'hello')
   })
 
+  test('responseType: arrayBuffer overrides content-type parsing', async ({ assert }) => {
+    const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry })
+
+    nock('http://localhost:3333')
+      .post('/auth/login')
+      .reply(200, 'hello', { 'Content-Type': 'application/pdf' })
+
+    const result = await tuyau.api.auth.login({
+      body: { email: 'foo@ok.com', password: 'secret' },
+      responseType: 'arrayBuffer',
+    })
+
+    assert.isTrue(result instanceof ArrayBuffer)
+  })
+
+  test('responseType: json overrides content-type parsing', async ({ assert }) => {
+    const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry })
+
+    nock('http://localhost:3333')
+      .post('/auth/login')
+      .reply(200, JSON.stringify({ ok: true }), { 'Content-Type': 'text/plain' })
+
+    const result = await tuyau.api.auth.login({
+      body: { email: 'foo@ok.com', password: 'secret' },
+      responseType: 'json',
+    })
+
+    assert.deepEqual(result, { ok: true })
+  })
+
+  test('responseType: text overrides content-type parsing', async ({ assert }) => {
+    const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry })
+
+    nock('http://localhost:3333')
+      .post('/auth/login')
+      .reply(200, JSON.stringify({ ok: true }), { 'Content-Type': 'application/json' })
+
+    const result = await tuyau.api.auth.login({
+      body: { email: 'foo@ok.com', password: 'secret' },
+      responseType: 'text',
+    })
+
+    assert.isTrue(typeof result === 'string')
+  })
+
   test('pass ky options when creating instance', async ({ assert }) => {
     let hookCalled = false
     const tuyau = createTuyau({

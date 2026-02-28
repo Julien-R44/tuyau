@@ -166,7 +166,7 @@ export class Tuyau<
      * Make the request
      */
     const isGetOrHead = ['GET', 'HEAD'].includes(method)
-    const { body: _, ...restArgs } = args as any
+    const { body: _, responseType: requestedResponseType, ...restArgs } = args as any
     const requestOptions = {
       searchParams: buildSearchParams((args as any)?.query || {}),
       [key]: !isGetOrHead ? body : undefined,
@@ -183,15 +183,15 @@ export class Tuyau<
       let data: any
 
       /**
-       * Parse the response based on the content type
+       * Parse the response based on the explicit responseType or the content type
        */
-      const responseType = res.headers.get('Content-Type')?.split(';')[0]?.trim()
-      if (responseType === 'application/json') {
-        data = await res.json()
-      } else if (responseType === 'application/octet-stream') {
-        data = await res.arrayBuffer()
+      if (requestedResponseType) {
+        data = await res[requestedResponseType]()
       } else {
-        data = await res.text()
+        const contentType = res.headers.get('Content-Type')?.split(';')[0]?.trim()
+        if (contentType === 'application/json') data = await res.json()
+        else if (contentType === 'application/octet-stream') data = await res.arrayBuffer()
+        else data = await res.text()
       }
 
       return data

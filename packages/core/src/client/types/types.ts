@@ -125,6 +125,18 @@ export type Endpoints = ValueOf<AdonisRegistry>
 export type EndpointByName<Name extends keyof AdonisRegistry & string> = AdonisRegistry[Name]
 
 /**
+ * Supported response types for overriding Content-Type based parsing
+ */
+export type ResponseType = 'json' | 'text' | 'arrayBuffer' | 'blob'
+
+/**
+ * Tuyau-specific request options (not part of Ky)
+ */
+export type TuyauRequestOptions = {
+  responseType?: ResponseType
+}
+
+/**
  * Pre-computed base Ky options to avoid recomputing Omit on every request
  */
 export type BaseRequestOptions = Omit<
@@ -151,7 +163,7 @@ export type RawRequestArgs<E extends SchemaEndpoint> = ParamsArg<E['types']['par
 /**
  * Constructs the request arguments type for an endpoint
  */
-export type RequestArgs<E extends SchemaEndpoint> = RawRequestArgs<E> & BaseRequestOptions
+export type RequestArgs<E extends SchemaEndpoint> = RawRequestArgs<E> & BaseRequestOptions & TuyauRequestOptions
 
 /**
  * Extracts response type from an endpoint
@@ -172,7 +184,8 @@ type EndpointFnInline<E extends AdonisEndpoint> = (
   args: ParamsArg<E['types']['params']> &
     QueryArg<E['types']['query']> &
     BodyArg<E['types']['body']> &
-    BaseRequestOptions,
+    BaseRequestOptions &
+    TuyauRequestOptions,
 ) => Promise<E['types']['response']>
 
 /**
