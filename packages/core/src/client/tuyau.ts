@@ -2,6 +2,7 @@ import { serialize } from 'object-to-formdata'
 import ky, { HTTPError, type KyInstance } from 'ky'
 import { createUrlBuilder, type UrlFor } from '@adonisjs/http-server/client/url_builder'
 
+import { TuyauRouter } from './router.ts'
 import { buildSearchParams } from './serializer.ts'
 import { parseResponse, TuyauHTTPError, TuyauNetworkError } from './errors.ts'
 import {
@@ -14,6 +15,7 @@ import {
 } from './utils.ts'
 import type {
   AdonisEndpoint,
+  CurrentRouteOptions,
   EndpointByMethodPattern,
   InferRoutes,
   InferTree,
@@ -43,6 +45,7 @@ export class Tuyau<
   readonly #entries: [StrKeys<Routes>, Routes[StrKeys<Routes>]][]
   readonly #client: KyInstance
   readonly #config: TuyauConfiguration<Reg>
+  readonly #router: TuyauRouter<Routes>
 
   /**
    * Merges the default Ky configuration with user-provided config
@@ -87,6 +90,7 @@ export class Tuyau<
       Routes[StrKeys<Routes>],
     ][]
     this.urlFor = this.#createUrlBuilder()
+    this.#router = new TuyauRouter(this.#entries, this.#config.baseUrl)
 
     this.#applyPlugins()
 
@@ -330,6 +334,35 @@ export class Tuyau<
       })
     }
     return new Proxy({}, { get: (_t, prop) => this.#makeNamed([...segments, String(prop)]) })
+  }
+
+  /**
+   * Checks if a route name exists in the registry.
+   */
+  has(routeName: StrKeys<Routes>): boolean {
+    return this.#router.has(routeName)
+  }
+
+  /**
+   * Determines the current route based on `window.location`.
+   *
+   * - **No arguments** — returns the current route name, or `undefined`
+   *   if no route matches (or running server-side).
+   * - **With a route name** — returns `true` if the current URL matches
+   *   that route. Supports `*` wildcards.
+   * - **With options** — additionally checks that the current URL params
+   *   and/or query match the provided values.
+   */
+  current(): StrKeys<Routes> | undefined
+  current(
+    routeName: StrKeys<Routes> | (string & {}),
+    options?: CurrentRouteOptions,
+  ): boolean
+  current(
+    routeName?: StrKeys<Routes> | (string & {}),
+    options?: CurrentRouteOptions,
+  ): StrKeys<Routes> | boolean | undefined {
+    return this.#router.current(routeName as any, options as any)
   }
 }
 

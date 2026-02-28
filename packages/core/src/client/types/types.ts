@@ -7,6 +7,14 @@ import type { ClientRouteMatchItTokens } from '@adonisjs/http-server/client/url_
 export type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'HEAD' | 'OPTIONS'
 
 /**
+ * Options for the `current` method to match params and/or query
+ */
+export interface CurrentRouteOptions {
+  params?: Record<string, any>
+  query?: Record<string, any>
+}
+
+/**
  * Base endpoint types structure
  */
 export interface EndpointTypes {
@@ -83,13 +91,6 @@ export interface AdonisRegistry extends Record<string, AdonisEndpoint> {}
 export type ValueOf<T> = T[keyof T]
 
 /**
- * Split a string by a delimiter
- */
-export type Split<S extends string, D extends string = '.'> = S extends `${infer T}${D}${infer U}`
-  ? [T, ...Split<U, D>]
-  : [S]
-
-/**
  * Convert a union type to an intersection type
  */
 export type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
@@ -163,7 +164,9 @@ export type RawRequestArgs<E extends SchemaEndpoint> = ParamsArg<E['types']['par
 /**
  * Constructs the request arguments type for an endpoint
  */
-export type RequestArgs<E extends SchemaEndpoint> = RawRequestArgs<E> & BaseRequestOptions & TuyauRequestOptions
+export type RequestArgs<E extends SchemaEndpoint> = RawRequestArgs<E> &
+  BaseRequestOptions &
+  TuyauRequestOptions
 
 /**
  * Extracts response type from an endpoint

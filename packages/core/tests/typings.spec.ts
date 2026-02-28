@@ -436,6 +436,21 @@ test.group('Client | Typings', (group) => {
     tuyau.urlFor.get('posts.comments.likes.detail', {})
   })
 
+  test('has rejects unknown route names, current accepts any string', () => {
+    const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry })
+
+    tuyau.has('users.show')
+    tuyau.current('users.show')
+    tuyau.current('posts.*.likes.*')
+    tuyau.current('nope.*')
+
+    // @ts-expect-error route name does not exist
+    tuyau.has('inexistent.route')
+
+    // @ts-expect-error route name does not exist
+    tuyau.has('users.nope')
+  })
+
   test('Path helper', ({ expectTypeOf }) => {
     type Params = PathWithRegistry.Params<typeof routes, 'GET', '/users/:id'>
 
