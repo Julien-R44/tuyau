@@ -19,11 +19,19 @@ export function buildSearchParams(query: QueryParameters): string {
       const fullKey = prefix ? `${prefix}[${encodedKey}]` : encodedKey
 
       if (Array.isArray(value)) {
-        for (const item of value) {
-          if (item !== undefined && item !== null) {
+        value.forEach((item, index) => {
+          if (item === undefined || item === null) return
+
+          if (item instanceof Date) {
+            parts.push(`${fullKey}[]=${encodeURIComponent(item.toISOString())}`)
+          } else if (typeof item === 'object') {
+            serialize(item as QueryParameters, `${fullKey}[${index}]`)
+          } else {
             parts.push(`${fullKey}[]=${encodeURIComponent(item)}`)
           }
-        }
+        })
+      } else if (value instanceof Date) {
+        parts.push(`${fullKey}=${encodeURIComponent(value.toISOString())}`)
       } else if (typeof value === 'object') {
         serialize(value as QueryParameters, fullKey)
       } else {

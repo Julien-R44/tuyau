@@ -72,4 +72,55 @@ test.group('buildSearchParams', () => {
     })
     assert.equal(result, 'filter[tags][]=a&filter[tags][]=b')
   })
+
+  test('arrays of objects', ({ assert }) => {
+    const result = buildSearchParams({
+      sort: [{ id: 'createdAt', desc: true }],
+    })
+    assert.equal(result, 'sort[0][id]=createdAt&sort[0][desc]=true')
+  })
+
+  test('arrays of objects with multiple items', ({ assert }) => {
+    const result = buildSearchParams({
+      sort: [
+        { id: 'createdAt', desc: true },
+        { id: 'name', desc: false },
+      ],
+    })
+    assert.equal(
+      result,
+      'sort[0][id]=createdAt&sort[0][desc]=true&sort[1][id]=name&sort[1][desc]=false',
+    )
+  })
+
+  test('arrays mixing primitives and objects', ({ assert }) => {
+    const result = buildSearchParams({
+      items: ['simple', { nested: 'value' }],
+    })
+    assert.equal(result, 'items[]=simple&items[1][nested]=value')
+  })
+
+  test('date values are serialized as ISO strings', ({ assert }) => {
+    const result = buildSearchParams({
+      createdAt: new Date('2024-01-01T00:00:00.000Z'),
+    })
+    assert.equal(result, 'createdAt=2024-01-01T00%3A00%3A00.000Z')
+  })
+
+  test('date values inside nested objects', ({ assert }) => {
+    const result = buildSearchParams({
+      filter: { from: new Date('2024-01-01T00:00:00.000Z') },
+    })
+    assert.equal(result, 'filter[from]=2024-01-01T00%3A00%3A00.000Z')
+  })
+
+  test('date values inside arrays', ({ assert }) => {
+    const result = buildSearchParams({
+      dates: [new Date('2024-01-01T00:00:00.000Z'), new Date('2024-06-01T00:00:00.000Z')],
+    })
+    assert.equal(
+      result,
+      'dates[]=2024-01-01T00%3A00%3A00.000Z&dates[]=2024-06-01T00%3A00%3A00.000Z',
+    )
+  })
 })

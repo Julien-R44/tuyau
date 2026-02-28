@@ -226,9 +226,11 @@ export type MaybeArray<T> = T | T[]
 /**
  * Type for URL query parameters
  */
+type QueryParameterPrimitive = string | number | boolean | Date | null | undefined
+
 export interface QueryParameters extends Record<
   string,
-  MaybeArray<string | number | boolean | null | undefined> | QueryParameters
+  QueryParameterPrimitive | Array<QueryParameterPrimitive | QueryParameters> | QueryParameters
 > {}
 
 /**
