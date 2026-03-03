@@ -54,6 +54,18 @@ router
   })
   .prefix('/posts')
 
+// Contacts API (for safe() / isStatus() testing)
+router.on('/contacts-page').renderInertia('contacts', {}).as('contacts.page')
+router
+  .group(() => {
+    router.get('/', [controllers.Contacts, 'list'])
+    router.get('/:id', [controllers.Contacts, 'show'])
+    router.post('/', [controllers.Contacts, 'store'])
+    router.put('/:id', [controllers.Contacts, 'update'])
+    router.delete('/:id', [controllers.Contacts, 'delete'])
+  })
+  .prefix('/contacts')
+
 // Products API (for query params testing)
 router
   .group(() => {

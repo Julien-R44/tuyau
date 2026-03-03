@@ -223,6 +223,22 @@ const routes = {
     },
   },
 
+  'auth.register': {
+    methods: ['POST'],
+    pattern: '/auth/register',
+    tokens: [{ old: '/auth/register', type: 0, val: 'auth/register', end: '' }],
+    types: placeholder as {
+      body: { email: string; password: string }
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: { token: string }
+      errorResponse:
+        | { status: 400; response: { error: string } }
+        | { status: 422; response: { messages: Array<{ field: string; message: string }> } }
+    },
+  },
+
   'subscriber_lists.store': {
     methods: ['POST'],
     pattern: '/api/subscriber-lists',

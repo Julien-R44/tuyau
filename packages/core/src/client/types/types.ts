@@ -1,6 +1,9 @@
 import type { Options as KyOptions } from 'ky'
 import type { ClientRouteMatchItTokens } from '@adonisjs/http-server/client/url_builder'
 
+import type { TuyauError } from '../errors.ts'
+import type { TuyauPromise } from '../promise.ts'
+
 /**
  * Supported HTTP methods for API endpoints
  */
@@ -23,6 +26,7 @@ export interface EndpointTypes {
   query: Record<string, any>
   body: unknown
   response: unknown
+  errorResponse?: unknown
 }
 
 /**
@@ -82,6 +86,16 @@ export type ExtractResponse<T> = T extends { __response: infer R; __status: Succ
   : T extends { __response: unknown; __status: number }
     ? never
     : T
+
+/**
+ * Inverse of ExtractResponse — extracts non-2xx status types as a discriminated union.
+ * Each member has `{ status: S; response: R }` for narrowing via `isStatus()`.
+ */
+export type ExtractErrorResponse<T> = T extends { __response: infer R; __status: infer S }
+  ? S extends SuccessStatus
+    ? never
+    : { status: S; response: R }
+  : never
 
 /**
  * Registry mapping endpoint names to their definitions
@@ -174,11 +188,30 @@ export type RequestArgs<E extends SchemaEndpoint> = RawRequestArgs<E> &
 export type ResponseOf<E extends SchemaEndpoint> = E['types']['response']
 
 /**
+ * Extracts error response type from an endpoint
+ */
+export type ErrorResponseOf<E extends SchemaEndpoint> = E['types'] extends {
+  errorResponse: infer ER
+}
+  ? ER
+  : unknown
+
+/**
+ * Normalizes the error type to satisfy TuyauError's constraint.
+ * Routes without typed errors pass `unknown`, which maps to `{ response: any }`.
+ * Always includes a `{ status: number; response: unknown }` fallback so that
+ * catch-all blocks after exhaustive `isStatus()` checks never resolve to `never`.
+ */
+type NormalizeError<E> =
+  | (E extends { response: any } ? E : { response: any })
+  | { status: number; response: unknown }
+
+/**
  * Function type for calling an endpoint
  */
 export type EndpointFn<E extends SchemaEndpoint> = (
   args: RequestArgs<E>,
-) => Promise<E['types']['response']>
+) => TuyauPromise<E['types']['response'], ErrorResponseOf<E>>
 
 /**
  * Function type for an endpoint with inlined args
@@ -189,7 +222,7 @@ type EndpointFnInline<E extends AdonisEndpoint> = (
     BodyArg<E['types']['body']> &
     BaseRequestOptions &
     TuyauRequestOptions,
-) => Promise<E['types']['response']>
+) => TuyauPromise<E['types']['response'], ErrorResponseOf<E>>
 
 /**
  * Transforms a pre-computed ApiDefinition tree into callable endpoint functions
@@ -326,6 +359,12 @@ export namespace PathWithRegistry {
     M extends Method,
     P extends PatternsByMethod<Reg, M>,
   > = FilterByMethodPathForRegistry<Reg, M, P>['types']['query']
+
+  export type Error<
+    Reg extends Record<string, AdonisEndpoint>,
+    M extends Method,
+    P extends PatternsByMethod<Reg, M>,
+  > = TuyauError<NormalizeError<ErrorResponseOf<FilterByMethodPathForRegistry<Reg, M, P>>>>
 }
 
 /**
@@ -357,6 +396,11 @@ export namespace RouteWithRegistry {
     Reg extends Record<string, AdonisEndpoint>,
     Name extends keyof Reg,
   > = EndpointByNameForRegistry<Reg, Name>['types']['query']
+
+  export type Error<
+    Reg extends Record<string, AdonisEndpoint>,
+    Name extends keyof Reg,
+  > = TuyauError<NormalizeError<ErrorResponseOf<EndpointByNameForRegistry<Reg, Name>>>>
 }
 
 /**
@@ -384,6 +428,12 @@ export namespace Path {
     M extends Method,
     P extends PatternsByMethod<UserAdonisRegistry, M>,
   > = FilterByMethodPathForRegistry<UserAdonisRegistry, M, P>['types']['query']
+  export type Error<
+    M extends Method,
+    P extends PatternsByMethod<UserAdonisRegistry, M>,
+  > = TuyauError<
+    NormalizeError<ErrorResponseOf<FilterByMethodPathForRegistry<UserAdonisRegistry, M, P>>>
+  >
 }
 
 /**
@@ -399,7 +449,20 @@ export namespace Route {
     UserEndpointByName<Name>['types']['body']
   export type Query<Name extends keyof UserAdonisRegistry> =
     UserEndpointByName<Name>['types']['query']
+  export type Error<Name extends keyof UserAdonisRegistry> = TuyauError<
+    NormalizeError<ErrorResponseOf<UserEndpointByName<Name>>>
+  >
 }
+
+/**
+ * Extracts literal status codes from E, filtering out the wide `number` from the fallback.
+ * `number extends 404` is false → keep. `number extends number` is true → skip.
+ */
+export type KnownStatuses<E> = E extends { status: infer S extends number }
+  ? number extends S
+    ? never
+    : S
+  : never
 
 type ParamsShape<E> = E extends { types: { paramsTuple: infer PT; params: infer P } }
   ? (PT extends [] ? { paramsTuple?: PT } : { paramsTuple: PT }) &

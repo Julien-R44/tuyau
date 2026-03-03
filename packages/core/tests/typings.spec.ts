@@ -1,9 +1,12 @@
 import { test } from '@japa/runner'
 
 import { createTuyau } from '../src/client/tuyau.ts'
+import type { TuyauError } from '../src/client/errors.ts'
+import type { TuyauPromise } from '../src/client/promise.ts'
 import { defaultRegistry as registry } from './fixtures/index.ts'
 import type {
   ExtractBody,
+  ExtractErrorResponse,
   ExtractQuery,
   ExtractQueryForGet,
   ExtractResponse,
@@ -436,6 +439,65 @@ test.group('Client | Typings', (group) => {
     tuyau.urlFor.get('posts.comments.likes.detail', {})
   })
 
+  test('safe() returns TuyauPromise with correct error types', ({ expectTypeOf }) => {
+    const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry })
+
+    const result = tuyau.api.auth.register({
+      body: { email: 'foo@ok.com', password: 'secret' },
+    })
+
+    expectTypeOf(result).toEqualTypeOf<
+      TuyauPromise<
+        { token: string },
+        | { status: 400; response: { error: string } }
+        | { status: 422; response: { messages: Array<{ field: string; message: string }> } }
+      >
+    >()
+  })
+
+  test('safe() via path method returns TuyauPromise with correct error types', ({
+    expectTypeOf,
+  }) => {
+    const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry })
+
+    const result = tuyau.post('/auth/register', {
+      body: { email: 'foo@ok.com', password: 'secret' },
+    })
+
+    expectTypeOf(result).toEqualTypeOf<
+      TuyauPromise<
+        { token: string },
+        | { status: 400; response: { error: string } }
+        | { status: 422; response: { messages: Array<{ field: string; message: string }> } }
+      >
+    >()
+  })
+
+  test('safe() via request method returns TuyauPromise with correct error types', ({
+    expectTypeOf,
+  }) => {
+    const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry })
+
+    const result = tuyau.request('auth.register', {
+      body: { email: 'foo@ok.com', password: 'secret' },
+    })
+
+    expectTypeOf(result).toEqualTypeOf<
+      TuyauPromise<
+        { token: string },
+        | { status: 400; response: { error: string } }
+        | { status: 422; response: { messages: Array<{ field: string; message: string }> } }
+      >
+    >()
+  })
+
+  test('routes without errorResponse have unknown error type', ({ expectTypeOf }) => {
+    const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry })
+
+    const result = tuyau.get('/users', {})
+    expectTypeOf(result).toEqualTypeOf<TuyauPromise<{ token: string }, unknown>>()
+  })
+
   test('has rejects unknown route names, current accepts any string', () => {
     const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry })
 
@@ -852,5 +914,210 @@ test.group('ExtractResponse type', (group) => {
 
     type Result = ExtractResponse<UnionResponse>
     expectTypeOf<Result>().toEqualTypeOf<{ price: number }>()
+  })
+})
+
+test.group('ExtractErrorResponse type', (group) => {
+  group.tap((t) => t.skip(true, 'skip typings tests'))
+
+  test('returns never for 200 OK response', ({ expectTypeOf }) => {
+    type OkResponse = { __response: { users: string[] }; __status: 200 }
+
+    type Result = ExtractErrorResponse<OkResponse>
+    expectTypeOf<Result>().toEqualTypeOf<never>()
+  })
+
+  test('returns never for 201 Created response', ({ expectTypeOf }) => {
+    type CreatedResponse = { __response: { id: number }; __status: 201 }
+
+    type Result = ExtractErrorResponse<CreatedResponse>
+    expectTypeOf<Result>().toEqualTypeOf<never>()
+  })
+
+  test('extracts 400 Bad Request response', ({ expectTypeOf }) => {
+    type BadRequestResponse = { __response: { error: string }; __status: 400 }
+
+    type Result = ExtractErrorResponse<BadRequestResponse>
+    expectTypeOf<Result>().toEqualTypeOf<{ status: 400; response: { error: string } }>()
+  })
+
+  test('extracts 401 Unauthorized response', ({ expectTypeOf }) => {
+    type UnauthorizedResponse = { __response: { message: string }; __status: 401 }
+
+    type Result = ExtractErrorResponse<UnauthorizedResponse>
+    expectTypeOf<Result>().toEqualTypeOf<{ status: 401; response: { message: string } }>()
+  })
+
+  test('extracts 422 Unprocessable Entity response', ({ expectTypeOf }) => {
+    type ValidationError = { __response: { errors: string[] }; __status: 422 }
+
+    type Result = ExtractErrorResponse<ValidationError>
+    expectTypeOf<Result>().toEqualTypeOf<{ status: 422; response: { errors: string[] } }>()
+  })
+
+  test('extracts 500 Internal Server Error response', ({ expectTypeOf }) => {
+    type ServerErrorResponse = { __response: { error: string }; __status: 500 }
+
+    type Result = ExtractErrorResponse<ServerErrorResponse>
+    expectTypeOf<Result>().toEqualTypeOf<{ status: 500; response: { error: string } }>()
+  })
+
+  test('returns never for plain types (no __status)', ({ expectTypeOf }) => {
+    type PlainResponse = { data: string; count: number }
+
+    type Result = ExtractErrorResponse<PlainResponse>
+    expectTypeOf<Result>().toEqualTypeOf<never>()
+  })
+
+  test('filters out success responses from union, keeps only errors', ({ expectTypeOf }) => {
+    type OkResponse = { __response: { data: string }; __status: 200 }
+
+    type NotFoundResponse = { __response: { error: string }; __status: 404 }
+
+    type UnionResponse = OkResponse | NotFoundResponse
+
+    type Result = ExtractErrorResponse<UnionResponse>
+    expectTypeOf<Result>().toEqualTypeOf<{ status: 404; response: { error: string } }>()
+  })
+
+  test('extracts multiple error responses from union', ({ expectTypeOf }) => {
+    type OkResponse = { __response: { token: string }; __status: 200 }
+
+    type BadRequestResponse = { __response: { error: string }; __status: 400 }
+
+    type UnauthorizedResponse = { __response: { message: string }; __status: 401 }
+
+    type UnionResponse = OkResponse | BadRequestResponse | UnauthorizedResponse
+
+    type Result = ExtractErrorResponse<UnionResponse>
+    expectTypeOf<Result>().toEqualTypeOf<
+      { status: 400; response: { error: string } } | { status: 401; response: { message: string } }
+    >()
+  })
+})
+
+test.group('TuyauError isStatus() type narrowing', (group) => {
+  group.tap((t) => t.skip(true, 'skip typings tests'))
+
+  test('isStatus narrows response type', ({ expectTypeOf }) => {
+    type Errors =
+      | { status: 400; response: { error: string } }
+      | { status: 422; response: { messages: Array<{ field: string; message: string }> } }
+
+    const error = {} as TuyauError<Errors>
+
+    if (error.isStatus(400)) {
+      expectTypeOf(error.response).toEqualTypeOf<{ error: string }>()
+    }
+
+    if (error.isStatus(422)) {
+      expectTypeOf(error.response).toEqualTypeOf<{
+        messages: Array<{ field: string; message: string }>
+      }>()
+    }
+  })
+
+  test('untyped TuyauError has any response', ({ expectTypeOf }) => {
+    const error = {} as TuyauError
+
+    expectTypeOf(error.response).toEqualTypeOf<any>()
+  })
+
+  test('isStatus suggests known status codes', ({ expectTypeOf }) => {
+    type Errors =
+      | { status: 400; response: { error: string } }
+      | { status: 422; response: { messages: string[] } }
+      | { status: number; response: unknown }
+
+    const error = {} as TuyauError<Errors>
+
+    // Known statuses are accepted
+    if (error.isStatus(400)) {
+      expectTypeOf(error.response).toEqualTypeOf<{ error: string }>()
+    }
+
+    // Arbitrary numbers are also accepted (the `number & {}` part)
+    error.isStatus(500)
+  })
+
+  test('isStatus accepts any number for untyped errors', () => {
+    const error = {} as TuyauError
+
+    // Should compile fine with any number
+    error.isStatus(404)
+    error.isStatus(500)
+    error.isStatus(422)
+  })
+
+  test('catch-all after exhaustive isStatus checks is not never', ({ expectTypeOf }) => {
+    type Errors =
+      | { status: 404; response: { message: string } }
+      | { status: number; response: unknown }
+
+    const error = {} as TuyauError<Errors>
+
+    if (error.isStatus(404)) return
+
+    // After exhausting 404, the fallback { status: number; response: unknown } remains
+    expectTypeOf(error.status).toEqualTypeOf<number | undefined>()
+    expectTypeOf(error.response).toEqualTypeOf<unknown>()
+  })
+})
+
+test.group('Route.Error / Path.Error helper types', (group) => {
+  group.tap((t) => t.skip(true, 'skip typings tests'))
+
+  test('RouteWithRegistry.Error returns typed TuyauError for route with errors', ({
+    expectTypeOf,
+  }) => {
+    type Err = RouteWithRegistry.Error<typeof routes, 'auth.register'>
+
+    const error = {} as Err
+
+    if (error.isStatus(400)) {
+      expectTypeOf(error.response).toEqualTypeOf<{ error: string }>()
+    }
+
+    if (error.isStatus(422)) {
+      expectTypeOf(error.response).toEqualTypeOf<{
+        messages: Array<{ field: string; message: string }>
+      }>()
+    }
+  })
+
+  test('RouteWithRegistry.Error returns TuyauError<{ response: any }> for route without errors', ({
+    expectTypeOf,
+  }) => {
+    type Err = RouteWithRegistry.Error<typeof routes, 'auth.login'>
+
+    const error = {} as Err
+    expectTypeOf(error.response).toEqualTypeOf<any>()
+  })
+
+  test('PathWithRegistry.Error returns typed TuyauError for path with errors', ({
+    expectTypeOf,
+  }) => {
+    type Err = PathWithRegistry.Error<typeof routes, 'POST', '/auth/register'>
+
+    const error = {} as Err
+
+    if (error.isStatus(400)) {
+      expectTypeOf(error.response).toEqualTypeOf<{ error: string }>()
+    }
+
+    if (error.isStatus(422)) {
+      expectTypeOf(error.response).toEqualTypeOf<{
+        messages: Array<{ field: string; message: string }>
+      }>()
+    }
+  })
+
+  test('PathWithRegistry.Error returns TuyauError<{ response: any }> for path without errors', ({
+    expectTypeOf,
+  }) => {
+    type Err = PathWithRegistry.Error<typeof routes, 'GET', '/users'>
+
+    const error = {} as Err
+    expectTypeOf(error.response).toEqualTypeOf<any>()
   })
 })

@@ -3,7 +3,7 @@ import { test } from '@japa/runner'
 
 import { createTuyau } from '../src/client/tuyau.ts'
 import { defaultRegistry as registry } from './fixtures/index.ts'
-import { TuyauHTTPError, TuyauNetworkError } from '../src/client/errors.ts'
+import { TuyauError, TuyauHTTPError, TuyauNetworkError } from '../src/client/errors.ts'
 
 const createTestTuyau = (baseUrl: string = 'http://localhost:3333') =>
   createTuyau({ baseUrl, registry })
@@ -542,5 +542,147 @@ test.group('Client | url', () => {
 
     assert.equal(r1.token, '123')
     assert.equal(r2.id, '1')
+  })
+})
+
+test.group('Client | safe()', () => {
+  test('returns [data, null] on success', async ({ assert }) => {
+    const tuyau = createTestTuyau()
+
+    nock('http://localhost:3333').post('/auth/login').reply(200, { token: '123' })
+
+    const [data, error] = await tuyau.api.auth
+      .login({ body: { email: 'foo@ok.com', password: 'secret' } })
+      .safe()
+
+    assert.deepEqual(data, { token: '123' })
+    assert.isNull(error)
+  })
+
+  test('returns [null, error] on HTTP error', async ({ assert }) => {
+    const tuyau = createTestTuyau()
+
+    nock('http://localhost:3333').post('/auth/login').reply(400, { message: 'Invalid credentials' })
+
+    const [data, error] = await tuyau.api.auth
+      .login({ body: { email: 'foo@ok.com', password: 'bar' } })
+      .safe()
+
+    assert.isNull(data)
+    assert.instanceOf(error, TuyauError)
+    assert.instanceOf(error, TuyauHTTPError)
+    assert.equal(error!.kind, 'http')
+    assert.equal(error!.status, 400)
+    assert.equal((error!.response as any).message, 'Invalid credentials')
+    assert.isTrue(error!.isStatus(400))
+  })
+
+  test('returns [null, error] on network error', async ({ assert }) => {
+    const tuyau = createTestTuyau('http://localhost:9999')
+
+    const [data, error] = await tuyau.api.auth
+      .login({ body: { email: 'test@test.com', password: 'password' } })
+      .safe()
+
+    assert.isNull(data)
+    assert.instanceOf(error, TuyauError)
+    assert.instanceOf(error, TuyauNetworkError)
+    assert.equal(error!.kind, 'network')
+    assert.isUndefined(error!.status)
+    assert.isUndefined(error!.response)
+    assert.include(error!.message, 'Network error')
+    assert.isFalse(error!.isStatus(404))
+  })
+
+  test('safe() works with path-based methods', async ({ assert }) => {
+    const tuyau = createTestTuyau()
+
+    nock('http://localhost:3333').get('/users').reply(200, { token: '123' })
+
+    const [data, error] = await tuyau.get('/users', {}).safe()
+
+    assert.deepEqual(data, { token: '123' })
+    assert.isNull(error)
+  })
+
+  test('safe() works with request method', async ({ assert }) => {
+    const tuyau = createTestTuyau()
+
+    nock('http://localhost:3333').get('/users').reply(200, { token: '123' })
+
+    const [data, error] = await tuyau.request('users.index', {}).safe()
+
+    assert.deepEqual(data, { token: '123' })
+    assert.isNull(error)
+  })
+
+  test('await still works (throws on error)', async ({ assert }) => {
+    const tuyau = createTestTuyau()
+
+    nock('http://localhost:3333').post('/auth/login').reply(400, { message: 'Invalid' })
+
+    try {
+      await tuyau.api.auth.login({ body: { email: 'foo@ok.com', password: 'bar' } })
+      assert.fail('Expected an error')
+    } catch (error) {
+      assert.instanceOf(error, TuyauHTTPError)
+    }
+  })
+
+  test('catch() still works on TuyauPromise', async ({ assert }) => {
+    const tuyau = createTestTuyau()
+
+    nock('http://localhost:3333').post('/auth/login').reply(400, { message: 'Invalid' })
+
+    let caughtError: any = null
+    await tuyau.api.auth.login({ body: { email: 'foo@ok.com', password: 'bar' } }).catch((err) => {
+      caughtError = err
+    })
+
+    assert.instanceOf(caughtError, TuyauHTTPError)
+  })
+
+  test('finally() still works on TuyauPromise', async ({ assert }) => {
+    const tuyau = createTestTuyau()
+
+    nock('http://localhost:3333').post('/auth/login').reply(200, { token: '123' })
+
+    let finallyCalled = false
+    await tuyau.api.auth
+      .login({ body: { email: 'foo@ok.com', password: 'secret' } })
+      .finally(() => {
+        finallyCalled = true
+      })
+
+    assert.isTrue(finallyCalled)
+  })
+})
+
+test.group('Client | isStatus()', () => {
+  test('isStatus returns true for matching status', async ({ assert }) => {
+    const tuyau = createTestTuyau()
+
+    nock('http://localhost:3333').post('/auth/login').reply(400, { error: 'Bad request' })
+
+    const [, error] = await tuyau.api.auth
+      .login({ body: { email: 'foo@ok.com', password: 'bar' } })
+      .safe()
+
+    assert.isTrue(error!.isStatus(400))
+    assert.isFalse(error!.isStatus(422))
+    assert.isFalse(error!.isStatus(500))
+  })
+
+  test('isStatus returns false for non-matching status', async ({ assert }) => {
+    const tuyau = createTestTuyau()
+
+    nock('http://localhost:3333').post('/auth/login').reply(500, { error: 'Server error' })
+
+    const [, error] = await tuyau.api.auth
+      .login({ body: { email: 'foo@ok.com', password: 'bar' } })
+      .safe()
+
+    assert.isFalse(error!.isStatus(400))
+    assert.isTrue(error!.isStatus(500))
   })
 })

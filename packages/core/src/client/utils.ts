@@ -1,3 +1,5 @@
+import { KyResponse } from 'ky'
+
 /**
  * Remove leading slash from the value
  */
@@ -31,4 +33,17 @@ export function segmentsToKebabRouteName(segments: string[]): string {
   return segments
     .map((segment) => segment.replace(/[A-Z]/g, (g) => `-${g.toLowerCase()}`))
     .join('.')
+}
+
+export async function parseResponse(response?: KyResponse) {
+  if (!response) return
+
+  const responseType = response.headers.get('Content-Type')?.split(';')[0]
+  if (responseType === 'application/json') {
+    return await response.json()
+  } else if (responseType === 'application/octet-stream') {
+    return await response.arrayBuffer()
+  }
+
+  return await response.text()
 }

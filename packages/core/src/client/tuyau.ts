@@ -3,12 +3,14 @@ import ky, { HTTPError, type KyInstance } from 'ky'
 import { createUrlBuilder, type UrlFor } from '@adonisjs/http-server/client/url_builder'
 
 import { TuyauRouter } from './router.ts'
+import { TuyauPromise } from './promise.ts'
 import { buildSearchParams } from './serializer.ts'
-import { parseResponse, TuyauHTTPError, TuyauNetworkError } from './errors.ts'
+import { TuyauHTTPError, TuyauNetworkError } from './errors.ts'
 import {
   isObject,
   isReactNative,
   isServer,
+  parseResponse,
   removeSlash,
   segmentsToKebabRouteName,
   segmentsToRouteName,
@@ -17,6 +19,7 @@ import type {
   AdonisEndpoint,
   CurrentRouteOptions,
   EndpointByMethodPattern,
+  ErrorResponseOf,
   InferRoutes,
   InferTree,
   Method,
@@ -151,62 +154,66 @@ export class Tuyau<
   /**
    * Performs the actual HTTP request with proper body formatting
    */
-  async #doFetch(name: string, method: Method, args: RequestArgs<any>) {
-    const url = this.#buildUrl(name, method, args)
-
-    /**
-     * If the body has a file, then we should move to multipart form data.
-     */
-    let key = 'json'
-    let body = (args as any).body
-    if (!(body instanceof FormData) && this.#hasFile(body)) {
-      body = serialize(body, { indices: true })
-      key = 'body'
-    } else if (body instanceof FormData) {
-      key = 'body'
-    }
-
-    /**
-     * Make the request
-     */
-    const isGetOrHead = ['GET', 'HEAD'].includes(method)
-    const { body: _, responseType: requestedResponseType, ...restArgs } = args as any
-    const requestOptions = {
-      searchParams: buildSearchParams((args as any)?.query || {}),
-      [key]: !isGetOrHead ? body : undefined,
-      ...restArgs,
-    }
-
-    try {
-      // @ts-expect-error tkt
-      const res = await this.#client[this.#getLowercaseMethod(method)](
-        removeSlash(url),
-        requestOptions,
-      )
-
-      let data: any
+  #doFetch(name: string, method: Method, args: RequestArgs<any>): TuyauPromise<any, any> {
+    const promise = (async () => {
+      const url = this.#buildUrl(name, method, args)
 
       /**
-       * Parse the response based on the explicit responseType or the content type
+       * If the body has a file, then we should move to multipart form data.
        */
-      if (requestedResponseType) {
-        data = await res[requestedResponseType]()
-      } else {
-        const contentType = res.headers.get('Content-Type')?.split(';')[0]?.trim()
-        if (contentType === 'application/json') data = await res.json()
-        else if (contentType === 'application/octet-stream') data = await res.arrayBuffer()
-        else data = await res.text()
+      let key = 'json'
+      let body = (args as any).body
+      if (!(body instanceof FormData) && this.#hasFile(body)) {
+        body = serialize(body, { indices: true })
+        key = 'body'
+      } else if (body instanceof FormData) {
+        key = 'body'
       }
 
-      return data
-    } catch (originalError: any) {
-      if (originalError instanceof HTTPError) {
-        const parsedResponse = await parseResponse(originalError.response)
-        throw new TuyauHTTPError(originalError, parsedResponse)
+      /**
+       * Make the request
+       */
+      const isGetOrHead = ['GET', 'HEAD'].includes(method)
+      const { body: _, responseType: requestedResponseType, ...restArgs } = args as any
+      const requestOptions = {
+        searchParams: buildSearchParams((args as any)?.query || {}),
+        [key]: !isGetOrHead ? body : undefined,
+        ...restArgs,
       }
 
-      throw new TuyauNetworkError(originalError, { url, method })
-    }
+      try {
+        // @ts-expect-error tkt
+        const res = await this.#client[this.#getLowercaseMethod(method)](
+          removeSlash(url),
+          requestOptions,
+        )
+
+        let data: any
+
+        /**
+         * Parse the response based on the explicit responseType or the content type
+         */
+        if (requestedResponseType) {
+          data = await res[requestedResponseType]()
+        } else {
+          const contentType = res.headers.get('Content-Type')?.split(';')[0]?.trim()
+          if (contentType === 'application/json') data = await res.json()
+          else if (contentType === 'application/octet-stream') data = await res.arrayBuffer()
+          else data = await res.text()
+        }
+
+        return data
+      } catch (originalError: any) {
+        if (originalError instanceof HTTPError) {
+          const parsedResponse = await parseResponse(originalError.response)
+          throw new TuyauHTTPError(originalError, parsedResponse)
+        }
+
+        throw new TuyauNetworkError(originalError, { url, method })
+      }
+    })()
+
+    return new TuyauPromise(promise)
   }
 
   /**
@@ -237,7 +244,10 @@ export class Tuyau<
   get<P extends PatternsByMethod<Routes, 'GET'>>(
     pattern: P,
     args: RequestArgs<EndpointByMethodPattern<Routes, 'GET', P>>,
-  ): Promise<EndpointByMethodPattern<Routes, 'GET', P>['types']['response']> {
+  ): TuyauPromise<
+    EndpointByMethodPattern<Routes, 'GET', P>['types']['response'],
+    ErrorResponseOf<EndpointByMethodPattern<Routes, 'GET', P>>
+  > {
     return this.#request('GET', pattern, args)
   }
 
@@ -247,7 +257,10 @@ export class Tuyau<
   post<P extends PatternsByMethod<Routes, 'POST'>>(
     pattern: P,
     args: RequestArgs<EndpointByMethodPattern<Routes, 'POST', P>>,
-  ): Promise<EndpointByMethodPattern<Routes, 'POST', P>['types']['response']> {
+  ): TuyauPromise<
+    EndpointByMethodPattern<Routes, 'POST', P>['types']['response'],
+    ErrorResponseOf<EndpointByMethodPattern<Routes, 'POST', P>>
+  > {
     return this.#request('POST', pattern, args)
   }
 
@@ -257,7 +270,10 @@ export class Tuyau<
   put<P extends PatternsByMethod<Routes, 'PUT'>>(
     pattern: P,
     args: RequestArgs<EndpointByMethodPattern<Routes, 'PUT', P>>,
-  ): Promise<EndpointByMethodPattern<Routes, 'PUT', P>['types']['response']> {
+  ): TuyauPromise<
+    EndpointByMethodPattern<Routes, 'PUT', P>['types']['response'],
+    ErrorResponseOf<EndpointByMethodPattern<Routes, 'PUT', P>>
+  > {
     return this.#request('PUT', pattern, args)
   }
 
@@ -267,7 +283,10 @@ export class Tuyau<
   patch<P extends PatternsByMethod<Routes, 'PATCH'>>(
     pattern: P,
     args: RequestArgs<EndpointByMethodPattern<Routes, 'PATCH', P>>,
-  ): Promise<EndpointByMethodPattern<Routes, 'PATCH', P>['types']['response']> {
+  ): TuyauPromise<
+    EndpointByMethodPattern<Routes, 'PATCH', P>['types']['response'],
+    ErrorResponseOf<EndpointByMethodPattern<Routes, 'PATCH', P>>
+  > {
     return this.#request('PATCH', pattern, args)
   }
 
@@ -277,7 +296,10 @@ export class Tuyau<
   delete<P extends PatternsByMethod<Routes, 'DELETE'>>(
     pattern: P,
     args: RequestArgs<EndpointByMethodPattern<Routes, 'DELETE', P>>,
-  ): Promise<EndpointByMethodPattern<Routes, 'DELETE', P>['types']['response']> {
+  ): TuyauPromise<
+    EndpointByMethodPattern<Routes, 'DELETE', P>['types']['response'],
+    ErrorResponseOf<EndpointByMethodPattern<Routes, 'DELETE', P>>
+  > {
     return this.#request('DELETE', pattern, args)
   }
 
@@ -287,7 +309,10 @@ export class Tuyau<
   head<P extends PatternsByMethod<Routes, 'HEAD'>>(
     pattern: P,
     args: RequestArgs<EndpointByMethodPattern<Routes, 'HEAD', P>>,
-  ): Promise<EndpointByMethodPattern<Routes, 'HEAD', P>['types']['response']> {
+  ): TuyauPromise<
+    EndpointByMethodPattern<Routes, 'HEAD', P>['types']['response'],
+    ErrorResponseOf<EndpointByMethodPattern<Routes, 'HEAD', P>>
+  > {
     return this.#request('HEAD', pattern, args)
   }
 
@@ -297,8 +322,9 @@ export class Tuyau<
   request<Name extends StrKeys<Routes>>(
     name: Name,
     args: RequestArgs<Routes[Name]>,
-  ): Promise<Routes[Name]['types']['response']> {
+  ): TuyauPromise<Routes[Name]['types']['response'], ErrorResponseOf<Routes[Name]>> {
     const def = this.#config.registry.routes[name]
+
     return this.#doFetch(name, def.methods[0], args)
   }
 
@@ -354,10 +380,7 @@ export class Tuyau<
    *   and/or query match the provided values.
    */
   current(): StrKeys<Routes> | undefined
-  current(
-    routeName: StrKeys<Routes> | (string & {}),
-    options?: CurrentRouteOptions,
-  ): boolean
+  current(routeName: StrKeys<Routes> | (string & {}), options?: CurrentRouteOptions): boolean
   current(
     routeName?: StrKeys<Routes> | (string & {}),
     options?: CurrentRouteOptions,

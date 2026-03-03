@@ -217,6 +217,19 @@ function wrapResponseType(responseType: string): string {
 }
 
 /**
+ * Wrap response type with ExtractErrorResponse and Awaited to extract non-2xx error types
+ */
+function wrapErrorResponseType(responseType: string): string {
+  if (responseType === 'unknown' || responseType === '{}') return 'unknown'
+
+  if (responseType.startsWith('ReturnType<')) {
+    return `ExtractErrorResponse<Awaited<${responseType}>>`
+  }
+
+  return `ExtractErrorResponse<${responseType}>`
+}
+
+/**
  * Determine body and query types based on HTTP method and validator presence
  *
  * For GET/HEAD: use ExtractQueryForGet to exclude headers/cookies/params from query
@@ -248,7 +261,9 @@ function determineBodyAndQueryTypes(options: { methods: string[]; requestType: s
  */
 function generateTypesRegistryEntry(route: ScannedRoute): string {
   const requestType = normalizeImportPaths(route.request?.type || '{}')
-  const responseType = wrapResponseType(route.response?.type || 'unknown')
+  const rawResponseType = route.response?.type || 'unknown'
+  const responseType = wrapResponseType(rawResponseType)
+  const errorResponseType = wrapErrorResponseType(rawResponseType)
   const { paramsType, paramsTuple } = generateRouteParams(route)
   const routeName = route.name
 
@@ -266,6 +281,7 @@ function generateTypesRegistryEntry(route: ScannedRoute): string {
       params: ${paramsType ? `{ ${paramsType} }` : '{}'}
       query: ${queryType}
       response: ${responseType}
+      errorResponse: ${errorResponseType}
     }
   }`
 }
@@ -328,7 +344,7 @@ function generateTypesContent(routes: ScannedRoute[]): string {
   return `/* eslint-disable prettier/prettier */
 /// <reference path="../manifest.d.ts" />
 
-import type { ExtractBody, ExtractQuery, ExtractQueryForGet, ExtractResponse } from '@tuyau/core/types'
+import type { ExtractBody, ExtractErrorResponse, ExtractQuery, ExtractQueryForGet, ExtractResponse } from '@tuyau/core/types'
 import type { InferInput } from '@vinejs/vine/types'
 
 export type ParamValue = string | number | bigint | boolean

@@ -38,4 +38,12 @@ export interface ApiDefinition {
     store: typeof routes['session.store']
     destroy: typeof routes['session.destroy']
   }
+  contacts: {
+    page: typeof routes['contacts.page']
+    list: typeof routes['contacts.list']
+    show: typeof routes['contacts.show']
+    store: typeof routes['contacts.store']
+    update: typeof routes['contacts.update']
+    delete: typeof routes['contacts.delete']
+  }
 }

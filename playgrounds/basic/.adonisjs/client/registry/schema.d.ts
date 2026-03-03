@@ -1,8 +1,10 @@
 /* eslint-disable prettier/prettier */
 /// <reference path="../manifest.d.ts" />
 
-import type { ExtractBody, ExtractQuery, ExtractQueryForGet } from '@tuyau/core/types'
+import type { ExtractBody, ExtractErrorResponse, ExtractQuery, ExtractQueryForGet, ExtractResponse } from '@tuyau/core/types'
 import type { InferInput } from '@vinejs/vine/types'
+
+export type ParamValue = string | number | bigint | boolean
 
 export interface Registry {
   'home': {
@@ -14,6 +16,7 @@ export interface Registry {
       params: {}
       query: {}
       response: unknown
+      errorResponse: unknown
     }
   }
   'posts.page': {
@@ -25,6 +28,7 @@ export interface Registry {
       params: {}
       query: {}
       response: unknown
+      errorResponse: unknown
     }
   }
   'products.page': {
@@ -36,6 +40,7 @@ export interface Registry {
       params: {}
       query: {}
       response: unknown
+      errorResponse: unknown
     }
   }
   'users.page': {
@@ -47,6 +52,7 @@ export interface Registry {
       params: {}
       query: {}
       response: unknown
+      errorResponse: unknown
     }
   }
   'accounts.create': {
@@ -57,7 +63,8 @@ export interface Registry {
       paramsTuple: []
       params: {}
       query: {}
-      response: Awaited<ReturnType<import('#controllers/accounts_controller').default['create']>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/accounts_controller').default['create']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/accounts_controller').default['create']>>>
     }
   }
   'accounts.store': {
@@ -68,7 +75,8 @@ export interface Registry {
       paramsTuple: []
       params: {}
       query: ExtractQuery<InferInput<(typeof import('#validators/user').signupValidator)>>
-      response: Awaited<ReturnType<import('#controllers/accounts_controller').default['store']>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/accounts_controller').default['store']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/accounts_controller').default['store']>>>
     }
   }
   'accounts.upload_profile_picture': {
@@ -79,7 +87,8 @@ export interface Registry {
       paramsTuple: []
       params: {}
       query: ExtractQuery<InferInput<(typeof import('#controllers/accounts_controller').default)['uploadProfilePictureValidator']>>
-      response: Awaited<ReturnType<import('#controllers/accounts_controller').default['uploadProfilePicture']>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/accounts_controller').default['uploadProfilePicture']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/accounts_controller').default['uploadProfilePicture']>>>
     }
   }
   'session.create': {
@@ -90,7 +99,8 @@ export interface Registry {
       paramsTuple: []
       params: {}
       query: {}
-      response: Awaited<ReturnType<import('#controllers/session_controller').default['create']>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/session_controller').default['create']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/session_controller').default['create']>>>
     }
   }
   'session.store': {
@@ -101,7 +111,8 @@ export interface Registry {
       paramsTuple: []
       params: {}
       query: {}
-      response: Awaited<ReturnType<import('#controllers/session_controller').default['store']>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/session_controller').default['store']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/session_controller').default['store']>>>
     }
   }
   'session.destroy': {
@@ -112,7 +123,8 @@ export interface Registry {
       paramsTuple: []
       params: {}
       query: {}
-      response: Awaited<ReturnType<import('#controllers/session_controller').default['destroy']>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/session_controller').default['destroy']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/session_controller').default['destroy']>>>
     }
   }
   'users.list': {
@@ -123,7 +135,8 @@ export interface Registry {
       paramsTuple: []
       params: {}
       query: {}
-      response: Awaited<ReturnType<import('#controllers/users_controller').default['list']>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/users_controller').default['list']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/users_controller').default['list']>>>
     }
   }
   'users.show': {
@@ -131,10 +144,11 @@ export interface Registry {
     pattern: '/users/:id'
     types: {
       body: {}
-      paramsTuple: [string]
-      params: { id: string }
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
       query: {}
-      response: Awaited<ReturnType<import('#controllers/users_controller').default['show']>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/users_controller').default['show']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/users_controller').default['show']>>>
     }
   }
   'users.store': {
@@ -145,7 +159,8 @@ export interface Registry {
       paramsTuple: []
       params: {}
       query: ExtractQuery<InferInput<(typeof import('#controllers/users_controller').default)['createValidator']>>
-      response: Awaited<ReturnType<import('#controllers/users_controller').default['store']>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/users_controller').default['store']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/users_controller').default['store']>>>
     }
   }
   'users.update': {
@@ -153,10 +168,11 @@ export interface Registry {
     pattern: '/users/:id'
     types: {
       body: ExtractBody<InferInput<(typeof import('#controllers/users_controller').default)['updateValidator']>>
-      paramsTuple: [string]
-      params: { id: string }
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
       query: ExtractQuery<InferInput<(typeof import('#controllers/users_controller').default)['updateValidator']>>
-      response: Awaited<ReturnType<import('#controllers/users_controller').default['update']>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/users_controller').default['update']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/users_controller').default['update']>>>
     }
   }
   'users.delete': {
@@ -164,10 +180,11 @@ export interface Registry {
     pattern: '/users/:id'
     types: {
       body: {}
-      paramsTuple: [string]
-      params: { id: string }
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
       query: {}
-      response: Awaited<ReturnType<import('#controllers/users_controller').default['delete']>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/users_controller').default['delete']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/users_controller').default['delete']>>>
     }
   }
   'posts.list': {
@@ -178,7 +195,8 @@ export interface Registry {
       paramsTuple: []
       params: {}
       query: ExtractQueryForGet<InferInput<(typeof import('#controllers/posts_controller').default)['listValidator']>>
-      response: Awaited<ReturnType<import('#controllers/posts_controller').default['list']>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/posts_controller').default['list']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/posts_controller').default['list']>>>
     }
   }
   'posts.show': {
@@ -186,10 +204,11 @@ export interface Registry {
     pattern: '/posts/:id'
     types: {
       body: {}
-      paramsTuple: [string]
-      params: { id: string }
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
       query: {}
-      response: Awaited<ReturnType<import('#controllers/posts_controller').default['show']>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/posts_controller').default['show']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/posts_controller').default['show']>>>
     }
   }
   'posts.store': {
@@ -200,7 +219,8 @@ export interface Registry {
       paramsTuple: []
       params: {}
       query: ExtractQuery<InferInput<(typeof import('#controllers/posts_controller').default)['createValidator']>>
-      response: Awaited<ReturnType<import('#controllers/posts_controller').default['store']>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/posts_controller').default['store']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/posts_controller').default['store']>>>
     }
   }
   'posts.update': {
@@ -208,10 +228,11 @@ export interface Registry {
     pattern: '/posts/:id'
     types: {
       body: ExtractBody<InferInput<(typeof import('#controllers/posts_controller').default)['updateValidator']>>
-      paramsTuple: [string]
-      params: { id: string }
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
       query: ExtractQuery<InferInput<(typeof import('#controllers/posts_controller').default)['updateValidator']>>
-      response: Awaited<ReturnType<import('#controllers/posts_controller').default['update']>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/posts_controller').default['update']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/posts_controller').default['update']>>>
     }
   }
   'posts.delete': {
@@ -219,10 +240,83 @@ export interface Registry {
     pattern: '/posts/:id'
     types: {
       body: {}
-      paramsTuple: [string]
-      params: { id: string }
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
       query: {}
-      response: Awaited<ReturnType<import('#controllers/posts_controller').default['delete']>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/posts_controller').default['delete']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/posts_controller').default['delete']>>>
+    }
+  }
+  'contacts.page': {
+    methods: ["GET","HEAD"]
+    pattern: '/contacts-page'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: unknown
+      errorResponse: unknown
+    }
+  }
+  'contacts.list': {
+    methods: ["GET","HEAD"]
+    pattern: '/contacts'
+    types: {
+      body: {}
+      paramsTuple: []
+      params: {}
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/contacts_controller').default['list']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/contacts_controller').default['list']>>>
+    }
+  }
+  'contacts.show': {
+    methods: ["GET","HEAD"]
+    pattern: '/contacts/:id'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/contacts_controller').default['show']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/contacts_controller').default['show']>>>
+    }
+  }
+  'contacts.store': {
+    methods: ["POST"]
+    pattern: '/contacts'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#controllers/contacts_controller').default)['createValidator']>>
+      paramsTuple: []
+      params: {}
+      query: ExtractQuery<InferInput<(typeof import('#controllers/contacts_controller').default)['createValidator']>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/contacts_controller').default['store']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/contacts_controller').default['store']>>>
+    }
+  }
+  'contacts.update': {
+    methods: ["PUT"]
+    pattern: '/contacts/:id'
+    types: {
+      body: ExtractBody<InferInput<(typeof import('#controllers/contacts_controller').default)['updateValidator']>>
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
+      query: ExtractQuery<InferInput<(typeof import('#controllers/contacts_controller').default)['updateValidator']>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/contacts_controller').default['update']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/contacts_controller').default['update']>>>
+    }
+  }
+  'contacts.delete': {
+    methods: ["DELETE"]
+    pattern: '/contacts/:id'
+    types: {
+      body: {}
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
+      query: {}
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/contacts_controller').default['delete']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/contacts_controller').default['delete']>>>
     }
   }
   'products.search': {
@@ -233,7 +327,8 @@ export interface Registry {
       paramsTuple: []
       params: {}
       query: ExtractQueryForGet<InferInput<(typeof import('#controllers/products_controller').default)['searchValidator']>>
-      response: Awaited<ReturnType<import('#controllers/products_controller').default['search']>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/products_controller').default['search']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/products_controller').default['search']>>>
     }
   }
   'products.categories': {
@@ -244,7 +339,8 @@ export interface Registry {
       paramsTuple: []
       params: {}
       query: {}
-      response: Awaited<ReturnType<import('#controllers/products_controller').default['categories']>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/products_controller').default['categories']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/products_controller').default['categories']>>>
     }
   }
   'products.by_category': {
@@ -252,10 +348,11 @@ export interface Registry {
     pattern: '/products/category/:category'
     types: {
       body: {}
-      paramsTuple: [string]
-      params: { category: string }
+      paramsTuple: [ParamValue]
+      params: { category: ParamValue }
       query: {}
-      response: Awaited<ReturnType<import('#controllers/products_controller').default['byCategory']>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/products_controller').default['byCategory']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/products_controller').default['byCategory']>>>
     }
   }
   'products.show': {
@@ -263,10 +360,11 @@ export interface Registry {
     pattern: '/products/:id'
     types: {
       body: {}
-      paramsTuple: [string]
-      params: { id: string }
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
       query: {}
-      response: Awaited<ReturnType<import('#controllers/products_controller').default['show']>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/products_controller').default['show']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/products_controller').default['show']>>>
     }
   }
   'products.store': {
@@ -277,7 +375,8 @@ export interface Registry {
       paramsTuple: []
       params: {}
       query: ExtractQuery<InferInput<(typeof import('#controllers/products_controller').default)['createValidator']>>
-      response: Awaited<ReturnType<import('#controllers/products_controller').default['store']>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/products_controller').default['store']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/products_controller').default['store']>>>
     }
   }
   'products.delete': {
@@ -285,10 +384,11 @@ export interface Registry {
     pattern: '/products/:id'
     types: {
       body: {}
-      paramsTuple: [string]
-      params: { id: string }
+      paramsTuple: [ParamValue]
+      params: { id: ParamValue }
       query: {}
-      response: Awaited<ReturnType<import('#controllers/products_controller').default['delete']>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/products_controller').default['delete']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/products_controller').default['delete']>>>
     }
   }
 }

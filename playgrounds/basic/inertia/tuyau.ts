@@ -1,6 +1,6 @@
 import { registry } from '~generated/registry'
-import { createTuyau } from '@tuyau/core/client'
 import { QueryClient } from '@tanstack/react-query'
+import { createTuyau, type Route } from '@tuyau/core/client'
 import { createTuyauReactQueryClient } from '@tuyau/react-query'
 
 export const client = createTuyau({
@@ -9,6 +9,7 @@ export const client = createTuyau({
   headers: { Accept: 'application/json' },
 })
 export const urlFor = client.urlFor
+export type { Route }
 
 export const queryClient = new QueryClient()
 

@@ -11,6 +11,7 @@ export interface ApiDefinition {
     login: Routes['auth.login'] & {
       show: Routes['auth.login.show']
     }
+    register: Routes['auth.register']
   }
   users: {
     index: Routes['users.index']
