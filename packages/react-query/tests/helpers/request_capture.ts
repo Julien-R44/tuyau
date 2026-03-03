@@ -62,10 +62,10 @@ export function withRequestCapture<T extends Tuyau<any>>(client: T) {
   const capture = new RequestCapture()
 
   const originalRequest = client.request.bind(client)
-  client.request = async (routeName: string, opts?: any) => {
+  client.request = ((routeName: string, opts?: any) => {
     capture.push({ routeName, options: opts || {} })
     return originalRequest(routeName as any, opts)
-  }
+  }) as typeof client.request
 
   return { client, capture }
 }

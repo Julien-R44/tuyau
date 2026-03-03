@@ -126,10 +126,10 @@ test.group('Infinite Query', () => {
     })
 
     const originalRequest = client.request.bind(client)
-    client.request = async (routeName: string, opts?: any) => {
+    client.request = ((routeName: string, opts?: any) => {
       capturedOptions = opts
       return originalRequest(routeName as any, opts)
-    }
+    }) as typeof client.request
 
     const tuyau = createTuyauReactQueryClient({ client })
 
