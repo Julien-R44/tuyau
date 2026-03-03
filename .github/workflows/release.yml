@@ -1,8 +1,13 @@
 name: release
-on: workflow_dispatch
+on:
+  push:
+    branches: [main]
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 permissions:
   contents: write
+  pull-requests: write
   id-token: write
 
 jobs:
@@ -15,8 +20,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -29,26 +32,17 @@ jobs:
           corepack enable
           corepack prepare pnpm@latest --activate
 
-      - name: Configure git
-        run: |
-          git config user.name "${GITHUB_ACTOR}"
-          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
-
       - name: Install dependencies
         run: pnpm install
 
-      - name: Version packages
-        run: pnpm changeset version
-
-      - name: Commit version changes
-        run: |
-          git add .
-          git diff --staged --quiet || git commit -m "chore(release): version packages"
-
-      - name: Build and publish
-        run: pnpm run release
+      - name: Create release PR or publish
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          version: pnpm changeset version
+          publish: pnpm run release
+          title: 'chore(release): version packages'
+          commit: 'chore(release): version packages'
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Push changes and tags
-        run: git push --follow-tags
