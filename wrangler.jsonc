@@ -4,8 +4,7 @@
   "compatibility_date": "2025-06-27",
   "compatibility_flags": ["nodejs_compat_v2"],
   "assets": {
-    "directory": "docs/dist",
-    "not_found_handling": "single-page-application",
+    "directory": "docs",
   },
   "observability": {
     "enabled": true,

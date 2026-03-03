@@ -1,0 +1,11 @@
+# Tuyau docs have moved to docs.adonisjs.com
+
+/docs/introduction https://docs.adonisjs.com/guides/frontend/api-client 301
+/docs/installation https://docs.adonisjs.com/guides/frontend/api-client#installation 301
+/docs/client https://docs.adonisjs.com/guides/frontend/api-client#making-api-calls 301
+/docs/inertia https://docs.adonisjs.com/guides/frontend/api-client 301
+/docs/superjson https://docs.adonisjs.com/guides/frontend/api-client#type-level-serialization 301
+/docs/openapi https://docs.adonisjs.com/guides/frontend/api-client 301
+/docs/next-js https://docs.adonisjs.com/guides/frontend/api-client 301
+/docs/* https://docs.adonisjs.com/guides/frontend/api-client 301
+/* https://docs.adonisjs.com/guides/frontend/api-client 301
