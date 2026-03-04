@@ -2,7 +2,6 @@
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "tuyau",
   "compatibility_date": "2025-06-27",
-  "compatibility_flags": ["nodejs_compat_v2"],
   "assets": {
     "directory": "docs",
   },
