@@ -22,7 +22,7 @@ export default function Products() {
         maxPrice,
         inStock: inStockOnly || undefined,
       },
-    })
+    }),
   )
 
   // Test: Categories query (no params)
@@ -32,16 +32,16 @@ export default function Products() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const byCategoryQuery = useQuery(
     query.products.byCategory.queryOptions(
-      selectedCategory ? { params: { category: selectedCategory } } : skipToken
-    )
+      selectedCategory ? { params: { category: selectedCategory } } : skipToken,
+    ),
   )
 
   // Test: Single product with route param
   const [selectedProductId, setSelectedProductId] = useState<number | null>(null)
   const productQuery = useQuery(
     query.products.show.queryOptions(
-      selectedProductId ? { params: { id: selectedProductId.toString() } } : skipToken
-    )
+      selectedProductId ? { params: { id: selectedProductId.toString() } } : skipToken,
+    ),
   )
 
   // Test: Create product mutation
@@ -51,7 +51,7 @@ export default function Products() {
         queryClient.invalidateQueries(query.products.search.pathFilter())
         queryClient.invalidateQueries(query.products.categories.pathFilter())
       },
-    })
+    }),
   )
 
   // Test: Delete product mutation
@@ -61,7 +61,7 @@ export default function Products() {
         queryClient.invalidateQueries(query.products.search.pathFilter())
         setSelectedProductId(null)
       },
-    })
+    }),
   )
 
   // Test: Direct URL building
@@ -644,7 +644,7 @@ export default function Products() {
                       'queryKey()': query.products.search.queryKey(),
                     },
                     null,
-                    2
+                    2,
                   )}
                 </pre>
               </div>

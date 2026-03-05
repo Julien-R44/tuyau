@@ -49,7 +49,7 @@ export default class ProductsController {
    */
   async search({ request }: HttpContext) {
     const { q, category, minPrice, maxPrice, inStock } = await request.validateUsing(
-      ProductsController.searchValidator
+      ProductsController.searchValidator,
     )
 
     let filtered = [...products]

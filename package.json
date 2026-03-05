@@ -24,7 +24,8 @@
   ],
   "scripts": {
     "typecheck": "pnpm run --parallel typecheck",
-    "lint": "eslint .",
+    "lint": "oxlint .",
+    "format": "oxfmt --write .",
     "test": "pnpm run --parallel --filter=!@tuyau/playground* test",
     "build": "pnpm run -r --filter=!@tuyau/playground* build",
     "checks": "pnpm lint && pnpm typecheck && pnpm test",
@@ -39,15 +40,14 @@
     "@japa/file-system": "^3.0.0",
     "@japa/runner": "^5.0.0",
     "@japa/snapshot": "^2.0.10",
-    "@julr/tooling-configs": "^5.0.0",
     "@poppinss/ts-exec": "^1.4.1",
     "@types/node": "^25.0.3",
     "c8": "^10.1.3",
     "copyfiles": "^2.4.1",
     "del-cli": "^7.0.0",
-    "eslint": "^9.39.2",
     "nock": "^14.0.10",
-    "prettier": "^3.7.4",
+    "oxfmt": "^0.36.0",
+    "oxlint": "^1.51.0",
     "tsup": "^8.5.1",
     "typescript": "^5.9.3",
     "vite": "^7.3.0",
@@ -58,6 +58,5 @@
       "better-sqlite3",
       "esbuild"
     ]
-  },
-  "prettier": "@julr/tooling-configs/prettier"
+  }
 }

@@ -14,7 +14,7 @@ export default function render(page: any) {
       return resolvePageComponent(
         `./pages/${name}.tsx`,
         import.meta.glob('./pages/**/*.tsx', { eager: true }),
-        (page: ReactElement<Data.SharedProps>) => <Layout children={page} />
+        (page: ReactElement<Data.SharedProps>) => <Layout children={page} />,
       )
     },
     setup: ({ App, props }) => {

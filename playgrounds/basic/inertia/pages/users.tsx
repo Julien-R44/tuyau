@@ -26,7 +26,7 @@ export default function Users() {
         setNewUserEmail('')
         setNewUserPassword('')
       },
-    })
+    }),
   )
 
   // Update mutation
@@ -36,7 +36,7 @@ export default function Users() {
         queryClient.invalidateQueries({ queryKey: query.users.list.pathKey() })
         setEditingUser(null)
       },
-    })
+    }),
   )
 
   // Delete mutation
@@ -45,7 +45,7 @@ export default function Users() {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: query.users.list.pathKey() })
       },
-    })
+    }),
   )
 
   const users = usersQuery.data?.users || []

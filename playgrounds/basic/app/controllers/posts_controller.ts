@@ -51,7 +51,7 @@ export default class PostsController {
       filteredPosts = filteredPosts.filter(
         (p) =>
           p.title.toLowerCase().includes(searchLower) ||
-          p.content.toLowerCase().includes(searchLower)
+          p.content.toLowerCase().includes(searchLower),
       )
     }
 

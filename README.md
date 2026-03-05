@@ -13,7 +13,7 @@ Set of tools to create typesafe APIs using AdonisJS. The monorepo includes the f
 - `@tuyau/react-query` : Tanstack Query integration for Tuyau.
 - `@tuyau/superjson` : Make [SuperJSON](https://github.com/flightcontrolhq/superjson) work seamlessly with Tuyau and AdonisJS.
 
-See documentation at [docs.adonisjs.com]([https://tuyau.julr.dev](https://docs.adonisjs.com/guides/frontend/api-client)).
+See documentation at [docs.adonisjs.com](<[https://tuyau.julr.dev](https://docs.adonisjs.com/guides/frontend/api-client)>).
 
 ## Sponsors
 

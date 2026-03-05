@@ -1,0 +1,25 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["eslint", "node", "oxc", "typescript", "promise"],
+  "categories": {
+    "correctness": "off"
+  },
+  "env": {
+    "builtin": true
+  },
+  "ignorePatterns": [
+    "*.min.*",
+    "*.d.ts",
+    "CHANGELOG.md",
+    "dist/**",
+    "LICENSE*",
+    "output/**",
+    "coverage/**",
+    "temp/**",
+    "build/**",
+    ".yalc/**",
+    "pnpm-lock.yaml",
+    "yarn.lock",
+    "package-lock.json"
+  ]
+}

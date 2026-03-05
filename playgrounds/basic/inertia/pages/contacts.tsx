@@ -44,7 +44,7 @@ export default function Contacts() {
         // error.response is narrowed to { message: string, existingEmail: string }
         log(
           'error',
-          `Conflict! ${error.response.message} (existing: ${error.response.existingEmail})`
+          `Conflict! ${error.response.message} (existing: ${error.response.existingEmail})`,
         )
         return
       }

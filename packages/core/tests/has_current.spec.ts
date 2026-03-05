@@ -55,7 +55,10 @@ test.group('matchPathAgainstPattern', () => {
   test('matches dynamic params', ({ assert }) => {
     assert.deepEqual(TuyauRouter.matchPathAgainstPattern('/users/42', '/users/:id'), { id: '42' })
     assert.deepEqual(
-      TuyauRouter.matchPathAgainstPattern('/posts/1/comments/2', '/posts/:postId/comments/:commentId'),
+      TuyauRouter.matchPathAgainstPattern(
+        '/posts/1/comments/2',
+        '/posts/:postId/comments/:commentId',
+      ),
       { postId: '1', commentId: '2' },
     )
     assert.isNull(TuyauRouter.matchPathAgainstPattern('/users', '/users/:id'))

@@ -18,8 +18,8 @@ export default function Posts() {
         initialPageParam: 1,
         getNextPageParam: (lastPage) => lastPage.meta.nextPage,
         pageParamKey: 'page',
-      }
-    )
+      },
+    ),
   )
 
   // Test: Single post query with route param
@@ -27,8 +27,8 @@ export default function Posts() {
   const singlePostQuery = useQuery(
     query.posts.show.queryOptions(
       selectedPostId ? { params: { id: selectedPostId.toString() } } : skipToken,
-      { enabled: !!selectedPostId }
-    )
+      { enabled: !!selectedPostId },
+    ),
   )
 
   // Test: Create mutation with body payload
@@ -39,7 +39,7 @@ export default function Posts() {
         setNewPostTitle('')
         setNewPostContent('')
       },
-    })
+    }),
   )
 
   // Test: Update mutation with route param + body
@@ -53,7 +53,7 @@ export default function Posts() {
           })
         }
       },
-    })
+    }),
   )
 
   // Test: Delete mutation with route param
@@ -63,7 +63,7 @@ export default function Posts() {
         queryClient.invalidateQueries({ queryKey: query.posts.list.pathKey() })
         setSelectedPostId(null)
       },
-    })
+    }),
   )
 
   // Test: Direct urlFor usage
@@ -547,7 +547,7 @@ export default function Posts() {
                       }),
                     },
                     null,
-                    2
+                    2,
                   )}
                 </pre>
               </div>

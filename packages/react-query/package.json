@@ -33,7 +33,7 @@
     "node": ">=24.0.0"
   },
   "scripts": {
-    "lint": "eslint .",
+    "lint": "oxlint .",
     "typecheck": "tsc --noEmit",
     "build": "tsup-node",
     "test": "pnpm quick:test",

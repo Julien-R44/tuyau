@@ -18,7 +18,7 @@ export default class GuestMiddleware {
   async handle(
     ctx: HttpContext,
     next: NextFn,
-    options: { guards?: (keyof Authenticators)[] } = {}
+    options: { guards?: (keyof Authenticators)[] } = {},
   ) {
     for (const guard of options.guards || [ctx.auth.defaultGuard]) {
       if (await ctx.auth.use(guard).check()) {

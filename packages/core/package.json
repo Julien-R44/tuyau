@@ -39,7 +39,7 @@
     "clean": "del-cli build",
     "copy:templates": "copyfiles --up 1 \"stubs/**/*.stub\" build",
     "typecheck": "tsc --noEmit",
-    "format": "prettier --write .",
+    "format": "oxfmt --write .",
     "quick:test": "node --import=@poppinss/ts-exec --enable-source-maps bin/test.ts --force-exit",
     "test": "c8 npm run quick:test",
     "index:commands": "adonis-kit index build/commands",

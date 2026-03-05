@@ -18,14 +18,14 @@ createInertiaApp({
     return resolvePageComponent(
       `./pages/${name}.tsx`,
       import.meta.glob('./pages/**/*.tsx'),
-      (page: ReactElement<Data.SharedProps>) => <Layout children={page} />
+      (page: ReactElement<Data.SharedProps>) => <Layout children={page} />,
     )
   },
   setup({ el, App, props }) {
     createRoot(el).render(
       <QueryClientProvider client={queryClient}>
         <App {...props} />
-      </QueryClientProvider>
+      </QueryClientProvider>,
     )
   },
   progress: {
