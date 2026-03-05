@@ -1,9 +1,9 @@
-import './types.js'
+import './types.ts'
 
 import type { AllHooks } from '@adonisjs/assembler/types'
 
-import { RegistryGenerator } from './registry_generator.js'
-import { GenerateRegistryConfig } from './types.js'
+import { RegistryGenerator } from './registry_generator.ts'
+import { GenerateRegistryConfig } from './types.ts'
 
 /**
  * AdonisJS assembler hook that scans routes and generates
