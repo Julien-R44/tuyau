@@ -120,10 +120,14 @@ test.group('generateTypesContent | validation error injection', () => {
     const withDefault = new RegistryGenerator().generateTypesContent(routes)
     assert.match(withDefault, /import type \{.*SimpleError.*\} from '@vinejs\/vine\/types'/)
 
-    const withCustom = new RegistryGenerator({ validationErrorType: 'MyError' }).generateTypesContent(routes)
+    const withCustom = new RegistryGenerator({
+      validationErrorType: 'MyError',
+    }).generateTypesContent(routes)
     assert.notMatch(withCustom, /import type \{.*SimpleError.*\} from '@vinejs\/vine\/types'/)
 
-    const withDisabled = new RegistryGenerator({ validationErrorType: false }).generateTypesContent(routes)
+    const withDisabled = new RegistryGenerator({ validationErrorType: false }).generateTypesContent(
+      routes,
+    )
     assert.notMatch(withDisabled, /import type \{.*SimpleError.*\} from '@vinejs\/vine\/types'/)
   })
 
@@ -206,10 +210,10 @@ test.group('generateTreeContent', () => {
     const content = generator.generateTreeContent(routes)
 
     assert.include(content, 'export interface ApiDefinition')
-    assert.include(content, "auth: {")
+    assert.include(content, 'auth: {')
     assert.include(content, "login: typeof routes['auth.login']")
     assert.include(content, "register: typeof routes['auth.register']")
-    assert.include(content, "users: {")
+    assert.include(content, 'users: {')
     assert.include(content, "index: typeof routes['users.index']")
   })
 
@@ -254,7 +258,10 @@ test.group('generate (full pipeline)', () => {
         name: 'users.store',
         methods: ['POST'],
         pattern: '/users',
-        request: { type: "InferInput<typeof import('app/validators/user.ts').default>", imports: [] },
+        request: {
+          type: "InferInput<typeof import('app/validators/user.ts').default>",
+          imports: [],
+        },
       }),
     ]
 

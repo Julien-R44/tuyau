@@ -98,7 +98,8 @@ export class RegistryGenerator {
    */
   #wrapErrorResponseType(responseType: string): string {
     if (responseType === 'unknown' || responseType === '{}') return 'unknown'
-    if (responseType.startsWith('ReturnType<')) return `ExtractErrorResponse<Awaited<${responseType}>>`
+    if (responseType.startsWith('ReturnType<'))
+      return `ExtractErrorResponse<Awaited<${responseType}>>`
 
     return `ExtractErrorResponse<${responseType}>`
   }
@@ -257,7 +258,9 @@ export class RegistryGenerator {
    * with route definitions and module augmentation.
    */
   generateRuntimeContent(routes: ScannedRoute[]): string {
-    const registryEntries = routes.map((route) => this.generateRuntimeRegistryEntry(route)).join(',\n')
+    const registryEntries = routes
+      .map((route) => this.generateRuntimeRegistryEntry(route))
+      .join(',\n')
 
     return `/* eslint-disable prettier/prettier */
 import type { AdonisEndpoint } from '@tuyau/core/types'
@@ -291,9 +294,7 @@ declare module '@tuyau/core/types' {
    * with request/response type definitions for each route.
    */
   generateTypesContent(routes: ScannedRoute[]): string {
-    const registryEntries = routes
-      .map((route) => this.generateTypesRegistryEntry(route))
-      .join('\n')
+    const registryEntries = routes.map((route) => this.generateTypesRegistryEntry(route)).join('\n')
 
     const useDefaultValidationType = this.#validationErrorType === DEFAULT_VALIDATION_ERROR_TYPE
     const coreImports = [
@@ -336,7 +337,6 @@ ${treeInterface}
 }
 `
   }
-
 
   /**
    * Write a file to disk, creating parent directories if needed.

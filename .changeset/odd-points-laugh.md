@@ -32,7 +32,7 @@ const [data, error] = await tuyau.api.auth
 
 if (error) {
   console.log(error.message) // "Request failed with status code 400: POST /auth/login"
-  console.log(error.status)  // 400
+  console.log(error.status) // 400
   return
 }
 
