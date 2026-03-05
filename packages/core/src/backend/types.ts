@@ -54,3 +54,35 @@ declare module '@adonisjs/core/http' {
     json<T>(body: T, generateEtag?: boolean): { __response: T; __status: 200 }
   }
 }
+
+export interface GenerateRegistryConfig {
+  /**
+   * Path to write the generated registry directory
+   * @default ./.adonisjs/client/registry
+   */
+  output?: string
+
+  /**
+   * Routes filtering configuration
+   */
+  routes?: {
+    /**
+     * Only include routes matching these patterns (route names)
+     * Can be strings, regex patterns, or functions
+     */
+    only?: Array<string | RegExp | ((routeName: string) => boolean)>
+
+    /**
+     * Exclude routes matching these patterns (route names)
+     * Can be strings, regex patterns, or functions
+     */
+    except?: Array<string | RegExp | ((routeName: string) => boolean)>
+  }
+
+  /**
+   * Custom TypeScript type string for 422 validation error responses.
+   * When not provided, uses the default VineJS SimpleErrorReporter format.
+   * Set to `false` to disable auto-adding 422 errors.
+   */
+  validationErrorType?: string | false
+}
