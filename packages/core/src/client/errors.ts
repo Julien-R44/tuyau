@@ -58,6 +58,14 @@ export class TuyauError<E extends { response: any } = { response: any }> extends
   ): this is TuyauHTTPError<Extract<E, { status: S }>> {
     return this.kind === 'http' && this.status === status
   }
+
+  /**
+   * Type guard that narrows to a 422 validation error.
+   * Alias for `isStatus(422)`.
+   */
+  isValidationError(): this is TuyauHTTPError<Extract<E, { status: 422 }>> {
+    return this.isStatus(422)
+  }
 }
 
 export class TuyauHTTPError<E extends { response: any } = { response: any }> extends TuyauError<E> {

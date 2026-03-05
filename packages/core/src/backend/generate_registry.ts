@@ -28,6 +28,13 @@ interface GenerateRegistryConfig {
      */
     except?: Array<string | RegExp | ((routeName: string) => boolean)>
   }
+
+  /**
+   * Custom TypeScript type string for 422 validation error responses.
+   * When not provided, uses the default VineJS SimpleErrorReporter format.
+   * Set to `false` to disable auto-adding 422 errors.
+   */
+  validationErrorType?: string | false
 }
 
 /**
@@ -259,11 +266,25 @@ function determineBodyAndQueryTypes(options: { methods: string[]; requestType: s
 /**
  * Generate a single registry entry for a route (types only)
  */
-function generateTypesRegistryEntry(route: ScannedRoute): string {
+function generateTypesRegistryEntry(
+  route: ScannedRoute,
+  validationErrorType: string | false,
+): string {
   const requestType = normalizeImportPaths(route.request?.type || '{}')
   const rawResponseType = route.response?.type || 'unknown'
   const responseType = wrapResponseType(rawResponseType)
-  const errorResponseType = wrapErrorResponseType(rawResponseType)
+  const hasValidator = requestType !== '{}'
+
+  let errorResponseType = wrapErrorResponseType(rawResponseType)
+
+  if (hasValidator && validationErrorType !== false) {
+    const validationError = `{ status: 422; response: ${validationErrorType} }`
+    errorResponseType =
+      errorResponseType === 'unknown'
+        ? validationError
+        : `${errorResponseType} | ${validationError}`
+  }
+
   const { paramsType, paramsTuple } = generateRouteParams(route)
   const routeName = route.name
 
@@ -338,14 +359,27 @@ ${treeInterface}
 /**
  * Generate the types-only registry file content
  */
-function generateTypesContent(routes: ScannedRoute[]): string {
-  const registryEntries = routes.map(generateTypesRegistryEntry).join('\n')
+function generateTypesContent(routes: ScannedRoute[], validationErrorType: string | false): string {
+  const registryEntries = routes
+    .map((route) => generateTypesRegistryEntry(route, validationErrorType))
+    .join('\n')
+
+  const useDefaultValidationType = validationErrorType === '{ errors: SimpleError[] }'
+  const coreImports = [
+    'ExtractBody',
+    'ExtractErrorResponse',
+    'ExtractQuery',
+    'ExtractQueryForGet',
+    'ExtractResponse',
+  ]
+  const vineImports = ['InferInput']
+  if (useDefaultValidationType) vineImports.push('SimpleError')
 
   return `/* eslint-disable prettier/prettier */
 /// <reference path="../manifest.d.ts" />
 
-import type { ExtractBody, ExtractErrorResponse, ExtractQuery, ExtractQueryForGet, ExtractResponse } from '@tuyau/core/types'
-import type { InferInput } from '@vinejs/vine/types'
+import type { ${coreImports.join(', ')} } from '@tuyau/core/types'
+import type { ${vineImports.join(', ')} } from '@vinejs/vine/types'
 
 export type ParamValue = string | number | bigint | boolean
 
@@ -363,6 +397,11 @@ export function generateRegistry(options?: GenerateRegistryConfig): {
     ...options,
   }
 
+  const validationErrorType =
+    config.validationErrorType === undefined
+      ? '{ errors: SimpleError[] }'
+      : config.validationErrorType
+
   return {
     async run(_, hooks) {
       hooks.add('routesScanning', (_, routesScanner) => {
@@ -375,7 +414,7 @@ export function generateRegistry(options?: GenerateRegistryConfig): {
         const scannedRoutes = routesScanner.getScannedRoutes()
 
         const runtimeContent = generateRuntimeContent(scannedRoutes)
-        const typesContent = generateTypesContent(scannedRoutes)
+        const typesContent = generateTypesContent(scannedRoutes, validationErrorType)
         const treeContent = generateTreeContent(scannedRoutes)
 
         const registryDir = config.output.replace(/\/$/, '')
