@@ -7,7 +7,7 @@ import { useQuery, useSuspenseQuery, useMutation, skipToken } from '@tanstack/re
 import { defaultRegistry } from './fixtures/index.ts'
 import { TuyauQueryKey } from '../src/types/common.ts'
 import { createTuyauReactQueryClient } from '../src/main.ts'
-import { withRequestCapture } from './helpers/request_capture.ts'
+import { withRequestCapture } from '@tuyau/query-core/test-helpers'
 import { queryClient, renderHookWithWrapper } from './helpers/index.tsx'
 
 test.group('Query | useQuery', () => {

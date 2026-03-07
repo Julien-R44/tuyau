@@ -17,3 +17,6 @@ todo.md
 tmp
 .attest
 .osgrep
+
+# opensrc - source code for packages
+opensrc/

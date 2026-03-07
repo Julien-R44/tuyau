@@ -1,6 +1,6 @@
 import { Tuyau } from '@tuyau/core/client'
 import { buildKey, segmentsToRouteName, getMutationKeyInternal } from '@tuyau/query-core'
-import type { QueryFilters } from '@tanstack/react-query'
+import type { QueryFilters } from '@tanstack/query-core'
 import type {
   AdonisEndpoint,
   InferRoutes,
@@ -8,38 +8,36 @@ import type {
   RawRequestArgs,
   TuyauRegistry,
 } from '@tuyau/core/types'
+import type { TuyauQueryKey, TuyauRequestOptions } from '@tuyau/query-core'
 
 import { tuyauQueryOptions } from './query.ts'
 import { tuyauInfiniteQueryOptions } from './infinite_query.ts'
 import { tuyauMutationOptions } from './mutation.ts'
-import type {
-  TuyauQueryKey,
-  TransformToReactQuery,
-  TuyauReactRequestOptions,
-} from './types/common.ts'
+import type { TransformToVueQuery } from './types/common.ts'
 
 /**
- * Creates a type-safe TanStack React Query client from a Tuyau client instance.
+ * Creates a type-safe TanStack Vue Query client from a Tuyau client instance.
  * Returns a Proxy-based object that mirrors the API route tree and exposes
  * `queryOptions`, `mutationOptions`, `infiniteQueryOptions`, and key/filter
- * helpers on each endpoint node
+ * helpers on each endpoint node.
+ *
+ * GET/HEAD endpoints get query and infinite query methods.
+ * Other methods (POST, PUT, etc.) get mutation methods.
+ * All nodes get `pathKey` and `pathFilter` for cache operations
  */
-export function createTuyauReactQueryClient<
+export function createTuyauVueQueryClient<
   Reg extends TuyauRegistry,
   Tree = InferTree<Reg>,
   Routes extends Record<string, AdonisEndpoint> = InferRoutes<Reg>,
 >(options: {
   client: Tuyau<Reg, Routes>
-  globalOptions?: TuyauReactRequestOptions
-}): TransformToReactQuery<Tree> {
+  globalOptions?: TuyauRequestOptions
+}): TransformToVueQuery<Tree> {
   const { client, globalOptions } = options
 
-  function makeReactQueryNamed(segments: string[]): any {
+  function makeVueQueryNamed(segments: string[]): any {
     const routeName = segmentsToRouteName(segments)
     const decoratedEndpoint = {
-      /**
-       * Queries
-       */
       queryOptions: (request: RawRequestArgs<any>, opts?: any) => {
         return tuyauQueryOptions({
           opts,
@@ -57,9 +55,6 @@ export function createTuyauReactQueryClient<
         ...filters,
       }),
 
-      /**
-       * Infinite Queries
-       */
       infiniteQueryOptions: (request: RawRequestArgs<any>, opts?: any) => {
         return tuyauInfiniteQueryOptions({
           opts,
@@ -78,15 +73,9 @@ export function createTuyauReactQueryClient<
         ...filters,
       }),
 
-      /**
-       * Mutations
-       */
       mutationOptions: (opts?: any) => tuyauMutationOptions({ opts, client, routeName }),
       mutationKey: () => getMutationKeyInternal({ segments }),
 
-      /**
-       * Paths
-       */
       pathKey: () => buildKey({ segments, type: 'any' }),
       pathFilter: (filters?: QueryFilters<TuyauQueryKey>) => ({
         queryKey: buildKey({ segments, type: 'any' }),
@@ -98,10 +87,10 @@ export function createTuyauReactQueryClient<
       get: (target, prop) => {
         if (typeof prop === 'symbol') return undefined
         if (prop in target) return target[prop as keyof typeof target]
-        return makeReactQueryNamed([...segments, String(prop)])
+        return makeVueQueryNamed([...segments, String(prop)])
       },
     })
   }
 
-  return makeReactQueryNamed([]) as TransformToReactQuery<Tree>
+  return makeVueQueryNamed([]) as TransformToVueQuery<Tree>
 }

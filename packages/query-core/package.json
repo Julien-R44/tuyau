@@ -1,15 +1,15 @@
 {
-  "name": "@tuyau/react-query",
+  "name": "@tuyau/query-core",
   "type": "module",
   "version": "1.0.0",
-  "description": "Tanstack Query integration for Tuyau",
+  "description": "Shared utilities for Tuyau Tanstack Query integrations",
   "author": "Julien Ripouteau <julien@ripouteau.com>",
   "license": "MIT",
   "homepage": "https://github.com/Julien-R44/tuyau#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Julien-R44/tuyau.git",
-    "directory": "packages/react-query"
+    "directory": "packages/query-core"
   },
   "bugs": {
     "url": "https://github.com/Julien-R44/tuyau/issues"
@@ -18,12 +18,12 @@
     "adonisjs",
     "typescript",
     "typesafe",
-    "react-query",
     "tanstack-query",
     "tuyau"
   ],
   "exports": {
-    ".": "./build/index.js"
+    ".": "./build/index.js",
+    "./test-helpers": "./tests/helpers/index.ts"
   },
   "main": "build/index.js",
   "files": [
@@ -40,24 +40,13 @@
     "quick:test": "node --import=@poppinss/ts-exec --enable-source-maps bin/test.ts --force-exit",
     "checks": "pnpm lint && pnpm typecheck"
   },
-  "dependencies": {
-    "@tuyau/query-core": "workspace:*"
-  },
   "peerDependencies": {
-    "@tanstack/react-query": "^5.74.7",
+    "@tanstack/query-core": "^5.74.7",
     "@tuyau/core": "^1.0.0-beta.9"
   },
   "devDependencies": {
-    "@adonisjs/core": "^7.0.1",
-    "@faker-js/faker": "^10.3.0",
-    "@happy-dom/global-registrator": "^20.8.3",
-    "@tanstack/react-query": "^5.90.21",
-    "@testing-library/react": "^16.3.2",
-    "@tuyau/core": "workspace:*",
-    "@types/react": "^19.2.14",
-    "@vinejs/vine": "^4.3.0",
-    "nock": "^14.0.11",
-    "react": "^19.2.4"
+    "@tanstack/query-core": "^5.74.7",
+    "@tuyau/core": "workspace:*"
   },
   "tsup": {
     "entry": [
@@ -71,6 +60,9 @@
   },
   "publishConfig": {
     "access": "public",
-    "tag": "latest"
+    "tag": "latest",
+    "exports": {
+      ".": "./build/index.js"
+    }
   }
 }

@@ -1,9 +1,8 @@
-import { mutationOptions } from '@tanstack/react-query'
+import { Tuyau } from '@tuyau/core/client'
 import type { SchemaEndpoint, RawRequestArgs } from '@tuyau/core/types'
-import type { UseMutationOptions } from '@tanstack/react-query'
+import type { MutationObserverOptions } from '@tanstack/query-core'
 import { getMutationKeyInternal, createMutationFn } from '@tuyau/query-core'
 import type { DistributiveOmit, TuyauQueryBaseOptions, TuyauMutationKey } from '@tuyau/query-core'
-import { Tuyau } from '@tuyau/core/client'
 
 type ReservedOptions = 'mutationKey' | 'mutationFn'
 
@@ -14,15 +13,22 @@ type Response<E extends SchemaEndpoint> = E['types']['response']
 
 /**
  * User-facing mutation options input. Extends TanStack's mutation observer
- * options but omits `mutationKey` and `mutationFn` which are auto-generated
+ * options but omits `mutationKey` and `mutationFn` which are auto-generated.
+ * Uses `MutationObserverOptions` from `@tanstack/query-core` because
+ * Vue Query does not export a `mutationOptions()` helper nor `MaybeRefDeep`.
+ * Refs passed by users will still be unwrapped at runtime by `useMutation`'s
+ * internal `cloneDeepUnref`
  */
 export interface TuyauMutationOptionsIn<TInput, TError, TOutput, TContext>
   extends
-    DistributiveOmit<UseMutationOptions<TOutput, TError, TInput, TContext>, ReservedOptions>,
+    DistributiveOmit<
+      MutationObserverOptions<TOutput, TError, TInput, TContext>,
+      ReservedOptions
+    >,
     TuyauQueryBaseOptions {}
 
 /**
- * Fully resolved mutation options ready to be passed to `useMutation`.
+ * Fully resolved mutation options ready to be passed to Vue's `useMutation`.
  * Includes the auto-generated `mutationKey` and `mutationFn`
  */
 export interface TuyauMutationOptionsOut<
@@ -30,7 +36,7 @@ export interface TuyauMutationOptionsOut<
   TError,
   TOutput,
   TContext,
-> extends UseMutationOptions<TOutput, TError, TInput, TContext> {
+> extends MutationObserverOptions<TOutput, TError, TInput, TContext> {
   mutationKey: TuyauMutationKey
 }
 
@@ -38,7 +44,7 @@ export interface TuyauMutationOptionsOut<
  * Callable interface exposed on mutation endpoints.
  * Returns fully resolved mutation options from user-provided options
  */
-export interface TuyauReactMutationOptions<TDef extends SchemaEndpoint> {
+export interface TuyauVueMutationOptions<TDef extends SchemaEndpoint> {
   <TContext = unknown>(
     opts?: TuyauMutationOptionsIn<RawRequestArgs<TDef>, any, Response<TDef>, TContext>,
   ): TuyauMutationOptionsOut<RawRequestArgs<TDef>, any, Response<TDef>, TContext>
@@ -48,7 +54,7 @@ export interface TuyauReactMutationOptions<TDef extends SchemaEndpoint> {
  * Decorates mutation endpoints with `mutationOptions` and `mutationKey` methods
  */
 export interface DecorateMutationFn<EDef extends SchemaEndpoint> {
-  mutationOptions: TuyauReactMutationOptions<EDef>
+  mutationOptions: TuyauVueMutationOptions<EDef>
   mutationKey: () => TuyauMutationKey
 }
 
@@ -62,12 +68,15 @@ export interface TuyauMutationOptionsOptions {
 }
 
 /**
- * Builds a TanStack React Query `mutationOptions` object from Tuyau route information.
- * Delegates mutationFn creation to the shared `createMutationFn` from `@tuyau/query-core`
+ * Builds a mutation options object from Tuyau route information.
+ * Delegates mutationFn creation to the shared `createMutationFn` from `@tuyau/query-core`.
+ *
+ * Unlike React Query, Vue Query does not provide a `mutationOptions()` helper,
+ * so this returns a plain object instead of calling a framework helper
  */
-export function tuyauMutationOptions(options: TuyauMutationOptionsOptions) {
+export function tuyauMutationOptions(options: TuyauMutationOptionsOptions): TuyauMutationOptionsOut<any, any, any, any> {
   const { opts, routeName, client } = options
   const mutationKey = getMutationKeyInternal({ segments: routeName.split('.') })
   const mutationFn = createMutationFn({ opts, routeName, client })
-  return mutationOptions({ ...opts, mutationKey, mutationFn })
+  return { ...opts, mutationKey, mutationFn }
 }

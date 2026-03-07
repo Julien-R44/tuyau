@@ -2,9 +2,9 @@
   "extends": "@adonisjs/tsconfig/tsconfig.package.json",
   "compilerOptions": {
     "rootDir": "./",
+    "moduleResolution": "nodenext",
+    "allowImportingTsExtensions": true,
+    "rewriteRelativeImportExtensions": true,
     "outDir": "./build"
-  },
-  "exclude": [
-    "opensrc"
-  ]
+  }
 }

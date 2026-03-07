@@ -8,7 +8,7 @@ import { defaultRegistry } from './fixtures/index.ts'
 import { TuyauMutationKey } from '../src/types/common.ts'
 import { renderHookWithWrapper } from './helpers/index.tsx'
 import { createTuyauReactQueryClient } from '../src/index.ts'
-import { withRequestCapture } from './helpers/request_capture.ts'
+import { withRequestCapture } from '@tuyau/query-core/test-helpers'
 
 test.group('Mutation | Options', () => {
   test('mutationOptions should create valid mutation options object', ({ assert }) => {

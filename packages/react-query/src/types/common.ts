@@ -1,34 +1,26 @@
-import type { SchemaEndpoint, RawRequestArgs, BaseRequestOptions } from '@tuyau/core/types'
+import type { SchemaEndpoint } from '@tuyau/core/types'
 import type {
   DataTag,
   DefinedInitialDataOptions,
-  QueryFilters,
   UndefinedInitialDataOptions,
   UnusedSkipTokenOptions,
 } from '@tanstack/react-query'
+import type {
+  TuyauQueryKey,
+  TuyauMutationKey,
+  TuyauRequestOptions,
+  TuyauQueryBaseOptions,
+  DecorateRouterKeyable,
+  DistributiveOmit,
+} from '@tuyau/query-core'
 
 import type { DecorateQueryFn } from './query.ts'
 import type { DecorateMutationFn } from '../mutation.ts'
-import type { DistributiveOmit, WithRequired } from './utils.ts'
 import type { DecorateInfiniteQueryFn } from './infinite_query.ts'
 
-/**
- * Query type identifier
- */
-export type QueryType = 'any' | 'infinite' | 'query'
-
-/**
- * Tuyau-specific query key structure
- */
-export type TuyauQueryKey = [
-  readonly string[],
-  { request?: RawRequestArgs<any>; type?: Exclude<QueryType, 'any'> }?,
-]
-
-/**
- * Tuyau-specific mutation key structure
- */
-export type TuyauMutationKey = [readonly string[]]
+export type { TuyauQueryKey, TuyauMutationKey, TuyauQueryBaseOptions, DecorateRouterKeyable }
+export type { DistributiveOmit, WithRequired } from '@tuyau/query-core'
+export type { QueryType } from '@tuyau/query-core'
 
 /**
  * Query options with defined initial data
@@ -97,35 +89,10 @@ export interface UnusedSkipTokenTuyauQueryOptionsOut<
 }
 
 /**
- * Tuyau-specific request options for React Query integration
+ * Alias for backward compatibility with existing consumers
  */
-export interface TuyauReactRequestOptions extends BaseRequestOptions {
-  /**
-   * Opt out or into aborting request on unmount
-   */
-  abortOnUnmount?: boolean
-}
+export type TuyauReactRequestOptions = TuyauRequestOptions
 
-/**
- * Base options for Tuyau queries and mutations
- */
-export interface TuyauQueryBaseOptions {
-  /**
-   * Tuyau-specific options including Ky request options (timeout, retry, headers, etc.)
-   */
-  tuyau?: TuyauReactRequestOptions
-}
-
-export interface DecorateRouterKeyable {
-  pathKey: () => TuyauQueryKey
-  pathFilter: (
-    filters?: QueryFilters<TuyauQueryKey>,
-  ) => WithRequired<QueryFilters<TuyauQueryKey>, 'queryKey'>
-}
-
-/**
- * Keys that identify an endpoint-like structure
- */
 type EndpointKeys = 'methods' | 'pattern' | 'types'
 
 /**

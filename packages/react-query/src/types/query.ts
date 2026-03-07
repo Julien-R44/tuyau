@@ -1,5 +1,6 @@
 import type { SchemaEndpoint, RawRequestArgs } from '@tuyau/core/types'
-import type { DataTag, QueryFilters, SkipToken, WithRequired } from '@tanstack/react-query'
+import type { DataTag, QueryFilters, SkipToken } from '@tanstack/react-query'
+import type { WithRequired } from '@tuyau/query-core'
 
 import type {
   DefinedTuyauQueryOptionsIn,

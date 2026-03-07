@@ -7,10 +7,9 @@ import type {
   SkipToken,
   UndefinedInitialDataInfiniteOptions,
   UnusedSkipTokenInfiniteOptions,
-  WithRequired,
 } from '@tanstack/react-query'
 
-import type { DistributiveOmit } from './utils.ts'
+import type { DistributiveOmit, WithRequired } from '@tuyau/query-core'
 import type { TuyauQueryBaseOptions, TuyauQueryKey } from './common.ts'
 
 type Response<E extends SchemaEndpoint> = E['types']['response']

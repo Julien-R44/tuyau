@@ -1,17 +1,19 @@
-import { skipToken } from '@tanstack/react-query'
+import { skipToken } from '@tanstack/query-core'
 
-import type { Fn } from './types/utils.ts'
-import type { QueryType, TuyauQueryKey, TuyauReactRequestOptions } from './types/common.ts'
+import type { Fn, QueryType, TuyauQueryKey, TuyauRequestOptions } from './types.ts'
 
 /**
- * Check if value is an object
+ * Type guard that checks if a value is a plain object
+ * (not null, not an array)
  */
 export function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
 }
 
 /**
- * Just call the function.
+ * Immediately invokes a function and returns its result.
+ * Used to create query/mutation functions inline with
+ * proper skip token handling
  */
 export function invoke(fn: undefined): undefined
 export function invoke<T>(fn: Fn<T>): T
@@ -19,6 +21,13 @@ export function invoke<T>(fn?: Fn<T>): T {
   return fn?.() as T
 }
 
+/**
+ * Builds a structured TanStack Query key from route segments,
+ * request arguments, and query type.
+ *
+ * For infinite queries, automatically strips `cursor` and `direction`
+ * from query/body params to ensure stable cache keys across pages
+ */
 export function buildKey(opts: {
   segments: string[]
   request?: unknown
@@ -65,12 +74,12 @@ export function buildKey(opts: {
 }
 
 /**
- * Extract Ky options from TuyauReactRequestOptions.
- * Removes tuyau-specific options like abortOnUnmount.
+ * Extracts Ky-compatible HTTP options from Tuyau request options,
+ * filtering out Tuyau-specific properties like `abortOnUnmount`
  */
 export function extractKyOptions(
-  tuyauOpts?: TuyauReactRequestOptions,
-): Omit<TuyauReactRequestOptions, 'abortOnUnmount'> {
+  tuyauOpts?: TuyauRequestOptions,
+): Omit<TuyauRequestOptions, 'abortOnUnmount'> {
   if (!tuyauOpts) return {}
 
   const { abortOnUnmount, ...kyOptions } = tuyauOpts
