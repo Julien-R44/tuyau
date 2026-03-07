@@ -1,4 +1,4 @@
-# @tuyau/react-query
+# @tuyau/query-core
 
 ## 1.1.0
 
@@ -58,29 +58,3 @@
   ```
 
   Same API as `@tuyau/react-query` — see its documentation for the full reference.
-
-### Patch Changes
-
-- Updated dependencies [665cd5e]
-  - @tuyau/query-core@1.1.0
-
-## 1.0.0
-
-### Major Changes
-
-- Complete rewrite of Tuyau. Documentation will be available soon on the AdonisJS website.
-
-## 0.0.1-next.1
-
-### Patch Changes
-
-- dd5cc13: - Added `abortOnUnmount` option to `createTuyauReactQueryClient` to control request cancellation when a component unmounts.
-  - Updated implementation of `infiniteQueryOptions` to include a `pagePageParamKey` option
-
-## 0.0.1-next.0
-
-### Patch Changes
-
-- 62edf66: Added React Query integration. See docs for more information.
-- Updated dependencies [62edf66]
-  - @tuyau/client@0.2.11-next.0
