@@ -1,7 +1,7 @@
 {
   "name": "@tuyau/core",
   "type": "module",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "E2E typesafe client for AdonisJS",
   "author": "Julien Ripouteau <julien@ripouteau.com>",
   "license": "MIT",
