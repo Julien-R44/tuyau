@@ -11,7 +11,7 @@ const routes = {
     pattern: '/auth/login',
     tokens: [{ old: '/auth/login', type: 0, val: 'auth/login', end: '' }],
     types: placeholder as {
-      body: { email: string; password: string; file?: any }
+      body: { email: string; password: string; file?: any; profile?: any; data?: any; attachments?: any }
       paramsTuple: [string, string]
       params: { 'user-id'?: string; 'user-token'?: string }
       query: { foo?: string }

@@ -322,7 +322,7 @@ test.group('Client | Chained', () => {
       .matchHeader('content-type', /multipart\/form-data/)
 
     await tuyau.api.auth.login({
-      body: { email: 'foo@ok.com', data: { nested: { deep: { file: new File(['hello'], 'hello.txt') } } } },
+      body: { email: 'foo@ok.com', password: 'foo', data: { nested: { deep: { file: new File(['hello'], 'hello.txt') } } } },
     })
   })
 
@@ -335,7 +335,7 @@ test.group('Client | Chained', () => {
       .matchHeader('content-type', /multipart\/form-data/)
 
     await tuyau.api.auth.login({
-      body: { email: 'foo@ok.com', attachments: [{ file: new File(['doc'], 'doc.pdf') }] },
+      body: { email: 'foo@ok.com', password: 'foo', attachments: [{ file: new File(['doc'], 'doc.pdf') }] },
     })
   })
 

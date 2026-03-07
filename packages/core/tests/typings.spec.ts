@@ -580,7 +580,7 @@ test.group('Client | Typings', (group) => {
     expectTypeOf<PostAuthResponse>().toEqualTypeOf<{ token: string }>()
     expectTypeOf<PostAuthParams>().toEqualTypeOf<{ 'user-id'?: string; 'user-token'?: string }>()
     expectTypeOf<PostAuthQuery>().toEqualTypeOf<{ foo?: string }>()
-    expectTypeOf<PostAuthBody>().toEqualTypeOf<{ email: string; password: string; file?: any }>()
+    expectTypeOf<PostAuthBody>().toEqualTypeOf<{ email: string; password: string; file?: any; profile?: any; data?: any; attachments?: any }>()
 
     // Test GET route with params
     type GetUsersShowResponse = PathWithRegistry.Response<typeof routes, 'GET', '/users/:id'>
@@ -641,7 +641,7 @@ test.group('Client | Typings', (group) => {
 
     expectTypeOf<AuthLoginResponse>().toEqualTypeOf<{ token: string }>()
     expectTypeOf<AuthLoginParams>().toEqualTypeOf<{ 'user-id'?: string; 'user-token'?: string }>()
-    expectTypeOf<AuthLoginBody>().toEqualTypeOf<{ email: string; password: string; file?: any }>()
+    expectTypeOf<AuthLoginBody>().toEqualTypeOf<{ email: string; password: string; file?: any; profile?: any; data?: any; attachments?: any }>()
 
     // Test route with required params
     type PostDetailResponse = RouteWithRegistry.Response<
