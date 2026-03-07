@@ -74,8 +74,13 @@ export class RegistryGenerator {
    * the TS type string and tuple representation.
    */
   #generateRouteParams(route: ScannedRoute) {
-    const dynamicParams = route.tokens.filter((token) => token.type === 1)
-    const paramsType = dynamicParams.map((token) => `${token.val}: ParamValue`).join('; ')
+    const dynamicParams = route.tokens.filter((token) => token.type === 1 || token.type === 2)
+    const paramsType = dynamicParams
+      .map((token) => {
+        if (token.type === 2) return "'*': ParamValue[]"
+        return `${token.val}: ParamValue`
+      })
+      .join('; ')
     const paramsTuple = dynamicParams.map(() => 'ParamValue').join(', ')
 
     return { paramsType, paramsTuple }

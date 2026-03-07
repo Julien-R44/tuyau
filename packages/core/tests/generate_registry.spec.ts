@@ -272,6 +272,49 @@ test.group('generate (full pipeline)', () => {
     assert.notInclude(result.types, "import('app/")
   })
 
+  test('handles wildcard route params', ({ assert }) => {
+    const routes = [
+      makeRoute({
+        name: 'downloads.file',
+        methods: ['GET'],
+        pattern: '/downloads/*',
+        tokens: [
+          { old: '/downloads/*', type: 0, val: 'downloads', end: '' },
+          { old: '/downloads/*', type: 2, val: 'path', end: '' },
+        ],
+      }),
+    ]
+
+    const generator = new RegistryGenerator()
+    const result = generator.generate(routes)
+
+    assert.include(result.types, "'*': ParamValue[]")
+    assert.include(result.types, 'paramsTuple: [ParamValue]')
+    assert.include(result.runtime, "'downloads.file'")
+  })
+
+  test('handles mixed dynamic and wildcard params', ({ assert }) => {
+    const routes = [
+      makeRoute({
+        name: 'files.show',
+        methods: ['GET'],
+        pattern: '/files/:bucket/*',
+        tokens: [
+          { old: '/files/:bucket/*', type: 0, val: 'files', end: '' },
+          { old: ':bucket', type: 1, val: 'bucket', end: '' },
+          { old: '/files/:bucket/*', type: 2, val: 'path', end: '' },
+        ],
+      }),
+    ]
+
+    const generator = new RegistryGenerator()
+    const result = generator.generate(routes)
+
+    assert.include(result.types, 'bucket: ParamValue')
+    assert.include(result.types, "'*': ParamValue[]")
+    assert.include(result.types, 'paramsTuple: [ParamValue, ParamValue]')
+  })
+
   test('handles dynamic route params', ({ assert }) => {
     const routes = [
       makeRoute({

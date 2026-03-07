@@ -239,6 +239,22 @@ const routes = {
     },
   },
 
+  'downloads.file': {
+    methods: ['GET'],
+    pattern: '/downloads/*',
+    tokens: [
+      { old: '/downloads/*', type: 0, val: 'downloads', end: '' },
+      { old: '/downloads/*', type: 2, val: 'path', end: '' },
+    ],
+    types: placeholder as {
+      paramsTuple: [string]
+      body: {}
+      params: { '*': string[] }
+      query: {}
+      response: { path: string }
+    },
+  },
+
   'subscriber_lists.store': {
     methods: ['POST'],
     pattern: '/api/subscriber-lists',

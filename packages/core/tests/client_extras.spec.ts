@@ -38,6 +38,22 @@ test.group('Client | urlFor', () => {
   })
 })
 
+test.group('Client | urlFor wildcard', () => {
+  test('urlFor generates correct URL for wildcard route', ({ assert }) => {
+    const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry })
+
+    const result = tuyau.urlFor.get('downloads.file', { '*': ['docs', 'api', 'guide.pdf'] })
+    assert.include(result.url, '/downloads/docs/api/guide.pdf')
+  })
+
+  test('urlFor generates correct URL for single-segment wildcard', ({ assert }) => {
+    const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry })
+
+    const result = tuyau.urlFor.get('downloads.file', { '*': ['readme.txt'] })
+    assert.include(result.url, '/downloads/readme.txt')
+  })
+})
+
 test.group('Client | Errors', () => {
   test('throws error for non-existent pattern', async ({ assert }) => {
     const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry })

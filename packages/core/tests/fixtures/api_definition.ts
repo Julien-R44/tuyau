@@ -31,6 +31,9 @@ export interface ApiDefinition {
     search: Routes['products.search']
     store: Routes['products.store']
   }
+  downloads: {
+    file: Routes['downloads.file']
+  }
   subscriberLists: {
     store: Routes['subscriber_lists.store']
     index: Routes['subscriber_lists.index']

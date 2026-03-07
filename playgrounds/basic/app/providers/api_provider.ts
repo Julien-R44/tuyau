@@ -26,7 +26,7 @@ class ApiSerializer extends BaseSerializer<{
   definePaginationMetaData(metaData: unknown): SimplePaginatorMetaKeys {
     if (!this.isLucidPaginatorMetaData(metaData)) {
       throw new Error(
-        'Invalid pagination metadata. Expected metadata to contain Lucid pagination keys'
+        'Invalid pagination metadata. Expected metadata to contain Lucid pagination keys',
       )
     }
     return metaData

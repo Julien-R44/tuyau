@@ -439,6 +439,40 @@ test.group('Client | Typings', (group) => {
     tuyau.urlFor.get('posts.comments.likes.detail', {})
   })
 
+  test('urlFor - wildcard route params', () => {
+    const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry })
+
+    // Valid wildcard param as array
+    tuyau.urlFor.get('downloads.file', { '*': ['docs', 'api', 'guide.pdf'] })
+
+    // @ts-expect-error missing required wildcard param
+    tuyau.urlFor.get('downloads.file', {})
+  })
+
+  test('request - wildcard route params', () => {
+    const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry })
+
+    // Valid wildcard param
+    tuyau.request('downloads.file', {
+      params: { '*': ['some', 'nested', 'path.txt'] },
+    })
+
+    // @ts-expect-error missing required wildcard param
+    tuyau.request('downloads.file', {})
+  })
+
+  test('request - wildcard route response type', ({ expectTypeOf }) => {
+    const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry })
+
+    type DownloadsResponse = Awaited<ReturnType<typeof tuyau.request<'downloads.file'>>>
+    expectTypeOf<DownloadsResponse>().toEqualTypeOf<{ path: string }>()
+  })
+
+  test('RouteWithRegistry - wildcard route params type', ({ expectTypeOf }) => {
+    type DownloadsParams = RouteWithRegistry.Params<typeof routes, 'downloads.file'>
+    expectTypeOf<DownloadsParams>().toEqualTypeOf<{ '*': string[] }>()
+  })
+
   test('safe() returns TuyauPromise with correct error types', ({ expectTypeOf }) => {
     const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry })
 

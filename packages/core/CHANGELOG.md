@@ -28,17 +28,17 @@
   ```ts
   // .safe() returns [data, null] on success, [null, error] on failure
   const [data, error] = await tuyau.api.auth
-    .login({ body: { email: "foo@bar.com", password: "secret" } })
-    .safe();
+    .login({ body: { email: 'foo@bar.com', password: 'secret' } })
+    .safe()
 
   if (error) {
-    console.log(error.message); // "Request failed with status code 400: POST /auth/login"
-    console.log(error.status); // 400
-    return;
+    console.log(error.message) // "Request failed with status code 400: POST /auth/login"
+    console.log(error.status) // 400
+    return
   }
 
   // data is fully typed here
-  console.log(data.token);
+  console.log(data.token)
   ```
 
   ### Narrowing errors with `isStatus()`
@@ -61,17 +61,17 @@
   ### Network vs HTTP errors
 
   ```ts
-  const [data, error] = await tuyau.api.users.index.safe();
+  const [data, error] = await tuyau.api.users.index.safe()
 
-  if (error.kind === "network") {
+  if (error.kind === 'network') {
     // Server unreachable or client offline
     // error.status and error.response are undefined
-    console.log("Network error:", error.message);
+    console.log('Network error:', error.message)
   }
 
-  if (error.kind === "http") {
+  if (error.kind === 'http') {
     // Server responded with a non-2xx status
-    console.log(error.status, error.response);
+    console.log(error.status, error.response)
   }
   ```
 
@@ -88,13 +88,13 @@
 
   ```ts
   const { data, error } = await tuyau.api.users.store.$post.safe({
-    body: { email: "foo@bar.com", password: "secret" },
-  });
+    body: { email: 'foo@bar.com', password: 'secret' },
+  })
 
   if (error.isValidationError()) {
     // error.response is typed as { errors: SimpleError[] }
     for (const err of error.response.errors) {
-      console.log(err.field, err.message);
+      console.log(err.field, err.message)
     }
   }
   ```
@@ -163,10 +163,10 @@
 
   ```ts
   export default class ListUsersController {
-    static validator = vine.compile(vine.object({ limit: vine.number() }));
+    static validator = vine.compile(vine.object({ limit: vine.number() }))
 
     async index() {
-      await request.validateUsing(ListUsersController.validator);
+      await request.validateUsing(ListUsersController.validator)
     }
   }
   ```
@@ -204,11 +204,11 @@
     vine.object({
       id: vine.number(),
     }),
-  );
+  )
 
   export default class MyController {
     public async handle({ request }: HttpContext) {
-      const payload = await request.validateUsing(myValidator);
+      const payload = await request.validateUsing(myValidator)
       // ...
     }
   }
@@ -241,13 +241,13 @@
     ```ts
     /// <reference path="../../adonisrc.ts" />
 
-    import { createTuyau } from "@tuyau/client";
-    import type { api } from "@your-monorepo/server/.adonisjs/api";
+    import { createTuyau } from '@tuyau/client'
+    import type { api } from '@your-monorepo/server/.adonisjs/api'
 
     export const tuyau = createTuyau({
       api,
-      baseUrl: "http://localhost:3333",
-    });
+      baseUrl: 'http://localhost:3333',
+    })
     ```
 
     As you can see, you first need to change the import path and the imported value. Next, you need to pass this `api` object as an argument to the `createTuyau` function.
@@ -262,14 +262,12 @@
 
   ```ts
   // Backend
-  router
-    .get("/posts/:id/generate-invitation", "...")
-    .as("posts.generateInvitation");
+  router.get('/posts/:id/generate-invitation', '...').as('posts.generateInvitation')
 
   // Client
-  await tuyau.$route("posts.generateInvitation", { id: 1 }).$get({
+  await tuyau.$route('posts.generateInvitation', { id: 1 }).$get({
     query: { limit: 10, page: 1 },
-  });
+  })
   ```
 
   ### Generating URL from route name
@@ -277,9 +275,9 @@
   If you need to generate the URL of a route using the route name, you can use the `$url` method. This method is pretty similar to [Ziggy](https://github.com/tighten/ziggy) behavior :
 
   ```ts
-  tuyau.$url("users.posts", { id: 1, postId: 2 }); // http://localhost:3333/users/1/posts/2
-  tuyau.$url("venues.events.show", [1, 2]); // http://localhost:3333/venues/1/events/2
-  tuyau.$url("users", { query: { page: 1, limit: 10 } }); // http://localhost:3333/users?page=1&limit=10
+  tuyau.$url('users.posts', { id: 1, postId: 2 }) // http://localhost:3333/users/1/posts/2
+  tuyau.$url('venues.events.show', [1, 2]) // http://localhost:3333/venues/1/events/2
+  tuyau.$url('users', { query: { page: 1, limit: 10 } }) // http://localhost:3333/users?page=1&limit=10
   ```
 
   If you are used to Ziggy and prefer to have a `route` method instead of `$url`, you can define a custom method in your client file pretty easily :
@@ -287,10 +285,10 @@
   ```ts
   export const tuyau = createTuyau({
     api,
-    baseUrl: "http://localhost:3333",
-  });
+    baseUrl: 'http://localhost:3333',
+  })
 
-  window.route = tuyau.$url.bind(tuyau);
+  window.route = tuyau.$url.bind(tuyau)
   ```
 
   Then you can use the `route` method in your frontend code :
@@ -299,9 +297,9 @@
   export function MyComponent() {
     return (
       <div>
-        <a href={route("users.posts", { id: 1, postId: 2 })}>Go to post</a>
+        <a href={route('users.posts', { id: 1, postId: 2 })}>Go to post</a>
       </div>
-    );
+    )
   }
   ```
 
@@ -310,9 +308,9 @@
   If you need to check if a route name exists, you can use the `$has` method. You can also use wildcards in the route name :
 
   ```ts
-  tuyau.$has("users"); // true
-  tuyau.$has("users.posts"); // true
-  tuyau.$has("users.*.comments"); // true
-  tuyau.$has("users.*"); // true
-  tuyau.$has("non-existent"); // false
+  tuyau.$has('users') // true
+  tuyau.$has('users.posts') // true
+  tuyau.$has('users.*.comments') // true
+  tuyau.$has('users.*') // true
+  tuyau.$has('non-existent') // false
   ```

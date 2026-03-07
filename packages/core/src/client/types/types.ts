@@ -22,7 +22,10 @@ export interface CurrentRouteOptions {
  */
 export interface EndpointTypes {
   paramsTuple: [...any[]]
-  params: Record<string, string | number | boolean | bigint>
+  params: Record<
+    string,
+    string | number | boolean | bigint | (string | number | boolean | bigint)[]
+  >
   query: Record<string, any>
   body: unknown
   response: unknown
