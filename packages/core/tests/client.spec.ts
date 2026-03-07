@@ -300,6 +300,45 @@ test.group('Client | Chained', () => {
     await tuyau.api.users.store({ body: { file: blob } })
   })
 
+  test('send as form data when file is nested in object', async () => {
+    const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry })
+
+    nock('http://localhost:3333')
+      .post('/auth/login')
+      .reply(200, { token: '123' })
+      .matchHeader('content-type', /multipart\/form-data/)
+
+    await tuyau.api.auth.login({
+      body: { email: 'foo@ok.com', password: 'foo', profile: { avatar: new File(['img'], 'avatar.png') } },
+    })
+  })
+
+  test('send as form data when file is deeply nested', async () => {
+    const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry })
+
+    nock('http://localhost:3333')
+      .post('/auth/login')
+      .reply(200, { token: '123' })
+      .matchHeader('content-type', /multipart\/form-data/)
+
+    await tuyau.api.auth.login({
+      body: { email: 'foo@ok.com', data: { nested: { deep: { file: new File(['hello'], 'hello.txt') } } } },
+    })
+  })
+
+  test('send as form data when file is inside array of objects', async () => {
+    const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry })
+
+    nock('http://localhost:3333')
+      .post('/auth/login')
+      .reply(200, { token: '123' })
+      .matchHeader('content-type', /multipart\/form-data/)
+
+    await tuyau.api.auth.login({
+      body: { email: 'foo@ok.com', attachments: [{ file: new File(['doc'], 'doc.pdf') }] },
+    })
+  })
+
   test('pass form data directly', async () => {
     const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry })
 

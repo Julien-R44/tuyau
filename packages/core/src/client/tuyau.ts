@@ -129,12 +129,15 @@ export class Tuyau<
   /**
    * Checks if an object contains any file uploads
    */
-  #hasFile(obj: Record<string, any>) {
-    if (!obj) return false
+  #hasFile(obj: Record<string, any>, depth = 0): boolean {
+    if (!obj || depth > 5) return false
 
     return Object.values(obj).some((val) => {
-      if (Array.isArray(val)) return val.some(this.#isFile)
-      return this.#isFile(val)
+      if (this.#isFile(val)) return true
+      if (Array.isArray(val)) return val.some((item) => this.#isFile(item) || (isObject(item) && this.#hasFile(item, depth + 1)))
+      if (isObject(val)) return this.#hasFile(val, depth + 1)
+
+      return false
     })
   }
 
