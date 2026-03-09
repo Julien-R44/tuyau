@@ -100,6 +100,7 @@ export default class ContactsController {
    * - 404: { message: string }
    */
   async delete({ params, response }: HttpContext) {
+    if (params.id === 'string') return response.badRequest({ error: 'No parameter' })
     const index = contacts.findIndex((c) => c.id === Number(params.id))
     if (index === -1) return response.notFound({ message: 'Contact not found' })
 

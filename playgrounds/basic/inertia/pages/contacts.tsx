@@ -1,15 +1,18 @@
-import { useState } from 'react'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { useEffect, useState } from 'react'
 
-import { client, type Route } from '~/tuyau'
+import { client, query, type Route } from '~/tuyau'
 
 /**
  * Playground page demonstrating:
  * - .safe() for non-throwing error handling
  * - isStatus() for narrowing typed errors
  * - Comparison with traditional try/catch
+ * - React Query integration (useQuery + useMutation)
  */
 export default function Contacts() {
   const [logs, setLogs] = useState<Array<{ type: 'success' | 'error' | 'info'; text: string }>>([])
+  const [queryContactId, setQueryContactId] = useState<number | null>(null)
 
   function log(type: 'success' | 'error' | 'info', text: string) {
     setLogs((prev) => [...prev, { type, text }])
@@ -44,7 +47,7 @@ export default function Contacts() {
         // error.response is narrowed to { message: string, existingEmail: string }
         log(
           'error',
-          `Conflict! ${error.response.message} (existing: ${error.response.existingEmail})`,
+          `Conflict! ${error.response.message} (existing: ${error.response.existingEmail})`
         )
         return
       }
@@ -146,6 +149,54 @@ export default function Contacts() {
     log('success', `Found: ${data.contact.name}`)
   }
 
+  // ─── React Query: useQuery ────────────────────────────────────
+  const contactQuery = useQuery(
+    query.contacts.show.queryOptions(
+      { params: { id: queryContactId ?? 1 } },
+      {
+        enabled: queryContactId !== null,
+        retry: false,
+      }
+    )
+  )
+
+  useEffect(() => {
+    if (contactQuery.isSuccess) {
+      log(
+        'success',
+        `[useQuery] Got contact: ${contactQuery.data.contact.name} (${contactQuery.data.contact.email})`
+      )
+    }
+    if (contactQuery.isError) {
+      const error = contactQuery.error
+      if (error.isStatus(404)) {
+        log('error', `[useQuery] Not found: ${error.response.message}`)
+        return
+      }
+      log('error', `[useQuery] Error: ${error.message}`)
+    }
+  }, [contactQuery.status, contactQuery.errorUpdatedAt])
+
+  // ─── React Query: useMutation ─────────────────────────────────
+  const mutation = useMutation(
+    query.contacts.delete.mutationOptions({
+      onSuccess: (data) => {
+        log('success', `[useMutation] Deleted: success=${data.success}`)
+      },
+      onError: (error) => {
+        if (error.isStatus(404)) {
+          log('error', `[useMutation] Not found: ${error.response.message}`)
+          return
+        }
+        if (error.isStatus(400)) {
+          log('error', `[useMutation] Bad request: ${error.response.error}`)
+          return
+        }
+        log('error', `[useMutation] Error: ${error.message}`)
+      },
+    })
+  )
+
   return (
     <div className="min-h-screen bg-slate-950 text-white p-8">
       <div className="max-w-4xl mx-auto">
@@ -157,65 +208,115 @@ export default function Contacts() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Actions panel */}
           <div className="space-y-6">
-            <Section title="1. Basic safe()">
-              <Btn onClick={() => fetchContact(1)} color="emerald">
-                Fetch contact #1 (exists)
-              </Btn>
-              <Btn onClick={() => fetchContact(999)} color="red">
-                Fetch contact #999 (404)
-              </Btn>
-            </Section>
+            <div className="border border-slate-700/50 rounded-xl p-4 space-y-4">
+              <h2 className="text-lg font-semibold text-blue-400">Tuyau Client (classic)</h2>
 
-            <Section title="2. isStatus() narrowing on create">
-              <Btn onClick={() => createContact('Dave', 'dave@example.com')} color="emerald">
-                Create "Dave" (new)
-              </Btn>
-              <Btn onClick={() => createContact('Alice Clone', 'alice@example.com')} color="red">
-                Create with alice@... (409 conflict)
-              </Btn>
-              <Btn onClick={() => createContact('X', 'bad')} color="yellow">
-                Create invalid (422)
-              </Btn>
-            </Section>
+              <Section title="1. Basic safe()">
+                <Btn onClick={() => fetchContact(1)} color="emerald">
+                  Fetch contact #1 (exists)
+                </Btn>
+                <Btn onClick={() => fetchContact(999)} color="red">
+                  Fetch contact #999 (404)
+                </Btn>
+              </Section>
 
-            <Section title="3. Multiple isStatus() on update">
-              <Btn onClick={() => updateContact(1, 'alice-new@example.com')} color="emerald">
-                Update #1 email (ok)
-              </Btn>
-              <Btn onClick={() => updateContact(999, 'test@test.com')} color="red">
-                Update #999 (404)
-              </Btn>
-              <Btn onClick={() => updateContact(1, 'bob@example.com')} color="yellow">
-                Update #1 to bob's email (409)
-              </Btn>
-            </Section>
+              <Section title="2. isStatus() narrowing on create">
+                <Btn onClick={() => createContact('Dave', 'dave@example.com')} color="emerald">
+                  Create "Dave" (new)
+                </Btn>
+                <Btn onClick={() => createContact('Alice Clone', 'alice@example.com')} color="red">
+                  Create with alice@... (409 conflict)
+                </Btn>
+                <Btn onClick={() => createContact('X', 'bad')} color="yellow">
+                  Create invalid (422)
+                </Btn>
+              </Section>
 
-            <Section title="4. Delete">
-              <Btn onClick={() => deleteContact(3)} color="emerald">
-                Delete #3 (exists)
-              </Btn>
-              <Btn onClick={() => deleteContact(999)} color="red">
-                Delete #999 (404)
-              </Btn>
-            </Section>
+              <Section title="3. Multiple isStatus() on update">
+                <Btn onClick={() => updateContact(1, 'alice-new@example.com')} color="emerald">
+                  Update #1 email (ok)
+                </Btn>
+                <Btn onClick={() => updateContact(999, 'test@test.com')} color="red">
+                  Update #999 (404)
+                </Btn>
+                <Btn onClick={() => updateContact(1, 'bob@example.com')} color="yellow">
+                  Update #1 to bob's email (409)
+                </Btn>
+              </Section>
 
-            <Section title="5. Typed try/catch (Route.Error)">
-              <Btn onClick={() => fetchContactTypedCatch(1)} color="emerald">
-                Fetch #1 (success)
-              </Btn>
-              <Btn onClick={() => fetchContactTypedCatch(999)} color="red">
-                Fetch #999 (typed 404)
-              </Btn>
-            </Section>
+              <Section title="4. Delete with safe()">
+                <Btn onClick={() => deleteContact(3)} color="emerald">
+                  Delete #3 (exists)
+                </Btn>
+                <Btn onClick={() => deleteContact(999)} color="red">
+                  Delete #999 (404)
+                </Btn>
+              </Section>
 
-            <Section title="6. .request() + safe()">
-              <Btn onClick={() => fetchContactByName(2)} color="emerald">
-                .request('contacts.show') #2
-              </Btn>
-              <Btn onClick={() => fetchContactByName(999)} color="red">
-                .request('contacts.show') #999
-              </Btn>
-            </Section>
+              <Section title="5. Typed try/catch (Route.Error)">
+                <Btn onClick={() => fetchContactTypedCatch(1)} color="emerald">
+                  Fetch #1 (success)
+                </Btn>
+                <Btn onClick={() => fetchContactTypedCatch(999)} color="red">
+                  Fetch #999 (typed 404)
+                </Btn>
+              </Section>
+
+              <Section title="6. .request() + safe()">
+                <Btn onClick={() => fetchContactByName(2)} color="emerald">
+                  .request('contacts.show') #2
+                </Btn>
+                <Btn onClick={() => fetchContactByName(999)} color="red">
+                  .request('contacts.show') #999
+                </Btn>
+              </Section>
+            </div>
+
+            <div className="border border-purple-700/50 rounded-xl p-4 space-y-4">
+              <h2 className="text-lg font-semibold text-purple-400">React Query</h2>
+
+              <Section title="7. useQuery (contacts.show)">
+                <Btn
+                  onClick={() => {
+                    log('info', '--- [useQuery] Fetching contact #1 ---')
+                    setQueryContactId(1)
+                  }}
+                  color="emerald"
+                >
+                  Query contact #1 (exists)
+                </Btn>
+                <Btn
+                  onClick={() => {
+                    log('info', '--- [useQuery] Fetching contact #999 ---')
+                    setQueryContactId(999)
+                  }}
+                  color="red"
+                >
+                  Query contact #999 (404)
+                </Btn>
+              </Section>
+
+              <Section title="8. useMutation (contacts.delete)">
+                <Btn
+                  onClick={() => {
+                    log('info', '--- [useMutation] Deleting contact #1 ---')
+                    mutation.mutate({ params: { id: 1 } })
+                  }}
+                  color="emerald"
+                >
+                  Delete contact #1 (exists)
+                </Btn>
+                <Btn
+                  onClick={() => {
+                    log('info', '--- [useMutation] Deleting contact #999 ---')
+                    mutation.mutate({ params: { id: 999 } })
+                  }}
+                  color="red"
+                >
+                  Delete contact #999 (404)
+                </Btn>
+              </Section>
+            </div>
           </div>
 
           {/* Logs panel */}

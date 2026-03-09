@@ -205,7 +205,7 @@ export type ErrorResponseOf<E extends SchemaEndpoint> = E['types'] extends {
  * Always includes a `{ status: number; response: unknown }` fallback so that
  * catch-all blocks after exhaustive `isStatus()` checks never resolve to `never`.
  */
-type NormalizeError<E> =
+export type NormalizeError<E> =
   | (E extends { response: any } ? E : { response: any })
   | { status: number; response: unknown }
 

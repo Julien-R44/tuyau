@@ -1,4 +1,10 @@
-import type { SchemaEndpoint, RawRequestArgs } from '@tuyau/core/types'
+import type { TuyauError } from '@tuyau/core/client'
+import type {
+  ErrorResponseOf,
+  NormalizeError,
+  SchemaEndpoint,
+  RawRequestArgs,
+} from '@tuyau/core/types'
 import type {
   DataTag,
   DefinedInitialDataInfiniteOptions,
@@ -13,6 +19,7 @@ import type { DistributiveOmit, WithRequired } from '@tuyau/query-core'
 import type { TuyauQueryBaseOptions, TuyauQueryKey } from './common.ts'
 
 type Response<E extends SchemaEndpoint> = E['types']['response']
+type Error<E extends SchemaEndpoint> = TuyauError<NormalizeError<ErrorResponseOf<E>>>
 
 type ReservedInfiniteQueryOptions = 'queryKey' | 'queryFn' | 'queryHashFn' | 'queryHash'
 
@@ -125,23 +132,23 @@ export interface TuyauReactInfiniteQueryOptions<EDef extends SchemaEndpoint> {
    */
   <TData = InfiniteData<Response<EDef>>>(
     input: RawRequestArgs<EDef>,
-    opts: UnusedSkipTokenTuyauInfiniteQueryOptionsIn<Response<EDef>, unknown, TData>,
-  ): UnusedSkipTokenTuyauInfiniteQueryOptionsOut<Response<EDef>, unknown, TData>
+    opts: UnusedSkipTokenTuyauInfiniteQueryOptionsIn<Response<EDef>, Error<EDef>, TData>,
+  ): UnusedSkipTokenTuyauInfiniteQueryOptionsOut<Response<EDef>, Error<EDef>, TData>
 
   /**
    * Overload 2: When initialData is defined
    */
   <TData = InfiniteData<Response<EDef>>>(
     input: RawRequestArgs<EDef> | SkipToken,
-    opts: DefinedTuyauInfiniteQueryOptionsIn<Response<EDef>, unknown, TData>,
-  ): DefinedTuyauInfiniteQueryOptionsOut<Response<EDef>, unknown, TData>
+    opts: DefinedTuyauInfiniteQueryOptionsIn<Response<EDef>, Error<EDef>, TData>,
+  ): DefinedTuyauInfiniteQueryOptionsOut<Response<EDef>, Error<EDef>, TData>
 
   /**
    * Overload 3: No arguments - no skipToken possible
    */
   (): UnusedSkipTokenTuyauInfiniteQueryOptionsOut<
     Response<EDef>,
-    unknown,
+    Error<EDef>,
     InfiniteData<Response<EDef>>
   >
 
@@ -150,8 +157,8 @@ export interface TuyauReactInfiniteQueryOptions<EDef extends SchemaEndpoint> {
    */
   <TData = InfiniteData<Response<EDef>>>(
     input: RawRequestArgs<EDef> | SkipToken,
-    opts: UndefinedTuyauInfiniteQueryOptionsIn<Response<EDef>, unknown, TData>,
-  ): UndefinedTuyauInfiniteQueryOptionsOut<Response<EDef>, unknown, TData>
+    opts: UndefinedTuyauInfiniteQueryOptionsIn<Response<EDef>, Error<EDef>, TData>,
+  ): UndefinedTuyauInfiniteQueryOptionsOut<Response<EDef>, Error<EDef>, TData>
 }
 
 /**
