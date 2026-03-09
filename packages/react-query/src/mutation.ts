@@ -1,9 +1,15 @@
 import { mutationOptions } from '@tanstack/react-query'
-import type { SchemaEndpoint, RawRequestArgs } from '@tuyau/core/types'
+import type {
+  SchemaEndpoint,
+  RawRequestArgs,
+  ErrorResponseOf,
+  NormalizeError,
+} from '@tuyau/core/types'
 import type { UseMutationOptions } from '@tanstack/react-query'
 import { getMutationKeyInternal, createMutationFn } from '@tuyau/query-core'
 import type { DistributiveOmit, TuyauQueryBaseOptions, TuyauMutationKey } from '@tuyau/query-core'
 import { Tuyau } from '@tuyau/core/client'
+import type { TuyauError } from '@tuyau/core/client'
 
 type ReservedOptions = 'mutationKey' | 'mutationFn'
 
@@ -11,6 +17,11 @@ type ReservedOptions = 'mutationKey' | 'mutationFn'
  * Extracts the response type from a schema endpoint definition
  */
 type Response<E extends SchemaEndpoint> = E['types']['response']
+
+/*
+ * Extracts the error type from a schema endpoint definition,
+ */
+type Error<E extends SchemaEndpoint> = TuyauError<NormalizeError<ErrorResponseOf<E>>>
 
 /**
  * User-facing mutation options input. Extends TanStack's mutation observer
@@ -40,8 +51,8 @@ export interface TuyauMutationOptionsOut<
  */
 export interface TuyauReactMutationOptions<TDef extends SchemaEndpoint> {
   <TContext = unknown>(
-    opts?: TuyauMutationOptionsIn<RawRequestArgs<TDef>, any, Response<TDef>, TContext>,
-  ): TuyauMutationOptionsOut<RawRequestArgs<TDef>, any, Response<TDef>, TContext>
+    opts?: TuyauMutationOptionsIn<RawRequestArgs<TDef>, Error<TDef>, Response<TDef>, TContext>,
+  ): TuyauMutationOptionsOut<RawRequestArgs<TDef>, Error<TDef>, Response<TDef>, TContext>
 }
 
 /**
