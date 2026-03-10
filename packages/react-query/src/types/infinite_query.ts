@@ -1,7 +1,6 @@
-import type { TuyauError } from '@tuyau/core/client'
 import type {
-  ErrorResponseOf,
-  NormalizeError,
+  ErrorOf,
+  ResponseOf,
   SchemaEndpoint,
   RawRequestArgs,
 } from '@tuyau/core/types'
@@ -17,9 +16,6 @@ import type {
 
 import type { DistributiveOmit, WithRequired } from '@tuyau/query-core'
 import type { TuyauQueryBaseOptions, TuyauQueryKey } from './common.ts'
-
-type Response<E extends SchemaEndpoint> = E['types']['response']
-type Error<E extends SchemaEndpoint> = TuyauError<NormalizeError<ErrorResponseOf<E>>>
 
 type ReservedInfiniteQueryOptions = 'queryKey' | 'queryFn' | 'queryHashFn' | 'queryHash'
 
@@ -130,35 +126,35 @@ export interface TuyauReactInfiniteQueryOptions<EDef extends SchemaEndpoint> {
   /**
    * Overload 1: When input is NOT SkipToken, return options compatible with useSuspenseInfiniteQuery
    */
-  <TData = InfiniteData<Response<EDef>>>(
+  <TData = InfiniteData<ResponseOf<EDef>>>(
     input: RawRequestArgs<EDef>,
-    opts: UnusedSkipTokenTuyauInfiniteQueryOptionsIn<Response<EDef>, Error<EDef>, TData>,
-  ): UnusedSkipTokenTuyauInfiniteQueryOptionsOut<Response<EDef>, Error<EDef>, TData>
+    opts: UnusedSkipTokenTuyauInfiniteQueryOptionsIn<ResponseOf<EDef>, ErrorOf<EDef>, TData>,
+  ): UnusedSkipTokenTuyauInfiniteQueryOptionsOut<ResponseOf<EDef>, ErrorOf<EDef>, TData>
 
   /**
    * Overload 2: When initialData is defined
    */
-  <TData = InfiniteData<Response<EDef>>>(
+  <TData = InfiniteData<ResponseOf<EDef>>>(
     input: RawRequestArgs<EDef> | SkipToken,
-    opts: DefinedTuyauInfiniteQueryOptionsIn<Response<EDef>, Error<EDef>, TData>,
-  ): DefinedTuyauInfiniteQueryOptionsOut<Response<EDef>, Error<EDef>, TData>
+    opts: DefinedTuyauInfiniteQueryOptionsIn<ResponseOf<EDef>, ErrorOf<EDef>, TData>,
+  ): DefinedTuyauInfiniteQueryOptionsOut<ResponseOf<EDef>, ErrorOf<EDef>, TData>
 
   /**
    * Overload 3: No arguments - no skipToken possible
    */
   (): UnusedSkipTokenTuyauInfiniteQueryOptionsOut<
-    Response<EDef>,
-    Error<EDef>,
-    InfiniteData<Response<EDef>>
+    ResponseOf<EDef>,
+    ErrorOf<EDef>,
+    InfiniteData<ResponseOf<EDef>>
   >
 
   /**
    * Overload 4: With skipToken or conditional (request | skipToken) and options
    */
-  <TData = InfiniteData<Response<EDef>>>(
+  <TData = InfiniteData<ResponseOf<EDef>>>(
     input: RawRequestArgs<EDef> | SkipToken,
-    opts: UndefinedTuyauInfiniteQueryOptionsIn<Response<EDef>, Error<EDef>, TData>,
-  ): UndefinedTuyauInfiniteQueryOptionsOut<Response<EDef>, Error<EDef>, TData>
+    opts: UndefinedTuyauInfiniteQueryOptionsIn<ResponseOf<EDef>, ErrorOf<EDef>, TData>,
+  ): UndefinedTuyauInfiniteQueryOptionsOut<ResponseOf<EDef>, ErrorOf<EDef>, TData>
 }
 
 /**
@@ -168,9 +164,9 @@ export interface DecorateInfiniteQueryFn<EDef extends SchemaEndpoint> {
   infiniteQueryOptions: TuyauReactInfiniteQueryOptions<EDef>
   infiniteQueryKey: (
     args?: RawRequestArgs<EDef>,
-  ) => DataTag<TuyauQueryKey, InfiniteData<Response<EDef>>>
+  ) => DataTag<TuyauQueryKey, InfiniteData<ResponseOf<EDef>>>
   infiniteQueryFilter: (
     args?: RawRequestArgs<EDef>,
-    filters?: QueryFilters<DataTag<TuyauQueryKey, InfiniteData<Response<EDef>>>>,
-  ) => WithRequired<QueryFilters<DataTag<TuyauQueryKey, InfiniteData<Response<EDef>>>>, 'queryKey'>
+    filters?: QueryFilters<DataTag<TuyauQueryKey, InfiniteData<ResponseOf<EDef>>>>,
+  ) => WithRequired<QueryFilters<DataTag<TuyauQueryKey, InfiniteData<ResponseOf<EDef>>>>, 'queryKey'>
 }
