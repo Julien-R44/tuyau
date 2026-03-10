@@ -210,6 +210,11 @@ export type NormalizeError<E> =
   | { status: number; response: unknown }
 
 /**
+ * Extracts the typed TuyauError contract from an endpoint.
+ */
+export type ErrorOf<E extends SchemaEndpoint> = TuyauError<NormalizeError<ErrorResponseOf<E>>>
+
+/**
  * Function type for calling an endpoint
  */
 export type EndpointFn<E extends SchemaEndpoint> = (
@@ -367,7 +372,7 @@ export namespace PathWithRegistry {
     Reg extends Record<string, AdonisEndpoint>,
     M extends Method,
     P extends PatternsByMethod<Reg, M>,
-  > = TuyauError<NormalizeError<ErrorResponseOf<FilterByMethodPathForRegistry<Reg, M, P>>>>
+  > = ErrorOf<FilterByMethodPathForRegistry<Reg, M, P>>
 }
 
 /**
@@ -403,7 +408,7 @@ export namespace RouteWithRegistry {
   export type Error<
     Reg extends Record<string, AdonisEndpoint>,
     Name extends keyof Reg,
-  > = TuyauError<NormalizeError<ErrorResponseOf<EndpointByNameForRegistry<Reg, Name>>>>
+  > = ErrorOf<EndpointByNameForRegistry<Reg, Name>>
 }
 
 /**
@@ -434,9 +439,7 @@ export namespace Path {
   export type Error<
     M extends Method,
     P extends PatternsByMethod<UserAdonisRegistry, M>,
-  > = TuyauError<
-    NormalizeError<ErrorResponseOf<FilterByMethodPathForRegistry<UserAdonisRegistry, M, P>>>
-  >
+  > = ErrorOf<FilterByMethodPathForRegistry<UserAdonisRegistry, M, P>>
 }
 
 /**
@@ -452,9 +455,7 @@ export namespace Route {
     UserEndpointByName<Name>['types']['body']
   export type Query<Name extends keyof UserAdonisRegistry> =
     UserEndpointByName<Name>['types']['query']
-  export type Error<Name extends keyof UserAdonisRegistry> = TuyauError<
-    NormalizeError<ErrorResponseOf<UserEndpointByName<Name>>>
-  >
+  export type Error<Name extends keyof UserAdonisRegistry> = ErrorOf<UserEndpointByName<Name>>
 }
 
 /**

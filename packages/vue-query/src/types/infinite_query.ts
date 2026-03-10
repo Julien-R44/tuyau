@@ -1,4 +1,4 @@
-import type { SchemaEndpoint, RawRequestArgs } from '@tuyau/core/types'
+import type { ErrorOf, RawRequestArgs, ResponseOf, SchemaEndpoint } from '@tuyau/core/types'
 import type { DataTag, InfiniteData, QueryFilters, SkipToken } from '@tanstack/query-core'
 import type { WithRequired, TuyauQueryKey } from '@tuyau/query-core'
 
@@ -8,11 +8,6 @@ import type {
   UndefinedTuyauInfiniteQueryOptionsIn,
   UndefinedTuyauInfiniteQueryOptionsOut,
 } from './common.ts'
-
-/**
- * Extracts the response type from a schema endpoint definition
- */
-type Response<E extends SchemaEndpoint> = E['types']['response']
 
 /**
  * Callable interface for building infinite query options on a given endpoint.
@@ -29,35 +24,35 @@ export interface TuyauVueInfiniteQueryOptions<EDef extends SchemaEndpoint> {
   /**
    * With request input and undefined initial data (default case)
    */
-  <TData = InfiniteData<Response<EDef>>>(
+  <TData = InfiniteData<ResponseOf<EDef>>>(
     input: RawRequestArgs<EDef>,
-    opts: UndefinedTuyauInfiniteQueryOptionsIn<Response<EDef>, unknown, TData>,
-  ): UndefinedTuyauInfiniteQueryOptionsOut<Response<EDef>, unknown, TData>
+    opts: UndefinedTuyauInfiniteQueryOptionsIn<ResponseOf<EDef>, ErrorOf<EDef>, TData>,
+  ): UndefinedTuyauInfiniteQueryOptionsOut<ResponseOf<EDef>, ErrorOf<EDef>, TData>
 
   /**
    * With defined initial data
    */
-  <TData = InfiniteData<Response<EDef>>>(
+  <TData = InfiniteData<ResponseOf<EDef>>>(
     input: RawRequestArgs<EDef> | SkipToken,
-    opts: DefinedTuyauInfiniteQueryOptionsIn<Response<EDef>, unknown, TData>,
-  ): DefinedTuyauInfiniteQueryOptionsOut<Response<EDef>, unknown, TData>
+    opts: DefinedTuyauInfiniteQueryOptionsIn<ResponseOf<EDef>, ErrorOf<EDef>, TData>,
+  ): DefinedTuyauInfiniteQueryOptionsOut<ResponseOf<EDef>, ErrorOf<EDef>, TData>
 
   /**
    * No arguments
    */
   (): UndefinedTuyauInfiniteQueryOptionsOut<
-    Response<EDef>,
-    unknown,
-    InfiniteData<Response<EDef>>
+    ResponseOf<EDef>,
+    ErrorOf<EDef>,
+    InfiniteData<ResponseOf<EDef>>
   >
 
   /**
    * With skipToken or conditional input and options
    */
-  <TData = InfiniteData<Response<EDef>>>(
+  <TData = InfiniteData<ResponseOf<EDef>>>(
     input: RawRequestArgs<EDef> | SkipToken,
-    opts: UndefinedTuyauInfiniteQueryOptionsIn<Response<EDef>, unknown, TData>,
-  ): UndefinedTuyauInfiniteQueryOptionsOut<Response<EDef>, unknown, TData>
+    opts: UndefinedTuyauInfiniteQueryOptionsIn<ResponseOf<EDef>, ErrorOf<EDef>, TData>,
+  ): UndefinedTuyauInfiniteQueryOptionsOut<ResponseOf<EDef>, ErrorOf<EDef>, TData>
 }
 
 /**
@@ -69,9 +64,9 @@ export interface DecorateInfiniteQueryFn<EDef extends SchemaEndpoint> {
   infiniteQueryOptions: TuyauVueInfiniteQueryOptions<EDef>
   infiniteQueryKey: (
     args?: RawRequestArgs<EDef>,
-  ) => DataTag<TuyauQueryKey, InfiniteData<Response<EDef>>>
+  ) => DataTag<TuyauQueryKey, InfiniteData<ResponseOf<EDef>>>
   infiniteQueryFilter: (
     args?: RawRequestArgs<EDef>,
-    filters?: QueryFilters<DataTag<TuyauQueryKey, InfiniteData<Response<EDef>>>>,
-  ) => WithRequired<QueryFilters<DataTag<TuyauQueryKey, InfiniteData<Response<EDef>>>>, 'queryKey'>
+    filters?: QueryFilters<DataTag<TuyauQueryKey, InfiniteData<ResponseOf<EDef>>>>,
+  ) => WithRequired<QueryFilters<DataTag<TuyauQueryKey, InfiniteData<ResponseOf<EDef>>>>, 'queryKey'>
 }

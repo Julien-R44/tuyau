@@ -1,4 +1,4 @@
-import type { SchemaEndpoint, RawRequestArgs } from '@tuyau/core/types'
+import type { ErrorOf, RawRequestArgs, ResponseOf, SchemaEndpoint } from '@tuyau/core/types'
 import type { DataTag, QueryFilters, SkipToken } from '@tanstack/query-core'
 import type { WithRequired, TuyauQueryKey } from '@tuyau/query-core'
 
@@ -8,11 +8,6 @@ import type {
   UndefinedTuyauQueryOptionsIn,
   UndefinedTuyauQueryOptionsOut,
 } from './common.ts'
-
-/**
- * Extracts the response type from a schema endpoint definition
- */
-type Response<E extends SchemaEndpoint> = E['types']['response']
 
 /**
  * Callable interface for building query options on a given endpoint.
@@ -29,36 +24,36 @@ export interface TuyauVueQueryOptions<EDef extends SchemaEndpoint> {
   /**
    * With defined initial data
    */
-  <TData = Response<EDef>>(
+  <TData = ResponseOf<EDef>>(
     input: RawRequestArgs<EDef> | SkipToken,
-    opts: DefinedTuyauQueryOptionsIn<Response<EDef>, TData, unknown>,
-  ): DefinedTuyauQueryOptionsOut<Response<EDef>, TData, unknown>
+    opts: DefinedTuyauQueryOptionsIn<ResponseOf<EDef>, TData, ErrorOf<EDef>>,
+  ): DefinedTuyauQueryOptionsOut<ResponseOf<EDef>, TData, ErrorOf<EDef>>
 
   /**
    * Without initial data (default case)
    */
-  <TData = Response<EDef>>(
+  <TData = ResponseOf<EDef>>(
     input?: RawRequestArgs<EDef>,
-    opts?: UndefinedTuyauQueryOptionsIn<Response<EDef>, TData, unknown>,
-  ): UndefinedTuyauQueryOptionsOut<Response<EDef>, TData, unknown>
+    opts?: UndefinedTuyauQueryOptionsIn<ResponseOf<EDef>, TData, ErrorOf<EDef>>,
+  ): UndefinedTuyauQueryOptionsOut<ResponseOf<EDef>, TData, ErrorOf<EDef>>
 
   /**
    * No arguments
    */
-  (): UndefinedTuyauQueryOptionsOut<Response<EDef>, Response<EDef>, unknown>
+  (): UndefinedTuyauQueryOptionsOut<ResponseOf<EDef>, ResponseOf<EDef>, ErrorOf<EDef>>
 
   /**
    * With skipToken only (conditional query)
    */
-  (input: SkipToken): UndefinedTuyauQueryOptionsOut<Response<EDef>, Response<EDef>, unknown>
+  (input: SkipToken): UndefinedTuyauQueryOptionsOut<ResponseOf<EDef>, ResponseOf<EDef>, ErrorOf<EDef>>
 
   /**
    * With skipToken or conditional input and optional options
    */
-  <TData = Response<EDef>>(
+  <TData = ResponseOf<EDef>>(
     input: RawRequestArgs<EDef> | SkipToken,
-    opts?: UndefinedTuyauQueryOptionsIn<Response<EDef>, TData, unknown>,
-  ): UndefinedTuyauQueryOptionsOut<Response<EDef>, TData, unknown>
+    opts?: UndefinedTuyauQueryOptionsIn<ResponseOf<EDef>, TData, ErrorOf<EDef>>,
+  ): UndefinedTuyauQueryOptionsOut<ResponseOf<EDef>, TData, ErrorOf<EDef>>
 }
 
 /**
@@ -67,9 +62,9 @@ export interface TuyauVueQueryOptions<EDef extends SchemaEndpoint> {
  */
 export interface DecorateQueryFn<EDef extends SchemaEndpoint> {
   queryOptions: TuyauVueQueryOptions<EDef>
-  queryKey: (args?: RawRequestArgs<EDef>) => DataTag<TuyauQueryKey, Response<EDef>>
+  queryKey: (args?: RawRequestArgs<EDef>) => DataTag<TuyauQueryKey, ResponseOf<EDef>>
   queryFilter: (
     args?: RawRequestArgs<EDef>,
-    filters?: QueryFilters<DataTag<TuyauQueryKey, Response<EDef>>>,
-  ) => WithRequired<QueryFilters<DataTag<TuyauQueryKey, Response<EDef>>>, 'queryKey'>
+    filters?: QueryFilters<DataTag<TuyauQueryKey, ResponseOf<EDef>>>,
+  ) => WithRequired<QueryFilters<DataTag<TuyauQueryKey, ResponseOf<EDef>>>, 'queryKey'>
 }
