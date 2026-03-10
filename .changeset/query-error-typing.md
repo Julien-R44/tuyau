@@ -3,7 +3,7 @@
 '@tuyau/vue-query': patch
 ---
 
-Improve TanStack Query error typing for both React and Vue adapters.
+Improve end-to-end error type safety for both TanStack Query React and Vue adapters.
 
 `queryOptions()`, `mutationOptions()`, and `infiniteQueryOptions()` now expose typed `TuyauError` instances, so `isStatus()` narrows `error.response` correctly.
 
