@@ -26,7 +26,7 @@ export default function Users() {
         setNewUserEmail('')
         setNewUserPassword('')
       },
-    }),
+    })
   )
 
   // Update mutation
@@ -36,7 +36,7 @@ export default function Users() {
         queryClient.invalidateQueries({ queryKey: query.users.list.pathKey() })
         setEditingUser(null)
       },
-    }),
+    })
   )
 
   // Delete mutation
@@ -45,10 +45,10 @@ export default function Users() {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: query.users.list.pathKey() })
       },
-    }),
+    })
   )
 
-  const users = usersQuery.data?.users || []
+  const users = usersQuery.data?.users.data || []
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
