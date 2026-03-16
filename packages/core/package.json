@@ -65,12 +65,12 @@
     "object-to-formdata": "^4.5.1"
   },
   "devDependencies": {
-    "@adonisjs/assembler": "^8.0.0",
+    "@adonisjs/assembler": "^8.0.1",
     "@adonisjs/core": "^7.0.1",
     "@adonisjs/http-server": "^8.0.0",
     "@faker-js/faker": "^10.3.0",
     "@poppinss/ts-exec": "^1.4.4",
-    "@types/node": "^25.3.3",
+    "@types/node": "^25.5.0",
     "@typescript/analyze-trace": "^0.10.1",
     "@vinejs/vine": "^4.3.0"
   },

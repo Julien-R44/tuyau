@@ -45,7 +45,7 @@
     "@tuyau/core": "^1.0.0-beta.9"
   },
   "devDependencies": {
-    "@tanstack/query-core": "^5.74.7",
+    "@tanstack/query-core": "^5.90.20",
     "@tuyau/core": "workspace:*"
   },
   "tsup": {
