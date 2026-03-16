@@ -39,4 +39,7 @@ export interface ApiDefinition {
     index: Routes['subscriber_lists.index']
     show: Routes['subscriber-lists.show']
   }
+  session: {
+    store: Routes['session.store']
+  }
 }

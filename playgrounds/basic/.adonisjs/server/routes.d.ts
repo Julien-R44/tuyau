@@ -15,27 +15,27 @@ export type ScannedRoutes = {
     'session.store': { paramsTuple?: []; params?: {} }
     'session.destroy': { paramsTuple?: []; params?: {} }
     'users.list': { paramsTuple?: []; params?: {} }
-    'users.show': { paramsTuple: [ParamValue]; params: { id: ParamValue } }
+    'users.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'users.store': { paramsTuple?: []; params?: {} }
-    'users.update': { paramsTuple: [ParamValue]; params: { id: ParamValue } }
-    'users.delete': { paramsTuple: [ParamValue]; params: { id: ParamValue } }
+    'users.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'users.delete': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'posts.list': { paramsTuple?: []; params?: {} }
-    'posts.show': { paramsTuple: [ParamValue]; params: { id: ParamValue } }
+    'posts.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'posts.store': { paramsTuple?: []; params?: {} }
-    'posts.update': { paramsTuple: [ParamValue]; params: { id: ParamValue } }
-    'posts.delete': { paramsTuple: [ParamValue]; params: { id: ParamValue } }
+    'posts.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'posts.delete': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'contacts.page': { paramsTuple?: []; params?: {} }
     'contacts.list': { paramsTuple?: []; params?: {} }
-    'contacts.show': { paramsTuple: [ParamValue]; params: { id: ParamValue } }
+    'contacts.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'contacts.store': { paramsTuple?: []; params?: {} }
-    'contacts.update': { paramsTuple: [ParamValue]; params: { id: ParamValue } }
-    'contacts.delete': { paramsTuple: [ParamValue]; params: { id: ParamValue } }
+    'contacts.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'contacts.delete': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'products.search': { paramsTuple?: []; params?: {} }
     'products.categories': { paramsTuple?: []; params?: {} }
-    'products.by_category': { paramsTuple: [ParamValue]; params: { category: ParamValue } }
-    'products.show': { paramsTuple: [ParamValue]; params: { id: ParamValue } }
+    'products.by_category': { paramsTuple: [ParamValue]; params: {'category': ParamValue} }
+    'products.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'products.store': { paramsTuple?: []; params?: {} }
-    'products.delete': { paramsTuple: [ParamValue]; params: { id: ParamValue } }
+    'products.delete': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
   }
   GET: {
     'home': { paramsTuple?: []; params?: {} }
@@ -45,16 +45,16 @@ export type ScannedRoutes = {
     'accounts.create': { paramsTuple?: []; params?: {} }
     'session.create': { paramsTuple?: []; params?: {} }
     'users.list': { paramsTuple?: []; params?: {} }
-    'users.show': { paramsTuple: [ParamValue]; params: { id: ParamValue } }
+    'users.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'posts.list': { paramsTuple?: []; params?: {} }
-    'posts.show': { paramsTuple: [ParamValue]; params: { id: ParamValue } }
+    'posts.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'contacts.page': { paramsTuple?: []; params?: {} }
     'contacts.list': { paramsTuple?: []; params?: {} }
-    'contacts.show': { paramsTuple: [ParamValue]; params: { id: ParamValue } }
+    'contacts.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'products.search': { paramsTuple?: []; params?: {} }
     'products.categories': { paramsTuple?: []; params?: {} }
-    'products.by_category': { paramsTuple: [ParamValue]; params: { category: ParamValue } }
-    'products.show': { paramsTuple: [ParamValue]; params: { id: ParamValue } }
+    'products.by_category': { paramsTuple: [ParamValue]; params: {'category': ParamValue} }
+    'products.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
   }
   HEAD: {
     'home': { paramsTuple?: []; params?: {} }
@@ -64,16 +64,16 @@ export type ScannedRoutes = {
     'accounts.create': { paramsTuple?: []; params?: {} }
     'session.create': { paramsTuple?: []; params?: {} }
     'users.list': { paramsTuple?: []; params?: {} }
-    'users.show': { paramsTuple: [ParamValue]; params: { id: ParamValue } }
+    'users.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'posts.list': { paramsTuple?: []; params?: {} }
-    'posts.show': { paramsTuple: [ParamValue]; params: { id: ParamValue } }
+    'posts.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'contacts.page': { paramsTuple?: []; params?: {} }
     'contacts.list': { paramsTuple?: []; params?: {} }
-    'contacts.show': { paramsTuple: [ParamValue]; params: { id: ParamValue } }
+    'contacts.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
     'products.search': { paramsTuple?: []; params?: {} }
     'products.categories': { paramsTuple?: []; params?: {} }
-    'products.by_category': { paramsTuple: [ParamValue]; params: { category: ParamValue } }
-    'products.show': { paramsTuple: [ParamValue]; params: { id: ParamValue } }
+    'products.by_category': { paramsTuple: [ParamValue]; params: {'category': ParamValue} }
+    'products.show': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
   }
   POST: {
     'accounts.store': { paramsTuple?: []; params?: {} }
@@ -86,15 +86,15 @@ export type ScannedRoutes = {
     'products.store': { paramsTuple?: []; params?: {} }
   }
   PUT: {
-    'users.update': { paramsTuple: [ParamValue]; params: { id: ParamValue } }
-    'posts.update': { paramsTuple: [ParamValue]; params: { id: ParamValue } }
-    'contacts.update': { paramsTuple: [ParamValue]; params: { id: ParamValue } }
+    'users.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'posts.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'contacts.update': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
   }
   DELETE: {
-    'users.delete': { paramsTuple: [ParamValue]; params: { id: ParamValue } }
-    'posts.delete': { paramsTuple: [ParamValue]; params: { id: ParamValue } }
-    'contacts.delete': { paramsTuple: [ParamValue]; params: { id: ParamValue } }
-    'products.delete': { paramsTuple: [ParamValue]; params: { id: ParamValue } }
+    'users.delete': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'posts.delete': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'contacts.delete': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
+    'products.delete': { paramsTuple: [ParamValue]; params: {'id': ParamValue} }
   }
 }
 declare module '@adonisjs/core/types/http' {

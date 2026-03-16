@@ -1,20 +1,14 @@
 /* eslint-disable prettier/prettier */
 /// <reference path="../manifest.d.ts" />
 
-import type {
-  ExtractBody,
-  ExtractErrorResponse,
-  ExtractQuery,
-  ExtractQueryForGet,
-  ExtractResponse,
-} from '@tuyau/core/types'
-import type { InferInput } from '@vinejs/vine/types'
+import type { ExtractBody, ExtractErrorResponse, ExtractQuery, ExtractQueryForGet, ExtractResponse } from '@tuyau/core/types'
+import type { InferInput, SimpleError } from '@vinejs/vine/types'
 
 export type ParamValue = string | number | bigint | boolean
 
 export interface Registry {
   'home': {
-    methods: ['GET', 'HEAD']
+    methods: ["GET","HEAD"]
     pattern: '/'
     types: {
       body: {}
@@ -26,7 +20,7 @@ export interface Registry {
     }
   }
   'posts.page': {
-    methods: ['GET', 'HEAD']
+    methods: ["GET","HEAD"]
     pattern: '/posts-page'
     types: {
       body: {}
@@ -38,7 +32,7 @@ export interface Registry {
     }
   }
   'products.page': {
-    methods: ['GET', 'HEAD']
+    methods: ["GET","HEAD"]
     pattern: '/products-page'
     types: {
       body: {}
@@ -50,7 +44,7 @@ export interface Registry {
     }
   }
   'users.page': {
-    methods: ['GET', 'HEAD']
+    methods: ["GET","HEAD"]
     pattern: '/users-page'
     types: {
       body: {}
@@ -62,293 +56,199 @@ export interface Registry {
     }
   }
   'accounts.create': {
-    methods: ['GET', 'HEAD']
+    methods: ["GET","HEAD"]
     pattern: '/signup'
     types: {
       body: {}
       paramsTuple: []
       params: {}
       query: {}
-      response: ExtractResponse<
-        Awaited<ReturnType<import('#controllers/accounts_controller').default['create']>>
-      >
-      errorResponse: ExtractErrorResponse<
-        Awaited<ReturnType<import('#controllers/accounts_controller').default['create']>>
-      >
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/accounts_controller').default['create']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/accounts_controller').default['create']>>>
     }
   }
   'accounts.store': {
-    methods: ['POST']
+    methods: ["POST"]
     pattern: '/signup'
     types: {
-      body: ExtractBody<InferInput<typeof import('#validators/user').signupValidator>>
+      body: ExtractBody<InferInput<(typeof import('#validators/user').signupValidator)>>
       paramsTuple: []
       params: {}
-      query: ExtractQuery<InferInput<typeof import('#validators/user').signupValidator>>
-      response: ExtractResponse<
-        Awaited<ReturnType<import('#controllers/accounts_controller').default['store']>>
-      >
-      errorResponse: ExtractErrorResponse<
-        Awaited<ReturnType<import('#controllers/accounts_controller').default['store']>>
-      >
+      query: ExtractQuery<InferInput<(typeof import('#validators/user').signupValidator)>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/accounts_controller').default['store']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/accounts_controller').default['store']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
   'accounts.upload_profile_picture': {
-    methods: ['POST']
+    methods: ["POST"]
     pattern: '/users/profile-picture'
     types: {
-      body: ExtractBody<
-        InferInput<
-          (typeof import('#controllers/accounts_controller').default)['uploadProfilePictureValidator']
-        >
-      >
+      body: ExtractBody<InferInput<(typeof import('#controllers/accounts_controller').default)['uploadProfilePictureValidator']>>
       paramsTuple: []
       params: {}
-      query: ExtractQuery<
-        InferInput<
-          (typeof import('#controllers/accounts_controller').default)['uploadProfilePictureValidator']
-        >
-      >
-      response: ExtractResponse<
-        Awaited<
-          ReturnType<import('#controllers/accounts_controller').default['uploadProfilePicture']>
-        >
-      >
-      errorResponse: ExtractErrorResponse<
-        Awaited<
-          ReturnType<import('#controllers/accounts_controller').default['uploadProfilePicture']>
-        >
-      >
+      query: ExtractQuery<InferInput<(typeof import('#controllers/accounts_controller').default)['uploadProfilePictureValidator']>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/accounts_controller').default['uploadProfilePicture']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/accounts_controller').default['uploadProfilePicture']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
   'session.create': {
-    methods: ['GET', 'HEAD']
+    methods: ["GET","HEAD"]
     pattern: '/login'
     types: {
       body: {}
       paramsTuple: []
       params: {}
       query: {}
-      response: ExtractResponse<
-        Awaited<ReturnType<import('#controllers/session_controller').default['create']>>
-      >
-      errorResponse: ExtractErrorResponse<
-        Awaited<ReturnType<import('#controllers/session_controller').default['create']>>
-      >
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/session_controller').default['create']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/session_controller').default['create']>>>
     }
   }
   'session.store': {
-    methods: ['POST']
+    methods: ["POST"]
     pattern: '/login'
     types: {
-      body: {}
+      body: ExtractBody<InferInput<(typeof import('#controllers/session_controller').default)['storeValidator']>>
       paramsTuple: []
       params: {}
-      query: {}
-      response: ExtractResponse<
-        Awaited<ReturnType<import('#controllers/session_controller').default['store']>>
-      >
-      errorResponse: ExtractErrorResponse<
-        Awaited<ReturnType<import('#controllers/session_controller').default['store']>>
-      >
+      query: ExtractQuery<InferInput<(typeof import('#controllers/session_controller').default)['storeValidator']>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/session_controller').default['store']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/session_controller').default['store']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
   'session.destroy': {
-    methods: ['POST']
+    methods: ["POST"]
     pattern: '/logout'
     types: {
       body: {}
       paramsTuple: []
       params: {}
       query: {}
-      response: ExtractResponse<
-        Awaited<ReturnType<import('#controllers/session_controller').default['destroy']>>
-      >
-      errorResponse: ExtractErrorResponse<
-        Awaited<ReturnType<import('#controllers/session_controller').default['destroy']>>
-      >
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/session_controller').default['destroy']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/session_controller').default['destroy']>>>
     }
   }
   'users.list': {
-    methods: ['GET', 'HEAD']
+    methods: ["GET","HEAD"]
     pattern: '/users'
     types: {
       body: {}
       paramsTuple: []
       params: {}
       query: {}
-      response: ExtractResponse<
-        Awaited<ReturnType<import('#controllers/users_controller').default['list']>>
-      >
-      errorResponse: ExtractErrorResponse<
-        Awaited<ReturnType<import('#controllers/users_controller').default['list']>>
-      >
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/users_controller').default['list']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/users_controller').default['list']>>>
     }
   }
   'users.show': {
-    methods: ['GET', 'HEAD']
+    methods: ["GET","HEAD"]
     pattern: '/users/:id'
     types: {
       body: {}
       paramsTuple: [ParamValue]
       params: { id: ParamValue }
       query: {}
-      response: ExtractResponse<
-        Awaited<ReturnType<import('#controllers/users_controller').default['show']>>
-      >
-      errorResponse: ExtractErrorResponse<
-        Awaited<ReturnType<import('#controllers/users_controller').default['show']>>
-      >
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/users_controller').default['show']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/users_controller').default['show']>>>
     }
   }
   'users.store': {
-    methods: ['POST']
+    methods: ["POST"]
     pattern: '/users'
     types: {
-      body: ExtractBody<
-        InferInput<(typeof import('#controllers/users_controller').default)['createValidator']>
-      >
+      body: ExtractBody<InferInput<(typeof import('#controllers/users_controller').default)['createValidator']>>
       paramsTuple: []
       params: {}
-      query: ExtractQuery<
-        InferInput<(typeof import('#controllers/users_controller').default)['createValidator']>
-      >
-      response: ExtractResponse<
-        Awaited<ReturnType<import('#controllers/users_controller').default['store']>>
-      >
-      errorResponse: ExtractErrorResponse<
-        Awaited<ReturnType<import('#controllers/users_controller').default['store']>>
-      >
+      query: ExtractQuery<InferInput<(typeof import('#controllers/users_controller').default)['createValidator']>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/users_controller').default['store']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/users_controller').default['store']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
   'users.update': {
-    methods: ['PUT']
+    methods: ["PUT"]
     pattern: '/users/:id'
     types: {
-      body: ExtractBody<
-        InferInput<(typeof import('#controllers/users_controller').default)['updateValidator']>
-      >
+      body: ExtractBody<InferInput<(typeof import('#controllers/users_controller').default)['updateValidator']>>
       paramsTuple: [ParamValue]
       params: { id: ParamValue }
-      query: ExtractQuery<
-        InferInput<(typeof import('#controllers/users_controller').default)['updateValidator']>
-      >
-      response: ExtractResponse<
-        Awaited<ReturnType<import('#controllers/users_controller').default['update']>>
-      >
-      errorResponse: ExtractErrorResponse<
-        Awaited<ReturnType<import('#controllers/users_controller').default['update']>>
-      >
+      query: ExtractQuery<InferInput<(typeof import('#controllers/users_controller').default)['updateValidator']>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/users_controller').default['update']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/users_controller').default['update']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
   'users.delete': {
-    methods: ['DELETE']
+    methods: ["DELETE"]
     pattern: '/users/:id'
     types: {
       body: {}
       paramsTuple: [ParamValue]
       params: { id: ParamValue }
       query: {}
-      response: ExtractResponse<
-        Awaited<ReturnType<import('#controllers/users_controller').default['delete']>>
-      >
-      errorResponse: ExtractErrorResponse<
-        Awaited<ReturnType<import('#controllers/users_controller').default['delete']>>
-      >
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/users_controller').default['delete']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/users_controller').default['delete']>>>
     }
   }
   'posts.list': {
-    methods: ['GET', 'HEAD']
+    methods: ["GET","HEAD"]
     pattern: '/posts'
     types: {
       body: {}
       paramsTuple: []
       params: {}
-      query: ExtractQueryForGet<
-        InferInput<(typeof import('#controllers/posts_controller').default)['listValidator']>
-      >
-      response: ExtractResponse<
-        Awaited<ReturnType<import('#controllers/posts_controller').default['list']>>
-      >
-      errorResponse: ExtractErrorResponse<
-        Awaited<ReturnType<import('#controllers/posts_controller').default['list']>>
-      >
+      query: ExtractQueryForGet<InferInput<(typeof import('#controllers/posts_controller').default)['listValidator']>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/posts_controller').default['list']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/posts_controller').default['list']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
   'posts.show': {
-    methods: ['GET', 'HEAD']
+    methods: ["GET","HEAD"]
     pattern: '/posts/:id'
     types: {
       body: {}
       paramsTuple: [ParamValue]
       params: { id: ParamValue }
       query: {}
-      response: ExtractResponse<
-        Awaited<ReturnType<import('#controllers/posts_controller').default['show']>>
-      >
-      errorResponse: ExtractErrorResponse<
-        Awaited<ReturnType<import('#controllers/posts_controller').default['show']>>
-      >
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/posts_controller').default['show']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/posts_controller').default['show']>>>
     }
   }
   'posts.store': {
-    methods: ['POST']
+    methods: ["POST"]
     pattern: '/posts'
     types: {
-      body: ExtractBody<
-        InferInput<(typeof import('#controllers/posts_controller').default)['createValidator']>
-      >
+      body: ExtractBody<InferInput<(typeof import('#controllers/posts_controller').default)['createValidator']>>
       paramsTuple: []
       params: {}
-      query: ExtractQuery<
-        InferInput<(typeof import('#controllers/posts_controller').default)['createValidator']>
-      >
-      response: ExtractResponse<
-        Awaited<ReturnType<import('#controllers/posts_controller').default['store']>>
-      >
-      errorResponse: ExtractErrorResponse<
-        Awaited<ReturnType<import('#controllers/posts_controller').default['store']>>
-      >
+      query: ExtractQuery<InferInput<(typeof import('#controllers/posts_controller').default)['createValidator']>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/posts_controller').default['store']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/posts_controller').default['store']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
   'posts.update': {
-    methods: ['PUT']
+    methods: ["PUT"]
     pattern: '/posts/:id'
     types: {
-      body: ExtractBody<
-        InferInput<(typeof import('#controllers/posts_controller').default)['updateValidator']>
-      >
+      body: ExtractBody<InferInput<(typeof import('#controllers/posts_controller').default)['updateValidator']>>
       paramsTuple: [ParamValue]
       params: { id: ParamValue }
-      query: ExtractQuery<
-        InferInput<(typeof import('#controllers/posts_controller').default)['updateValidator']>
-      >
-      response: ExtractResponse<
-        Awaited<ReturnType<import('#controllers/posts_controller').default['update']>>
-      >
-      errorResponse: ExtractErrorResponse<
-        Awaited<ReturnType<import('#controllers/posts_controller').default['update']>>
-      >
+      query: ExtractQuery<InferInput<(typeof import('#controllers/posts_controller').default)['updateValidator']>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/posts_controller').default['update']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/posts_controller').default['update']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
   'posts.delete': {
-    methods: ['DELETE']
+    methods: ["DELETE"]
     pattern: '/posts/:id'
     types: {
       body: {}
       paramsTuple: [ParamValue]
       params: { id: ParamValue }
       query: {}
-      response: ExtractResponse<
-        Awaited<ReturnType<import('#controllers/posts_controller').default['delete']>>
-      >
-      errorResponse: ExtractErrorResponse<
-        Awaited<ReturnType<import('#controllers/posts_controller').default['delete']>>
-      >
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/posts_controller').default['delete']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/posts_controller').default['delete']>>>
     }
   }
   'contacts.page': {
-    methods: ['GET', 'HEAD']
+    methods: ["GET","HEAD"]
     pattern: '/contacts-page'
     types: {
       body: {}
@@ -360,193 +260,135 @@ export interface Registry {
     }
   }
   'contacts.list': {
-    methods: ['GET', 'HEAD']
+    methods: ["GET","HEAD"]
     pattern: '/contacts'
     types: {
       body: {}
       paramsTuple: []
       params: {}
       query: {}
-      response: ExtractResponse<
-        Awaited<ReturnType<import('#controllers/contacts_controller').default['list']>>
-      >
-      errorResponse: ExtractErrorResponse<
-        Awaited<ReturnType<import('#controllers/contacts_controller').default['list']>>
-      >
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/contacts_controller').default['list']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/contacts_controller').default['list']>>>
     }
   }
   'contacts.show': {
-    methods: ['GET', 'HEAD']
+    methods: ["GET","HEAD"]
     pattern: '/contacts/:id'
     types: {
       body: {}
       paramsTuple: [ParamValue]
       params: { id: ParamValue }
       query: {}
-      response: ExtractResponse<
-        Awaited<ReturnType<import('#controllers/contacts_controller').default['show']>>
-      >
-      errorResponse: ExtractErrorResponse<
-        Awaited<ReturnType<import('#controllers/contacts_controller').default['show']>>
-      >
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/contacts_controller').default['show']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/contacts_controller').default['show']>>>
     }
   }
   'contacts.store': {
-    methods: ['POST']
+    methods: ["POST"]
     pattern: '/contacts'
     types: {
-      body: ExtractBody<
-        InferInput<(typeof import('#controllers/contacts_controller').default)['createValidator']>
-      >
+      body: ExtractBody<InferInput<(typeof import('#controllers/contacts_controller').default)['createValidator']>>
       paramsTuple: []
       params: {}
-      query: ExtractQuery<
-        InferInput<(typeof import('#controllers/contacts_controller').default)['createValidator']>
-      >
-      response: ExtractResponse<
-        Awaited<ReturnType<import('#controllers/contacts_controller').default['store']>>
-      >
-      errorResponse: ExtractErrorResponse<
-        Awaited<ReturnType<import('#controllers/contacts_controller').default['store']>>
-      >
+      query: ExtractQuery<InferInput<(typeof import('#controllers/contacts_controller').default)['createValidator']>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/contacts_controller').default['store']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/contacts_controller').default['store']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
   'contacts.update': {
-    methods: ['PUT']
+    methods: ["PUT"]
     pattern: '/contacts/:id'
     types: {
-      body: ExtractBody<
-        InferInput<(typeof import('#controllers/contacts_controller').default)['updateValidator']>
-      >
+      body: ExtractBody<InferInput<(typeof import('#controllers/contacts_controller').default)['updateValidator']>>
       paramsTuple: [ParamValue]
       params: { id: ParamValue }
-      query: ExtractQuery<
-        InferInput<(typeof import('#controllers/contacts_controller').default)['updateValidator']>
-      >
-      response: ExtractResponse<
-        Awaited<ReturnType<import('#controllers/contacts_controller').default['update']>>
-      >
-      errorResponse: ExtractErrorResponse<
-        Awaited<ReturnType<import('#controllers/contacts_controller').default['update']>>
-      >
+      query: ExtractQuery<InferInput<(typeof import('#controllers/contacts_controller').default)['updateValidator']>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/contacts_controller').default['update']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/contacts_controller').default['update']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
   'contacts.delete': {
-    methods: ['DELETE']
+    methods: ["DELETE"]
     pattern: '/contacts/:id'
     types: {
       body: {}
       paramsTuple: [ParamValue]
       params: { id: ParamValue }
       query: {}
-      response: ExtractResponse<
-        Awaited<ReturnType<import('#controllers/contacts_controller').default['delete']>>
-      >
-      errorResponse: ExtractErrorResponse<
-        Awaited<ReturnType<import('#controllers/contacts_controller').default['delete']>>
-      >
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/contacts_controller').default['delete']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/contacts_controller').default['delete']>>>
     }
   }
   'products.search': {
-    methods: ['GET', 'HEAD']
+    methods: ["GET","HEAD"]
     pattern: '/products/search'
     types: {
       body: {}
       paramsTuple: []
       params: {}
-      query: ExtractQueryForGet<
-        InferInput<(typeof import('#controllers/products_controller').default)['searchValidator']>
-      >
-      response: ExtractResponse<
-        Awaited<ReturnType<import('#controllers/products_controller').default['search']>>
-      >
-      errorResponse: ExtractErrorResponse<
-        Awaited<ReturnType<import('#controllers/products_controller').default['search']>>
-      >
+      query: ExtractQueryForGet<InferInput<(typeof import('#controllers/products_controller').default)['searchValidator']>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/products_controller').default['search']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/products_controller').default['search']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
   'products.categories': {
-    methods: ['GET', 'HEAD']
+    methods: ["GET","HEAD"]
     pattern: '/products/categories'
     types: {
       body: {}
       paramsTuple: []
       params: {}
       query: {}
-      response: ExtractResponse<
-        Awaited<ReturnType<import('#controllers/products_controller').default['categories']>>
-      >
-      errorResponse: ExtractErrorResponse<
-        Awaited<ReturnType<import('#controllers/products_controller').default['categories']>>
-      >
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/products_controller').default['categories']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/products_controller').default['categories']>>>
     }
   }
   'products.by_category': {
-    methods: ['GET', 'HEAD']
+    methods: ["GET","HEAD"]
     pattern: '/products/category/:category'
     types: {
       body: {}
       paramsTuple: [ParamValue]
       params: { category: ParamValue }
       query: {}
-      response: ExtractResponse<
-        Awaited<ReturnType<import('#controllers/products_controller').default['byCategory']>>
-      >
-      errorResponse: ExtractErrorResponse<
-        Awaited<ReturnType<import('#controllers/products_controller').default['byCategory']>>
-      >
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/products_controller').default['byCategory']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/products_controller').default['byCategory']>>>
     }
   }
   'products.show': {
-    methods: ['GET', 'HEAD']
+    methods: ["GET","HEAD"]
     pattern: '/products/:id'
     types: {
       body: {}
       paramsTuple: [ParamValue]
       params: { id: ParamValue }
       query: {}
-      response: ExtractResponse<
-        Awaited<ReturnType<import('#controllers/products_controller').default['show']>>
-      >
-      errorResponse: ExtractErrorResponse<
-        Awaited<ReturnType<import('#controllers/products_controller').default['show']>>
-      >
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/products_controller').default['show']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/products_controller').default['show']>>>
     }
   }
   'products.store': {
-    methods: ['POST']
+    methods: ["POST"]
     pattern: '/products'
     types: {
-      body: ExtractBody<
-        InferInput<(typeof import('#controllers/products_controller').default)['createValidator']>
-      >
+      body: ExtractBody<InferInput<(typeof import('#controllers/products_controller').default)['createValidator']>>
       paramsTuple: []
       params: {}
-      query: ExtractQuery<
-        InferInput<(typeof import('#controllers/products_controller').default)['createValidator']>
-      >
-      response: ExtractResponse<
-        Awaited<ReturnType<import('#controllers/products_controller').default['store']>>
-      >
-      errorResponse: ExtractErrorResponse<
-        Awaited<ReturnType<import('#controllers/products_controller').default['store']>>
-      >
+      query: ExtractQuery<InferInput<(typeof import('#controllers/products_controller').default)['createValidator']>>
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/products_controller').default['store']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/products_controller').default['store']>>> | { status: 422; response: { errors: SimpleError[] } }
     }
   }
   'products.delete': {
-    methods: ['DELETE']
+    methods: ["DELETE"]
     pattern: '/products/:id'
     types: {
       body: {}
       paramsTuple: [ParamValue]
       params: { id: ParamValue }
       query: {}
-      response: ExtractResponse<
-        Awaited<ReturnType<import('#controllers/products_controller').default['delete']>>
-      >
-      errorResponse: ExtractErrorResponse<
-        Awaited<ReturnType<import('#controllers/products_controller').default['delete']>>
-      >
+      response: ExtractResponse<Awaited<ReturnType<import('#controllers/products_controller').default['delete']>>>
+      errorResponse: ExtractErrorResponse<Awaited<ReturnType<import('#controllers/products_controller').default['delete']>>>
     }
   }
 }

@@ -51,6 +51,14 @@ export interface AdonisEndpoint extends SchemaEndpoint {
 }
 
 /**
+ * Like `Omit` but distributes over union types.
+ * Standard `Omit<A | B, K>` collapses to `{}` when A and B have disjoint keys
+ * because `keyof (A | B)` returns only common keys. This variant applies
+ * `Omit` to each union member individually.
+ */
+type DistributiveOmit<T, K extends keyof any> = T extends any ? Omit<T, K> : never
+
+/**
  * Extract query params from a validator type if it has a 'query' property.
  * Used in generated registry to separate query params from body for POST/PUT/PATCH/DELETE.
  * For GET/HEAD, use ExtractQueryForGet instead.
@@ -65,13 +73,13 @@ export type ExtractQuery<T> = 'query' extends keyof T
  * Extract query params for GET/HEAD requests.
  * Excludes headers, cookies, and params from the validator type since these are not query params.
  */
-export type ExtractQueryForGet<T> = Omit<T, 'headers' | 'cookies' | 'params'>
+export type ExtractQueryForGet<T> = DistributiveOmit<T, 'headers' | 'cookies' | 'params'>
 
 /**
  * Extract body from a validator type, excluding reserved properties.
  * Excludes 'query', 'params', 'headers', and 'cookies' as these are handled separately by AdonisJS.
  */
-export type ExtractBody<T> = Omit<T, 'query' | 'params' | 'headers' | 'cookies'>
+export type ExtractBody<T> = DistributiveOmit<T, 'query' | 'params' | 'headers' | 'cookies'>
 
 /**
  * Success status codes (2xx)
@@ -163,13 +171,23 @@ export type BaseRequestOptions = Omit<
 >
 
 /**
- * Helper types for optional/required fields - using literal types instead of mapped types
+ * Helper types for optional/required fields - using literal types instead of mapped types.
+ *
+ * When `keyof T` is `never`, we distinguish true empty objects (where `{} extends T`)
+ * from union types with disjoint keys (e.g. `{ a: string } | { b: string }`) where
+ * `keyof` is also `never` but the type is not empty.
  */
-type ParamsArg<T> = keyof T extends never ? {} : {} extends T ? { params?: T } : { params: T }
+type ParamsArg<T> = keyof T extends never
+  ? {} extends T ? {} : { params: T }
+  : {} extends T ? { params?: T } : { params: T }
 
-type QueryArg<T> = keyof T extends never ? {} : {} extends T ? { query?: T } : { query: T }
+type QueryArg<T> = keyof T extends never
+  ? {} extends T ? {} : { query: T }
+  : {} extends T ? { query?: T } : { query: T }
 
-type BodyArg<T> = keyof T extends never ? {} : {} extends T ? { body?: T } : { body: T }
+type BodyArg<T> = keyof T extends never
+  ? {} extends T ? {} : { body: T }
+  : {} extends T ? { body?: T } : { body: T }
 
 /**
  * Request args without ky options

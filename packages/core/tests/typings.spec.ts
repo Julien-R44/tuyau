@@ -712,6 +712,80 @@ test.group('Client | Typings', (group) => {
   })
 })
 
+test.group('Union body types (vine.group)', (group) => {
+  group.tap((t) => t.skip(true, 'skip typings tests'))
+
+  test('ExtractBody preserves union types', ({ expectTypeOf }) => {
+    type UnionBody = { password: string } | { assertion: { id: string; rawId: string } }
+
+    type Result = ExtractBody<UnionBody>
+    expectTypeOf<Result>().toEqualTypeOf<UnionBody>()
+  })
+
+  test('ExtractQuery preserves union types', ({ expectTypeOf }) => {
+    type UnionQuery =
+      | { search: string; category: string }
+      | { lat: number; lng: number; radius: number }
+
+    type Result = ExtractQueryForGet<UnionQuery>
+    expectTypeOf<Result>().toEqualTypeOf<UnionQuery>()
+  })
+
+  test('ExtractBody on union with reserved keys strips them from each member', ({
+    expectTypeOf,
+  }) => {
+    type UnionWithQuery =
+      | { password: string; query: { ref: string } }
+      | { assertion: { id: string }; query: { ref: string } }
+
+    type Result = ExtractBody<UnionWithQuery>
+    expectTypeOf<Result>().toEqualTypeOf<
+      { password: string } | { assertion: { id: string } }
+    >()
+  })
+
+  test('request method accepts union body', () => {
+    const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry })
+
+    // Both variants of the union should be accepted
+    tuyau.request('session.store', {
+      body: { password: 'my-password' },
+    })
+
+    tuyau.request('session.store', {
+      body: { assertion: { id: 'some-id', rawId: 'some-raw-id' } },
+    })
+
+    // @ts-expect-error body is required
+    tuyau.request('session.store', {})
+
+    // @ts-expect-error wrong body shape
+    tuyau.request('session.store', { body: { wrong: true } })
+  })
+
+  test('named api accepts union body', () => {
+    const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry })
+
+    tuyau.api.session.store({
+      body: { password: 'my-password' },
+    })
+
+    tuyau.api.session.store({
+      body: { assertion: { id: 'some-id', rawId: 'some-raw-id' } },
+    })
+
+    // @ts-expect-error body is required
+    tuyau.api.session.store({})
+  })
+
+  test('RouteWithRegistry.Body preserves union', ({ expectTypeOf }) => {
+    type Body = RouteWithRegistry.Body<typeof routes, 'session.store'>
+    expectTypeOf<Body>().toEqualTypeOf<
+      { password: string } | { assertion: { id: string; rawId: string } }
+    >()
+  })
+})
+
 test.group('ExtractQuery and ExtractBody types', (group) => {
   group.tap((t) => t.skip(true, 'skip typings tests'))
 

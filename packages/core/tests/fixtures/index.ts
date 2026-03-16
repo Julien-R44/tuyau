@@ -344,6 +344,23 @@ const routes = {
       response: { results: string[] }
     },
   },
+  /**
+   * Route with union body type (simulates vine.group with merge).
+   * When a validator uses vine.object({}).merge(vine.group([...])),
+   * the body type becomes a union of the group conditionals.
+   */
+  'session.store': {
+    methods: ['POST'],
+    pattern: '/session',
+    tokens: [{ old: '/session', type: 0, val: 'session', end: '' }],
+    types: placeholder as {
+      paramsTuple: []
+      body: { password: string } | { assertion: { id: string; rawId: string } }
+      params: {}
+      query: {}
+      response: { success: boolean }
+    },
+  },
 } as const satisfies Record<string, AdonisEndpoint>
 
 export const defaultRegistry = {
