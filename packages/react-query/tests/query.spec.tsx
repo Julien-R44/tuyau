@@ -250,6 +250,31 @@ test.group('Types | queryOptions useSuspenseQuery compatibility', () => {
   })
 })
 
+test.group('Types | TuyauPromise assignable to Promise (TanStack Query compat)', () => {
+  test('useQuery with raw tuyau client should infer response type, not TuyauPromise', ({
+    expectTypeOf,
+  }) => {
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
+
+    // When users use @tuyau/core directly with TanStack Query (without @tuyau/react-query),
+    // queryFn returns TuyauPromise which implements PromiseLike but NOT Promise.
+    // TanStack Query's queryFn is typed as `() => T | Promise<T>`.
+    // Since TuyauPromise is not a Promise, TS resolves T = TuyauPromise<Response>
+    // instead of unwrapping it to T = Response. This makes `data` wrongly typed.
+    const { result } = renderHookWithWrapper(() =>
+      useQuery({
+        queryKey: ['users'] as const,
+        queryFn: () => client.request('users.index', {}),
+      }),
+    )
+
+    // BUG: data is TuyauPromise<Array<...>> | undefined instead of Array<...> | undefined
+    expectTypeOf(result.current.data).toEqualTypeOf<
+      Array<{ id: number; name: string }> | undefined
+    >()
+  })
+})
+
 test.group('Query | Filters', () => {
   test('queryFilter should merge filters with queryKey', ({ assert }) => {
     const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })

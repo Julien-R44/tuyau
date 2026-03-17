@@ -12,9 +12,11 @@ type NormalizeError<E> =
 
 /**
  * A promise wrapper that adds `.safe()` for non-throwing error handling.
- * Implements PromiseLike so `await` works transparently.
+ * Implements Promise so it's fully compatible with TanStack Query and other
+ * libraries that expect `Promise<T>` return types.
  */
-export class TuyauPromise<Data, Errors = unknown> implements PromiseLike<Data> {
+export class TuyauPromise<Data, Errors = unknown> implements Promise<Data> {
+  readonly [Symbol.toStringTag]: string = 'TuyauPromise'
   #promise: Promise<Data>
 
   constructor(promise: Promise<Data>) {

@@ -473,6 +473,16 @@ test.group('Client | Typings', (group) => {
     expectTypeOf<DownloadsParams>().toEqualTypeOf<{ '*': string[] }>()
   })
 
+  test('TuyauPromise is assignable to Promise', ({ expectTypeOf }) => {
+    const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry })
+
+    const result = tuyau.get('/users', {})
+
+    // This is the scenario that breaks TanStack Query:
+    // queryFn expects Promise<T>, but TuyauPromise only implements PromiseLike<T>
+    expectTypeOf(result).toMatchTypeOf<Promise<{ token: string }>>()
+  })
+
   test('safe() returns TuyauPromise with correct error types', ({ expectTypeOf }) => {
     const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry })
 
