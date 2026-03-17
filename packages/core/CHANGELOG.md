@@ -1,5 +1,52 @@
 # @tuyau/core
 
+## 1.2.2
+
+### Patch Changes
+
+- 8ce6877: Fix `TuyauPromise` not being assignable to `Promise<T>`, which broke TanStack Query type inference.
+
+  `TuyauPromise` implemented `PromiseLike<T>` but was missing `[Symbol.toStringTag]`, so TypeScript did not consider it structurally compatible with `Promise<T>`. When users passed a tuyau call directly to TanStack Query's `queryFn`, the `data` type was inferred as `TuyauPromise<Response>` instead of `Response`:
+
+  ```ts
+  // Before: data was typed as TuyauPromise<User[]> instead of User[]
+  const { data } = useQuery({
+    queryKey: ["users"],
+    queryFn: () => tuyau.request("users.index", {}),
+  });
+  ```
+
+  `TuyauPromise` now implements the full `Promise<T>` interface, so it works seamlessly with TanStack Query and any other library expecting `Promise<T>`.
+
+- 8a29325: Fix body type not being recognized when using `vine.group` with `.merge()` in validators.
+
+  Previously, validators like this would cause tuyau to lose the `body` type, resulting in `'body' does not exist in type 'BaseRequestOptions'`:
+
+  ```ts
+  const createSessionValidator = vine.create(
+    vine
+      .object({})
+      .merge(
+        vine.group([
+          vine.group.if((data) => data.password, { password: vine.string() }),
+          vine.group.if((data) => data.assertion, {
+            assertion: webauthnAssertion,
+          }),
+        ]),
+      ),
+  );
+  ```
+
+  The tuyau client now correctly accepts both variants of the union:
+
+  ```ts
+  // Both calls are now properly typed
+  await client.session.store({ body: { password: "secret" } });
+  await client.session.store({
+    body: { assertion: { id: "...", rawId: "..." } },
+  });
+  ```
+
 ## 1.2.1
 
 ### Patch Changes
