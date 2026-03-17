@@ -1,5 +1,6 @@
 import type { Options as KyOptions } from 'ky'
 import type { ClientRouteMatchItTokens } from '@adonisjs/http-server/client/url_builder'
+import type { MultipartFile } from "@adonisjs/core/bodyparser";
 
 import type { TuyauError } from '../errors.ts'
 import type { TuyauPromise } from '../promise.ts'
@@ -75,11 +76,20 @@ export type ExtractQuery<T> = 'query' extends keyof T
  */
 export type ExtractQueryForGet<T> = DistributiveOmit<T, 'headers' | 'cookies' | 'params'>
 
+type ReplaceMultipartWithBlob<T> = T extends MultipartFile
+  ? Blob
+  : T extends readonly (infer U)[]
+  ? U extends MultipartFile
+    ? Blob[]
+    : T
+  : T extends object
+  ? { [K in keyof T]: ReplaceMultipartWithBlob<T[K]> }
+  : T;
 /**
  * Extract body from a validator type, excluding reserved properties.
  * Excludes 'query', 'params', 'headers', and 'cookies' as these are handled separately by AdonisJS.
  */
-export type ExtractBody<T> = DistributiveOmit<T, 'query' | 'params' | 'headers' | 'cookies'>
+export type ExtractBody<T> = ReplaceMultipartWithBlob<DistributiveOmit<T, 'query' | 'params' | 'headers' | 'cookies'>>
 
 /**
  * Success status codes (2xx)
