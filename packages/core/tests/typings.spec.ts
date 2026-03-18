@@ -924,6 +924,34 @@ test.group('ExtractQuery and ExtractBody types', (group) => {
       password: string
     }>()
   })
+
+  test('ExtractBody replaces MultipartFile with File | Blob', ({ expectTypeOf }) => {
+    type WithFile = { avatar: { isMultipartFile: true; fieldName: string; size: number }; name: string }
+
+    type Result = ExtractBody<WithFile>
+    expectTypeOf<Result>().toEqualTypeOf<{ avatar: File | Blob; name: string }>()
+  })
+
+  test('ExtractBody replaces MultipartFile array with (File | Blob) array', ({ expectTypeOf }) => {
+    type WithFiles = { documents: { isMultipartFile: true; fieldName: string }[]; title: string }
+
+    type Result = ExtractBody<WithFiles>
+    expectTypeOf<Result>().toEqualTypeOf<{ documents: (File | Blob)[]; title: string }>()
+  })
+
+  test('ExtractBody replaces optional MultipartFile with optional File | Blob', ({ expectTypeOf }) => {
+    type WithOptionalFile = { avatar?: { isMultipartFile: true; fieldName: string }; name: string }
+
+    type Result = ExtractBody<WithOptionalFile>
+    expectTypeOf<Result>().toEqualTypeOf<{ avatar?: File | Blob; name: string }>()
+  })
+
+  test('ExtractBody does not affect non-file types', ({ expectTypeOf }) => {
+    type NoFiles = { name: string; age: number; active: boolean }
+
+    type Result = ExtractBody<NoFiles>
+    expectTypeOf<Result>().toEqualTypeOf<{ name: string; age: number; active: boolean }>()
+  })
 })
 
 test.group('ExtractResponse type', (group) => {
