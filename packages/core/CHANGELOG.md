@@ -1,5 +1,13 @@
 # @tuyau/core
 
+## 1.2.3
+
+### Patch Changes
+
+- ecbf2be: Replace `MultipartFile` with `File | Blob` in client-side body types.
+
+  When using `vine.file()` in validators, the generated types previously exposed `MultipartFile` (a server-side type) to the client, forcing users to cast it to `File` or `Blob` when handling file uploads on the client. With this change,`ExtractBody` now automatically replaces `MultipartFile` with `File | Blob`.
+
 ## 1.2.2
 
 ### Patch Changes
@@ -24,16 +32,14 @@
 
   ```ts
   const createSessionValidator = vine.create(
-    vine
-      .object({})
-      .merge(
-        vine.group([
-          vine.group.if((data) => data.password, { password: vine.string() }),
-          vine.group.if((data) => data.assertion, {
-            assertion: webauthnAssertion,
-          }),
-        ]),
-      ),
+    vine.object({}).merge(
+      vine.group([
+        vine.group.if((data) => data.password, { password: vine.string() }),
+        vine.group.if((data) => data.assertion, {
+          assertion: webauthnAssertion,
+        }),
+      ]),
+    ),
   );
   ```
 
