@@ -12,13 +12,17 @@ const DEFAULT_VALIDATION_ERROR_TYPE = '{ errors: SimpleError[] }'
  */
 export class RegistryGenerator {
   #validationErrorType: string | false
+  #errorResponseType?: string
   #routesFilter?: GenerateRegistryConfig['routes']
 
-  constructor(options?: Partial<Pick<GenerateRegistryConfig, 'validationErrorType' | 'routes'>>) {
+  constructor(
+    options?: Partial<Pick<GenerateRegistryConfig, 'validationErrorType' | 'errorResponseType' | 'routes'>>,
+  ) {
     this.#validationErrorType =
       options?.validationErrorType === undefined
         ? DEFAULT_VALIDATION_ERROR_TYPE
         : options.validationErrorType
+    this.#errorResponseType = options?.errorResponseType
     this.#routesFilter = options?.routes
   }
 
@@ -226,9 +230,9 @@ export class RegistryGenerator {
     const responseType = this.#wrapResponseType(rawResponseType)
     const hasValidator = requestType !== '{}'
 
-    let errorResponseType = this.#wrapErrorResponseType(rawResponseType)
+    let errorResponseType = this.#errorResponseType ?? this.#wrapErrorResponseType(rawResponseType)
 
-    if (hasValidator && this.#validationErrorType !== false) {
+    if (hasValidator && this.#validationErrorType !== false && !this.#errorResponseType) {
       const validationError = `{ status: 422; response: ${this.#validationErrorType} }`
       errorResponseType =
         errorResponseType === 'unknown'
