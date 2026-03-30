@@ -85,4 +85,10 @@ export interface GenerateRegistryConfig {
    * Set to `false` to disable auto-adding 422 errors.
    */
   validationErrorType?: string | false
+
+  /**
+   * Custom TypeScript type string used as the error response type for all routes.
+   * When not provided, error response types are inferred from each route response.
+   */
+  errorResponseType?: string
 }
