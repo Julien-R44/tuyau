@@ -1,0 +1,23 @@
+import { assert } from '@japa/assert'
+import { snapshot } from '@japa/snapshot'
+import { fileSystem } from '@japa/file-system'
+import { expectTypeOf } from '@japa/expect-type'
+import { processCLIArgs, configure, run } from '@japa/runner'
+
+import { HappyDom } from '../tests/helpers/happy_dom_env.ts'
+
+processCLIArgs(process.argv.slice(2))
+configure({
+  files: ['tests/**/*.spec.ts'],
+  plugins: [assert(), expectTypeOf(), fileSystem({ autoClean: true }), snapshot()],
+  setup: [
+    () => {
+      HappyDom.init()
+      return () => {
+        HappyDom.destroy()
+      }
+    },
+  ],
+})
+
+run()

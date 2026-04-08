@@ -1,0 +1,12 @@
+{
+  "extends": "@adonisjs/tsconfig/tsconfig.package.json",
+  "compilerOptions": {
+    "lib": ["DOM", "ESNext"],
+    "rootDir": "./",
+    "moduleResolution": "nodenext",
+    "allowImportingTsExtensions": true,
+    "rewriteRelativeImportExtensions": true,
+    "outDir": "./build"
+  },
+  "exclude": ["tests/integration", "vitest.config.ts"]
+}
