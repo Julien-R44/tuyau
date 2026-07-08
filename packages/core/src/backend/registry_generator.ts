@@ -110,6 +110,19 @@ export class RegistryGenerator {
   }
 
   /**
+   * Wrap a response type with `ExtractRawResponse` to expose the full
+   * `{ status; response }` discriminated union across all status codes
+   * (success + error). Consumed by OpenAPI generators.
+   */
+  #wrapRawResponseType(responseType: string): string {
+    if (responseType === 'unknown' || responseType === '{}') return 'unknown'
+    if (responseType.startsWith('ReturnType<'))
+      return `ExtractRawResponse<Awaited<${responseType}>>`
+
+    return `ExtractRawResponse<${responseType}>`
+  }
+
+  /**
    * Resolve body and query type strings based on the HTTP method.
    * GET/HEAD routes use `ExtractQueryForGet`, others use
    * `ExtractBody`/`ExtractQuery`.
@@ -227,6 +240,7 @@ export class RegistryGenerator {
     const hasValidator = requestType !== '{}'
 
     let errorResponseType = this.#wrapErrorResponseType(rawResponseType)
+    let rawResponseUnion = this.#wrapRawResponseType(rawResponseType)
 
     if (hasValidator && this.#validationErrorType !== false) {
       const validationError = `{ status: 422; response: ${this.#validationErrorType} }`
@@ -234,6 +248,10 @@ export class RegistryGenerator {
         errorResponseType === 'unknown'
           ? validationError
           : `${errorResponseType} | ${validationError}`
+      rawResponseUnion =
+        rawResponseUnion === 'unknown'
+          ? validationError
+          : `${rawResponseUnion} | ${validationError}`
     }
 
     const { paramsType, paramsTuple } = this.#generateRouteParams(route)
@@ -254,6 +272,7 @@ export class RegistryGenerator {
       query: ${queryType}
       response: ${responseType}
       errorResponse: ${errorResponseType}
+      rawResponse: ${rawResponseUnion}
     }
   }`
   }
@@ -307,6 +326,7 @@ declare module '@tuyau/core/types' {
       'ExtractErrorResponse',
       'ExtractQuery',
       'ExtractQueryForGet',
+      'ExtractRawResponse',
       'ExtractResponse',
     ]
     const vineImports = ['InferInput']

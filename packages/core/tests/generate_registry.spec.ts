@@ -447,3 +447,62 @@ test.group('filterRoute', () => {
     )
   })
 })
+
+test.group('generateTypesContent | rawResponse union', () => {
+  test('emits rawResponse wrapping the awaited return type', ({ assert }) => {
+    const routes = [
+      makeRoute({
+        name: 'users.index',
+        methods: ['GET'],
+        pattern: '/users',
+        response: { type: "ReturnType<UsersController['index']>", imports: [] },
+      }),
+    ]
+
+    const generator = new RegistryGenerator()
+    const content = generator.generateTypesContent(routes)
+
+    assert.include(
+      content,
+      "rawResponse: ExtractRawResponse<Awaited<ReturnType<UsersController['index']>>>",
+    )
+  })
+
+  test('unions the 422 validation error into rawResponse for validated routes', ({ assert }) => {
+    const routes = [
+      makeRoute({
+        name: 'users.store',
+        methods: ['POST'],
+        pattern: '/users',
+        request: { type: 'InferInput<typeof createUserValidator>', imports: [] },
+        response: { type: "ReturnType<UsersController['store']>", imports: [] },
+      }),
+    ]
+
+    const generator = new RegistryGenerator()
+    const content = generator.generateTypesContent(routes)
+
+    assert.include(
+      content,
+      "rawResponse: ExtractRawResponse<Awaited<ReturnType<UsersController['store']>>> | { status: 422; response: { errors: SimpleError[] } }",
+    )
+  })
+
+  test('rawResponse is unknown for routes without a known return type', ({ assert }) => {
+    const routes = [makeRoute({ name: 'home', methods: ['GET'], pattern: '/' })]
+
+    const generator = new RegistryGenerator()
+    const content = generator.generateTypesContent(routes)
+
+    assert.include(content, 'rawResponse: unknown')
+  })
+
+  test('imports ExtractRawResponse from @tuyau/core/types', ({ assert }) => {
+    const routes = [makeRoute({ name: 'home', methods: ['GET'], pattern: '/' })]
+
+    const generator = new RegistryGenerator()
+    const content = generator.generateTypesContent(routes)
+
+    assert.match(content, /import type \{[^}]*ExtractRawResponse[^}]*\} from '@tuyau\/core\/types'/)
+  })
+})
