@@ -21,3 +21,6 @@ tmp
 # opensrc - source code for packages
 opensrc/
 *.tsbuildinfo
+
+# Amp orb portal metadata
+.amp/portals/

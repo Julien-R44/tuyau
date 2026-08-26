@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$repo_root"
+
+run_step() {
+  local label="$1"
+  shift
+  local started_at=$SECONDS
+
+  printf '\n==> %s\n' "$label"
+  "$@"
+  printf '<== %s (%ss)\n' "$label" "$((SECONDS - started_at))"
+}
+
+if ! command -v mise >/dev/null 2>&1; then
+  run_step "Install mise" bash -c 'curl -fsSL https://mise.run | sh'
+fi
+
+export PATH="$HOME/.local/bin:$PATH"
+
+run_step "Trust mise configuration" mise trust --yes "$repo_root/mise.toml"
+run_step "Install pinned toolchain" mise install
+run_step "Enable Corepack" mise exec -- corepack enable
+
+package_manager="$(mise exec -- node -p "require('./package.json').packageManager")"
+run_step "Activate $package_manager" mise exec -- corepack prepare "$package_manager" --activate
+run_step "Install workspace dependencies" mise exec -- pnpm install --frozen-lockfile
+run_step "Build workspace packages" mise exec -- pnpm build
+
+profile_marker="# tuyau mise environment"
+if ! grep -Fqx "$profile_marker" "$HOME/.bash_profile" 2>/dev/null; then
+  cat >> "$HOME/.bash_profile" <<EOF
+
+$profile_marker
+if [[ "\${PWD}" == "$repo_root" || "\${PWD}" == "$repo_root"/* ]]; then
+  eval "\$("$HOME/.local/bin/mise" activate bash)"
+fi
+EOF
+fi
+
+printf '\nOrb setup complete.\n'
