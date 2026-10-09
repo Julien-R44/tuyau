@@ -178,7 +178,7 @@ test.group('generateRuntimeContent', () => {
     assert.include(content, 'as const satisfies Record<string, AdonisEndpoint>')
   })
 
-  test('sanitizes tokens (removes matcher)', ({ assert }) => {
+  test('sanitizes tokens (removes matcher and old)', ({ assert }) => {
     const routes = [
       makeRoute({
         name: 'users.show',
@@ -195,6 +195,11 @@ test.group('generateRuntimeContent', () => {
     const content = generator.generateRuntimeContent(routes)
 
     assert.notInclude(content, 'matcher')
+    assert.notInclude(content, '"old"')
+    assert.include(
+      content,
+      'tokens: [{"type":0,"val":"users","end":""},{"type":1,"val":"id","end":""}]',
+    )
   })
 })
 

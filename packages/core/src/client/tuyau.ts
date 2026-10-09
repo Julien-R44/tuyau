@@ -1,6 +1,11 @@
 import { serialize } from 'object-to-formdata'
 import ky, { HTTPError, type KyInstance } from 'ky'
-import { createUrlBuilder, type UrlFor } from '@adonisjs/http-server/client/url_builder'
+import {
+  createUrlBuilder,
+  type ClientRouteJSON,
+  type ClientRouteMatchItTokens,
+  type UrlFor,
+} from '@adonisjs/http-server/client/url_builder'
 
 import { TuyauRouter } from './router.ts'
 import { TuyauPromise } from './promise.ts'
@@ -78,7 +83,14 @@ export class Tuyau<
    * Creates a URL builder instance for generating URLs based on the route registry
    */
   #createUrlBuilder() {
-    const rootEntries = this.#entries.map(([name, entry]) => ({ name, domain: 'root', ...entry }))
+    const rootEntries: ClientRouteJSON[] = this.#entries.map(([name, entry]) => ({
+      name,
+      domain: 'root',
+      pattern: entry.pattern,
+      methods: entry.methods,
+      // The builder's token type still declares `old`, which the registry no longer ships and `createURL` never reads.
+      tokens: entry.tokens as ClientRouteMatchItTokens[],
+    }))
     return createUrlBuilder({ root: rootEntries }, buildSearchParams as any)
   }
 
@@ -134,7 +146,10 @@ export class Tuyau<
 
     return Object.values(obj).some((val) => {
       if (this.#isFile(val)) return true
-      if (Array.isArray(val)) return val.some((item) => this.#isFile(item) || (isObject(item) && this.#hasFile(item, depth + 1)))
+      if (Array.isArray(val))
+        return val.some(
+          (item) => this.#isFile(item) || (isObject(item) && this.#hasFile(item, depth + 1)),
+        )
       if (isObject(val)) return this.#hasFile(val, depth + 1)
 
       return false
