@@ -207,7 +207,7 @@ export type TuyauRequestOptions = {
  */
 export type BaseRequestOptions = Omit<
   KyOptions,
-  'body' | 'params' | 'searchParams' | 'method' | 'json' | 'prefixUrl'
+  'body' | 'params' | 'searchParams' | 'method' | 'json' | 'prefix' | 'baseUrl'
 >
 
 /**
@@ -368,7 +368,7 @@ export interface QueryParameters extends Record<
  */
 export interface TuyauConfiguration<T extends TuyauRegistry> extends Omit<
   KyOptions,
-  'prefixUrl' | 'body' | 'json' | 'method' | 'searchParams'
+  'prefix' | 'baseUrl' | 'body' | 'json' | 'method' | 'searchParams'
 > {
   registry: T
   baseUrl: string

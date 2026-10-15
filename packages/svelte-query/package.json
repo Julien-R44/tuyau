@@ -47,7 +47,7 @@
   },
   "peerDependencies": {
     "@tanstack/svelte-query": "^6.1.0",
-    "@tuyau/core": "^1.2.2",
+    "@tuyau/core": "^2.0.0",
     "svelte": "^5.25.0"
   },
   "devDependencies": {
