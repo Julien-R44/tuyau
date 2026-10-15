@@ -1,4 +1,6 @@
+import vine from '@vinejs/vine'
 import { test } from '@japa/runner'
+import type { InferInput } from '@vinejs/vine/types'
 
 import { createTuyau } from '../src/client/tuyau.ts'
 import type { TuyauError } from '../src/client/errors.ts'
@@ -6,6 +8,7 @@ import type { TuyauPromise } from '../src/client/promise.ts'
 import { defaultRegistry as registry } from './fixtures/index.ts'
 import { generatedRegistry as largeRegistry } from './fixtures/generated-fixture-300.ts'
 import type {
+  AdonisEndpoint,
   ExtractBody,
   ExtractErrorResponse,
   ExtractQuery,
@@ -843,11 +846,56 @@ test.group('Union body types (vine.group)', (group) => {
 test.group('ExtractQuery and ExtractBody types', (group) => {
   group.tap((t) => t.skip(true, 'skip typings tests'))
 
+  test('open-record validators preserve registry and client typing', ({ expectTypeOf }) => {
+    const validator = vine.create(vine.record(vine.string()))
+    type Input = InferInput<typeof validator>
+
+    expectTypeOf<ExtractQuery<Input>>().toEqualTypeOf<{}>()
+
+    const routes = {
+      contact: {
+        methods: ['POST'],
+        pattern: '/contact',
+        tokens: [],
+        types: {} as {
+          body: ExtractBody<Input>
+          query: ExtractQuery<Input>
+          params: {}
+          paramsTuple: []
+          response: { accepted: boolean }
+        },
+      },
+    } satisfies Record<string, AdonisEndpoint>
+
+    const client = createTuyau({
+      baseUrl: 'http://localhost:3333',
+      registry: { routes, $tree: {} as { contact: typeof routes.contact } },
+    })
+
+    const response = client.api.contact({ body: { name: 'Alice', message: 'Hello' } })
+    expectTypeOf<Awaited<typeof response>>().toEqualTypeOf<{ accepted: boolean }>()
+
+    // @ts-expect-error Record values must remain strings.
+    client.api.contact({ body: { message: 123 } })
+  })
+
   test('ExtractQuery extracts query from validator with query property', ({ expectTypeOf }) => {
     type ValidatorWithQuery = { query: { page: number; limit?: number } }
 
     type Result = ExtractQuery<ValidatorWithQuery>
     expectTypeOf<Result>().toEqualTypeOf<{ page: number; limit?: number }>()
+  })
+
+  test('ExtractQuery preserves object unions but rejects mixed query types', ({ expectTypeOf }) => {
+    type Search = { search: string }
+    type Location = { lat: number; lng: number }
+
+    expectTypeOf<ExtractQuery<{ query: Search | Location }>>().toEqualTypeOf<Search | Location>()
+    expectTypeOf<ExtractQuery<{ query: Search } | { query: Location }>>().toEqualTypeOf<
+      Search | Location
+    >()
+    expectTypeOf<ExtractQuery<{ query: Search | string }>>().toEqualTypeOf<{}>()
+    expectTypeOf<ExtractQuery<{ query: Search | null }>>().toEqualTypeOf<{}>()
   })
 
   test('ExtractBody excludes headers and cookies from validator', ({ expectTypeOf }) => {
