@@ -2,7 +2,7 @@ import { Tuyau } from '@tuyau/core/client'
 import type { RawRequestArgs } from '@tuyau/core/types'
 
 import { extractKyOptions } from './utils.ts'
-import type { TuyauMutationKey, TuyauQueryBaseOptions } from './types.ts'
+import type { TuyauMutationKey, TuyauQueryBaseOptions, TuyauRequestOptions } from './types.ts'
 
 /**
  * Builds a mutation key from route path segments
@@ -19,6 +19,7 @@ export interface CreateMutationFnOptions {
   opts?: TuyauQueryBaseOptions
   routeName: string
   client: Tuyau<any>
+  globalOptions?: TuyauRequestOptions
 }
 
 /**
@@ -30,6 +31,7 @@ export function createMutationFn(options: CreateMutationFnOptions) {
     const kyOptions = extractKyOptions(options.opts?.tuyau)
     const requestArgs: RawRequestArgs<any> = request || {}
     return await options.client.request(options.routeName, {
+      ...extractKyOptions(options.globalOptions),
       ...requestArgs,
       ...kyOptions,
       retry: 0,

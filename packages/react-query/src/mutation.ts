@@ -1,13 +1,13 @@
 import { mutationOptions } from '@tanstack/react-query'
-import type {
-  SchemaEndpoint,
-  RawRequestArgs,
-  ErrorOf,
-  ResponseOf,
-} from '@tuyau/core/types'
+import type { SchemaEndpoint, RawRequestArgs, ErrorOf, ResponseOf } from '@tuyau/core/types'
 import type { UseMutationOptions } from '@tanstack/react-query'
 import { getMutationKeyInternal, createMutationFn } from '@tuyau/query-core'
-import type { DistributiveOmit, TuyauQueryBaseOptions, TuyauMutationKey } from '@tuyau/query-core'
+import type {
+  DistributiveOmit,
+  TuyauQueryBaseOptions,
+  TuyauMutationKey,
+  TuyauRequestOptions,
+} from '@tuyau/query-core'
 import { Tuyau } from '@tuyau/core/client'
 
 type ReservedOptions = 'mutationKey' | 'mutationFn'
@@ -59,6 +59,7 @@ export interface TuyauMutationOptionsOptions {
   opts?: TuyauMutationOptionsIn<any, any, any, any>
   routeName: string
   client: Tuyau<any>
+  globalOptions?: TuyauRequestOptions
 }
 
 /**
@@ -66,8 +67,8 @@ export interface TuyauMutationOptionsOptions {
  * Delegates mutationFn creation to the shared `createMutationFn` from `@tuyau/query-core`
  */
 export function tuyauMutationOptions(options: TuyauMutationOptionsOptions) {
-  const { opts, routeName, client } = options
+  const { opts, routeName, client, globalOptions } = options
   const mutationKey = getMutationKeyInternal({ segments: routeName.split('.') })
-  const mutationFn = createMutationFn({ opts, routeName, client })
+  const mutationFn = createMutationFn({ opts, routeName, client, globalOptions })
   return mutationOptions({ ...opts, mutationKey, mutationFn })
 }

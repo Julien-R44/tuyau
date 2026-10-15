@@ -85,7 +85,8 @@ export function createTuyauSvelteQueryClient<
         ...filters,
       }),
 
-      mutationOptions: (opts?: any) => tuyauMutationOptions({ opts, client, routeName }),
+      mutationOptions: (opts?: any) =>
+        tuyauMutationOptions({ opts, client, routeName, globalOptions }),
       mutationKey: () => getMutationKeyInternal({ segments }),
 
       pathKey: () => buildKey({ segments, type: 'any' }),
