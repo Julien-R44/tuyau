@@ -2,7 +2,13 @@ import nock from 'nock'
 import { test } from '@japa/runner'
 import { createTuyau } from '@tuyau/core/client'
 import { setTimeout } from 'node:timers/promises'
-import { useQuery, useSuspenseQuery, useMutation, skipToken } from '@tanstack/react-query'
+import {
+  QueryClient,
+  useQuery,
+  useSuspenseQuery,
+  useMutation,
+  skipToken,
+} from '@tanstack/react-query'
 
 import { defaultRegistry } from './fixtures/index.ts'
 import { TuyauQueryKey } from '../src/types/common.ts'
@@ -785,4 +791,91 @@ test.group('Query | Ky options', () => {
     assert.equal(lastRequest?.options.timeout, 5000)
     assert.notProperty(lastRequest?.options, 'abortOnUnmount')
   })
+})
+
+test.group('Global request options', () => {
+  for (const operation of ['query', 'infinite query', 'mutation']) {
+    for (const scenario of [
+      { name: 'client default', global: {}, local: {}, expected: 12_000 },
+      {
+        name: 'global timeout',
+        global: { timeout: 30_000 },
+        local: {},
+        expected: 30_000,
+      },
+      {
+        name: 'global disabled timeout',
+        global: { timeout: false as const },
+        local: {},
+        expected: false,
+      },
+      {
+        name: 'local override',
+        global: { timeout: 30_000 },
+        local: { timeout: 60_000 },
+        expected: 60_000,
+      },
+      {
+        name: 'local disabled timeout',
+        global: { timeout: 30_000 },
+        local: { timeout: false as const },
+        expected: false,
+      },
+    ]) {
+      test(`${operation} uses ${scenario.name}`, async ({ assert, cleanup }) => {
+        let requests = 0
+        const client = createTuyau({
+          baseUrl: 'http://localhost:3333',
+          registry: defaultRegistry,
+          timeout: 12_000,
+          hooks: {
+            beforeRequest: [
+              (_request, options) => {
+                requests++
+                assert.propertyVal(options, 'timeout', scenario.expected)
+                assert.equal(options.retry.limit, 0)
+                assert.notProperty(options, 'abortOnUnmount')
+              },
+            ],
+          },
+          fetch: async () => Response.json([]),
+        })
+        const tuyau = createTuyauReactQueryClient({
+          client,
+          globalOptions: { ...scenario.global, retry: 3, abortOnUnmount: true },
+        })
+        const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } })
+        cleanup(() => queryClient.clear())
+
+        if (operation === 'query') {
+          await queryClient.fetchQuery(
+            tuyau.users.index.queryOptions({}, { tuyau: scenario.local }),
+          )
+        } else if (operation === 'infinite query') {
+          await queryClient.fetchInfiniteQuery(
+            tuyau.users.index.infiniteQueryOptions(
+              {},
+              {
+                tuyau: scenario.local,
+                initialPageParam: 1,
+                getNextPageParam: () => undefined,
+              },
+            ),
+          )
+        } else {
+          const options = tuyau.users.store.mutationOptions({ tuyau: scenario.local })
+          await options.mutationFn!(
+            { body: { name: 'test' } },
+            {
+              client: queryClient,
+              meta: undefined,
+              mutationKey: options.mutationKey,
+            },
+          )
+        }
+
+        assert.equal(requests, 1)
+      })
+    }
+  }
 })
