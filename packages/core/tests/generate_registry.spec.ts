@@ -107,6 +107,41 @@ test.group('generateTypesContent | validation error injection', () => {
     assert.include(content, 'errorResponse: unknown')
   })
 
+  test('supports global errorResponseType override for all routes', ({ assert }) => {
+    const routes = [
+      makeRoute({
+        name: 'users.store',
+        methods: ['POST'],
+        pattern: '/users',
+        request: { type: 'InferInput<typeof createUserValidator>', imports: [] },
+        response: { type: "ReturnType<UsersController['store']>", imports: [] },
+      }),
+    ]
+
+    const generator = new RegistryGenerator({ errorResponseType: '{ status: number, code: string, payload?: unknown}' })
+    const content = generator.generateTypesContent(routes)
+
+    assert.include(content, 'errorResponse: { status: number, code: string, payload?: unknown} | { status: 422; response: { errors: SimpleError[] } }')
+    assert.notInclude(content, "ExtractErrorResponse<Awaited<ReturnType<UsersController['store']>>>")
+  })
+
+  test('global errorResponseType override applies to routes without validators', ({ assert }) => {
+    const routes = [
+      makeRoute({
+        name: 'home',
+        methods: ['GET'],
+        pattern: '/',
+        response: { type: 'unknown', imports: [] },
+      }),
+    ]
+
+    const generator = new RegistryGenerator({ errorResponseType: '{ status: number, code: string, payload?: unknown}' })
+    const content = generator.generateTypesContent(routes)
+
+    assert.include(content, 'errorResponse: { status: number, code: string, payload?: unknown}')
+    assert.notInclude(content, '422')
+  })
+
   test('imports SimpleError from vine only when using default type', ({ assert }) => {
     const routes = [
       makeRoute({
