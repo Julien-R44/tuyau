@@ -56,6 +56,7 @@ export function createInfiniteQueryFn(options: CreateInfiniteQueryFnOptions) {
       }
 
       return await client.request(routeName, {
+        ...extractKyOptions(globalOptions),
         ...requestArgs,
         ...kyOptions,
         retry: 0,

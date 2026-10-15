@@ -81,7 +81,8 @@ export function createTuyauReactQueryClient<
       /**
        * Mutations
        */
-      mutationOptions: (opts?: any) => tuyauMutationOptions({ opts, client, routeName }),
+      mutationOptions: (opts?: any) =>
+        tuyauMutationOptions({ opts, client, routeName, globalOptions }),
       mutationKey: () => getMutationKeyInternal({ segments }),
 
       /**

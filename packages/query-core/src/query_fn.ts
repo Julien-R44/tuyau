@@ -36,6 +36,7 @@ export function createQueryFn(options: CreateQueryFnOptions) {
       const kyOptions = extractKyOptions(opts?.tuyau)
 
       return await client.request(routeName, {
+        ...extractKyOptions(globalOptions),
         ...request,
         ...kyOptions,
         retry: 0,

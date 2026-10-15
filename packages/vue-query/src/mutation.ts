@@ -2,7 +2,12 @@ import { Tuyau } from '@tuyau/core/client'
 import type { ErrorOf, RawRequestArgs, ResponseOf, SchemaEndpoint } from '@tuyau/core/types'
 import type { MutationObserverOptions } from '@tanstack/query-core'
 import { getMutationKeyInternal, createMutationFn } from '@tuyau/query-core'
-import type { DistributiveOmit, TuyauQueryBaseOptions, TuyauMutationKey } from '@tuyau/query-core'
+import type {
+  DistributiveOmit,
+  TuyauQueryBaseOptions,
+  TuyauMutationKey,
+  TuyauRequestOptions,
+} from '@tuyau/query-core'
 
 type ReservedOptions = 'mutationKey' | 'mutationFn'
 
@@ -16,10 +21,7 @@ type ReservedOptions = 'mutationKey' | 'mutationFn'
  */
 export interface TuyauMutationOptionsIn<TInput, TError, TOutput, TContext>
   extends
-    DistributiveOmit<
-      MutationObserverOptions<TOutput, TError, TInput, TContext>,
-      ReservedOptions
-    >,
+    DistributiveOmit<MutationObserverOptions<TOutput, TError, TInput, TContext>, ReservedOptions>,
     TuyauQueryBaseOptions {}
 
 /**
@@ -60,6 +62,7 @@ export interface TuyauMutationOptionsOptions {
   opts?: TuyauMutationOptionsIn<any, any, any, any>
   routeName: string
   client: Tuyau<any>
+  globalOptions?: TuyauRequestOptions
 }
 
 /**
@@ -69,9 +72,11 @@ export interface TuyauMutationOptionsOptions {
  * Unlike React Query, Vue Query does not provide a `mutationOptions()` helper,
  * so this returns a plain object instead of calling a framework helper
  */
-export function tuyauMutationOptions(options: TuyauMutationOptionsOptions): TuyauMutationOptionsOut<any, any, any, any> {
-  const { opts, routeName, client } = options
+export function tuyauMutationOptions(
+  options: TuyauMutationOptionsOptions,
+): TuyauMutationOptionsOut<any, any, any, any> {
+  const { opts, routeName, client, globalOptions } = options
   const mutationKey = getMutationKeyInternal({ segments: routeName.split('.') })
-  const mutationFn = createMutationFn({ opts, routeName, client })
+  const mutationFn = createMutationFn({ opts, routeName, client, globalOptions })
   return { ...opts, mutationKey, mutationFn }
 }
