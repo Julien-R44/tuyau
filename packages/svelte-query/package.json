@@ -1,0 +1,79 @@
+{
+  "name": "@tuyau/svelte-query",
+  "type": "module",
+  "version": "1.1.0",
+  "description": "Svelte Tanstack Query integration for Tuyau",
+  "author": "Julien Ripouteau <julien@ripouteau.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/Julien-R44/tuyau#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Julien-R44/tuyau.git",
+    "directory": "packages/svelte-query"
+  },
+  "bugs": {
+    "url": "https://github.com/Julien-R44/tuyau/issues"
+  },
+  "keywords": [
+    "adonisjs",
+    "typescript",
+    "typesafe",
+    "svelte-query",
+    "tanstack-query",
+    "tuyau",
+    "svelte"
+  ],
+  "exports": {
+    ".": "./build/index.js"
+  },
+  "main": "build/index.js",
+  "files": [
+    "build"
+  ],
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "lint": "oxlint .",
+    "typecheck": "tsc --noEmit",
+    "build": "tsup-node",
+    "test": "pnpm quick:test && pnpm test:integration",
+    "quick:test": "node --import=@poppinss/ts-exec --enable-source-maps bin/test.ts --force-exit",
+    "test:integration": "vitest run",
+    "checks": "pnpm lint && pnpm typecheck"
+  },
+  "dependencies": {
+    "@tuyau/query-core": "workspace:*"
+  },
+  "peerDependencies": {
+    "@tanstack/svelte-query": "^6.1.0",
+    "@tuyau/core": "^1.2.2",
+    "svelte": "^5.25.0"
+  },
+  "devDependencies": {
+    "@adonisjs/core": "^7.6.0",
+    "@faker-js/faker": "^10.6.0",
+    "@happy-dom/global-registrator": "^21.0.1",
+    "@sveltejs/vite-plugin-svelte": "^7.3.1",
+    "@tanstack/query-core": "^5.104.3",
+    "@tanstack/svelte-query": "^6.3.3",
+    "@tuyau/core": "workspace:*",
+    "nock": "^15.0.1",
+    "svelte": "^5.57.2",
+    "vitest": "^5.0.5"
+  },
+  "tsup": {
+    "entry": [
+      "./src/index.ts"
+    ],
+    "outDir": "./build",
+    "clean": true,
+    "format": "esm",
+    "dts": true,
+    "target": "esnext"
+  },
+  "publishConfig": {
+    "access": "public",
+    "tag": "latest"
+  }
+}
