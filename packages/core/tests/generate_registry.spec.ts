@@ -178,15 +178,15 @@ test.group('generateRuntimeContent', () => {
     assert.include(content, 'as const satisfies Record<string, AdonisEndpoint>')
   })
 
-  test('sanitizes tokens (removes matcher and old)', ({ assert }) => {
+  test('compacts tokens, omitting empty suffixes and server-only fields', ({ assert }) => {
     const routes = [
       makeRoute({
         name: 'users.show',
         methods: ['GET'],
-        pattern: '/users/:id',
+        pattern: '/users/:id.json',
         tokens: [
           { old: '/users/', type: 0, val: 'users', end: '' },
-          { old: ':id', type: 1, val: 'id', end: '', matcher: /\d+/ } as any,
+          { old: ':id.json', type: 1, val: 'id', end: '.json', matcher: /\d+/ } as any,
         ],
       }),
     ]
@@ -196,10 +196,7 @@ test.group('generateRuntimeContent', () => {
 
     assert.notInclude(content, 'matcher')
     assert.notInclude(content, '"old"')
-    assert.include(
-      content,
-      'tokens: [{"type":0,"val":"users","end":""},{"type":1,"val":"id","end":""}]',
-    )
+    assert.include(content, 'tokens: [[0,"users"],[1,"id",".json"]]')
   })
 })
 

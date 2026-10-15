@@ -43,18 +43,22 @@ export interface SchemaEndpoint {
 }
 
 /**
- * A route token as the generated registry ships it. The URL builder only reads
- * `type`, `val` and `end`; `old` (the whole pattern, repeated on every token)
- * stays optional so registries generated before it was dropped still type-check.
+ * Object token used by older registries. `old` is optional because some
+ * generator versions omit it. The URL builder does not read it.
  */
 export type ClientRouteToken = Omit<ClientRouteMatchItTokens, 'old'> & { old?: string }
+
+/**
+ * Serialized route token. An omitted suffix is equivalent to an empty string.
+ */
+export type CompactRouteToken = [type: ClientRouteMatchItTokens['type'], val: string, end?: string]
 
 /**
  * Definition of an AdonisJS endpoint with types and metadata
  * Includes tokens for runtime route building
  */
 export interface AdonisEndpoint extends SchemaEndpoint {
-  tokens: ClientRouteToken[]
+  tokens: (CompactRouteToken | ClientRouteToken)[]
 }
 
 /**
