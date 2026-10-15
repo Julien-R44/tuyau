@@ -63,10 +63,13 @@ export class RegistryGenerator {
   }
 
   /**
-   * Strip server-only properties (matcher, etc.) from route tokens.
+   * Keep only what the client URL builder reads from a token: `type`, `val`
+   * and `end`. `matcher` is server-only, and `old` repeats the whole route
+   * pattern on every token without ever being read, which made the tokens
+   * two thirds of the generated registry on a large app.
    */
   #sanitizeTokens(tokens: ScannedRoute['tokens']) {
-    return tokens.map(({ old, type, val, end }) => ({ old, type, val, end }))
+    return tokens.map(({ type, val, end }) => ({ type, val, end }))
   }
 
   /**

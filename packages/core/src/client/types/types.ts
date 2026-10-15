@@ -43,11 +43,18 @@ export interface SchemaEndpoint {
 }
 
 /**
+ * A route token as the generated registry ships it. The URL builder only reads
+ * `type`, `val` and `end`; `old` (the whole pattern, repeated on every token)
+ * stays optional so registries generated before it was dropped still type-check.
+ */
+export type ClientRouteToken = Omit<ClientRouteMatchItTokens, 'old'> & { old?: string }
+
+/**
  * Definition of an AdonisJS endpoint with types and metadata
  * Includes tokens for runtime route building
  */
 export interface AdonisEndpoint extends SchemaEndpoint {
-  tokens: ClientRouteMatchItTokens[]
+  tokens: ClientRouteToken[]
 }
 
 /**
@@ -194,16 +201,28 @@ export type BaseRequestOptions = Omit<
  * `keyof` is also `never` but the type is not empty.
  */
 type ParamsArg<T> = keyof T extends never
-  ? {} extends T ? {} : { params: T }
-  : {} extends T ? { params?: T } : { params: T }
+  ? {} extends T
+    ? {}
+    : { params: T }
+  : {} extends T
+    ? { params?: T }
+    : { params: T }
 
 type QueryArg<T> = keyof T extends never
-  ? {} extends T ? {} : { query: T }
-  : {} extends T ? { query?: T } : { query: T }
+  ? {} extends T
+    ? {}
+    : { query: T }
+  : {} extends T
+    ? { query?: T }
+    : { query: T }
 
 type BodyArg<T> = keyof T extends never
-  ? {} extends T ? {} : { body: T }
-  : {} extends T ? { body?: T } : { body: T }
+  ? {} extends T
+    ? {}
+    : { body: T }
+  : {} extends T
+    ? { body?: T }
+    : { body: T }
 
 /**
  * Request args without ky options
@@ -439,10 +458,9 @@ export namespace RouteWithRegistry {
     Name extends keyof Reg,
   > = EndpointByNameForRegistry<Reg, Name>['types']['query']
 
-  export type Error<
-    Reg extends Record<string, AdonisEndpoint>,
-    Name extends keyof Reg,
-  > = ErrorOf<EndpointByNameForRegistry<Reg, Name>>
+  export type Error<Reg extends Record<string, AdonisEndpoint>, Name extends keyof Reg> = ErrorOf<
+    EndpointByNameForRegistry<Reg, Name>
+  >
 }
 
 /**
@@ -470,10 +488,9 @@ export namespace Path {
     M extends Method,
     P extends PatternsByMethod<UserAdonisRegistry, M>,
   > = FilterByMethodPathForRegistry<UserAdonisRegistry, M, P>['types']['query']
-  export type Error<
-    M extends Method,
-    P extends PatternsByMethod<UserAdonisRegistry, M>,
-  > = ErrorOf<FilterByMethodPathForRegistry<UserAdonisRegistry, M, P>>
+  export type Error<M extends Method, P extends PatternsByMethod<UserAdonisRegistry, M>> = ErrorOf<
+    FilterByMethodPathForRegistry<UserAdonisRegistry, M, P>
+  >
 }
 
 /**

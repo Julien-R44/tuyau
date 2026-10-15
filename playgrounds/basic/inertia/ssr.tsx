@@ -1,21 +1,20 @@
-import { ReactElement } from 'react'
 import ReactDOMServer from 'react-dom/server'
-import { createInertiaApp } from '@inertiajs/react'
+import { createInertiaApp, type ResolvedComponent } from '@inertiajs/react'
 import { resolvePageComponent } from '@adonisjs/inertia/helpers'
 
 import Layout from '~/layouts/default'
-import { Data } from '~/generated/data'
 
 export default function render(page: any) {
   return createInertiaApp({
     page,
     render: ReactDOMServer.renderToString,
-    resolve: (name) => {
-      return resolvePageComponent(
+    resolve: async (name) => {
+      const page = await resolvePageComponent(
         `./pages/${name}.tsx`,
-        import.meta.glob('./pages/**/*.tsx', { eager: true }),
-        (page: ReactElement<Data.SharedProps>) => <Layout children={page} />,
+        import.meta.glob<{ default: ResolvedComponent }>('./pages/**/*.tsx', { eager: true }),
+        Layout,
       )
+      return page.default
     },
     setup: ({ App, props }) => {
       return <App {...props} />
