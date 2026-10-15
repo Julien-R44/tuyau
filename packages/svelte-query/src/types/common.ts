@@ -1,7 +1,12 @@
 import type { SchemaEndpoint } from '@tuyau/core/types'
-import type { DataTag, InfiniteData, InitialDataFunction } from '@tanstack/query-core'
-import type { DefinedInitialDataOptions, UndefinedInitialDataOptions } from '@tanstack/svelte-query'
-import type { CreateInfiniteQueryOptions } from '@tanstack/svelte-query'
+import type {
+  DataTag,
+  InfiniteData,
+  InitialDataFunction,
+  DefinedInitialDataOptions,
+  UndefinedInitialDataOptions,
+  CreateInfiniteQueryOptions,
+} from '@tanstack/svelte-query'
 import type {
   TuyauQueryKey,
   TuyauMutationKey,

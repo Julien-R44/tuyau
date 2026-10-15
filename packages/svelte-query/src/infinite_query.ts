@@ -1,9 +1,8 @@
 import { Tuyau } from '@tuyau/core/client'
 import { createInfiniteQueryFn } from '@tuyau/query-core'
 import type { TuyauQueryKey, TuyauRequestOptions } from '@tuyau/query-core'
-import type { SkipToken } from '@tanstack/query-core'
 import type { RawRequestArgs } from '@tuyau/core/types'
-import type { CreateInfiniteQueryOptions } from '@tanstack/svelte-query'
+import type { CreateInfiniteQueryOptions, SkipToken } from '@tanstack/svelte-query'
 
 import type { AnyTuyauInfiniteQueryOptionsIn } from './types/common.ts'
 

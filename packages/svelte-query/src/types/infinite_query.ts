@@ -1,5 +1,5 @@
 import type { ErrorOf, RawRequestArgs, ResponseOf, SchemaEndpoint } from '@tuyau/core/types'
-import type { DataTag, InfiniteData, QueryFilters, SkipToken } from '@tanstack/query-core'
+import type { DataTag, InfiniteData, QueryFilters, SkipToken } from '@tanstack/svelte-query'
 import type { WithRequired, TuyauQueryKey } from '@tuyau/query-core'
 
 import type {

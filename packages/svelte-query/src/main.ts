@@ -1,6 +1,6 @@
 import { Tuyau } from '@tuyau/core/client'
 import { buildKey, segmentsToRouteName, getMutationKeyInternal } from '@tuyau/query-core'
-import type { QueryFilters } from '@tanstack/query-core'
+import type { QueryFilters } from '@tanstack/svelte-query'
 import type {
   AdonisEndpoint,
   InferRoutes,
