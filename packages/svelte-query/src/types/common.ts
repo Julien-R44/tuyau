@@ -1,8 +1,7 @@
 import type { SchemaEndpoint } from '@tuyau/core/types'
-import type { DataTag } from '@tanstack/query-core'
+import type { DataTag, InfiniteData, InitialDataFunction } from '@tanstack/query-core'
 import type { DefinedInitialDataOptions, UndefinedInitialDataOptions } from '@tanstack/svelte-query'
 import type { CreateInfiniteQueryOptions } from '@tanstack/svelte-query'
-import type { InitialDataFunction, NonUndefinedGuard } from '@tanstack/query-core'
 import type {
   TuyauQueryKey,
   TuyauMutationKey,
@@ -61,7 +60,7 @@ export type DefinedTuyauQueryOptionsOut<TQueryFnData, TData, TError> = DefinedIn
   TData,
   TuyauQueryKey
 > & {
-  queryKey: DataTag<TuyauQueryKey, TData, TError>
+  queryKey: DataTag<TuyauQueryKey, TQueryFnData, TError>
 }
 
 /**
@@ -71,7 +70,7 @@ export type DefinedTuyauQueryOptionsOut<TQueryFnData, TData, TError> = DefinedIn
  */
 export type UndefinedTuyauQueryOptionsOut<TQueryFnData, TData, TError> =
   UndefinedInitialDataOptions<TQueryFnData, TError, TData, TuyauQueryKey> & {
-    queryKey: DataTag<TuyauQueryKey, TData, TError>
+    queryKey: DataTag<TuyauQueryKey, TQueryFnData, TError>
   }
 
 type ReservedInfiniteQueryOptions = 'queryKey' | 'queryFn' | 'queryHashFn' | 'queryHash'
@@ -110,7 +109,7 @@ export type UndefinedTuyauInfiniteQueryOptionsIn<TQueryFnData, TError, TData> = 
  */
 export type UndefinedTuyauInfiniteQueryOptionsOut<TQueryFnData, TError, TData> =
   CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TuyauQueryKey, unknown> & {
-    queryKey: DataTag<TuyauQueryKey, TData>
+    queryKey: DataTag<TuyauQueryKey, InfiniteData<TQueryFnData>>
   }
 
 /**
@@ -122,9 +121,7 @@ export type DefinedTuyauInfiniteQueryOptionsIn<TQueryFnData, TError, TData> = Di
 > &
   TuyauQueryBaseOptions &
   TuyauInfiniteQueryBaseOptionsIn & {
-    initialData:
-      | NonUndefinedGuard<TQueryFnData>
-      | InitialDataFunction<NonUndefinedGuard<TQueryFnData>>
+    initialData: InfiniteData<TQueryFnData> | InitialDataFunction<InfiniteData<TQueryFnData>>
   }
 
 /**
@@ -133,7 +130,7 @@ export type DefinedTuyauInfiniteQueryOptionsIn<TQueryFnData, TError, TData> = Di
  */
 export type DefinedTuyauInfiniteQueryOptionsOut<TQueryFnData, TError, TData> =
   CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TuyauQueryKey, unknown> & {
-    queryKey: DataTag<TuyauQueryKey, TData>
+    queryKey: DataTag<TuyauQueryKey, InfiniteData<TQueryFnData>>
   }
 
 /**
@@ -181,4 +178,4 @@ export type TransformToSvelteQuery<T> = {
 /**
  * Top-level type for a Tuyau Svelte Query client
  */
-export type TuyauSvelteQuery<R extends Record<string, SchemaEndpoint>> = TransformToSvelteQuery<R>
+export type TuyauSvelteQuery<Tree> = TransformToSvelteQuery<Tree>

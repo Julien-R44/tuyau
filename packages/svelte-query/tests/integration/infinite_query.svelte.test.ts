@@ -1,10 +1,11 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest'
+import { describe, it, expect, expectTypeOf, beforeEach, afterEach } from 'vitest'
 import { createInfiniteQuery, skipToken } from '@tanstack/svelte-query'
+import type { InfiniteData } from '@tanstack/query-core'
 import { createTuyau } from '@tuyau/core/client'
 import nock from 'nock'
 
 import { defaultRegistry } from '../fixtures/index.ts'
-import { createTuyauSvelteQueryClient } from '../../src/main.ts'
+import { createTuyauSvelteQueryClient } from '../../src/index.ts'
 import { withEffectRoot, createTestQueryClient, settle } from './utils.svelte.ts'
 
 describe('Infinite Query | createInfiniteQuery', () => {
@@ -37,12 +38,19 @@ describe('Infinite Query | createInfiniteQuery', () => {
             {
               pageParamKey: 'page',
               initialPageParam: 1,
-              getNextPageParam: (lastPage: any) => lastPage.nextCursor,
+              getNextPageParam: (lastPage) => lastPage.nextCursor,
             },
           ),
         () => queryClient,
       )
 
+      expectTypeOf(query.data).toEqualTypeOf<
+        | InfiniteData<{
+            data: Array<{ id: number; title: string }>
+            nextCursor: number | null
+          }>
+        | undefined
+      >()
       expect(query.isPending).toBe(true)
 
       await settle()
@@ -50,6 +58,22 @@ describe('Infinite Query | createInfiniteQuery', () => {
       expect(query.isSuccess).toBe(true)
       expect(query.data!.pages).toHaveLength(1)
       expect(query.data!.pages[0].data[0].title).toBe('Article 1')
+
+      const nextPage = nock('http://localhost:3333')
+        .get('/articles')
+        .query({ page: 2, limit: 10 })
+        .reply(200, { data: [{ id: 2, title: 'Article 2' }], nextCursor: null })
+
+      await query.fetchNextPage()
+      await settle()
+
+      expect(nextPage.isDone()).toBe(true)
+      expect(query.data!.pages.map((page) => page.data[0].title)).toEqual([
+        'Article 1',
+        'Article 2',
+      ])
+      expect(query.data!.pageParams).toEqual([1, 2])
+      expect(query.hasNextPage).toBe(false)
     }),
   )
 

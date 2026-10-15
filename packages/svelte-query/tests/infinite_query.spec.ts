@@ -1,13 +1,80 @@
 import nock from 'nock'
 import { test } from '@japa/runner'
 import { createTuyau } from '@tuyau/core/client'
-import { skipToken } from '@tanstack/query-core'
+import { InfiniteQueryObserver, QueryClient, skipToken } from '@tanstack/query-core'
+import type { InfiniteData } from '@tanstack/query-core'
 
 import { defaultRegistry } from './fixtures/index.ts'
 import { createTuyauSvelteQueryClient } from '../src/index.ts'
 import { withRequestCapture } from '@tuyau/query-core/test-helpers'
 
 test.group('Infinite Query', () => {
+  test('initial data and cache retain pages when select transforms the result', ({
+    assert,
+    expectTypeOf,
+  }) => {
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
+    const tuyau = createTuyauSvelteQueryClient({ client })
+    const initialData = {
+      pages: [{ data: [{ id: 7, title: 'First' }], nextCursor: null }],
+      pageParams: [1],
+    }
+    const options = [
+      tuyau.articles.index.infiniteQueryOptions(
+        {},
+        {
+          enabled: false,
+          initialPageParam: 1,
+          getNextPageParam: (page) => page.nextCursor,
+          select: (data) => data.pages.flatMap((page) => page.data.map((article) => article.title)),
+        },
+      ),
+      tuyau.articles.index.infiniteQueryOptions(
+        {},
+        {
+          enabled: false,
+          initialData,
+          initialPageParam: 1,
+          getNextPageParam: (page) => page.nextCursor,
+          select: (data) => data.pages.flatMap((page) => page.data.map((article) => article.title)),
+        },
+      ),
+      tuyau.articles.index.infiniteQueryOptions(
+        {},
+        {
+          enabled: false,
+          initialData: () => initialData,
+          initialPageParam: 1,
+          getNextPageParam: (page) => page.nextCursor,
+          select: (data) => data.pages.flatMap((page) => page.data.map((article) => article.title)),
+        },
+      ),
+    ]
+
+    for (const option of options) {
+      const cache = new QueryClient()
+      if (!option.initialData) {
+        cache.setQueryData(tuyau.articles.index.infiniteQueryKey({}), initialData)
+      }
+      const observer = new InfiniteQueryObserver(cache, option)
+      const selected = observer.getCurrentResult().data
+      const cached = cache.getQueryData(option.queryKey)
+
+      expectTypeOf(selected).toEqualTypeOf<string[] | undefined>()
+      expectTypeOf(cached).toEqualTypeOf<
+        | InfiniteData<{
+            data: Array<{ id: number; title: string }>
+            nextCursor: number | null
+          }>
+        | undefined
+      >()
+      assert.deepEqual(selected, ['First'])
+      assert.deepEqual(cached, initialData)
+      observer.destroy()
+      cache.clear()
+    }
+  })
+
   test('query keys', ({ assert }) => {
     const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
     const tuyau = createTuyauSvelteQueryClient({ client })

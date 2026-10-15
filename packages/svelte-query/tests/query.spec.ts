@@ -1,11 +1,11 @@
 import nock from 'nock'
 import { test } from '@japa/runner'
 import { createTuyau } from '@tuyau/core/client'
-import { skipToken } from '@tanstack/query-core'
+import { QueryClient, QueryObserver, skipToken } from '@tanstack/query-core'
 
 import { defaultRegistry } from './fixtures/index.ts'
 import type { TuyauQueryKey } from '../src/types/common.ts'
-import { createTuyauSvelteQueryClient } from '../src/main.ts'
+import { createTuyauSvelteQueryClient } from '../src/index.ts'
 import { withRequestCapture } from '@tuyau/query-core/test-helpers'
 import { queryClient } from './helpers/index.ts'
 
@@ -236,6 +236,41 @@ test.group('Query | CamelCase to snake_case conversion', () => {
 })
 
 test.group('Types | Query Types', () => {
+  test('select changes observer data without changing cache types', ({ assert, expectTypeOf }) => {
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
+    const tuyau = createTuyauSvelteQueryClient({ client })
+    const users = [
+      { id: 7, name: 'Alice' },
+      { id: 12, name: 'Bob' },
+    ]
+    const options = [
+      tuyau.users.index.queryOptions({}, { enabled: false, select: (data) => data.length }),
+      tuyau.users.index.queryOptions(
+        {},
+        {
+          enabled: false,
+          initialData: users,
+          select: (data) => data.length,
+        },
+      ),
+    ]
+
+    for (const option of options) {
+      const cache = new QueryClient()
+      cache.setQueryData(tuyau.users.index.queryKey({}), users)
+      const observer = new QueryObserver(cache, option)
+      const selected = observer.getCurrentResult().data
+      const cached = cache.getQueryData(option.queryKey)
+
+      expectTypeOf(selected).toEqualTypeOf<number | undefined>()
+      expectTypeOf(cached).toEqualTypeOf<Array<{ id: number; name: string }> | undefined>()
+      assert.equal(selected, 2)
+      assert.deepEqual(cached, users)
+      observer.destroy()
+      cache.clear()
+    }
+  })
+
   test('queryOptions should return correct types', ({ expectTypeOf }) => {
     const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
     const tuyau = createTuyauSvelteQueryClient({ client })

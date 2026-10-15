@@ -8,5 +8,5 @@
     "rewriteRelativeImportExtensions": true,
     "outDir": "./build"
   },
-  "exclude": ["tests/integration", "vitest.config.ts"]
+  "exclude": ["vitest.config.ts"]
 }
