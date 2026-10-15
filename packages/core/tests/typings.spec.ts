@@ -4,6 +4,7 @@ import { createTuyau } from '../src/client/tuyau.ts'
 import type { TuyauError } from '../src/client/errors.ts'
 import type { TuyauPromise } from '../src/client/promise.ts'
 import { defaultRegistry as registry } from './fixtures/index.ts'
+import { generatedRegistry as largeRegistry } from './fixtures/generated-fixture-300.ts'
 import type {
   ExtractBody,
   ExtractErrorResponse,
@@ -11,6 +12,7 @@ import type {
   ExtractQueryForGet,
   ExtractResponse,
   PathWithRegistry,
+  RawRequestArgs,
   RouteWithRegistry,
 } from '../src/client/types/types.ts'
 
@@ -18,6 +20,47 @@ const routes = registry.routes
 
 test.group('Client | Typings', (group) => {
   group.tap((t) => t.skip(true, 'skip typings tests'))
+
+  test('optional request arguments reject unrelated values', ({ expectTypeOf }) => {
+    const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry })
+
+    tuyau.request('users.index', {})
+    tuyau.request('users.index', { query: { email: 'alice@example.com' } })
+
+    type EmptyArgs = RawRequestArgs<typeof largeRegistry.routes['message.index']>
+    expectTypeOf<null>().not.toMatchTypeOf<EmptyArgs>()
+    expectTypeOf<undefined>().not.toMatchTypeOf<EmptyArgs>()
+
+    // Use a variable: fresh object literals trigger a different excess-property check.
+    const options = { qurey: { email: 'alice@example.com' } }
+
+    // @ts-expect-error Misspelled query options must not be silently accepted.
+    tuyau.request('users.index', options)
+    // @ts-expect-error Path calls must reject unrelated options too.
+    tuyau.get('/users', options)
+    // @ts-expect-error Named API calls must reject unrelated options too.
+    tuyau.api.users.index(options)
+    // @ts-expect-error Request options must not accept a number.
+    tuyau.request('users.index', 42)
+  })
+
+  test('large registry preserves request inference', async ({ expectTypeOf }) => {
+    const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry: largeRegistry })
+    const named = await tuyau.request('feedback.review.update', {
+      params: { id: '123', groupId: '456' },
+      query: { category: 'news' },
+    })
+    const path = await tuyau.post('/file/quality/restore', {
+      body: { name: 'Alice', email: 'alice@example.com' },
+    })
+    expectTypeOf(named.created).toEqualTypeOf<boolean>()
+    expectTypeOf(path.updated).toEqualTypeOf<boolean>()
+
+    // @ts-expect-error Both route params remain required.
+    tuyau.request('feedback.review.update', { params: { id: '123' } })
+    // @ts-expect-error The body remains required.
+    tuyau.post('/file/quality/restore', {})
+  })
 
   test('named', async ({ expectTypeOf }) => {
     const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry })

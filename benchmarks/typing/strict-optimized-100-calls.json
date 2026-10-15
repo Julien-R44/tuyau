@@ -1,0 +1,271 @@
+{
+  "metadata": {
+    "timestamp": "2026-10-15T21:35:52.508Z",
+    "commit": "304153a1339ccfa3bc2ef05ca7bfa9be30c273a2",
+    "status": "M package.json\n M packages/core/src/client/types/types.ts\n M packages/core/tests/typings.spec.ts\n?? benchmarks/",
+    "node": "v26.10.0",
+    "typescript": "6.0.3",
+    "platform": "linux/x64",
+    "cpu": "Intel(R) Xeon(R) Processor @ 2.60GHz",
+    "cpuCount": 2,
+    "memoryGib": 3.8389320373535156,
+    "lockfileHash": "8ee099c752abab859c07898eac4bdaeaa2aa67483abfc81280570ab33bc33949",
+    "runnerHash": "5e890a5de4f471c063f10055253f4c6af67883f6309ad07b0acbd570a581bd2d",
+    "declarationHashes": {
+      "packages/core/build/client/index.d.ts": "057fbbc29250996ec3d83578889e86d1c65cfc86c0febe8af6bff670404ceebd",
+      "packages/core/build/client/types/index.d.ts": "0848a94ed99c6db0b26d3a8073ff8ff93dd0ff32844f98db2f84c7e11e92796c",
+      "packages/query-core/build/index.d.ts": "cd1f6ae9167c76f46782199c5731f33aad25c7dfd91e3dc4318425585c613c7d",
+      "packages/react-query/build/index.d.ts": "84fcfa01543d35a412a4e96bc123afb915080a2446e13bff6ccdf6c35f6fa8f8",
+      "packages/vue-query/build/index.d.ts": "c252c20be7a6fa5272355f9dadbfc87b3cd78c7b35cd5916740ff4f3b0963a2c"
+    },
+    "sizes": [
+      1000
+    ],
+    "samples": 3,
+    "calls": 100,
+    "scenarios": [
+      "named",
+      "tree",
+      "path",
+      "react",
+      "vue"
+    ],
+    "compilerOptions": {
+      "strict": true,
+      "skipLibCheck": true,
+      "incremental": false
+    }
+  },
+  "results": [
+    {
+      "routes": 1000,
+      "scenario": "named",
+      "ok": true,
+      "samples": [
+        {
+          "diagnostics": [],
+          "wallMs": 1882,
+          "checkMs": 1070,
+          "totalMs": 1750,
+          "memoryKib": 206761,
+          "types": 33705,
+          "instantiations": 27001,
+          "files": 112
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 1876,
+          "checkMs": 1020,
+          "totalMs": 1740,
+          "memoryKib": 186631,
+          "types": 33705,
+          "instantiations": 27001,
+          "files": 112
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 1883,
+          "checkMs": 1070,
+          "totalMs": 1750,
+          "memoryKib": 189839,
+          "types": 33705,
+          "instantiations": 27001,
+          "files": 112
+        }
+      ],
+      "median": {
+        "wallMs": 1882,
+        "checkMs": 1070,
+        "totalMs": 1750,
+        "memoryKib": 189839,
+        "types": 33705,
+        "instantiations": 27001,
+        "files": 112
+      }
+    },
+    {
+      "routes": 1000,
+      "scenario": "tree",
+      "ok": true,
+      "samples": [
+        {
+          "diagnostics": [],
+          "wallMs": 1889,
+          "checkMs": 1050,
+          "totalMs": 1750,
+          "memoryKib": 181575,
+          "types": 34193,
+          "instantiations": 24144,
+          "files": 112
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 1829,
+          "checkMs": 1000,
+          "totalMs": 1700,
+          "memoryKib": 201735,
+          "types": 34193,
+          "instantiations": 24144,
+          "files": 112
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 1788,
+          "checkMs": 980,
+          "totalMs": 1650,
+          "memoryKib": 181057,
+          "types": 34193,
+          "instantiations": 24144,
+          "files": 112
+        }
+      ],
+      "median": {
+        "wallMs": 1829,
+        "checkMs": 1000,
+        "totalMs": 1700,
+        "memoryKib": 181575,
+        "types": 34193,
+        "instantiations": 24144,
+        "files": 112
+      }
+    },
+    {
+      "routes": 1000,
+      "scenario": "path",
+      "ok": true,
+      "samples": [
+        {
+          "diagnostics": [],
+          "wallMs": 4609,
+          "checkMs": 3730,
+          "totalMs": 4470,
+          "memoryKib": 359522,
+          "types": 42033,
+          "instantiations": 884306,
+          "files": 112
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 4346,
+          "checkMs": 3470,
+          "totalMs": 4190,
+          "memoryKib": 357673,
+          "types": 42033,
+          "instantiations": 884306,
+          "files": 112
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 4346,
+          "checkMs": 3510,
+          "totalMs": 4210,
+          "memoryKib": 339793,
+          "types": 42033,
+          "instantiations": 884306,
+          "files": 112
+        }
+      ],
+      "median": {
+        "wallMs": 4346,
+        "checkMs": 3510,
+        "totalMs": 4210,
+        "memoryKib": 357673,
+        "types": 42033,
+        "instantiations": 884306,
+        "files": 112
+      }
+    },
+    {
+      "routes": 1000,
+      "scenario": "react",
+      "ok": true,
+      "samples": [
+        {
+          "diagnostics": [],
+          "wallMs": 2433,
+          "checkMs": 1370,
+          "totalMs": 2280,
+          "memoryKib": 231728,
+          "types": 44280,
+          "instantiations": 56622,
+          "files": 150
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 2330,
+          "checkMs": 1270,
+          "totalMs": 2190,
+          "memoryKib": 240696,
+          "types": 44280,
+          "instantiations": 56622,
+          "files": 150
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 2241,
+          "checkMs": 1230,
+          "totalMs": 2080,
+          "memoryKib": 226603,
+          "types": 44280,
+          "instantiations": 56622,
+          "files": 150
+        }
+      ],
+      "median": {
+        "wallMs": 2330,
+        "checkMs": 1270,
+        "totalMs": 2190,
+        "memoryKib": 231728,
+        "types": 44280,
+        "instantiations": 56622,
+        "files": 150
+      }
+    },
+    {
+      "routes": 1000,
+      "scenario": "vue",
+      "ok": true,
+      "samples": [
+        {
+          "diagnostics": [],
+          "wallMs": 2726,
+          "checkMs": 1600,
+          "totalMs": 2580,
+          "memoryKib": 277103,
+          "types": 57553,
+          "instantiations": 194213,
+          "files": 155
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 2716,
+          "checkMs": 1590,
+          "totalMs": 2570,
+          "memoryKib": 284323,
+          "types": 57553,
+          "instantiations": 194213,
+          "files": 155
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 2631,
+          "checkMs": 1540,
+          "totalMs": 2480,
+          "memoryKib": 270733,
+          "types": 57553,
+          "instantiations": 194213,
+          "files": 155
+        }
+      ],
+      "median": {
+        "wallMs": 2716,
+        "checkMs": 1590,
+        "totalMs": 2570,
+        "memoryKib": 277103,
+        "types": 57553,
+        "instantiations": 194213,
+        "files": 155
+      }
+    }
+  ]
+}

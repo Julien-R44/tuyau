@@ -203,10 +203,12 @@ export type BaseRequestOptions = Omit<
  * When `keyof T` is `never`, we distinguish true empty objects (where `{} extends T`)
  * from union types with disjoint keys (e.g. `{ a: string } | { b: string }`) where
  * `keyof` is also `never` but the type is not empty.
+ * Use unknown as the neutral intersection member to avoid cross-product unions
+ * during generic inference without disabling weak-type checks on optional args.
  */
 type ParamsArg<T> = keyof T extends never
   ? {} extends T
-    ? {}
+    ? unknown
     : { params: T }
   : {} extends T
     ? { params?: T }
@@ -214,7 +216,7 @@ type ParamsArg<T> = keyof T extends never
 
 type QueryArg<T> = keyof T extends never
   ? {} extends T
-    ? {}
+    ? unknown
     : { query: T }
   : {} extends T
     ? { query?: T }
@@ -222,18 +224,19 @@ type QueryArg<T> = keyof T extends never
 
 type BodyArg<T> = keyof T extends never
   ? {} extends T
-    ? {}
+    ? unknown
     : { body: T }
   : {} extends T
     ? { body?: T }
     : { body: T }
 
 /**
- * Request args without ky options
+ * Request args without ky options. The final intersection excludes null and
+ * undefined even when all three argument helpers resolve to unknown.
  */
 export type RawRequestArgs<E extends SchemaEndpoint> = ParamsArg<E['types']['params']> &
   QueryArg<E['types']['query']> &
-  BodyArg<E['types']['body']>
+  BodyArg<E['types']['body']> & {}
 
 /**
  * Constructs the request arguments type for an endpoint
