@@ -10,6 +10,7 @@ import type {
   ExtractErrorResponse,
   ExtractQuery,
   ExtractQueryForGet,
+  ExtractRawResponse,
   ExtractResponse,
   PathWithRegistry,
   RawRequestArgs,
@@ -1103,6 +1104,36 @@ test.group('ExtractResponse type', (group) => {
 
     type Result = ExtractResponse<UnionResponse>
     expectTypeOf<Result>().toEqualTypeOf<{ price: number }>()
+  })
+})
+
+test.group('ExtractRawResponse type', (group) => {
+  group.tap((t) => t.skip(true, 'skip typings tests'))
+
+  test('preserves success and error statuses alongside plain responses', ({ expectTypeOf }) => {
+    type Response =
+      | { token: string }
+      | { __response: { id: number }; __status: 201 }
+      | { __response: undefined; __status: 204 }
+      | { __response: { message: string }; __status: 401 }
+
+    expectTypeOf<ExtractRawResponse<Response>>().toEqualTypeOf<
+      | { status: 200; response: { token: string } }
+      | { status: 201; response: { id: number } }
+      | { status: 204; response: undefined }
+      | { status: 401; response: { message: string } }
+    >()
+  })
+
+  test('preserves fallback success bodies alongside validation errors', ({ expectTypeOf }) => {
+    type ValidationError = { status: 422; response: { errors: string[] } }
+
+    expectTypeOf<ExtractRawResponse<unknown> | ValidationError>().toEqualTypeOf<
+      { status: 200; response: unknown } | ValidationError
+    >()
+    expectTypeOf<ExtractRawResponse<{}> | ValidationError>().toEqualTypeOf<
+      { status: 200; response: {} } | ValidationError
+    >()
   })
 })
 

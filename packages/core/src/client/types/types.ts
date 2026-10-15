@@ -136,6 +136,19 @@ export type ExtractErrorResponse<T> = T extends { __response: infer R; __status:
   : never
 
 /**
+ * Normalizes a controller return type into a discriminated union of
+ * `{ status; response }` across ALL status codes (success and error alike),
+ * preserving the status that `ExtractResponse` drops (every 2xx collapses to its
+ * body) and `ExtractErrorResponse` splits off. Members carrying no status brand
+ * (a plain returned body) default to status 200. Consumers such as OpenAPI
+ * generators use this to emit every documented response with its correct code
+ * (200/201/204/4xx/…).
+ */
+export type ExtractRawResponse<T> = T extends { __response: infer R; __status: infer S }
+  ? { status: S; response: R }
+  : { status: 200; response: T }
+
+/**
  * Registry mapping endpoint names to their definitions
  */
 export interface AdonisRegistry extends Record<string, AdonisEndpoint> {}

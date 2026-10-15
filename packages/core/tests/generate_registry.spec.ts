@@ -449,3 +449,87 @@ test.group('filterRoute', () => {
     )
   })
 })
+
+test.group('generateTypesContent | rawResponse union', () => {
+  test('emits rawResponse wrapping the awaited return type', ({ assert }) => {
+    const routes = [
+      makeRoute({
+        name: 'users.index',
+        methods: ['GET'],
+        pattern: '/users',
+        response: { type: "ReturnType<UsersController['index']>", imports: [] },
+      }),
+    ]
+
+    const generator = new RegistryGenerator()
+    const content = generator.generateTypesContent(routes)
+
+    assert.include(
+      content,
+      "rawResponse: ExtractRawResponse<Awaited<ReturnType<UsersController['index']>>>",
+    )
+  })
+
+  test('unions the 422 validation error into rawResponse for validated routes', ({ assert }) => {
+    const routes = [
+      makeRoute({
+        name: 'users.store',
+        methods: ['POST'],
+        pattern: '/users',
+        request: { type: 'InferInput<typeof createUserValidator>', imports: [] },
+        response: { type: "ReturnType<UsersController['store']>", imports: [] },
+      }),
+    ]
+
+    const generator = new RegistryGenerator()
+    const content = generator.generateTypesContent(routes)
+
+    assert.include(
+      content,
+      "rawResponse: ExtractRawResponse<Awaited<ReturnType<UsersController['store']>>> | { status: 422; response: { errors: SimpleError[] } }",
+    )
+  })
+
+  test('preserves an unknown success body for routes without a known return type', ({ assert }) => {
+    const routes = [makeRoute({ name: 'home', methods: ['GET'], pattern: '/' })]
+
+    const generator = new RegistryGenerator()
+    const content = generator.generateTypesContent(routes)
+
+    assert.include(content, 'rawResponse: ExtractRawResponse<unknown>')
+  })
+
+  test('preserves fallback successes alongside configured validation errors', ({ assert }) => {
+    for (const type of [undefined, 'unknown', '{}']) {
+      const route = makeRoute({
+        name: 'users.store',
+        methods: ['POST'],
+        request: { type: 'InferInput<typeof createUserValidator>', imports: [] },
+        response: type === undefined ? undefined : { type, imports: [] },
+      })
+
+      for (const validationErrorType of [undefined, 'MyValidationError', false] as const) {
+        const generator = new RegistryGenerator({ validationErrorType })
+        const content = generator.generateTypesContent([route])
+        const validationError =
+          validationErrorType === false
+            ? ''
+            : ` | { status: 422; response: ${validationErrorType ?? '{ errors: SimpleError[] }'} }`
+
+        assert.include(
+          content,
+          `rawResponse: ExtractRawResponse<${type ?? 'unknown'}>${validationError}\n`,
+        )
+      }
+    }
+  })
+
+  test('imports ExtractRawResponse from @tuyau/core/types', ({ assert }) => {
+    const routes = [makeRoute({ name: 'home', methods: ['GET'], pattern: '/' })]
+
+    const generator = new RegistryGenerator()
+    const content = generator.generateTypesContent(routes)
+
+    assert.match(content, /import type \{[^}]*ExtractRawResponse[^}]*\} from '@tuyau\/core\/types'/)
+  })
+})
