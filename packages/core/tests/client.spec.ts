@@ -272,7 +272,7 @@ test.group('Client | Chained', () => {
       await tuyau.api.auth.login({ body: { email: 'foo@ok.com', password: 'bar' } })
     } catch (error) {
       assert.instanceOf(error, TuyauHTTPError)
-      assert.equal(error.response.message, 'Invalid credentials')
+      assert.deepPropertyVal(error, 'response', { message: 'Invalid credentials' })
     }
   })
 
@@ -460,9 +460,8 @@ test.group('Client | Chained', () => {
 
     try {
       await tuyau.api.auth.login({ body: { email: 'foo@ok.com', password: 'password' } })
-      // @ts-ignore
     } catch (error) {
-      assert.deepEqual(error.message, 'Request failed with status code 400: POST /auth/login')
+      assert.propertyVal(error, 'message', 'Request failed with status code 400: POST /auth/login')
     }
   })
 
