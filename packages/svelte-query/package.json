@@ -47,20 +47,20 @@
   },
   "peerDependencies": {
     "@tanstack/svelte-query": "^6.1.0",
-    "@tuyau/core": "^1.0.0-beta.9",
+    "@tuyau/core": "^1.2.2",
     "svelte": "^5.25.0"
   },
   "devDependencies": {
-    "@adonisjs/core": "^7.0.1",
-    "@faker-js/faker": "^10.3.0",
-    "@happy-dom/global-registrator": "^20.8.4",
+    "@adonisjs/core": "^7.6.0",
+    "@faker-js/faker": "^10.6.0",
+    "@happy-dom/global-registrator": "^21.0.1",
     "@sveltejs/vite-plugin-svelte": "^7.3.1",
-    "@tanstack/query-core": "^5.96.2",
-    "@tanstack/svelte-query": "^6.1.13",
+    "@tanstack/query-core": "^5.104.3",
+    "@tanstack/svelte-query": "^6.3.3",
     "@tuyau/core": "workspace:*",
-    "nock": "^14.0.11",
-    "svelte": "^5.25.0",
-    "vitest": "^4.1.0"
+    "nock": "^15.0.1",
+    "svelte": "^5.57.2",
+    "vitest": "^5.0.5"
   },
   "tsup": {
     "entry": [

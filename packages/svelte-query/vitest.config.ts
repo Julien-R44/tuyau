@@ -5,6 +5,6 @@ export default defineConfig({
   plugins: [svelte()],
   test: {
     include: ['tests/integration/**/*.svelte.test.ts'],
-    environment: 'happy-dom',
+    environment: './tests/helpers/happy_dom_env.ts',
   },
 })
