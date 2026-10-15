@@ -1,0 +1,1930 @@
+{
+  "metadata": {
+    "timestamp": "2026-10-15T18:17:02.564Z",
+    "commit": "304153a1339ccfa3bc2ef05ca7bfa9be30c273a2",
+    "status": "M package.json\n?? benchmarks/",
+    "node": "v26.10.0",
+    "typescript": "6.0.3",
+    "platform": "linux/x64",
+    "cpu": "Intel(R) Xeon(R) Processor @ 2.60GHz",
+    "cpuCount": 2,
+    "memoryGib": 3.8389320373535156,
+    "lockfileHash": "8ee099c752abab859c07898eac4bdaeaa2aa67483abfc81280570ab33bc33949",
+    "runnerHash": "5e890a5de4f471c063f10055253f4c6af67883f6309ad07b0acbd570a581bd2d",
+    "declarationHashes": {
+      "packages/core/build/client/index.d.ts": "604dc859cc8cbeae439e223410ec6c5f622ca905391820e6f67f624e1ddeb1c2",
+      "packages/core/build/client/types/index.d.ts": "eb885b695f578d290a789d22c40345767a0ee8193514b54ec7d9de05be225832",
+      "packages/query-core/build/index.d.ts": "cd1f6ae9167c76f46782199c5731f33aad25c7dfd91e3dc4318425585c613c7d",
+      "packages/react-query/build/index.d.ts": "84fcfa01543d35a412a4e96bc123afb915080a2446e13bff6ccdf6c35f6fa8f8",
+      "packages/vue-query/build/index.d.ts": "c252c20be7a6fa5272355f9dadbfc87b3cd78c7b35cd5916740ff4f3b0963a2c"
+    },
+    "sizes": [
+      10,
+      100,
+      300,
+      1000,
+      3000
+    ],
+    "samples": 3,
+    "calls": 10,
+    "scenarios": [
+      "registry",
+      "client",
+      "named",
+      "tree",
+      "path",
+      "url",
+      "react",
+      "vue"
+    ],
+    "compilerOptions": {
+      "strict": true,
+      "skipLibCheck": true,
+      "incremental": false
+    }
+  },
+  "results": [
+    {
+      "routes": 10,
+      "scenario": "registry",
+      "ok": true,
+      "samples": [
+        {
+          "diagnostics": [],
+          "wallMs": 639,
+          "checkMs": 70,
+          "totalMs": 520,
+          "memoryKib": 64625,
+          "types": 509,
+          "instantiations": 227,
+          "files": 111
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 630,
+          "checkMs": 60,
+          "totalMs": 500,
+          "memoryKib": 62682,
+          "types": 509,
+          "instantiations": 227,
+          "files": 111
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 611,
+          "checkMs": 60,
+          "totalMs": 480,
+          "memoryKib": 62761,
+          "types": 509,
+          "instantiations": 227,
+          "files": 111
+        }
+      ],
+      "median": {
+        "wallMs": 630,
+        "checkMs": 60,
+        "totalMs": 500,
+        "memoryKib": 62761,
+        "types": 509,
+        "instantiations": 227,
+        "files": 111
+      }
+    },
+    {
+      "routes": 10,
+      "scenario": "client",
+      "ok": true,
+      "samples": [
+        {
+          "diagnostics": [],
+          "wallMs": 614,
+          "checkMs": 70,
+          "totalMs": 480,
+          "memoryKib": 65863,
+          "types": 584,
+          "instantiations": 372,
+          "files": 112
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 709,
+          "checkMs": 70,
+          "totalMs": 570,
+          "memoryKib": 65277,
+          "types": 584,
+          "instantiations": 372,
+          "files": 112
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 593,
+          "checkMs": 70,
+          "totalMs": 460,
+          "memoryKib": 63841,
+          "types": 584,
+          "instantiations": 372,
+          "files": 112
+        }
+      ],
+      "median": {
+        "wallMs": 614,
+        "checkMs": 70,
+        "totalMs": 480,
+        "memoryKib": 65277,
+        "types": 584,
+        "instantiations": 372,
+        "files": 112
+      }
+    },
+    {
+      "routes": 10,
+      "scenario": "named",
+      "ok": true,
+      "samples": [
+        {
+          "diagnostics": [],
+          "wallMs": 887,
+          "checkMs": 330,
+          "totalMs": 770,
+          "memoryKib": 91727,
+          "types": 2178,
+          "instantiations": 1376,
+          "files": 112
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 1205,
+          "checkMs": 490,
+          "totalMs": 1050,
+          "memoryKib": 90178,
+          "types": 2178,
+          "instantiations": 1376,
+          "files": 112
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 872,
+          "checkMs": 350,
+          "totalMs": 750,
+          "memoryKib": 92519,
+          "types": 2178,
+          "instantiations": 1376,
+          "files": 112
+        }
+      ],
+      "median": {
+        "wallMs": 887,
+        "checkMs": 350,
+        "totalMs": 770,
+        "memoryKib": 91727,
+        "types": 2178,
+        "instantiations": 1376,
+        "files": 112
+      }
+    },
+    {
+      "routes": 10,
+      "scenario": "tree",
+      "ok": true,
+      "samples": [
+        {
+          "diagnostics": [],
+          "wallMs": 668,
+          "checkMs": 130,
+          "totalMs": 540,
+          "memoryKib": 72432,
+          "types": 975,
+          "instantiations": 1408,
+          "files": 112
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 806,
+          "checkMs": 150,
+          "totalMs": 650,
+          "memoryKib": 71562,
+          "types": 975,
+          "instantiations": 1408,
+          "files": 112
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 676,
+          "checkMs": 120,
+          "totalMs": 560,
+          "memoryKib": 72452,
+          "types": 975,
+          "instantiations": 1408,
+          "files": 112
+        }
+      ],
+      "median": {
+        "wallMs": 676,
+        "checkMs": 130,
+        "totalMs": 560,
+        "memoryKib": 72432,
+        "types": 975,
+        "instantiations": 1408,
+        "files": 112
+      }
+    },
+    {
+      "routes": 10,
+      "scenario": "path",
+      "ok": true,
+      "samples": [
+        {
+          "diagnostics": [],
+          "wallMs": 808,
+          "checkMs": 270,
+          "totalMs": 690,
+          "memoryKib": 70940,
+          "types": 2002,
+          "instantiations": 3592,
+          "files": 112
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 1036,
+          "checkMs": 340,
+          "totalMs": 880,
+          "memoryKib": 72876,
+          "types": 2002,
+          "instantiations": 3592,
+          "files": 112
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 877,
+          "checkMs": 270,
+          "totalMs": 740,
+          "memoryKib": 69636,
+          "types": 2002,
+          "instantiations": 3592,
+          "files": 112
+        }
+      ],
+      "median": {
+        "wallMs": 877,
+        "checkMs": 270,
+        "totalMs": 740,
+        "memoryKib": 70940,
+        "types": 2002,
+        "instantiations": 3592,
+        "files": 112
+      }
+    },
+    {
+      "routes": 10,
+      "scenario": "url",
+      "ok": true,
+      "samples": [
+        {
+          "diagnostics": [],
+          "wallMs": 669,
+          "checkMs": 120,
+          "totalMs": 540,
+          "memoryKib": 70028,
+          "types": 1503,
+          "instantiations": 2449,
+          "files": 112
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 780,
+          "checkMs": 140,
+          "totalMs": 650,
+          "memoryKib": 72403,
+          "types": 1503,
+          "instantiations": 2449,
+          "files": 112
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 682,
+          "checkMs": 120,
+          "totalMs": 560,
+          "memoryKib": 72365,
+          "types": 1503,
+          "instantiations": 2449,
+          "files": 112
+        }
+      ],
+      "median": {
+        "wallMs": 682,
+        "checkMs": 120,
+        "totalMs": 560,
+        "memoryKib": 72365,
+        "types": 1503,
+        "instantiations": 2449,
+        "files": 112
+      }
+    },
+    {
+      "routes": 10,
+      "scenario": "react",
+      "ok": true,
+      "samples": [
+        {
+          "diagnostics": [],
+          "wallMs": 1019,
+          "checkMs": 270,
+          "totalMs": 890,
+          "memoryKib": 100241,
+          "types": 4442,
+          "instantiations": 8749,
+          "files": 150
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 1082,
+          "checkMs": 260,
+          "totalMs": 960,
+          "memoryKib": 95995,
+          "types": 4442,
+          "instantiations": 8749,
+          "files": 150
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 1075,
+          "checkMs": 240,
+          "totalMs": 920,
+          "memoryKib": 104189,
+          "types": 4442,
+          "instantiations": 8749,
+          "files": 150
+        }
+      ],
+      "median": {
+        "wallMs": 1075,
+        "checkMs": 260,
+        "totalMs": 920,
+        "memoryKib": 100241,
+        "types": 4442,
+        "instantiations": 8749,
+        "files": 150
+      }
+    },
+    {
+      "routes": 10,
+      "scenario": "vue",
+      "ok": true,
+      "samples": [
+        {
+          "diagnostics": [],
+          "wallMs": 1164,
+          "checkMs": 300,
+          "totalMs": 1010,
+          "memoryKib": 124380,
+          "types": 6330,
+          "instantiations": 22860,
+          "files": 155
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 1170,
+          "checkMs": 330,
+          "totalMs": 1040,
+          "memoryKib": 114383,
+          "types": 6330,
+          "instantiations": 22860,
+          "files": 155
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 1303,
+          "checkMs": 400,
+          "totalMs": 1160,
+          "memoryKib": 121618,
+          "types": 6330,
+          "instantiations": 22860,
+          "files": 155
+        }
+      ],
+      "median": {
+        "wallMs": 1170,
+        "checkMs": 330,
+        "totalMs": 1040,
+        "memoryKib": 121618,
+        "types": 6330,
+        "instantiations": 22860,
+        "files": 155
+      }
+    },
+    {
+      "routes": 100,
+      "scenario": "registry",
+      "ok": true,
+      "samples": [
+        {
+          "diagnostics": [],
+          "wallMs": 712,
+          "checkMs": 160,
+          "totalMs": 590,
+          "memoryKib": 72446,
+          "types": 3254,
+          "instantiations": 1577,
+          "files": 111
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 746,
+          "checkMs": 150,
+          "totalMs": 590,
+          "memoryKib": 76818,
+          "types": 3254,
+          "instantiations": 1577,
+          "files": 111
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 846,
+          "checkMs": 180,
+          "totalMs": 710,
+          "memoryKib": 72852,
+          "types": 3254,
+          "instantiations": 1577,
+          "files": 111
+        }
+      ],
+      "median": {
+        "wallMs": 746,
+        "checkMs": 160,
+        "totalMs": 590,
+        "memoryKib": 72852,
+        "types": 3254,
+        "instantiations": 1577,
+        "files": 111
+      }
+    },
+    {
+      "routes": 100,
+      "scenario": "client",
+      "ok": true,
+      "samples": [
+        {
+          "diagnostics": [],
+          "wallMs": 738,
+          "checkMs": 180,
+          "totalMs": 620,
+          "memoryKib": 74062,
+          "types": 3329,
+          "instantiations": 1722,
+          "files": 112
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 784,
+          "checkMs": 180,
+          "totalMs": 650,
+          "memoryKib": 74577,
+          "types": 3329,
+          "instantiations": 1722,
+          "files": 112
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 830,
+          "checkMs": 200,
+          "totalMs": 710,
+          "memoryKib": 67254,
+          "types": 3329,
+          "instantiations": 1722,
+          "files": 112
+        }
+      ],
+      "median": {
+        "wallMs": 784,
+        "checkMs": 180,
+        "totalMs": 650,
+        "memoryKib": 74062,
+        "types": 3329,
+        "instantiations": 1722,
+        "files": 112
+      }
+    },
+    {
+      "routes": 100,
+      "scenario": "named",
+      "ok": false,
+      "samples": [
+        {
+          "diagnostics": [
+            "tmp/typing-bench-UPVRvK/100/consumer-named.ts(4,45): error TS2590: Expression produces a union type that is too complex to represent."
+          ],
+          "wallMs": 842,
+          "checkMs": 280,
+          "totalMs": 720,
+          "memoryKib": 86932,
+          "types": 9317,
+          "instantiations": 3176,
+          "files": 112
+        },
+        {
+          "diagnostics": [
+            "tmp/typing-bench-UPVRvK/100/consumer-named.ts(4,45): error TS2590: Expression produces a union type that is too complex to represent."
+          ],
+          "wallMs": 1082,
+          "checkMs": 410,
+          "totalMs": 950,
+          "memoryKib": 81670,
+          "types": 9317,
+          "instantiations": 3176,
+          "files": 112
+        },
+        {
+          "diagnostics": [
+            "tmp/typing-bench-UPVRvK/100/consumer-named.ts(4,45): error TS2590: Expression produces a union type that is too complex to represent."
+          ],
+          "wallMs": 970,
+          "checkMs": 320,
+          "totalMs": 840,
+          "memoryKib": 72790,
+          "types": 9317,
+          "instantiations": 3176,
+          "files": 112
+        }
+      ],
+      "median": {
+        "wallMs": 970,
+        "checkMs": 320,
+        "totalMs": 840,
+        "memoryKib": 81670,
+        "types": 9317,
+        "instantiations": 3176,
+        "files": 112
+      }
+    },
+    {
+      "routes": 100,
+      "scenario": "tree",
+      "ok": true,
+      "samples": [
+        {
+          "diagnostics": [],
+          "wallMs": 886,
+          "checkMs": 260,
+          "totalMs": 760,
+          "memoryKib": 74089,
+          "types": 3777,
+          "instantiations": 2773,
+          "files": 112
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 855,
+          "checkMs": 230,
+          "totalMs": 730,
+          "memoryKib": 78581,
+          "types": 3777,
+          "instantiations": 2773,
+          "files": 112
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 885,
+          "checkMs": 240,
+          "totalMs": 720,
+          "memoryKib": 75281,
+          "types": 3777,
+          "instantiations": 2773,
+          "files": 112
+        }
+      ],
+      "median": {
+        "wallMs": 885,
+        "checkMs": 240,
+        "totalMs": 730,
+        "memoryKib": 75281,
+        "types": 3777,
+        "instantiations": 2773,
+        "files": 112
+      }
+    },
+    {
+      "routes": 100,
+      "scenario": "path",
+      "ok": true,
+      "samples": [
+        {
+          "diagnostics": [],
+          "wallMs": 2958,
+          "checkMs": 2410,
+          "totalMs": 2840,
+          "memoryKib": 155840,
+          "types": 31483,
+          "instantiations": 21412,
+          "files": 112
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 3311,
+          "checkMs": 2710,
+          "totalMs": 3180,
+          "memoryKib": 143060,
+          "types": 31483,
+          "instantiations": 21412,
+          "files": 112
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 3209,
+          "checkMs": 2650,
+          "totalMs": 3070,
+          "memoryKib": 149903,
+          "types": 31483,
+          "instantiations": 21412,
+          "files": 112
+        }
+      ],
+      "median": {
+        "wallMs": 3209,
+        "checkMs": 2650,
+        "totalMs": 3070,
+        "memoryKib": 149903,
+        "types": 31483,
+        "instantiations": 21412,
+        "files": 112
+      }
+    },
+    {
+      "routes": 100,
+      "scenario": "url",
+      "ok": true,
+      "samples": [
+        {
+          "diagnostics": [],
+          "wallMs": 916,
+          "checkMs": 320,
+          "totalMs": 780,
+          "memoryKib": 96404,
+          "types": 9108,
+          "instantiations": 16039,
+          "files": 112
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 1007,
+          "checkMs": 370,
+          "totalMs": 890,
+          "memoryKib": 93966,
+          "types": 9108,
+          "instantiations": 16039,
+          "files": 112
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 906,
+          "checkMs": 330,
+          "totalMs": 790,
+          "memoryKib": 94491,
+          "types": 9108,
+          "instantiations": 16039,
+          "files": 112
+        }
+      ],
+      "median": {
+        "wallMs": 916,
+        "checkMs": 330,
+        "totalMs": 790,
+        "memoryKib": 94491,
+        "types": 9108,
+        "instantiations": 16039,
+        "files": 112
+      }
+    },
+    {
+      "routes": 100,
+      "scenario": "react",
+      "ok": true,
+      "samples": [
+        {
+          "diagnostics": [],
+          "wallMs": 1140,
+          "checkMs": 330,
+          "totalMs": 990,
+          "memoryKib": 109884,
+          "types": 7245,
+          "instantiations": 10114,
+          "files": 150
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 1189,
+          "checkMs": 330,
+          "totalMs": 1050,
+          "memoryKib": 111335,
+          "types": 7245,
+          "instantiations": 10114,
+          "files": 150
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 1279,
+          "checkMs": 340,
+          "totalMs": 1120,
+          "memoryKib": 109766,
+          "types": 7245,
+          "instantiations": 10114,
+          "files": 150
+        }
+      ],
+      "median": {
+        "wallMs": 1189,
+        "checkMs": 330,
+        "totalMs": 1050,
+        "memoryKib": 109884,
+        "types": 7245,
+        "instantiations": 10114,
+        "files": 150
+      }
+    },
+    {
+      "routes": 100,
+      "scenario": "vue",
+      "ok": true,
+      "samples": [
+        {
+          "diagnostics": [],
+          "wallMs": 1350,
+          "checkMs": 440,
+          "totalMs": 1220,
+          "memoryKib": 143527,
+          "types": 9133,
+          "instantiations": 24225,
+          "files": 155
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 1369,
+          "checkMs": 410,
+          "totalMs": 1150,
+          "memoryKib": 130730,
+          "types": 9133,
+          "instantiations": 24225,
+          "files": 155
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 1552,
+          "checkMs": 490,
+          "totalMs": 1390,
+          "memoryKib": 123405,
+          "types": 9133,
+          "instantiations": 24225,
+          "files": 155
+        }
+      ],
+      "median": {
+        "wallMs": 1369,
+        "checkMs": 440,
+        "totalMs": 1220,
+        "memoryKib": 130730,
+        "types": 9133,
+        "instantiations": 24225,
+        "files": 155
+      }
+    },
+    {
+      "routes": 300,
+      "scenario": "registry",
+      "ok": true,
+      "samples": [
+        {
+          "diagnostics": [],
+          "wallMs": 893,
+          "checkMs": 260,
+          "totalMs": 770,
+          "memoryKib": 101723,
+          "types": 9354,
+          "instantiations": 4577,
+          "files": 111
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 953,
+          "checkMs": 260,
+          "totalMs": 820,
+          "memoryKib": 98763,
+          "types": 9354,
+          "instantiations": 4577,
+          "files": 111
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 978,
+          "checkMs": 270,
+          "totalMs": 840,
+          "memoryKib": 99539,
+          "types": 9354,
+          "instantiations": 4577,
+          "files": 111
+        }
+      ],
+      "median": {
+        "wallMs": 953,
+        "checkMs": 260,
+        "totalMs": 820,
+        "memoryKib": 99539,
+        "types": 9354,
+        "instantiations": 4577,
+        "files": 111
+      }
+    },
+    {
+      "routes": 300,
+      "scenario": "client",
+      "ok": true,
+      "samples": [
+        {
+          "diagnostics": [],
+          "wallMs": 1048,
+          "checkMs": 330,
+          "totalMs": 930,
+          "memoryKib": 92719,
+          "types": 9429,
+          "instantiations": 4722,
+          "files": 112
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 948,
+          "checkMs": 330,
+          "totalMs": 830,
+          "memoryKib": 93504,
+          "types": 9429,
+          "instantiations": 4722,
+          "files": 112
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 1011,
+          "checkMs": 340,
+          "totalMs": 890,
+          "memoryKib": 92845,
+          "types": 9429,
+          "instantiations": 4722,
+          "files": 112
+        }
+      ],
+      "median": {
+        "wallMs": 1011,
+        "checkMs": 330,
+        "totalMs": 890,
+        "memoryKib": 92845,
+        "types": 9429,
+        "instantiations": 4722,
+        "files": 112
+      }
+    },
+    {
+      "routes": 300,
+      "scenario": "named",
+      "ok": false,
+      "samples": [
+        {
+          "diagnostics": [
+            "tmp/typing-bench-UPVRvK/300/consumer-named.ts(4,45): error TS2590: Expression produces a union type that is too complex to represent."
+          ],
+          "wallMs": 1238,
+          "checkMs": 550,
+          "totalMs": 1100,
+          "memoryKib": 119989,
+          "types": 56515,
+          "instantiations": 7176,
+          "files": 112
+        },
+        {
+          "diagnostics": [
+            "tmp/typing-bench-UPVRvK/300/consumer-named.ts(4,45): error TS2590: Expression produces a union type that is too complex to represent."
+          ],
+          "wallMs": 1116,
+          "checkMs": 490,
+          "totalMs": 1000,
+          "memoryKib": 118754,
+          "types": 56515,
+          "instantiations": 7176,
+          "files": 112
+        },
+        {
+          "diagnostics": [
+            "tmp/typing-bench-UPVRvK/300/consumer-named.ts(4,45): error TS2590: Expression produces a union type that is too complex to represent."
+          ],
+          "wallMs": 1174,
+          "checkMs": 530,
+          "totalMs": 1040,
+          "memoryKib": 131332,
+          "types": 56515,
+          "instantiations": 7176,
+          "files": 112
+        }
+      ],
+      "median": {
+        "wallMs": 1174,
+        "checkMs": 530,
+        "totalMs": 1040,
+        "memoryKib": 119989,
+        "types": 56515,
+        "instantiations": 7176,
+        "files": 112
+      }
+    },
+    {
+      "routes": 300,
+      "scenario": "tree",
+      "ok": true,
+      "samples": [
+        {
+          "diagnostics": [],
+          "wallMs": 1028,
+          "checkMs": 400,
+          "totalMs": 900,
+          "memoryKib": 100333,
+          "types": 9966,
+          "instantiations": 5818,
+          "files": 112
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 1045,
+          "checkMs": 410,
+          "totalMs": 920,
+          "memoryKib": 95314,
+          "types": 9966,
+          "instantiations": 5818,
+          "files": 112
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 1056,
+          "checkMs": 370,
+          "totalMs": 930,
+          "memoryKib": 98698,
+          "types": 9966,
+          "instantiations": 5818,
+          "files": 112
+        }
+      ],
+      "median": {
+        "wallMs": 1045,
+        "checkMs": 400,
+        "totalMs": 920,
+        "memoryKib": 98698,
+        "types": 9966,
+        "instantiations": 5818,
+        "files": 112
+      }
+    },
+    {
+      "routes": 300,
+      "scenario": "path",
+      "ok": true,
+      "samples": [
+        {
+          "diagnostics": [],
+          "wallMs": 18843,
+          "checkMs": 18170,
+          "totalMs": 18690,
+          "memoryKib": 647450,
+          "types": 227481,
+          "instantiations": 61012,
+          "files": 112
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 18996,
+          "checkMs": 18280,
+          "totalMs": 18850,
+          "memoryKib": 655229,
+          "types": 227481,
+          "instantiations": 61012,
+          "files": 112
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 19699,
+          "checkMs": 19040,
+          "totalMs": 19550,
+          "memoryKib": 627601,
+          "types": 227481,
+          "instantiations": 61012,
+          "files": 112
+        }
+      ],
+      "median": {
+        "wallMs": 18996,
+        "checkMs": 18280,
+        "totalMs": 18850,
+        "memoryKib": 647450,
+        "types": 227481,
+        "instantiations": 61012,
+        "files": 112
+      }
+    },
+    {
+      "routes": 300,
+      "scenario": "url",
+      "ok": true,
+      "samples": [
+        {
+          "diagnostics": [],
+          "wallMs": 1355,
+          "checkMs": 620,
+          "totalMs": 1180,
+          "memoryKib": 114804,
+          "types": 26006,
+          "instantiations": 46239,
+          "files": 112
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 1200,
+          "checkMs": 570,
+          "totalMs": 1080,
+          "memoryKib": 128767,
+          "types": 26006,
+          "instantiations": 46239,
+          "files": 112
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 1286,
+          "checkMs": 630,
+          "totalMs": 1160,
+          "memoryKib": 122014,
+          "types": 26006,
+          "instantiations": 46239,
+          "files": 112
+        }
+      ],
+      "median": {
+        "wallMs": 1286,
+        "checkMs": 620,
+        "totalMs": 1160,
+        "memoryKib": 122014,
+        "types": 26006,
+        "instantiations": 46239,
+        "files": 112
+      }
+    },
+    {
+      "routes": 300,
+      "scenario": "react",
+      "ok": true,
+      "samples": [
+        {
+          "diagnostics": [],
+          "wallMs": 1380,
+          "checkMs": 470,
+          "totalMs": 1240,
+          "memoryKib": 122806,
+          "types": 13437,
+          "instantiations": 13159,
+          "files": 150
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 1370,
+          "checkMs": 490,
+          "totalMs": 1250,
+          "memoryKib": 122364,
+          "types": 13437,
+          "instantiations": 13159,
+          "files": 150
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 1393,
+          "checkMs": 510,
+          "totalMs": 1270,
+          "memoryKib": 130872,
+          "types": 13437,
+          "instantiations": 13159,
+          "files": 150
+        }
+      ],
+      "median": {
+        "wallMs": 1380,
+        "checkMs": 490,
+        "totalMs": 1250,
+        "memoryKib": 122806,
+        "types": 13437,
+        "instantiations": 13159,
+        "files": 150
+      }
+    },
+    {
+      "routes": 300,
+      "scenario": "vue",
+      "ok": true,
+      "samples": [
+        {
+          "diagnostics": [],
+          "wallMs": 1533,
+          "checkMs": 540,
+          "totalMs": 1400,
+          "memoryKib": 149577,
+          "types": 15325,
+          "instantiations": 27270,
+          "files": 155
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 1490,
+          "checkMs": 550,
+          "totalMs": 1360,
+          "memoryKib": 151420,
+          "types": 15325,
+          "instantiations": 27270,
+          "files": 155
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 1809,
+          "checkMs": 590,
+          "totalMs": 1650,
+          "memoryKib": 149228,
+          "types": 15325,
+          "instantiations": 27270,
+          "files": 155
+        }
+      ],
+      "median": {
+        "wallMs": 1533,
+        "checkMs": 550,
+        "totalMs": 1400,
+        "memoryKib": 149577,
+        "types": 15325,
+        "instantiations": 27270,
+        "files": 155
+      }
+    },
+    {
+      "routes": 1000,
+      "scenario": "registry",
+      "ok": true,
+      "samples": [
+        {
+          "diagnostics": [],
+          "wallMs": 1550,
+          "checkMs": 720,
+          "totalMs": 1420,
+          "memoryKib": 178408,
+          "types": 30704,
+          "instantiations": 15077,
+          "files": 111
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 1556,
+          "checkMs": 700,
+          "totalMs": 1420,
+          "memoryKib": 167338,
+          "types": 30704,
+          "instantiations": 15077,
+          "files": 111
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 1608,
+          "checkMs": 760,
+          "totalMs": 1470,
+          "memoryKib": 176690,
+          "types": 30704,
+          "instantiations": 15077,
+          "files": 111
+        }
+      ],
+      "median": {
+        "wallMs": 1556,
+        "checkMs": 720,
+        "totalMs": 1420,
+        "memoryKib": 176690,
+        "types": 30704,
+        "instantiations": 15077,
+        "files": 111
+      }
+    },
+    {
+      "routes": 1000,
+      "scenario": "client",
+      "ok": true,
+      "samples": [
+        {
+          "diagnostics": [],
+          "wallMs": 1731,
+          "checkMs": 830,
+          "totalMs": 1600,
+          "memoryKib": 180879,
+          "types": 30779,
+          "instantiations": 15222,
+          "files": 112
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 1587,
+          "checkMs": 770,
+          "totalMs": 1460,
+          "memoryKib": 198189,
+          "types": 30779,
+          "instantiations": 15222,
+          "files": 112
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 1663,
+          "checkMs": 850,
+          "totalMs": 1530,
+          "memoryKib": 184503,
+          "types": 30779,
+          "instantiations": 15222,
+          "files": 112
+        }
+      ],
+      "median": {
+        "wallMs": 1663,
+        "checkMs": 830,
+        "totalMs": 1530,
+        "memoryKib": 184503,
+        "types": 30779,
+        "instantiations": 15222,
+        "files": 112
+      }
+    },
+    {
+      "routes": 1000,
+      "scenario": "named",
+      "ok": false,
+      "samples": [
+        {
+          "diagnostics": [
+            "tmp/typing-bench-UPVRvK/1000/consumer-named.ts(4,45): error TS2590: Expression produces a union type that is too complex to represent."
+          ],
+          "wallMs": 1814,
+          "checkMs": 940,
+          "totalMs": 1690,
+          "memoryKib": 195067,
+          "types": 32205,
+          "instantiations": 21176,
+          "files": 112
+        },
+        {
+          "diagnostics": [
+            "tmp/typing-bench-UPVRvK/1000/consumer-named.ts(4,45): error TS2590: Expression produces a union type that is too complex to represent."
+          ],
+          "wallMs": 1766,
+          "checkMs": 940,
+          "totalMs": 1630,
+          "memoryKib": 195981,
+          "types": 32205,
+          "instantiations": 21176,
+          "files": 112
+        },
+        {
+          "diagnostics": [
+            "tmp/typing-bench-UPVRvK/1000/consumer-named.ts(4,45): error TS2590: Expression produces a union type that is too complex to represent."
+          ],
+          "wallMs": 1749,
+          "checkMs": 910,
+          "totalMs": 1610,
+          "memoryKib": 191529,
+          "types": 32205,
+          "instantiations": 21176,
+          "files": 112
+        }
+      ],
+      "median": {
+        "wallMs": 1766,
+        "checkMs": 940,
+        "totalMs": 1630,
+        "memoryKib": 195067,
+        "types": 32205,
+        "instantiations": 21176,
+        "files": 112
+      }
+    },
+    {
+      "routes": 1000,
+      "scenario": "tree",
+      "ok": true,
+      "samples": [
+        {
+          "diagnostics": [],
+          "wallMs": 1603,
+          "checkMs": 830,
+          "totalMs": 1470,
+          "memoryKib": 170892,
+          "types": 31330,
+          "instantiations": 16318,
+          "files": 112
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 1614,
+          "checkMs": 820,
+          "totalMs": 1480,
+          "memoryKib": 179700,
+          "types": 31330,
+          "instantiations": 16318,
+          "files": 112
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 1771,
+          "checkMs": 850,
+          "totalMs": 1640,
+          "memoryKib": 169928,
+          "types": 31330,
+          "instantiations": 16318,
+          "files": 112
+        }
+      ],
+      "median": {
+        "wallMs": 1614,
+        "checkMs": 830,
+        "totalMs": 1480,
+        "memoryKib": 170892,
+        "types": 31330,
+        "instantiations": 16318,
+        "files": 112
+      }
+    },
+    {
+      "routes": 1000,
+      "scenario": "path",
+      "ok": false,
+      "samples": [
+        {
+          "diagnostics": [
+            "tmp/typing-bench-UPVRvK/1000/consumer-path.ts(4,52): error TS2590: Expression produces a union type that is too complex to represent.",
+            "tmp/typing-bench-UPVRvK/1000/consumer-path.ts(5,63): error TS2590: Expression produces a union type that is too complex to represent."
+          ],
+          "wallMs": 2554,
+          "checkMs": 1650,
+          "totalMs": 2420,
+          "memoryKib": 232095,
+          "types": 53893,
+          "instantiations": 199612,
+          "files": 112
+        },
+        {
+          "diagnostics": [
+            "tmp/typing-bench-UPVRvK/1000/consumer-path.ts(4,52): error TS2590: Expression produces a union type that is too complex to represent.",
+            "tmp/typing-bench-UPVRvK/1000/consumer-path.ts(5,63): error TS2590: Expression produces a union type that is too complex to represent."
+          ],
+          "wallMs": 2507,
+          "checkMs": 1660,
+          "totalMs": 2370,
+          "memoryKib": 236103,
+          "types": 53893,
+          "instantiations": 199612,
+          "files": 112
+        },
+        {
+          "diagnostics": [
+            "tmp/typing-bench-UPVRvK/1000/consumer-path.ts(4,52): error TS2590: Expression produces a union type that is too complex to represent.",
+            "tmp/typing-bench-UPVRvK/1000/consumer-path.ts(5,63): error TS2590: Expression produces a union type that is too complex to represent."
+          ],
+          "wallMs": 2398,
+          "checkMs": 1570,
+          "totalMs": 2260,
+          "memoryKib": 213345,
+          "types": 53893,
+          "instantiations": 199612,
+          "files": 112
+        }
+      ],
+      "median": {
+        "wallMs": 2507,
+        "checkMs": 1650,
+        "totalMs": 2370,
+        "memoryKib": 232095,
+        "types": 53893,
+        "instantiations": 199612,
+        "files": 112
+      }
+    },
+    {
+      "routes": 1000,
+      "scenario": "url",
+      "ok": true,
+      "samples": [
+        {
+          "diagnostics": [],
+          "wallMs": 2219,
+          "checkMs": 1390,
+          "totalMs": 2080,
+          "memoryKib": 255907,
+          "types": 85156,
+          "instantiations": 151939,
+          "files": 112
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 2324,
+          "checkMs": 1490,
+          "totalMs": 2190,
+          "memoryKib": 265965,
+          "types": 85156,
+          "instantiations": 151939,
+          "files": 112
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 2236,
+          "checkMs": 1440,
+          "totalMs": 2110,
+          "memoryKib": 258482,
+          "types": 85156,
+          "instantiations": 151939,
+          "files": 112
+        }
+      ],
+      "median": {
+        "wallMs": 2236,
+        "checkMs": 1440,
+        "totalMs": 2110,
+        "memoryKib": 258482,
+        "types": 85156,
+        "instantiations": 151939,
+        "files": 112
+      }
+    },
+    {
+      "routes": 1000,
+      "scenario": "react",
+      "ok": true,
+      "samples": [
+        {
+          "diagnostics": [],
+          "wallMs": 2324,
+          "checkMs": 1130,
+          "totalMs": 2180,
+          "memoryKib": 228202,
+          "types": 34801,
+          "instantiations": 23659,
+          "files": 150
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 2004,
+          "checkMs": 960,
+          "totalMs": 1870,
+          "memoryKib": 213929,
+          "types": 34801,
+          "instantiations": 23659,
+          "files": 150
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 1991,
+          "checkMs": 970,
+          "totalMs": 1860,
+          "memoryKib": 213390,
+          "types": 34801,
+          "instantiations": 23659,
+          "files": 150
+        }
+      ],
+      "median": {
+        "wallMs": 2004,
+        "checkMs": 970,
+        "totalMs": 1870,
+        "memoryKib": 213929,
+        "types": 34801,
+        "instantiations": 23659,
+        "files": 150
+      }
+    },
+    {
+      "routes": 1000,
+      "scenario": "vue",
+      "ok": true,
+      "samples": [
+        {
+          "diagnostics": [],
+          "wallMs": 2404,
+          "checkMs": 1250,
+          "totalMs": 2260,
+          "memoryKib": 242323,
+          "types": 36689,
+          "instantiations": 37770,
+          "files": 155
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 2104,
+          "checkMs": 1000,
+          "totalMs": 1940,
+          "memoryKib": 229792,
+          "types": 36689,
+          "instantiations": 37770,
+          "files": 155
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 2208,
+          "checkMs": 1120,
+          "totalMs": 2060,
+          "memoryKib": 253099,
+          "types": 36689,
+          "instantiations": 37770,
+          "files": 155
+        }
+      ],
+      "median": {
+        "wallMs": 2208,
+        "checkMs": 1120,
+        "totalMs": 2060,
+        "memoryKib": 242323,
+        "types": 36689,
+        "instantiations": 37770,
+        "files": 155
+      }
+    },
+    {
+      "routes": 3000,
+      "scenario": "registry",
+      "ok": true,
+      "samples": [
+        {
+          "diagnostics": [],
+          "wallMs": 2931,
+          "checkMs": 1600,
+          "totalMs": 2770,
+          "memoryKib": 381925,
+          "types": 91704,
+          "instantiations": 45077,
+          "files": 111
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 2808,
+          "checkMs": 1510,
+          "totalMs": 2610,
+          "memoryKib": 379584,
+          "types": 91704,
+          "instantiations": 45077,
+          "files": 111
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 2691,
+          "checkMs": 1470,
+          "totalMs": 2540,
+          "memoryKib": 393186,
+          "types": 91704,
+          "instantiations": 45077,
+          "files": 111
+        }
+      ],
+      "median": {
+        "wallMs": 2808,
+        "checkMs": 1510,
+        "totalMs": 2610,
+        "memoryKib": 381925,
+        "types": 91704,
+        "instantiations": 45077,
+        "files": 111
+      }
+    },
+    {
+      "routes": 3000,
+      "scenario": "client",
+      "ok": true,
+      "samples": [
+        {
+          "diagnostics": [],
+          "wallMs": 3103,
+          "checkMs": 1820,
+          "totalMs": 2940,
+          "memoryKib": 407458,
+          "types": 91779,
+          "instantiations": 45222,
+          "files": 112
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 2999,
+          "checkMs": 1750,
+          "totalMs": 2830,
+          "memoryKib": 404471,
+          "types": 91779,
+          "instantiations": 45222,
+          "files": 112
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 3257,
+          "checkMs": 2000,
+          "totalMs": 3100,
+          "memoryKib": 393584,
+          "types": 91779,
+          "instantiations": 45222,
+          "files": 112
+        }
+      ],
+      "median": {
+        "wallMs": 3103,
+        "checkMs": 1820,
+        "totalMs": 2940,
+        "memoryKib": 404471,
+        "types": 91779,
+        "instantiations": 45222,
+        "files": 112
+      }
+    },
+    {
+      "routes": 3000,
+      "scenario": "named",
+      "ok": false,
+      "samples": [
+        {
+          "diagnostics": [
+            "tmp/typing-bench-UPVRvK/3000/consumer-named.ts(4,45): error TS2590: Expression produces a union type that is too complex to represent."
+          ],
+          "wallMs": 3393,
+          "checkMs": 2150,
+          "totalMs": 3220,
+          "memoryKib": 411518,
+          "types": 95205,
+          "instantiations": 61176,
+          "files": 112
+        },
+        {
+          "diagnostics": [
+            "tmp/typing-bench-UPVRvK/3000/consumer-named.ts(4,45): error TS2590: Expression produces a union type that is too complex to represent."
+          ],
+          "wallMs": 3087,
+          "checkMs": 1880,
+          "totalMs": 2950,
+          "memoryKib": 401809,
+          "types": 95205,
+          "instantiations": 61176,
+          "files": 112
+        },
+        {
+          "diagnostics": [
+            "tmp/typing-bench-UPVRvK/3000/consumer-named.ts(4,45): error TS2590: Expression produces a union type that is too complex to represent."
+          ],
+          "wallMs": 3298,
+          "checkMs": 1890,
+          "totalMs": 2960,
+          "memoryKib": 418878,
+          "types": 95205,
+          "instantiations": 61176,
+          "files": 112
+        }
+      ],
+      "median": {
+        "wallMs": 3298,
+        "checkMs": 1890,
+        "totalMs": 2960,
+        "memoryKib": 411518,
+        "types": 95205,
+        "instantiations": 61176,
+        "files": 112
+      }
+    },
+    {
+      "routes": 3000,
+      "scenario": "tree",
+      "ok": true,
+      "samples": [
+        {
+          "diagnostics": [],
+          "wallMs": 3325,
+          "checkMs": 1860,
+          "totalMs": 3150,
+          "memoryKib": 407640,
+          "types": 92370,
+          "instantiations": 46318,
+          "files": 112
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 2903,
+          "checkMs": 1770,
+          "totalMs": 2740,
+          "memoryKib": 432277,
+          "types": 92370,
+          "instantiations": 46318,
+          "files": 112
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 2922,
+          "checkMs": 1620,
+          "totalMs": 2740,
+          "memoryKib": 409209,
+          "types": 92370,
+          "instantiations": 46318,
+          "files": 112
+        }
+      ],
+      "median": {
+        "wallMs": 2922,
+        "checkMs": 1770,
+        "totalMs": 2740,
+        "memoryKib": 409209,
+        "types": 92370,
+        "instantiations": 46318,
+        "files": 112
+      }
+    },
+    {
+      "routes": 3000,
+      "scenario": "path",
+      "ok": false,
+      "samples": [
+        {
+          "diagnostics": [
+            "tmp/typing-bench-UPVRvK/3000/consumer-path.ts(4,52): error TS2590: Expression produces a union type that is too complex to represent.",
+            "tmp/typing-bench-UPVRvK/3000/consumer-path.ts(5,63): error TS2590: Expression produces a union type that is too complex to represent."
+          ],
+          "wallMs": 5103,
+          "checkMs": 3780,
+          "totalMs": 4940,
+          "memoryKib": 512523,
+          "types": 159893,
+          "instantiations": 595612,
+          "files": 112
+        },
+        {
+          "diagnostics": [
+            "tmp/typing-bench-UPVRvK/3000/consumer-path.ts(4,52): error TS2590: Expression produces a union type that is too complex to represent.",
+            "tmp/typing-bench-UPVRvK/3000/consumer-path.ts(5,63): error TS2590: Expression produces a union type that is too complex to represent."
+          ],
+          "wallMs": 5022,
+          "checkMs": 3790,
+          "totalMs": 4870,
+          "memoryKib": 511655,
+          "types": 159893,
+          "instantiations": 595612,
+          "files": 112
+        },
+        {
+          "diagnostics": [
+            "tmp/typing-bench-UPVRvK/3000/consumer-path.ts(4,52): error TS2590: Expression produces a union type that is too complex to represent.",
+            "tmp/typing-bench-UPVRvK/3000/consumer-path.ts(5,63): error TS2590: Expression produces a union type that is too complex to represent."
+          ],
+          "wallMs": 5169,
+          "checkMs": 3960,
+          "totalMs": 5010,
+          "memoryKib": 533987,
+          "types": 159893,
+          "instantiations": 595612,
+          "files": 112
+        }
+      ],
+      "median": {
+        "wallMs": 5103,
+        "checkMs": 3790,
+        "totalMs": 4940,
+        "memoryKib": 512523,
+        "types": 159893,
+        "instantiations": 595612,
+        "files": 112
+      }
+    },
+    {
+      "routes": 3000,
+      "scenario": "url",
+      "ok": true,
+      "samples": [
+        {
+          "diagnostics": [],
+          "wallMs": 4887,
+          "checkMs": 3780,
+          "totalMs": 4700,
+          "memoryKib": 640050,
+          "types": 254156,
+          "instantiations": 453939,
+          "files": 112
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 4941,
+          "checkMs": 3660,
+          "totalMs": 4770,
+          "memoryKib": 626270,
+          "types": 254156,
+          "instantiations": 453939,
+          "files": 112
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 4705,
+          "checkMs": 3420,
+          "totalMs": 4550,
+          "memoryKib": 639569,
+          "types": 254156,
+          "instantiations": 453939,
+          "files": 112
+        }
+      ],
+      "median": {
+        "wallMs": 4887,
+        "checkMs": 3660,
+        "totalMs": 4700,
+        "memoryKib": 639569,
+        "types": 254156,
+        "instantiations": 453939,
+        "files": 112
+      }
+    },
+    {
+      "routes": 3000,
+      "scenario": "react",
+      "ok": true,
+      "samples": [
+        {
+          "diagnostics": [],
+          "wallMs": 3548,
+          "checkMs": 2030,
+          "totalMs": 3340,
+          "memoryKib": 422860,
+          "types": 95841,
+          "instantiations": 53659,
+          "files": 150
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 4031,
+          "checkMs": 2360,
+          "totalMs": 3860,
+          "memoryKib": 420309,
+          "types": 95841,
+          "instantiations": 53659,
+          "files": 150
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 3323,
+          "checkMs": 1900,
+          "totalMs": 3160,
+          "memoryKib": 433850,
+          "types": 95841,
+          "instantiations": 53659,
+          "files": 150
+        }
+      ],
+      "median": {
+        "wallMs": 3548,
+        "checkMs": 2030,
+        "totalMs": 3340,
+        "memoryKib": 422860,
+        "types": 95841,
+        "instantiations": 53659,
+        "files": 150
+      }
+    },
+    {
+      "routes": 3000,
+      "scenario": "vue",
+      "ok": true,
+      "samples": [
+        {
+          "diagnostics": [],
+          "wallMs": 4085,
+          "checkMs": 2250,
+          "totalMs": 3830,
+          "memoryKib": 466617,
+          "types": 97729,
+          "instantiations": 67770,
+          "files": 155
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 4012,
+          "checkMs": 2240,
+          "totalMs": 3740,
+          "memoryKib": 470343,
+          "types": 97729,
+          "instantiations": 67770,
+          "files": 155
+        },
+        {
+          "diagnostics": [],
+          "wallMs": 3474,
+          "checkMs": 1980,
+          "totalMs": 3300,
+          "memoryKib": 453511,
+          "types": 97729,
+          "instantiations": 67770,
+          "files": 155
+        }
+      ],
+      "median": {
+        "wallMs": 4012,
+        "checkMs": 2240,
+        "totalMs": 3740,
+        "memoryKib": 466617,
+        "types": 97729,
+        "instantiations": 67770,
+        "files": 155
+      }
+    }
+  ]
+}
