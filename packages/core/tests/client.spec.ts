@@ -4,6 +4,7 @@ import { test } from '@japa/runner'
 import { createTuyau } from '../src/client/tuyau.ts'
 import { defaultRegistry as registry } from './fixtures/index.ts'
 import { TuyauError, TuyauHTTPError, TuyauNetworkError } from '../src/client/errors.ts'
+import type { AdonisEndpoint } from '../src/client/types/types.ts'
 
 const createTestTuyau = (baseUrl: string = 'http://localhost:3333') =>
   createTuyau({ baseUrl, registry })
@@ -249,39 +250,56 @@ test.group('Client | Chained', () => {
     await tuyau.api.users.index({ query: { foo: 'bar', bar: 'baz', ids: [1, 2] } })
   })
 
-  test('builds URLs from registry tokens that carry no `old` field', async ({ assert }) => {
-    const inlineRoutes = {
-      'users.show': {
-        methods: ['GET'] as 'GET'[],
-        pattern: '/users/:id',
-        tokens: [
-          { type: 0 as const, val: 'users', end: '' },
-          { type: 1 as const, val: 'id', end: '' },
-        ],
-        types: {} as any as {
-          body: {}
-          params: { id: string | number }
-          paramsTuple: [string | number]
-          query: {}
-          response: { id: string }
+  test('builds URLs and requests from object and compact tokens', async ({
+    assert,
+    expectTypeOf,
+  }) => {
+    const tokenFormats = [
+      [
+        { type: 0, val: 'users', end: '' },
+        { type: 1, val: 'id', end: '.json' },
+      ],
+      [
+        [0, 'users'],
+        [1, 'id', '.json'],
+      ],
+    ] as const satisfies AdonisEndpoint['tokens'][]
+
+    for (const tokens of tokenFormats) {
+      const inlineRoutes = {
+        'users.show': {
+          methods: ['GET'],
+          pattern: '/users/:id.json',
+          tokens,
+          types: {} as {
+            body: {}
+            params: { id: string | number }
+            paramsTuple: [string | number]
+            query: {}
+            response: { id: string }
+          },
         },
-      },
+      } as const satisfies Record<string, AdonisEndpoint>
+
+      interface InlineApi {
+        users: { show: (typeof inlineRoutes)['users.show'] }
+      }
+
+      const tuyau = createTuyau({
+        baseUrl: 'http://localhost:3333',
+        registry: { routes: inlineRoutes, $tree: {} as InlineApi },
+      })
+
+      expectTypeOf<Parameters<typeof tuyau.api.users.show>[0]['params']>().toEqualTypeOf<{
+        id: string | number
+      }>()
+      assert.equal(tuyau.urlFor('users.show', { id: 0 }), '/users/0.json')
+
+      nock('http://localhost:3333').get('/users/0.json').reply(200, { id: '0' })
+      const result = await tuyau.api.users.show({ params: { id: 0 } })
+      assert.deepEqual(result, { id: '0' })
+      expectTypeOf(result).toEqualTypeOf<{ id: string }>()
     }
-
-    interface InlineApi {
-      users: { show: (typeof inlineRoutes)['users.show'] }
-    }
-
-    const tuyau = createTuyau({
-      baseUrl: 'http://localhost:3333',
-      registry: { routes: inlineRoutes, $tree: {} as InlineApi },
-    })
-
-    assert.equal(tuyau.urlFor('users.show', { id: 42 }), '/users/42')
-
-    nock('http://localhost:3333').get('/users/42').reply(200, { id: '42' })
-    const result = await tuyau.api.users.show({ params: { id: 42 } })
-    assert.deepEqual(result, { id: '42' })
   })
 
   test('send as form data when payload include file', async () => {

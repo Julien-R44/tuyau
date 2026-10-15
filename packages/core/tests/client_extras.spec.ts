@@ -3,6 +3,7 @@ import { test } from '@japa/runner'
 
 import { createTuyau } from '../src/client/tuyau.ts'
 import { defaultRegistry as registry } from './fixtures/index.ts'
+import type { AdonisEndpoint } from '../src/client/types/types.ts'
 
 test.group('Client | getRoute', () => {
   test('returns url and methods for named route', async ({ assert }) => {
@@ -35,6 +36,58 @@ test.group('Client | urlFor', () => {
     const result = tuyau.urlFor.get('users.index', {}, { qs: { var: 'hi' } }).url
     assert.isFalse(result.includes('??'), `URL contains double "??": ${result}`)
     assert.include(result, '?var=hi')
+  })
+
+  test('compact tokens support root, optional parameters, and wildcards', ({ assert }) => {
+    const cases: {
+      pattern: string
+      tokens: AdonisEndpoint['tokens']
+      params: Record<string, string | string[]>
+      expected: string
+    }[] = [
+      { pattern: '/', tokens: [[0, '/']], params: {}, expected: '/' },
+      {
+        pattern: '/posts/:slug?',
+        tokens: [
+          [0, 'posts'],
+          [3, 'slug'],
+        ],
+        params: {},
+        expected: '/posts',
+      },
+      {
+        pattern: '/posts/:slug?',
+        tokens: [
+          [0, 'posts'],
+          [3, 'slug'],
+        ],
+        params: { slug: 'hello' },
+        expected: '/posts/hello',
+      },
+      {
+        pattern: '/downloads/*',
+        tokens: [
+          [0, 'downloads'],
+          [2, '*'],
+        ],
+        params: { '*': ['docs', 'guide.pdf'] },
+        expected: '/downloads/docs/guide.pdf',
+      },
+    ]
+
+    for (const { pattern, tokens, params, expected } of cases) {
+      const tuyau = createTuyau({
+        baseUrl: 'http://localhost:3333',
+        registry: {
+          routes: {
+            route: { methods: ['GET'], pattern, tokens, types: {} as AdonisEndpoint['types'] },
+          },
+        },
+      })
+
+      assert.equal(tuyau.urlFor('route', params), expected)
+      assert.deepEqual(tuyau.getRoute('route', { params }), { url: expected, methods: ['GET'] })
+    }
   })
 })
 

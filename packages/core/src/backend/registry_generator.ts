@@ -3,6 +3,7 @@ import { writeFile, mkdir } from 'node:fs/promises'
 import stringHelpers from '@adonisjs/core/helpers/string'
 import type { ScannedRoute, RoutesListItem } from '@adonisjs/assembler/types'
 import { GenerateRegistryConfig } from './types.ts'
+import type { CompactRouteToken } from '../client/types/types.ts'
 
 const DEFAULT_VALIDATION_ERROR_TYPE = '{ errors: SimpleError[] }'
 
@@ -63,13 +64,10 @@ export class RegistryGenerator {
   }
 
   /**
-   * Keep only what the client URL builder reads from a token: `type`, `val`
-   * and `end`. `matcher` is server-only, and `old` repeats the whole route
-   * pattern on every token without ever being read, which made the tokens
-   * two thirds of the generated registry on a large app.
+   * Encode client tokens as tuples, omitting empty suffixes and server-only fields.
    */
-  #sanitizeTokens(tokens: ScannedRoute['tokens']) {
-    return tokens.map(({ type, val, end }) => ({ type, val, end }))
+  #sanitizeTokens(tokens: ScannedRoute['tokens']): CompactRouteToken[] {
+    return tokens.map(({ type, val, end }) => (end === '' ? [type, val] : [type, val, end]))
   }
 
   /**

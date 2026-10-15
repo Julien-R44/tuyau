@@ -88,8 +88,11 @@ export class Tuyau<
       domain: 'root',
       pattern: entry.pattern,
       methods: entry.methods,
-      // The builder's token type still declares `old`, which the registry no longer ships and `createURL` never reads.
-      tokens: entry.tokens as ClientRouteMatchItTokens[],
+      // Decode once for Adonis, preserving object tokens from older registries.
+      // Its type still requires `old`, although the URL builder never reads it.
+      tokens: entry.tokens.map((token) =>
+        Array.isArray(token) ? { type: token[0], val: token[1], end: token[2] ?? '' } : token,
+      ) as ClientRouteMatchItTokens[],
     }))
     return createUrlBuilder({ root: rootEntries }, buildSearchParams as any)
   }
