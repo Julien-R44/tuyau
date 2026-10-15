@@ -24,6 +24,18 @@ import type { TransformToSvelteQuery } from './types/common.ts'
  * GET/HEAD endpoints get query and infinite query methods.
  * Other methods (POST, PUT, etc.) get mutation methods.
  * All nodes get `pathKey` and `pathFilter` for cache operations
+ *
+ * Route types are inferred from `client`. No Tuyau context is required.
+ * Call TanStack's `createQuery` during component initialization within a
+ * `QueryClientProvider`, or pass a QueryClient accessor explicitly.
+ *
+ * @example
+ * ```ts
+ * import { createQuery } from '@tanstack/svelte-query'
+ *
+ * const query = createTuyauSvelteQueryClient({ client })
+ * const users = createQuery(() => query.users.index.queryOptions())
+ * ```
  */
 export function createTuyauSvelteQueryClient<
   Reg extends TuyauRegistry,
