@@ -249,6 +249,41 @@ test.group('Client | Chained', () => {
     await tuyau.api.users.index({ query: { foo: 'bar', bar: 'baz', ids: [1, 2] } })
   })
 
+  test('builds URLs from registry tokens that carry no `old` field', async ({ assert }) => {
+    const inlineRoutes = {
+      'users.show': {
+        methods: ['GET'] as 'GET'[],
+        pattern: '/users/:id',
+        tokens: [
+          { type: 0 as const, val: 'users', end: '' },
+          { type: 1 as const, val: 'id', end: '' },
+        ],
+        types: {} as any as {
+          body: {}
+          params: { id: string | number }
+          paramsTuple: [string | number]
+          query: {}
+          response: { id: string }
+        },
+      },
+    }
+
+    interface InlineApi {
+      users: { show: (typeof inlineRoutes)['users.show'] }
+    }
+
+    const tuyau = createTuyau({
+      baseUrl: 'http://localhost:3333',
+      registry: { routes: inlineRoutes, $tree: {} as InlineApi },
+    })
+
+    assert.equal(tuyau.urlFor('users.show', { id: 42 }), '/users/42')
+
+    nock('http://localhost:3333').get('/users/42').reply(200, { id: '42' })
+    const result = await tuyau.api.users.show({ params: { id: 42 } })
+    assert.deepEqual(result, { id: '42' })
+  })
+
   test('send as form data when payload include file', async () => {
     const tuyau = createTuyau({ baseUrl: 'http://localhost:3333', registry })
 
@@ -309,7 +344,11 @@ test.group('Client | Chained', () => {
       .matchHeader('content-type', /multipart\/form-data/)
 
     await tuyau.api.auth.login({
-      body: { email: 'foo@ok.com', password: 'foo', profile: { avatar: new File(['img'], 'avatar.png') } },
+      body: {
+        email: 'foo@ok.com',
+        password: 'foo',
+        profile: { avatar: new File(['img'], 'avatar.png') },
+      },
     })
   })
 
@@ -322,7 +361,11 @@ test.group('Client | Chained', () => {
       .matchHeader('content-type', /multipart\/form-data/)
 
     await tuyau.api.auth.login({
-      body: { email: 'foo@ok.com', password: 'foo', data: { nested: { deep: { file: new File(['hello'], 'hello.txt') } } } },
+      body: {
+        email: 'foo@ok.com',
+        password: 'foo',
+        data: { nested: { deep: { file: new File(['hello'], 'hello.txt') } } },
+      },
     })
   })
 
@@ -335,7 +378,11 @@ test.group('Client | Chained', () => {
       .matchHeader('content-type', /multipart\/form-data/)
 
     await tuyau.api.auth.login({
-      body: { email: 'foo@ok.com', password: 'foo', attachments: [{ file: new File(['doc'], 'doc.pdf') }] },
+      body: {
+        email: 'foo@ok.com',
+        password: 'foo',
+        attachments: [{ file: new File(['doc'], 'doc.pdf') }],
+      },
     })
   })
 
