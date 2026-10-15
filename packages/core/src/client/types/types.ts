@@ -72,11 +72,14 @@ type DistributiveOmit<T, K extends keyof any> = T extends any ? Omit<T, K> : nev
 /**
  * Extract query params from a validator type if it has a 'query' property.
  * Used in generated registry to separate query params from body for POST/PUT/PATCH/DELETE.
+ * Requires the entire inferred query type to be an object, including every union member.
  * For GET/HEAD, use ExtractQueryForGet instead.
  */
 export type ExtractQuery<T> = 'query' extends keyof T
   ? T extends { query?: infer Q }
-    ? Q
+    ? [Q] extends [object]
+      ? Q
+      : {}
     : {}
   : {}
 
