@@ -27,10 +27,14 @@ test.group('Typing | errors', () => {
 
     const assertTypedError = (error: QueryError) => {
       if (error.isStatus(404)) {
-        expectTypeOf(error.response).toEqualTypeOf<{ message: string; id: string }>()
+        expectTypeOf(error.response).toEqualTypeOf<{ message: string; id: string } | undefined>()
+
+        if (error.hasResponse()) {
+          expectTypeOf(error.response).toEqualTypeOf<{ message: string; id: string }>()
+        }
       }
 
-      if (error.isStatus(422)) {
+      if (error.hasResponse() && error.isStatus(422)) {
         expectTypeOf(error.response).toEqualTypeOf<{ field: string }>()
       }
     }
@@ -47,14 +51,14 @@ test.group('Typing | errors', () => {
       useMutation(
         tuyau.contacts.store.mutationOptions({
           onError: (error) => {
-            if (error.isStatus(409)) {
+            if (error.isStatus(409) && error.hasResponse()) {
               expectTypeOf(error.response).toEqualTypeOf<{
                 message: string
                 existingId: number
               }>()
             }
 
-            if (error.isStatus(422)) {
+            if (error.isStatus(422) && error.hasResponse()) {
               expectTypeOf(error.response).toEqualTypeOf<{ field: string }>()
             }
           },
@@ -65,11 +69,11 @@ test.group('Typing | errors', () => {
     type MutationError = RouteWithRegistry.Error<typeof errorRegistry.routes, 'contacts.store'>
 
     const assertTypedError = (error: MutationError) => {
-      if (error.isStatus(409)) {
+      if (error.isStatus(409) && error.hasResponse()) {
         expectTypeOf(error.response).toEqualTypeOf<{ message: string; existingId: number }>()
       }
 
-      if (error.isStatus(422)) {
+      if (error.isStatus(422) && error.hasResponse()) {
         expectTypeOf(error.response).toEqualTypeOf<{ field: string }>()
       }
     }
@@ -98,11 +102,11 @@ test.group('Typing | errors', () => {
     type InfiniteQueryError = RouteWithRegistry.Error<typeof errorRegistry.routes, 'articles.index'>
 
     const assertTypedError = (error: InfiniteQueryError) => {
-      if (error.isStatus(404)) {
+      if (error.isStatus(404) && error.hasResponse()) {
         expectTypeOf(error.response).toEqualTypeOf<{ message: string }>()
       }
 
-      if (error.isStatus(422)) {
+      if (error.isStatus(422) && error.hasResponse()) {
         expectTypeOf(error.response).toEqualTypeOf<{ field: string }>()
       }
     }

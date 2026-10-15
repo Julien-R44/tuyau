@@ -1,5 +1,5 @@
 import { serialize } from 'object-to-formdata'
-import ky, { HTTPError, type KyInstance } from 'ky'
+import ky, { isHTTPError, isNetworkError, isTimeoutError, type KyInstance } from 'ky'
 import {
   createUrlBuilder,
   type ClientRouteJSON,
@@ -10,13 +10,17 @@ import {
 import { TuyauRouter } from './router.ts'
 import { TuyauPromise } from './promise.ts'
 import { buildSearchParams } from './serializer.ts'
-import { TuyauHTTPError, TuyauNetworkError } from './errors.ts'
+import {
+  TuyauAbortedError,
+  TuyauHTTPError,
+  TuyauNetworkError,
+  TuyauTimeoutError,
+  TuyauUnknownError,
+} from './errors.ts'
 import {
   isObject,
   isReactNative,
   isServer,
-  parseResponse,
-  removeSlash,
   segmentsToKebabRouteName,
   segmentsToRouteName,
 } from './utils.ts'
@@ -59,9 +63,11 @@ export class Tuyau<
    * Merges the default Ky configuration with user-provided config
    */
   #mergeKyConfiguration() {
+    const { baseUrl, registry: _, plugins: __, ...options } = this.#config
+
     return {
-      prefixUrl: this.#config.baseUrl,
-      ...this.#config,
+      ...options,
+      prefix: baseUrl,
       hooks: {
         ...this.#config.hooks,
         beforeRequest: [
@@ -118,7 +124,7 @@ export class Tuyau<
   /**
    * Automatically appends CSRF token from cookies to requests
    */
-  #appendCsrfToken(request: Request) {
+  #appendCsrfToken({ request }: { request: Request }) {
     const cookies = globalThis.document?.cookie
     if (!cookies) return
 
@@ -196,18 +202,27 @@ export class Tuyau<
        */
       const isGetOrHead = ['GET', 'HEAD'].includes(method)
       const { body: _, responseType: requestedResponseType, ...restArgs } = args as any
+      let signal: AbortSignal | null | undefined
       const requestOptions = {
         searchParams: buildSearchParams((args as any)?.query || {}),
         [key]: !isGetOrHead ? body : undefined,
         ...restArgs,
+        hooks: {
+          ...restArgs.hooks,
+          init: [
+            ...(restArgs.hooks?.init ?? []),
+            (options: { signal?: AbortSignal | null }) => {
+              // Capture the caller's final signal before Ky replaces it internally.
+              signal = options.signal
+            },
+          ],
+        },
       }
 
       try {
         // @ts-expect-error tkt
-        const res = await this.#client[this.#getLowercaseMethod(method)](
-          removeSlash(url),
-          requestOptions,
-        )
+        const request = this.#client[this.#getLowercaseMethod(method)](url, requestOptions)
+        const res = await request
 
         let data: any
 
@@ -215,22 +230,31 @@ export class Tuyau<
          * Parse the response based on the explicit responseType or the content type
          */
         if (requestedResponseType) {
-          data = await res[requestedResponseType]()
+          data = await request[requestedResponseType]()
         } else {
           const contentType = res.headers.get('Content-Type')?.split(';')[0]?.trim()
-          if (contentType === 'application/json') data = await res.json()
-          else if (contentType === 'application/octet-stream') data = await res.arrayBuffer()
-          else data = await res.text()
+          if (contentType === 'application/json') data = await request.json()
+          else if (contentType === 'application/octet-stream') data = await request.arrayBuffer()
+          else data = await request.text()
         }
 
         return data
-      } catch (originalError: any) {
-        if (originalError instanceof HTTPError) {
-          const parsedResponse = await parseResponse(originalError.response)
-          throw new TuyauHTTPError(originalError, parsedResponse)
+      } catch (originalError) {
+        if (isHTTPError(originalError)) {
+          throw new TuyauHTTPError(originalError, url)
         }
 
-        throw new TuyauNetworkError(originalError, { url, method })
+        if (isTimeoutError(originalError)) throw new TuyauTimeoutError(originalError)
+
+        if (signal?.aborted && Object.is(originalError, signal.reason)) {
+          throw new TuyauAbortedError(originalError)
+        }
+
+        if (isNetworkError(originalError)) {
+          throw new TuyauNetworkError(originalError, { url, method })
+        }
+
+        throw new TuyauUnknownError(originalError)
       }
     })()
 

@@ -829,11 +829,11 @@ test.group('Global request options', () => {
           registry: defaultRegistry,
           timeout: 12_000,
           hooks: {
-            beforeRequest: [
-              (_request, options) => {
+            init: [
+              (options) => {
                 requests++
                 assert.propertyVal(options, 'timeout', scenario.expected)
-                assert.equal(options.retry.limit, 0)
+                assert.equal(options.retry, 0)
                 assert.notProperty(options, 'abortOnUnmount')
               },
             ],

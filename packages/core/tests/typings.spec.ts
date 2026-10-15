@@ -1227,13 +1227,63 @@ test.group('TuyauError isStatus() type narrowing', (group) => {
     const error = {} as TuyauError<Errors>
 
     if (error.isStatus(400)) {
-      expectTypeOf(error.response).toEqualTypeOf<{ error: string }>()
+      expectTypeOf(error.response).toMatchTypeOf<{ error: string } | undefined>()
+      expectTypeOf<undefined>().toMatchTypeOf<typeof error.response>()
+
+      if (error.hasResponse()) {
+        expectTypeOf(error.response).toMatchTypeOf<{ error: string }>()
+      }
     }
 
     if (error.isStatus(422)) {
-      expectTypeOf(error.response).toEqualTypeOf<{
-        messages: Array<{ field: string; message: string }>
-      }>()
+      expectTypeOf(error.response).toEqualTypeOf<
+        | {
+            messages: Array<{ field: string; message: string }>
+          }
+        | undefined
+      >()
+    }
+  })
+
+  test('hasResponse composes before status checks and preserves nullable payloads', ({
+    expectTypeOf,
+  }) => {
+    type Errors =
+      | { status: 400; response: { error: string } }
+      | { status: 422; response: null | false | 0 | '' }
+      | { status: number; response: unknown }
+
+    const error = {} as TuyauError<Errors>
+
+    if (error.hasResponse() && error.isStatus(400)) {
+      expectTypeOf(error.response).toEqualTypeOf<{ error: string }>()
+    }
+
+    if (error.isValidationError() && error.hasResponse()) {
+      expectTypeOf(error.response).toEqualTypeOf<null | false | 0 | ''>()
+    }
+
+    if (error.isStatus(503)) {
+      expectTypeOf(error.response).toEqualTypeOf<unknown>()
+    }
+  })
+
+  test('unknown statuses do not inherit a registered payload without an explicit fallback', ({
+    expectTypeOf,
+  }) => {
+    const error = {} as TuyauError<{ status: 422; response: { messages: string[] } }>
+
+    if (error.isStatus(500)) {
+      expectTypeOf(error.response).toEqualTypeOf<unknown>()
+
+      if (error.hasResponse()) {
+        // @ts-expect-error Payload presence does not give an unknown status the 422 schema.
+        error.response.messages
+      }
+    }
+
+    if (error.isValidationError() && error.hasResponse()) {
+      expectTypeOf(error.response).toEqualTypeOf<{ messages: string[] }>()
     }
   })
 
@@ -1253,7 +1303,7 @@ test.group('TuyauError isStatus() type narrowing', (group) => {
 
     // Known statuses are accepted
     if (error.isStatus(400)) {
-      expectTypeOf(error.response).toEqualTypeOf<{ error: string }>()
+      expectTypeOf(error.response).toEqualTypeOf<{ error: string } | undefined>()
     }
 
     // Arbitrary numbers are also accepted (the `number & {}` part)
@@ -1294,11 +1344,11 @@ test.group('Route.Error / Path.Error helper types', (group) => {
 
     const error = {} as Err
 
-    if (error.isStatus(400)) {
+    if (error.isStatus(400) && error.hasResponse()) {
       expectTypeOf(error.response).toEqualTypeOf<{ error: string }>()
     }
 
-    if (error.isStatus(422)) {
+    if (error.isStatus(422) && error.hasResponse()) {
       expectTypeOf(error.response).toEqualTypeOf<{
         messages: Array<{ field: string; message: string }>
       }>()
@@ -1321,11 +1371,11 @@ test.group('Route.Error / Path.Error helper types', (group) => {
 
     const error = {} as Err
 
-    if (error.isStatus(400)) {
+    if (error.isStatus(400) && error.hasResponse()) {
       expectTypeOf(error.response).toEqualTypeOf<{ error: string }>()
     }
 
-    if (error.isStatus(422)) {
+    if (error.isStatus(422) && error.hasResponse()) {
       expectTypeOf(error.response).toEqualTypeOf<{
         messages: Array<{ field: string; message: string }>
       }>()

@@ -1,9 +1,17 @@
 import nock from 'nock'
 import { test } from '@japa/runner'
+import { isHTTPError } from 'ky'
 
 import { createTuyau } from '../src/client/tuyau.ts'
 import { defaultRegistry as registry } from './fixtures/index.ts'
-import { TuyauError, TuyauHTTPError, TuyauNetworkError } from '../src/client/errors.ts'
+import {
+  TuyauAbortedError,
+  TuyauError,
+  TuyauHTTPError,
+  TuyauNetworkError,
+  TuyauTimeoutError,
+  TuyauUnknownError,
+} from '../src/client/errors.ts'
 import type { AdonisEndpoint } from '../src/client/types/types.ts'
 
 const createTestTuyau = (baseUrl: string = 'http://localhost:3333') =>
@@ -476,7 +484,7 @@ test.group('Client | Chained', () => {
       query: { email: 'foo@ok.com' },
       headers: { 'custom-header': 'custom-value' },
       hooks: {
-        beforeRequest: [(request) => request.headers.set('second-header', 'custom-value')],
+        beforeRequest: [({ request }) => request.headers.set('second-header', 'custom-value')],
       },
     })
   })
@@ -787,5 +795,263 @@ test.group('Client | isStatus()', () => {
 
     assert.isFalse(error!.isStatus(400))
     assert.isTrue(error!.isStatus(500))
+  })
+})
+
+test.group('Client | Ky 2', () => {
+  for (const baseUrl of ['http://localhost:3333/api', 'http://localhost:3333/api/']) {
+    test(`preserves the path prefix in ${baseUrl}`, async ({ assert }) => {
+      const tuyau = createTuyau({
+        registry,
+        baseUrl,
+        fetch: async (request) => Response.json({ url: (request as Request).url }),
+      })
+
+      const data = await tuyau.get('/users', { query: { email: 'foo@example.com' } })
+      assert.deepEqual(data, { url: 'http://localhost:3333/api/users?email=foo%40example.com' })
+    })
+  }
+
+  const bodies = [
+    { label: 'empty', body: '', contentType: 'application/json', expected: undefined },
+    { label: 'malformed JSON', body: '{', contentType: 'application/json', expected: undefined },
+    { label: 'null', body: 'null', contentType: 'application/json', expected: null },
+    { label: 'false', body: 'false', contentType: 'application/json', expected: false },
+    { label: 'zero', body: '0', contentType: 'application/json', expected: 0 },
+    { label: 'empty string', body: '""', contentType: 'application/json', expected: '' },
+    { label: 'text', body: 'Invalid', contentType: 'text/plain', expected: 'Invalid' },
+    {
+      label: 'problem JSON',
+      body: '{"detail":"Invalid"}',
+      contentType: 'application/problem+json',
+      expected: { detail: 'Invalid' },
+    },
+  ]
+
+  for (const { label, body, contentType, expected } of bodies) {
+    test(`preserves HTTP status and payload presence for ${label}`, async ({ assert }) => {
+      const tuyau = createTuyau({
+        registry,
+        baseUrl: 'http://localhost:3333/api',
+        fetch: async () =>
+          new Response(body, { status: 422, headers: { 'Content-Type': contentType } }),
+      })
+
+      const [data, error] = await tuyau.get('/users', {}).safe()
+
+      assert.isNull(data)
+      assert.instanceOf(error, TuyauHTTPError)
+      assert.equal(error!.kind, 'http')
+      assert.isTrue(error!.isStatus(422))
+      assert.isTrue(error!.isValidationError())
+      assert.equal(error!.rawResponse!.status, 422)
+      assert.equal(error!.rawRequest!.url, 'http://localhost:3333/api/users')
+      assert.deepEqual(error!.response, expected)
+      assert.equal(error!.hasResponse(), expected !== undefined)
+      assert.equal(error!.message, 'Request failed with status code 422: GET /users')
+    })
+  }
+
+  test('uses the parsed payload modified by a beforeError hook', async ({ assert }) => {
+    const tuyau = createTuyau({
+      registry,
+      baseUrl: 'http://localhost:3333',
+      fetch: async () => Response.json({ message: 'Invalid' }, { status: 422 }),
+      hooks: {
+        beforeError: [
+          ({ error }) => {
+            if (isHTTPError(error)) error.data = { original: error.data }
+            return error
+          },
+        ],
+      },
+    })
+
+    const [, error] = await tuyau.get('/users', {}).safe()
+    assert.equal(error!.kind, 'http')
+    assert.deepEqual(error!.response, { original: { message: 'Invalid' } })
+  })
+
+  for (const timeoutOptions of [{ timeout: 10 }, { timeout: false as const, totalTimeout: 10 }]) {
+    test(`classifies ${Object.keys(timeoutOptions).at(-1)} separately from network errors`, async ({
+      assert,
+    }) => {
+      const tuyau = createTuyau({
+        registry,
+        baseUrl: 'http://localhost:3333',
+        retry: 0,
+        ...timeoutOptions,
+        fetch: () => new Promise<Response>(() => {}),
+      })
+
+      const [data, error] = await tuyau.get('/users', {}).safe()
+      assert.isNull(data)
+      assert.instanceOf(error, TuyauTimeoutError)
+      assert.equal(error!.kind, 'timeout')
+      assert.isUndefined(error!.status)
+      assert.isFalse(error!.hasResponse())
+      assert.instanceOf(error!.cause, Error)
+    })
+  }
+
+  test('applies totalTimeout while reading a successful response body', async ({ assert }) => {
+    const tuyau = createTuyau({
+      registry,
+      baseUrl: 'http://localhost:3333',
+      timeout: false,
+      totalTimeout: 10,
+      retry: 0,
+      fetch: async () =>
+        new Response(new ReadableStream(), {
+          headers: { 'Content-Type': 'application/json' },
+        }),
+    })
+
+    const [, error] = await tuyau.get('/users', {}).safe()
+    assert.instanceOf(error, TuyauTimeoutError)
+    assert.equal(error!.kind, 'timeout')
+  })
+
+  test('classifies a dropped response-body connection as network', async ({ assert }) => {
+    const cause = new TypeError('terminated')
+    const tuyau = createTuyau({
+      registry,
+      baseUrl: 'http://localhost:3333',
+      fetch: async () =>
+        new Response(
+          new ReadableStream({
+            pull(controller) {
+              controller.error(cause)
+            },
+          }),
+          { headers: { 'Content-Type': 'application/json' } },
+        ),
+    })
+
+    const [, error] = await tuyau.get('/users', {}).safe()
+    assert.instanceOf(error, TuyauNetworkError)
+    assert.equal(error!.kind, 'network')
+    assert.strictEqual((error!.cause as Error).cause, cause)
+  })
+
+  for (const scope of ['client', 'request', 'client-init', 'request-init'] as const) {
+    for (const reason of [undefined, 'cancelled', new Error('cancelled')]) {
+      test(`classifies ${scope} cancellation and preserves reason ${reason}`, async ({
+        assert,
+      }) => {
+        const controller = new AbortController()
+        const hooks = {
+          init: [
+            (options: { signal?: AbortSignal | null }) => {
+              options.signal = controller.signal
+            },
+          ],
+        }
+        const tuyau = createTuyau({
+          registry,
+          baseUrl: 'http://localhost:3333',
+          retry: 0,
+          signal: scope === 'client' ? controller.signal : undefined,
+          ...(scope === 'client-init' ? { hooks } : {}),
+          fetch: (request) =>
+            new Promise<Response>((_, reject) => {
+              const { signal } = request as Request
+              signal.addEventListener('abort', () => reject(signal.reason), { once: true })
+              queueMicrotask(() => controller.abort(reason))
+            }),
+        })
+
+        const [data, error] = await tuyau
+          .get(
+            '/users',
+            scope === 'request'
+              ? { signal: controller.signal }
+              : scope === 'request-init'
+                ? { hooks }
+                : {},
+          )
+          .safe()
+
+        assert.isNull(data)
+        assert.instanceOf(error, TuyauAbortedError)
+        assert.equal(error!.kind, 'aborted')
+        assert.strictEqual(error!.cause, controller.signal.reason)
+        assert.isUndefined(error!.status)
+        assert.isFalse(error!.hasResponse())
+      })
+    }
+  }
+
+  test('keeps final init signals isolated between concurrent requests', async ({ assert }) => {
+    const tuyau = createTuyau({
+      registry,
+      baseUrl: 'http://localhost:3333',
+      signal: AbortSignal.abort('superseded'),
+      hooks: {
+        init: [
+          (options) => {
+            const { controller, reason } = options.context! as {
+              controller: AbortController
+              reason: string
+            }
+            options.signal = controller.signal
+            queueMicrotask(() => controller.abort(reason))
+          },
+        ],
+      },
+      fetch: async () => Response.json({ token: 'unexpected success' }),
+    })
+
+    const reasons = ['first request', 'second request']
+    const results = await Promise.all(
+      reasons.map((reason) =>
+        tuyau
+          .get('/users', {
+            context: { controller: new AbortController(), reason },
+          })
+          .safe(),
+      ),
+    )
+
+    for (const [index, [data, error]] of results.entries()) {
+      assert.isNull(data)
+      assert.equal(error!.kind, 'aborted')
+      assert.strictEqual(error!.cause, reasons[index])
+    }
+  })
+
+  test('does not mistake hook TypeErrors for network failures', async ({ assert }) => {
+    const cause = new TypeError('Failed to fetch')
+    const tuyau = createTuyau({
+      registry,
+      baseUrl: 'http://localhost:3333',
+      hooks: {
+        beforeRequest: [
+          () => {
+            throw cause
+          },
+        ],
+      },
+    })
+
+    const [, error] = await tuyau.get('/users', {}).safe()
+    assert.instanceOf(error, TuyauUnknownError)
+    assert.equal(error!.kind, 'unknown')
+    assert.strictEqual(error!.cause, cause)
+    assert.isFalse(error!.hasResponse())
+  })
+
+  test('classifies invalid successful JSON as unknown, not network', async ({ assert }) => {
+    const tuyau = createTuyau({
+      registry,
+      baseUrl: 'http://localhost:3333',
+      fetch: async () => new Response('{', { headers: { 'Content-Type': 'application/json' } }),
+    })
+
+    const [, error] = await tuyau.get('/users', {}).safe()
+    assert.instanceOf(error, TuyauUnknownError)
+    assert.equal(error!.kind, 'unknown')
+    assert.instanceOf(error!.cause, SyntaxError)
+    assert.isFalse(error!.isStatus(200))
   })
 })

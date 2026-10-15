@@ -6,7 +6,7 @@ import { client, query, type Route } from '~/tuyau'
 /**
  * Playground page demonstrating:
  * - .safe() for non-throwing error handling
- * - isStatus() for narrowing typed errors
+ * - isStatus() and hasResponse() for narrowing typed error payloads
  * - Comparison with traditional try/catch
  * - React Query integration (useQuery + useMutation)
  */
@@ -43,7 +43,7 @@ export default function Contacts() {
     const [data, error] = await client.post('/contacts', { body: { name, email } }).safe()
 
     if (error) {
-      if (error.isStatus(409)) {
+      if (error.isStatus(409) && error.hasResponse()) {
         // error.response is narrowed to { message: string, existingEmail: string }
         log(
           'error',
@@ -68,13 +68,13 @@ export default function Contacts() {
       .safe()
 
     if (error) {
-      if (error.isStatus(404)) {
+      if (error.isStatus(404) && error.hasResponse()) {
         // narrowed to { message: string }
         log('error', `Not found: ${error.response.message}`)
         return
       }
 
-      if (error.isStatus(409)) {
+      if (error.isStatus(409) && error.hasResponse()) {
         // narrowed to { message: string, existingEmail: string }
         log('error', `Conflict: ${error.response.message} (${error.response.existingEmail})`)
         return
@@ -96,7 +96,7 @@ export default function Contacts() {
       .safe()
 
     if (error) {
-      if (error.isStatus(404)) {
+      if (error.isStatus(404) && error.hasResponse()) {
         log('error', `Not found: ${error.response.message}`)
         return
       }
@@ -118,7 +118,7 @@ export default function Contacts() {
     } catch (e) {
       const error = e as Route.Error<'contacts.show'>
 
-      if (error.isStatus(404)) {
+      if (error.isStatus(404) && error.hasResponse()) {
         // error.response is narrowed to { message: string, id: number }
         log('error', `Not found (id: ${error.response.id}): ${error.response.message}`)
         return
@@ -137,7 +137,7 @@ export default function Contacts() {
       .safe()
 
     if (error) {
-      if (error.isStatus(404)) {
+      if (error.isStatus(404) && error.hasResponse()) {
         log('error', `Not found: ${error.response.message} (id: ${error.response.id})`)
         return
       }
@@ -169,7 +169,7 @@ export default function Contacts() {
     }
     if (contactQuery.isError) {
       const error = contactQuery.error
-      if (error.isStatus(404)) {
+      if (error.isStatus(404) && error.hasResponse()) {
         log('error', `[useQuery] Not found: ${error.response.message}`)
         return
       }
@@ -184,11 +184,11 @@ export default function Contacts() {
         log('success', `[useMutation] Deleted: success=${data.success}`)
       },
       onError: (error) => {
-        if (error.isStatus(404)) {
+        if (error.isStatus(404) && error.hasResponse()) {
           log('error', `[useMutation] Not found: ${error.response.message}`)
           return
         }
-        if (error.isStatus(400)) {
+        if (error.isStatus(400) && error.hasResponse()) {
           log('error', `[useMutation] Bad request: ${error.response.error}`)
           return
         }
