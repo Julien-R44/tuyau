@@ -115,7 +115,6 @@ export class RegistryGenerator {
    * (success + error). Consumed by OpenAPI generators.
    */
   #wrapRawResponseType(responseType: string): string {
-    if (responseType === 'unknown' || responseType === '{}') return 'unknown'
     if (responseType.startsWith('ReturnType<'))
       return `ExtractRawResponse<Awaited<${responseType}>>`
 
@@ -248,10 +247,7 @@ export class RegistryGenerator {
         errorResponseType === 'unknown'
           ? validationError
           : `${errorResponseType} | ${validationError}`
-      rawResponseUnion =
-        rawResponseUnion === 'unknown'
-          ? validationError
-          : `${rawResponseUnion} | ${validationError}`
+      rawResponseUnion = `${rawResponseUnion} | ${validationError}`
     }
 
     const { paramsType, paramsTuple } = this.#generateRouteParams(route)
