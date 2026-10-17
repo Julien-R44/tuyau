@@ -37,12 +37,12 @@ jobs:
 
       - name: Create release PR or publish
         id: changesets
-        uses: changesets/action@v1
+        uses: changesets/action@v2.1.2
         with:
-          version: pnpm changeset version
-          publish: pnpm run release
-          title: 'chore(release): version packages'
-          commit: 'chore(release): version packages'
+          version-script: pnpm changeset version
+          publish-script: pnpm run release
+          pr-title: 'chore(release): version packages'
+          commit-message: 'chore(release): version packages'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_CONFIG_PROVENANCE: true
