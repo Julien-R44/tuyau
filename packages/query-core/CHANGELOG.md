@@ -1,5 +1,11 @@
 # @tuyau/query-core
 
+## 1.1.1
+
+### Patch Changes
+
+- 60c5bd0: Apply global HTTP options, including `timeout`, to queries, infinite queries, and mutations. Local `tuyau` options override global options. Ky retries remain disabled so TanStack Query controls retries.
+
 ## 1.1.0
 
 ### Minor Changes
@@ -16,45 +22,39 @@
   ```
 
   ```ts
-  import { createTuyau } from "@tuyau/core/client";
-  import { createTuyauVueQueryClient } from "@tuyau/vue-query";
+  import { createTuyau } from '@tuyau/core/client'
+  import { createTuyauVueQueryClient } from '@tuyau/vue-query'
 
-  const client = createTuyau<api>({ baseUrl: "http://localhost:3333" });
-  const tuyau = createTuyauVueQueryClient({ client });
+  const client = createTuyau<api>({ baseUrl: 'http://localhost:3333' })
+  const tuyau = createTuyauVueQueryClient({ client })
 
   // Queries
-  useQuery(tuyau.users.index.queryOptions({ query: { name: "John" } }));
+  useQuery(tuyau.users.index.queryOptions({ query: { name: 'John' } }))
 
   // Reactive queries (use a getter for automatic re-evaluation)
-  const name = ref("John");
-  useQuery(() =>
-    tuyau.users.index.queryOptions({ query: { name: name.value } }),
-  );
+  const name = ref('John')
+  useQuery(() => tuyau.users.index.queryOptions({ query: { name: name.value } }))
 
   // Mutations
-  const { mutate } = useMutation(tuyau.users.store.mutationOptions());
+  const { mutate } = useMutation(tuyau.users.store.mutationOptions())
 
   // Infinite queries
   useInfiniteQuery(
     tuyau.articles.index.infiniteQueryOptions(
       { query: { limit: 10 } },
       {
-        pageParamKey: "page",
+        pageParamKey: 'page',
         initialPageParam: 1,
         getNextPageParam: (p) => p.nextCursor,
       },
     ),
-  );
+  )
 
   // Conditional queries with skipToken
-  useQuery(
-    tuyau.users.show.queryOptions(
-      userId ? { params: { id: userId } } : skipToken,
-    ),
-  );
+  useQuery(tuyau.users.show.queryOptions(userId ? { params: { id: userId } } : skipToken))
 
   // Query invalidation
-  queryClient.invalidateQueries(tuyau.users.pathFilter());
+  queryClient.invalidateQueries(tuyau.users.pathFilter())
   ```
 
   Same API as `@tuyau/react-query` — see its documentation for the full reference.
