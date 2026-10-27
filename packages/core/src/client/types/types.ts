@@ -332,11 +332,11 @@ export type RegValues<R> = R[StrKeys<R>]
 
 /**
  * Gets URL patterns for endpoints matching a specific HTTP method
+ * Defers indexing until the method is resolved so concrete registries
+ * can forward their method and pattern generics to PathWithRegistry.
  */
-export type PatternsByMethod<
-  Reg extends Record<string, AdonisEndpoint>,
-  M extends Method,
-> = EndpointsByMethod<Reg, M>['pattern']
+export type PatternsByMethod<Reg extends Record<string, AdonisEndpoint>, M extends Method> =
+  EndpointsByMethod<Reg, M> extends infer E extends AdonisEndpoint ? E['pattern'] : never
 
 /**
  * Finds an endpoint by HTTP method and URL pattern
@@ -395,7 +395,7 @@ type UserEndpointByName<Name extends keyof UserAdonisRegistry> = UserAdonisRegis
 type FilterByMethodPathForRegistry<
   Reg extends Record<string, AdonisEndpoint>,
   M extends Method,
-  P extends ValueOf<Reg>['pattern'] & string,
+  P extends string,
 > = {
   [K in keyof Reg]: Reg[K]['pattern'] extends P
     ? M extends Reg[K]['methods'][number]

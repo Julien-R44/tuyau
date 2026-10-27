@@ -63,6 +63,14 @@ export interface GenerateRegistryConfig {
   output?: string
 
   /**
+   * Augment the global UserRegistry used by the core Route/Path helpers
+   * and AdonisJS Inertia. Disable for secondary registries in the same
+   * TypeScript program and import their local Route/Path helpers instead.
+   * @default true
+   */
+  typeAugmentation?: boolean
+
+  /**
    * Routes filtering configuration
    */
   routes?: {

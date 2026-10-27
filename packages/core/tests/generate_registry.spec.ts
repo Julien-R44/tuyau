@@ -1,6 +1,10 @@
+import { fileURLToPath } from 'node:url'
+import ts from 'typescript'
 import { test } from '@japa/runner'
+import { RoutesScanner } from '@adonisjs/assembler/routes_scanner'
 import type { ScannedRoute, RoutesListItem } from '@adonisjs/assembler/types'
 
+import { generateRegistry } from '../src/backend/generate_registry.ts'
 import { RegistryGenerator } from '../src/backend/registry_generator.ts'
 
 function makeRoute(overrides: Partial<ScannedRoute> & { name: string }): ScannedRoute {
@@ -532,4 +536,204 @@ test.group('generateTypesContent | rawResponse union', () => {
 
     assert.match(content, /import type \{[^}]*ExtractRawResponse[^}]*\} from '@tuyau\/core\/types'/)
   })
+})
+
+test.group('generateRegistry hook', () => {
+  test('keeps independent filters, including global and sticky regexes', async ({ assert, fs }) => {
+    const events = { routesScanning: [] as Function[], routesScanned: [] as Function[] }
+    const hooks = {
+      add: (event: keyof typeof events, handler: Function) => events[event].push(handler),
+    }
+    const devServer = { ui: { logger: { info() {} } } }
+
+    for (const hook of [
+      generateRegistry({
+        output: `${fs.basePath}/web`,
+        routes: { only: [/^(users|shared)\./g] },
+        typeAugmentation: false,
+      }),
+      generateRegistry({
+        output: `${fs.basePath}/admin`,
+        routes: { only: [/^(admin|shared)\./y] },
+        typeAugmentation: false,
+      }),
+    ]) {
+      await (hook as any).run({}, hooks)
+    }
+
+    const scanner = new RoutesScanner(fs.basePath, [])
+    for (const handler of events.routesScanning) await handler(devServer, scanner)
+    await scanner.scan(
+      ['users.index', 'admin.dashboard', 'shared.health', 'internal.health'].map((name) =>
+        makeRoute({ name }),
+      ),
+    )
+    assert.deepEqual(
+      scanner.getScannedRoutes().map((route) => route.name),
+      ['users.index', 'admin.dashboard', 'shared.health'],
+    )
+    for (const handler of events.routesScanned) await handler(devServer, scanner)
+
+    const web = await fs.contents('web/index.ts')
+    const admin = await fs.contents('admin/index.ts')
+    assert.include(web, "'users.index'")
+    assert.include(web, "'shared.health'")
+    assert.notInclude(web, "'admin.dashboard'")
+    assert.notInclude(web, "'internal.health'")
+    assert.include(admin, "'admin.dashboard'")
+    assert.include(admin, "'shared.health'")
+    assert.notInclude(admin, "'users.index'")
+    assert.notInclude(admin, "'internal.health'")
+  })
+})
+
+test.group('generated registry types', () => {
+  test('exports isolated helpers with optional legacy augmentation')
+    .with([true, false])
+    .run(async ({ assert, fs }, augment) => {
+      await fs.create('manifest.d.ts', 'export {}')
+      await new RegistryGenerator(augment ? undefined : { typeAugmentation: false }).writeOutput({
+        outputDir: `${fs.basePath}/web`,
+        routes: [
+          makeRoute({
+            name: 'users.show',
+            pattern: '/users/:id',
+            tokens: [
+              { old: '/users/', type: 0, val: 'users', end: '' },
+              { old: ':id', type: 1, val: 'id', end: '' },
+            ],
+            request: { type: '{ params: { id: string }; page: number }', imports: [] },
+            response: { type: '{ name: string }', imports: [] },
+          }),
+          makeRoute({
+            name: 'users.store',
+            pattern: '/users',
+            methods: ['POST'],
+            request: { type: '{ email: string; query: { notify: boolean } }', imports: [] },
+            response: {
+              type: '{ __response: { id: number }; __status: 201 } | { __response: { message: string }; __status: 409 }',
+              imports: [],
+            },
+          }),
+        ],
+      })
+      await new RegistryGenerator({ typeAugmentation: false }).writeOutput({
+        outputDir: `${fs.basePath}/admin`,
+        routes: [
+          makeRoute({
+            name: 'admin.dashboard',
+            pattern: '/admin',
+            response: { type: '{ revenue: number }', imports: [] },
+          }),
+        ],
+      })
+
+      await fs.create(
+        'consumer.ts',
+        `
+import { registry as webRegistry } from './web/index.ts'
+import { registry as adminRegistry } from './admin/index.ts'
+import type { Route, Path } from './web/index.ts'
+import type { Route as AdminRoute, Path as AdminPath } from './admin/index.ts'
+import { createTuyau } from '@tuyau/core/client'
+import type { UserRegistry, Route as GlobalRoute, Path as GlobalPath } from '@tuyau/core/types'
+
+type Equal<A, B> = (<T>() => T extends A ? 1 : 2) extends
+  (<T>() => T extends B ? 1 : 2) ? true : false
+type Check<T extends true> = T
+
+export type Contracts = [
+  Check<Equal<Route.Response<'users.show'>, { name: string }>>,
+  Check<Equal<Path.Response<'GET', '/users/:id'>, { name: string }>>,
+  Check<Equal<Route.Response<'users.store'>, { id: number }>>,
+  Check<Equal<Path.Response<'POST', '/users'>, { id: number }>>,
+  Check<Equal<Route.Body<'users.store'>, { email: string }>>,
+  Check<Equal<Path.Body<'POST', '/users'>, { email: string }>>,
+  Check<Equal<Route.Query<'users.show'>, { page: number }>>,
+  Check<Equal<Path.Query<'GET', '/users/:id'>, { page: number }>>,
+  Check<Equal<Route.Query<'users.store'>, { notify: boolean }>>,
+  Check<Equal<Path.Query<'POST', '/users'>, { notify: boolean }>>,
+  Check<Equal<Route.Params<'users.show'>, { id: string | number | bigint | boolean }>>,
+  Check<Equal<Path.Params<'GET', '/users/:id'>, { id: string | number | bigint | boolean }>>,
+  Check<Equal<AdminRoute.Response<'admin.dashboard'>, { revenue: number }>>,
+  Check<Equal<AdminPath.Response<'GET', '/admin'>, { revenue: number }>>,
+  ${
+    augment
+      ? `
+  Check<Equal<UserRegistry['routes'], typeof webRegistry.routes>>,
+  Check<Equal<UserRegistry['$tree'], typeof webRegistry.$tree>>,
+  Check<Equal<GlobalRoute.Response<'users.store'>, { id: number }>>,
+  Check<Equal<GlobalPath.Response<'GET', '/users/:id'>, { name: string }>>,
+  `
+      : 'Check<Equal<keyof UserRegistry, never>>,'
+  }
+]
+
+export const request: Route.Request<'users.store'> = {
+  body: { email: 'alice@example.com' }, query: { notify: true },
+}
+export const pathRequest: Path.Request<'POST', '/users'> = request
+
+export function checkErrors(route: Route.Error<'users.store'>, path: Path.Error<'POST', '/users'>) {
+  if (route.isStatus(409)) {
+    const message: string = route.response.message
+    // @ts-expect-error A conflict response does not have a success payload.
+    route.response.id
+    void message
+  }
+  if (path.isStatus(409)) {
+    const message: string = path.response.message
+    // @ts-expect-error Error payloads must not degrade to any.
+    path.response.id
+    void message
+  }
+}
+
+createTuyau({ baseUrl: 'https://example.test', registry: webRegistry }).api.users.show({ params: { id: 1 }, query: { page: 2 } })
+createTuyau({ baseUrl: 'https://example.test', registry: adminRegistry }).api.admin.dashboard({})
+
+// @ts-expect-error Admin routes are not part of the public registry.
+type ForeignRoute = Route.Response<'admin.dashboard'>
+// @ts-expect-error Public routes are not part of the admin registry.
+type ForeignAdminRoute = AdminRoute.Response<'users.show'>
+// @ts-expect-error Admin paths are not part of the public registry.
+type ForeignPath = Path.Response<'GET', '/admin'>
+// @ts-expect-error Public paths are not part of the admin registry.
+type ForeignAdminPath = AdminPath.Response<'GET', '/users/:id'>
+// @ts-expect-error The path must support the specified method.
+type WrongMethod = Path.Response<'POST', '/users/:id'>
+// @ts-expect-error The generated request body remains validated.
+export const invalidRequest: Path.Request<'POST', '/users'> = { body: { email: 123 } }
+`,
+      )
+
+      const program = ts.createProgram([`${fs.basePath}/consumer.ts`], {
+        target: ts.ScriptTarget.ESNext,
+        module: ts.ModuleKind.NodeNext,
+        strict: true,
+        noEmit: true,
+        esModuleInterop: true,
+        skipLibCheck: false,
+        allowImportingTsExtensions: true,
+        paths: {
+          '@tuyau/core/types': [
+            fileURLToPath(new URL('../src/client/types/index.ts', import.meta.url)),
+          ],
+          '@tuyau/core/client': [fileURLToPath(new URL('../src/client/index.ts', import.meta.url))],
+          '@vinejs/vine/types': [
+            fileURLToPath(import.meta.resolve('@vinejs/vine/types')).replace(/\.js$/, '.d.ts'),
+          ],
+        },
+      })
+      assert.deepEqual(
+        ts
+          .getPreEmitDiagnostics(program)
+          .map(
+            (diagnostic) =>
+              `${diagnostic.file?.fileName}: TS${diagnostic.code}: ${ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n').slice(0, 500)}`,
+          ),
+        [],
+      )
+    })
+    .timeout(30_000)
 })

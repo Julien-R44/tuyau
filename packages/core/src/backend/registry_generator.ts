@@ -13,13 +13,17 @@ const DEFAULT_VALIDATION_ERROR_TYPE = '{ errors: SimpleError[] }'
  */
 export class RegistryGenerator {
   #validationErrorType: string | false
+  #typeAugmentation: boolean
   #routesFilter?: GenerateRegistryConfig['routes']
 
-  constructor(options?: Partial<Pick<GenerateRegistryConfig, 'validationErrorType' | 'routes'>>) {
+  constructor(
+    options?: Pick<GenerateRegistryConfig, 'validationErrorType' | 'typeAugmentation' | 'routes'>,
+  ) {
     this.#validationErrorType =
       options?.validationErrorType === undefined
         ? DEFAULT_VALIDATION_ERROR_TYPE
         : options.validationErrorType
+    this.#typeAugmentation = options?.typeAugmentation ?? true
     this.#routesFilter = options?.routes
   }
 
@@ -31,7 +35,13 @@ export class RegistryGenerator {
     pattern: string | RegExp | ((routeName: string) => boolean),
   ): boolean {
     if (typeof pattern === 'string') return routeName.includes(pattern)
-    if (pattern instanceof RegExp) return pattern.test(routeName)
+    if (pattern instanceof RegExp) {
+      const lastIndex = pattern.lastIndex
+      pattern.lastIndex = 0
+      const matches = pattern.test(routeName)
+      pattern.lastIndex = lastIndex
+      return matches
+    }
     if (typeof pattern === 'function') return pattern(routeName)
 
     return false
@@ -41,7 +51,7 @@ export class RegistryGenerator {
    * Check if a route passes the configured only/except filters.
    * Returns true when no filters are set.
    */
-  filterRoute(route: RoutesListItem): boolean {
+  filterRoute(route: Pick<RoutesListItem, 'name'>): boolean {
     if (!this.#routesFilter) return true
 
     const { only, except } = this.#routesFilter
@@ -282,11 +292,23 @@ export class RegistryGenerator {
     const registryEntries = routes
       .map((route) => this.generateRuntimeRegistryEntry(route))
       .join(',\n')
+    const moduleAugmentation = this.#typeAugmentation
+      ? `
+declare module '@tuyau/core/types' {
+  export interface UserRegistry {
+    routes: typeof routes
+    $tree: ApiDefinition
+  }
+}
+`
+      : ''
 
     return `/* eslint-disable prettier/prettier */
 import type { AdonisEndpoint } from '@tuyau/core/types'
 import type { Registry } from './schema.d.ts'
 import type { ApiDefinition } from './tree.d.ts'
+
+export type { Route, Path } from './schema.d.ts'
 
 const placeholder: any = {}
 
@@ -300,14 +322,7 @@ export const registry = {
   routes,
   $tree: {} as ApiDefinition,
 }
-
-declare module '@tuyau/core/types' {
-  export interface UserRegistry {
-    routes: typeof routes
-    $tree: ApiDefinition
-  }
-}
-`
+${moduleAugmentation}`
   }
 
   /**
@@ -325,6 +340,10 @@ declare module '@tuyau/core/types' {
       'ExtractQueryForGet',
       'ExtractRawResponse',
       'ExtractResponse',
+      'Method',
+      'PathWithRegistry',
+      'PatternsByMethod',
+      'RouteWithRegistry',
     ]
     const vineImports = ['InferInput']
     if (useDefaultValidationType) vineImports.push('SimpleError')
@@ -334,11 +353,36 @@ declare module '@tuyau/core/types' {
 
 import type { ${coreImports.join(', ')} } from '@tuyau/core/types'
 import type { ${vineImports.join(', ')} } from '@vinejs/vine/types'
+import type { routes } from './index.ts'
 
 export type ParamValue = string | number | bigint | boolean
 
 export interface Registry {
 ${registryEntries}
+}
+
+export namespace Route {
+  export type Request<Name extends keyof typeof routes> = RouteWithRegistry.Request<typeof routes, Name>
+  export type Response<Name extends keyof typeof routes> = RouteWithRegistry.Response<typeof routes, Name>
+  export type Params<Name extends keyof typeof routes> = RouteWithRegistry.Params<typeof routes, Name>
+  export type Body<Name extends keyof typeof routes> = RouteWithRegistry.Body<typeof routes, Name>
+  export type Query<Name extends keyof typeof routes> = RouteWithRegistry.Query<typeof routes, Name>
+  export type Error<Name extends keyof typeof routes> = RouteWithRegistry.Error<typeof routes, Name>
+}
+
+export namespace Path {
+  export type Request<M extends Method, P extends PatternsByMethod<typeof routes, M>> =
+    PathWithRegistry.Request<typeof routes, M, P>
+  export type Response<M extends Method, P extends PatternsByMethod<typeof routes, M>> =
+    PathWithRegistry.Response<typeof routes, M, P>
+  export type Params<M extends Method, P extends PatternsByMethod<typeof routes, M>> =
+    PathWithRegistry.Params<typeof routes, M, P>
+  export type Body<M extends Method, P extends PatternsByMethod<typeof routes, M>> =
+    PathWithRegistry.Body<typeof routes, M, P>
+  export type Query<M extends Method, P extends PatternsByMethod<typeof routes, M>> =
+    PathWithRegistry.Query<typeof routes, M, P>
+  export type Error<M extends Method, P extends PatternsByMethod<typeof routes, M>> =
+    PathWithRegistry.Error<typeof routes, M, P>
 }
 `
   }
