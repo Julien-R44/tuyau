@@ -1,5 +1,17 @@
 # @tuyau/core
 
+## 1.3.0
+
+### Minor Changes
+
+- 15da8af: Export registry-local `Route` and `Path` type helpers from each generated registry. Add `typeAugmentation: false` to disable the global `UserRegistry` augmentation for secondary registries. The default remains `true` for compatibility with existing core helpers and AdonisJS Inertia.
+
+  Support multiple `generateRegistry` hooks with independent route filters, and make global and sticky regex filters repeatable across scanning and output generation.
+
+### Patch Changes
+
+- 15da8af: Allow `generateRegistry` to be registered several times, each with its own `output` and `routes` filter. The assembler's routes scanner holds a single filter, so a second registry overwrote the first one's filter and every output got the same routes.
+
 ## 1.2.3
 
 ### Patch Changes
