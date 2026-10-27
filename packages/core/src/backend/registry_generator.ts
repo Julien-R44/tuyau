@@ -41,7 +41,7 @@ export class RegistryGenerator {
    * Check if a route passes the configured only/except filters.
    * Returns true when no filters are set.
    */
-  filterRoute(route: RoutesListItem): boolean {
+  filterRoute(route: Pick<RoutesListItem, 'name'>): boolean {
     if (!this.#routesFilter) return true
 
     const { only, except } = this.#routesFilter

@@ -2,6 +2,7 @@ import { test } from '@japa/runner'
 import type { ScannedRoute, RoutesListItem } from '@adonisjs/assembler/types'
 
 import { RegistryGenerator } from '../src/backend/registry_generator.ts'
+import { generateRegistry } from '../src/backend/generate_registry.ts'
 
 function makeRoute(overrides: Partial<ScannedRoute> & { name: string }): ScannedRoute {
   return {
@@ -531,5 +532,47 @@ test.group('generateTypesContent | rawResponse union', () => {
     const content = generator.generateTypesContent(routes)
 
     assert.match(content, /import type \{[^}]*ExtractRawResponse[^}]*\} from '@tuyau\/core\/types'/)
+  })
+})
+
+test.group('generateRegistry hook', () => {
+  test('generates several registries with their own route filters', async ({ assert, fs }) => {
+    const routes = ['users.index', 'admin.dashboard', 'v1.users'].map((name) => makeRoute({ name }))
+
+    // Like the assembler's scanner, it holds a single filter: the last one set wins
+    let scannerFilter = (_route: ScannedRoute) => true
+    const routesScanner = {
+      filter: (filterFn: typeof scannerFilter) => (scannerFilter = filterFn),
+      getScannedRoutes: () => routes.filter((route) => scannerFilter(route)),
+    }
+
+    const scanning: Function[] = []
+    const scanned: Function[] = []
+    const hooks = {
+      add: (event: string, handler: Function) =>
+        (event === 'routesScanning' ? scanning : scanned).push(handler),
+    }
+    const devServer = { ui: { logger: { info: () => {} } } }
+
+    for (const hook of [
+      generateRegistry({ output: `${fs.basePath}/web`, routes: { except: [/^admin\./] } }),
+      generateRegistry({ output: `${fs.basePath}/admin`, routes: { only: [/^admin\./] } }),
+    ]) {
+      await (hook as any).run({}, hooks)
+    }
+
+    for (const handler of scanning) await handler(devServer, routesScanner)
+    for (const handler of scanned) await handler(devServer, routesScanner)
+
+    const web = await fs.contents('web/index.ts')
+    const admin = await fs.contents('admin/index.ts')
+
+    assert.include(web, "'users.index'")
+    assert.include(web, "'v1.users'")
+    assert.notInclude(web, "'admin.dashboard'")
+
+    assert.include(admin, "'admin.dashboard'")
+    assert.notInclude(admin, "'users.index'")
+    assert.notInclude(admin, "'v1.users'")
   })
 })
