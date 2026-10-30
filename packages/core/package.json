@@ -61,7 +61,7 @@
     }
   },
   "dependencies": {
-    "ky": "^1.14.3",
+    "ky": "^2.2.0",
     "object-to-formdata": "^5.0.0"
   },
   "devDependencies": {

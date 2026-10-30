@@ -2,6 +2,10 @@ import { HTTPError, type KyRequest, type KyResponse } from 'ky'
 
 import { KnownStatuses } from './types/types.ts'
 
+type ErrorForStatus<E, S extends number> = [Extract<E, { status: S }>] extends [never]
+  ? { response: unknown }
+  : Extract<E, { status: S }>
+
 /**
  * Base class for all errors exposed by Tuyau.
  *
@@ -11,9 +15,12 @@ export class TuyauError<E extends { response: any } = { response: any }> extends
   /**
    * Error kind exposed by Tuyau.
    * - `'http'`: the server responded with a non-2xx status code.
-   * - `'network'`: the request failed before receiving a response.
+   * - `'network'`: a network failure prevented the request from completing.
+   * - `'timeout'`: Ky's request or total timeout expired.
+   * - `'aborted'`: the request was cancelled by the caller.
+   * - `'unknown'`: another error occurred, including parsing and hook errors.
    */
-  kind!: 'http' | 'network'
+  kind: 'http' | 'network' | 'timeout' | 'aborted' | 'unknown' = 'unknown'
 
   /**
    * HTTP status code returned by the server.
@@ -34,9 +41,10 @@ export class TuyauError<E extends { response: any } = { response: any }> extends
 
   /**
    * Parsed error payload returned by the server.
-   * `undefined` for network errors.
+   * May be `undefined` even for HTTP errors when the body is empty or cannot be parsed.
+   * Typed payloads require a status guard; an unexpected status has an unknown payload.
    */
-  response: E['response'] | undefined
+  response: unknown extends E['response'] ? E['response'] : unknown
 
   constructor(message: string, options?: ErrorOptions) {
     super(message, options)
@@ -55,7 +63,7 @@ export class TuyauError<E extends { response: any } = { response: any }> extends
    */
   isStatus<S extends KnownStatuses<E> | (number & {})>(
     status: S,
-  ): this is TuyauHTTPError<Extract<E, { status: S }>> {
+  ): this is TuyauHTTPError<ErrorForStatus<E, S>> {
     return this.kind === 'http' && this.status === status
   }
 
@@ -63,33 +71,34 @@ export class TuyauError<E extends { response: any } = { response: any }> extends
    * Type guard that narrows to a 422 validation error.
    * Alias for `isStatus(422)`.
    */
-  isValidationError(): this is TuyauHTTPError<Extract<E, { status: 422 }>> {
+  isValidationError(): this is TuyauHTTPError<ErrorForStatus<E, 422>> {
     return this.isStatus(422)
+  }
+
+  /**
+   * Checks payload presence, not its schema. Falsy values, including `null`, are present.
+   */
+  hasResponse(): this is this & { response: {} | null } {
+    return this.response !== undefined
   }
 }
 
 export class TuyauHTTPError<E extends { response: any } = { response: any }> extends TuyauError<E> {
   declare kind: 'http'
-  declare status: number | undefined
-  declare rawResponse: KyResponse | undefined
-  declare rawRequest: KyRequest | undefined
-  declare response: E['response']
+  declare status: number
+  declare rawResponse: KyResponse
+  declare rawRequest: KyRequest
+  declare response: E['response'] | undefined
 
-  constructor(kyError: HTTPError, response: any) {
-    const status = kyError.response?.status
-    const reason = status ? `status code ${status}` : 'an unknown error'
-    const url = kyError.request?.url.replace(kyError.options.prefixUrl || '', '')
-
-    const message = kyError.response
-      ? `Request failed with ${reason}: ${kyError.request?.method.toUpperCase()} /${url}`
-      : `Request failed with ${reason}`
+  constructor(kyError: HTTPError, url: string) {
+    const message = `Request failed with status code ${kyError.response.status}: ${kyError.request.method.toUpperCase()} ${url}`
 
     super(message, { cause: kyError })
 
     this.kind = 'http'
     this.rawResponse = kyError.response
-    this.response = response
-    this.status = kyError.response?.status
+    this.response = kyError.data
+    this.status = kyError.response.status
     this.rawRequest = kyError.request
     this.name = 'TuyauHTTPError'
   }
@@ -114,5 +123,38 @@ export class TuyauNetworkError extends TuyauError<{ response: never }> {
 
     this.kind = 'network'
     this.name = 'TuyauNetworkError'
+  }
+}
+
+export class TuyauTimeoutError extends TuyauError<{ response: never }> {
+  declare kind: 'timeout'
+  declare response: undefined
+
+  constructor(cause: Error) {
+    super('Request timed out', { cause })
+    this.kind = 'timeout'
+    this.name = 'TuyauTimeoutError'
+  }
+}
+
+export class TuyauAbortedError extends TuyauError<{ response: never }> {
+  declare kind: 'aborted'
+  declare response: undefined
+
+  constructor(cause: unknown) {
+    super('Request aborted', { cause })
+    this.kind = 'aborted'
+    this.name = 'TuyauAbortedError'
+  }
+}
+
+export class TuyauUnknownError extends TuyauError<{ response: never }> {
+  declare kind: 'unknown'
+  declare response: undefined
+
+  constructor(cause: unknown) {
+    super('Request failed with an unknown error', { cause })
+    this.kind = 'unknown'
+    this.name = 'TuyauUnknownError'
   }
 }
