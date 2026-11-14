@@ -12,10 +12,10 @@ export default class SuperjsonMiddleware {
     const isSuperjsonRequest = this.#isSuperJsonRequest(ctx)
 
     /**
-     * If we received a superjson request with a body, then
-     * deserialize the body.
+     * Only JSON bodies are serialized by the client plugin.
+     * Form bodies must be preserved even when the response uses SuperJSON.
      */
-    if (isSuperjsonRequest && request.hasBody()) {
+    if (isSuperjsonRequest && request.hasBody() && request.bodyType === 'json') {
       request.updateBody(SuperJSON.deserialize(request.body() as any))
     }
 
