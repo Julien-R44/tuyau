@@ -1,11 +1,12 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
+import { flushSync } from 'svelte'
 import { createMutation } from '@tanstack/svelte-query'
 import { createTuyau } from '@tuyau/core/client'
 import nock from 'nock'
 
 import { defaultRegistry } from '../fixtures/index.ts'
 import { createTuyauSvelteQueryClient } from '../../src/main.ts'
-import { withEffectRoot, createTestQueryClient, settle } from './utils.svelte.ts'
+import { withEffectRoot, createTestQueryClient } from './utils.svelte.ts'
 
 describe('Mutation | createMutation', () => {
   let queryClient = createTestQueryClient()
@@ -34,9 +35,10 @@ describe('Mutation | createMutation', () => {
 
       mutation.mutate({ body: { name: 'foo' } })
 
-      await settle()
-
-      expect(mutation.isSuccess).toBe(true)
+      await vi.waitFor(() => {
+        flushSync()
+        expect(mutation.isSuccess).toBe(true)
+      })
     }),
   )
 
@@ -62,9 +64,10 @@ describe('Mutation | createMutation', () => {
 
       mutation.mutate({ body: { name: 'bar' } })
 
-      await settle()
-
-      expect(mutation.isSuccess).toBe(true)
+      await vi.waitFor(() => {
+        flushSync()
+        expect(mutation.isSuccess).toBe(true)
+      })
       expect(onSuccessCalled).toBe(true)
     }),
   )
