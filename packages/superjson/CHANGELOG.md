@@ -1,5 +1,11 @@
 # @tuyau/superjson
 
+## 1.0.1
+
+### Patch Changes
+
+- a936431: Preserve multipart and URL-encoded request bodies when SuperJSON is enabled. Only deserialize bodies parsed as JSON by Adonis, while continuing to serialize responses with SuperJSON.
+
 ## 1.0.0
 
 ### Major Changes

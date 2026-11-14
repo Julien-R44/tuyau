@@ -1,5 +1,12 @@
 # @tuyau/vue-query
 
+## 1.1.2
+
+### Patch Changes
+
+- Updated dependencies [a936431]
+  - @tuyau/query-core@1.1.2
+
 ## 1.1.1
 
 ### Patch Changes

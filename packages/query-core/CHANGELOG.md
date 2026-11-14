@@ -1,5 +1,11 @@
 # @tuyau/query-core
 
+## 1.1.2
+
+### Patch Changes
+
+- a936431: Expose `responseType` in `tuyau` request options and global options for the React, Vue, and Svelte Query integrations. Require `@tuyau/core` version 1.1.0 or later, which introduced this option.
+
 ## 1.1.1
 
 ### Patch Changes
