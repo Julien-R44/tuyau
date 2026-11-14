@@ -249,7 +249,7 @@ test.group('Types | queryOptions useSuspenseQuery compatibility', () => {
     const shouldFetch = Math.random() > 0.5
     const options = tuyau.users.index.queryOptions(
       shouldFetch ? { query: { name: 'foo' } } : skipToken,
-      { staleTime: 5000, retry: 3 },
+      { staleTime: 5000, retry: 3, tuyau: { responseType: 'arrayBuffer' } },
     )
 
     void (() => useQuery(options))
@@ -672,6 +672,38 @@ test.group('Query | Ky retry disabled', () => {
 })
 
 test.group('Query | Ky options', () => {
+  test('responseType parses binary data without a content type', async ({ assert, cleanup }) => {
+    const client = createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry })
+    const tuyau = createTuyauReactQueryClient({
+      client,
+      globalOptions: { responseType: 'text' },
+    })
+    const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } })
+    cleanup(() => queryClient.clear())
+    const bytes = Uint8Array.from([0, 255, 128, 65])
+
+    const scope = nock('http://localhost:3333')
+      .get('/users/1')
+      .reply(200, Buffer.from(bytes))
+      .get('/users/2')
+      .reply(200, 'plain text', { 'Content-Type': 'application/json' })
+
+    const result = await queryClient.fetchQuery(
+      tuyau.users.show.queryOptions(
+        { params: { id: '1' } },
+        { tuyau: { responseType: 'arrayBuffer' } },
+      ),
+    )
+    assert.instanceOf(result, ArrayBuffer)
+    assert.deepEqual(result, bytes.buffer)
+
+    const text = await queryClient.fetchQuery(
+      tuyau.users.show.queryOptions({ params: { id: '2' } }),
+    )
+    assert.equal(text, 'plain text')
+    assert.isTrue(scope.isDone())
+  })
+
   test('should pass timeout option to client.request', async ({ assert }) => {
     const { client, capture } = withRequestCapture(
       createTuyau({ baseUrl: 'http://localhost:3333', registry: defaultRegistry }),

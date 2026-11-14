@@ -1,5 +1,9 @@
 import type { QueryFilters } from '@tanstack/query-core'
-import type { BaseRequestOptions, RawRequestArgs } from '@tuyau/core/types'
+import type {
+  BaseRequestOptions,
+  RawRequestArgs,
+  TuyauRequestOptions as CoreRequestOptions,
+} from '@tuyau/core/types'
 
 /**
  * Discriminator for the type of TanStack Query operation.
@@ -26,17 +30,17 @@ export type TuyauQueryKey = [
 export type TuyauMutationKey = [readonly string[]]
 
 /**
- * Options forwarded to the underlying Ky HTTP client, extended
+ * Options forwarded to the underlying Tuyau client, extended
  * with `abortOnUnmount` to automatically abort requests when
  * the component using the query unmounts
  */
-export interface TuyauRequestOptions extends BaseRequestOptions {
+export interface TuyauRequestOptions extends BaseRequestOptions, CoreRequestOptions {
   abortOnUnmount?: boolean
 }
 
 /**
  * Base options shared by all Tuyau query/mutation option builders.
- * Allows passing Ky-specific options via the `tuyau` property
+ * Allows passing request options via the `tuyau` property
  */
 export interface TuyauQueryBaseOptions {
   tuyau?: TuyauRequestOptions
