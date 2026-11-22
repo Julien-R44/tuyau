@@ -1038,6 +1038,21 @@ test.group('ExtractQuery and ExtractBody types', (group) => {
     expectTypeOf<Result>().toEqualTypeOf<{ avatar?: File | Blob; name: string }>()
   })
 
+  test('ExtractBody preserves tuples', ({ expectTypeOf }) => {
+    type WithTuples = {
+      location?: [number, number]
+      range: readonly [string, ...number[]]
+      upload: [{ isMultipartFile: true; fieldName: string }, string?]
+    }
+
+    type Result = ExtractBody<WithTuples>
+    expectTypeOf<Result>().toEqualTypeOf<{
+      location?: [number, number]
+      range: readonly [string, ...number[]]
+      upload: [File | Blob, string?]
+    }>()
+  })
+
   test('ExtractBody does not affect non-file types', ({ expectTypeOf }) => {
     type NoFiles = { name: string; age: number; active: boolean }
 

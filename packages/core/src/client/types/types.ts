@@ -93,14 +93,13 @@ export type ExtractQueryForGet<T> = DistributiveOmit<T, 'headers' | 'cookies' | 
  * Recursively replaces AdonisJS MultipartFile types with the DOM File type.
  * MultipartFile is matched structurally via `{ isMultipartFile: true }` to avoid
  * importing from @adonisjs/bodyparser in client-side code.
+ * The mapped type is homomorphic, so arrays and tuples keep their shape.
  */
 type ReplaceMultipartFile<T> = T extends { isMultipartFile: true }
   ? File | Blob
-  : T extends (infer U)[]
-    ? ReplaceMultipartFile<U>[]
-    : T extends object
-      ? { [K in keyof T]: ReplaceMultipartFile<T[K]> }
-      : T
+  : T extends object
+    ? { [K in keyof T]: ReplaceMultipartFile<T[K]> }
+    : T
 
 /**
  * Extract body from a validator type, excluding reserved properties.
